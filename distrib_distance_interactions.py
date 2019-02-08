@@ -5,14 +5,15 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 dic_dist = []
-with open("/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/pre_adipo.ibed", 'r') as f1:
+with open("/home/laverre/Documents/Regulatory_Landscape/data/mouse/all_interactions/all_interactions.txt", 'r') as f1:
     for i in f1.readlines()[1:]:
         i = i.split("\t")
-        if i[0] == i[4]:
+        if i[0] == i[3]:
             midbait = ((int(i[1]) + int(i[2])) / 2)
-            midcontact = ((int(i[5]) + int(i[6])) / 2)
+            midcontact = ((int(i[4]) + int(i[5])) / 2)
             dist = midbait - midcontact
-            dic_dist.append(dist)
+            if abs(dist) > 20000:
+                dic_dist.append(dist)
 
 
 print("Distance moyenne", np.mean(dic_dist))

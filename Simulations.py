@@ -4,9 +4,13 @@
 import numpy as np
 from datetime import datetime
 import os
+import sys
+
+sp = sys.argv[1] #"human"
+genome = sys.argv[2] #"hg38"
 
 # Dictionary of chromosomes length
-f2 = open("../data/mouse/chromosome_size_mm10.txt", 'r')
+f2 = open("../data/"+sp+"/chromosome_size_"+genome+".txt", 'r')
 chromo_size = {}
 for i in f2.readlines():
     i = i.split("\t")
@@ -14,7 +18,7 @@ for i in f2.readlines():
 
 # Dictionary of restrictions fragments
 dic_frag = {}
-with open("../data/mouse/Digest_mm10_HindIII_None.txt.rmap",'r') as f1:
+with open("../data/"+sp+"/Digest_"+genome+"_HindIII_None.txt.rmap",'r') as f1:
     for i in f1.readlines()[1:]:
         i = i.split("\t")
         frag = (int(i[1]), int(i[2]))
@@ -31,13 +35,12 @@ for i in dic_frag.keys():
 
 # Dictionary of interactions distances by fragment
 dist = {}
-position = {}
 vect_dist = []
 trans = tot = 0
 short_dist = []
 super_dist = []
 
-with open("../data/mouse/all_interactions/all_interactions.txt") as f3:
+with open("../data/"+sp+"/all_interactions/all_interactions.txt") as f3:
     for i in f3.readlines()[1:]:
         i = i.split("\t")
         midbait = ((int(i[1]) + int(i[2])) / 2)
@@ -45,7 +48,7 @@ with open("../data/mouse/all_interactions/all_interactions.txt") as f3:
         frag = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
         tot += 1
         if i[0] == i[3]:
-            if 20000 < abs(midbait-midcontact) < 2000000:
+            if 25000 < abs(midbait-midcontact) < 5000000:
                 vect_dist.append(midbait - midcontact)
                 if frag in dist.keys():
                     dist[frag].append(midbait - midcontact)
@@ -53,9 +56,9 @@ with open("../data/mouse/all_interactions/all_interactions.txt") as f3:
                     dist[frag] = [midbait - midcontact]
 
             else:
-                if abs(midbait - midcontact) < 20000:
+                if abs(midbait - midcontact) < 25000:
                     short_dist.append(frag + ':' + str(i[1]) + ':' + str(i[6]))
-                if abs(midbait - midcontact) > 2000000:
+                if abs(midbait - midcontact) > 5000000:
                     super_dist.append(frag + ':' + str(i[1]) + ':' + str(i[6]))
 
         else:
@@ -76,9 +79,9 @@ pos = []
 neg = []
 for i in vect_dist:
     if i > 0:
-        pos.append(int(i/2000))
+        pos.append(int(i/5000))     # 5000 = 1000*2 bin of 5kB
     else:
-        neg.append(int(i/2000))
+        neg.append(int(i/5000))     # 10000 = 500*2 bin of 10kB
 
 proba_pos = []
 bin_pos = []
@@ -86,42 +89,44 @@ proba_neg = []
 bin_neg = []
 for i in range(min(pos), max(pos)):
     proba_pos.append(pos.count(i)/len(pos))
-    bin_pos.append(i)
+    bin_pos.append(i*5000)
 
 for i in range(min(neg), max(neg)):
     proba_neg.append(neg.count(i) / len(neg))
-    bin_neg.append(i)
+    bin_neg.append(i*5000)
+
 
 print("Starting simulations")
 startTime = datetime.now()
 
 #### Simulations by fragment
-output = open("../data/mouse/simulations.txt", 'w')
-if os.stat("../data/mouse/simulations.txt").st_size == 0:
+output = open("../data/"+sp+"/simulations_5Mb_bin5kb_uniq10_noreplace_test.txt", 'w')
+if os.stat("../data/"+sp+"/simulations_5Mb_bin5kb_uniq10_noreplace_test.txt").st_size == 0:
     output.write("chr_bait\tstart_bait\tend_bait\tstart\tend\n")
 
 contact_simul = {}
 running = 0
-count_error = 0
+missing_frag = 0
 
 for frag in dist.keys():
     chr = frag.split(':')[0]
-    tot += 1
-    midbait = ((int(frag.split(':')[1])+int(frag.split(':')[2])) / 2 )
+    fragment = str(frag.split(':')[0]) + '\t' + str(frag.split(':')[1]) + '\t' + str(frag.split(':')[2])
+    midbait = ((int(frag.split(':')[1])+int(frag.split(':')[2])) / 2)
     proba_pos_bis = list(proba_pos)
     bin_pos_bis = list(bin_pos)
     i = len(proba_pos) - 1
 
-    # Delete positive distances exceeding chrom length
+    # Exclude positive distances exceeding chrom length
     while i >= 0:
         if midbait + bin_pos_bis[i] > int(chromo_size[chr]):
             del proba_pos_bis[i]
             del bin_pos_bis[i]
+            print("Exclude pos +1 ! ")
             i = i - 1
         else:
             break
 
-    # Delete negatives distances out of null range
+    # Exclude negatives distances out of null range
     proba_neg_bis = list(proba_neg)
     bin_neg_bis = list(bin_neg)
     i = 0
@@ -129,6 +134,7 @@ for frag in dist.keys():
         if midbait + bin_neg_bis[i] < 0:
             del proba_neg_bis[i]
             del bin_neg_bis[i]
+            print("Exclude neg +1 ! ")
         else:
             break
 
@@ -137,25 +143,28 @@ for frag in dist.keys():
     proba_bis = proba_pos_bis + proba_neg_bis
     proba_bis = [x / sum(proba_bis) for x in proba_bis]
     probs = np.array(proba_bis)
-    probs /= probs.sum()
 
-    # Random draw of restriction frag according to proba distribution
-    rand = np.random.choice(bin_bis, len(dist[frag]), p=probs, replace=False)
+    # Random draw of distances according to proba distribution
+    rand = np.random.choice(bin_bis, len(dist[frag])*10, p=probs)
     rand = rand.tolist()
+
+    # Overlap with restriction frag
+    simul = []
     for pos in rand:
-        contact = midbait + (int(pos)*2000)
+        contact = midbait + int(pos)
         i = 0
-        while i < (len(dic_frag[chr])-1) and dic_frag[chr][i][1] < contact:
+        while i < (len(dic_frag[chr])-1) and dic_frag[chr][i][1] <= contact:
             i += 1
 
-        #print("start&end_bait:", frag.split(':')[1], frag.split(':')[2], "pos_rand:", pos, "contact_simul", contact, "start&end_simul:", dic_frag[chr][i][0], dic_frag[chr][i][1])
-        output.write(str(frag.split(':')[0]) + '\t' + str(frag.split(':')[1]) + '\t' + str(frag.split(':')[2]) + '\t' + str(
-                    int(dic_frag[chr][i][0])) + '\t' + str(int(dic_frag[chr][i][1])) + '\n')
+        simul.append(str(int(dic_frag[chr][i][0])) + '\t' + str(int(dic_frag[chr][i][1])))
+
+    # Selection of same number of unique restriction frag as in observed data
+    select = np.random.choice(list(set(simul)), len(dist[frag]), replace=False)
+    for frag_simul in select:
+        output.write(fragment + '\t' + frag_simul + '\n')
 
     running += 1
-    print("Fragments simulés :", running, "sur", len(dist))
+    print("Simulated fragments :", running, "of", len(dist))
 
-print("Simul bait décalé de 1:", count_error)
 print("Temps d'exécution :", datetime.now() - startTime)
-
-
+output.close()

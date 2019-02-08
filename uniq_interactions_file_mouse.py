@@ -42,10 +42,12 @@ for d in L:
     alldicts.update(d)
 allkeys = alldicts.keys()
 
+"""
 for d in L:
     for key in allkeys:
         if key not in d:
             d[key] = 'NA'
+"""
 
 ### Fusion of interaction's dictionary
 dict_final = defaultdict(list)
@@ -54,6 +56,7 @@ for k, v in chain(dict1.items(), dict2.items(), dict3.items(), dict4.items(), di
                   dict13.items(), dict14.items()):
     dict_final[k].append(v)
 
+"""
 ### Output
 output = open("/home/laverre/Documents/Regulatory_Landscape/data/mouse/all_interactions/all_interactions.txt", 'w')
 if os.stat("/home/laverre/Documents/Regulatory_Landscape/data/mouse/all_interactions/all_interactions.txt").st_size == 0:
@@ -66,6 +69,8 @@ for k, v in dict_final.items():
         output.write(str(i) + "\t")
     output.write("\n")
 
+output.close()
+"""
 print("Nombre total d'interactions:", len(dict_final.keys()))
 print("Nombre d'interaction unique:", (sum(len(i) == 1 for i in dict_final.values())))
 print("Fréquence moyenne d'interaction :", (sum(len(i) for i in dict_final.values()))/len(dict_final.keys()))
@@ -75,8 +80,10 @@ print("Médiane fréquence d'interaction :", np.median(freq))
 
 
 ### Frequency distribution of number of cells per interactions
-plt.hist(freq, min(len(set(freq)), 500), (0, 11))
+plt.hist(freq, min(len(set(freq)), 500), (0, 15))
 plt.title('Mouse frequency')
 plt.xlabel('cells')
 plt.ylabel('Frequency')
 plt.show()
+plt.savefig('/home/laverre/Documents/Regulatory_Landscape/data/mouse/all_interactions/mouse_frequency2.png')
+
