@@ -3,25 +3,29 @@
 
 import os
 import sys
+import re
 
 
 reference_file = sys.argv[1]
 interest_file = sys.argv[2]
-interest_name = sys.argv[3]
-output_file = sys.argv[4]
+output_file = sys.argv[3]
 
 
 def sorting_dictionary(file):
     dic = {}
     with open(file, 'r') as f:
-        for i in f.readlines():
+        start = 0
+        if bool(re.search('start', f.readline())) is True:      # Check if header is present
+            start = 1
+
+        f.seek(0)
+        for i in f.readlines()[start:]:
+            i = i.strip("\n")
             i = i.split("\t")
-            pos = (int(i[1]), int(i[2]))  # values = positions
+            pos = (int(i[1]), int(i[2]), str(i[3]))  # values = positions + ID
 
-            if int(i[1]) == int(i[2]):
-
-            if chr in dic.keys():
-                dic[i[0]].append(pos)     # keys = chromosomes
+            if i[0] in dic.keys():
+                dic[i[0]].append(pos)     # keys = chromosomes
             else:
                 dic[i[0]] = [pos]
 
@@ -32,18 +36,20 @@ def sorting_dictionary(file):
 
     return dic
 
+
 ref_dic = sorting_dictionary(reference_file)
 print("Reference dictionary ready !")
 
 int_dic = sorting_dictionary(interest_file)
-
+print(int_dic)
 # Testing overlap in interest dic
-if int_dic.values()[1][0] != int_dic.values()[1][1]:
+if list(int_dic.values())[0][0][0] != list(int_dic.values())[0][0][1]:
     new_int_dic = {}
     for k in int_dic.keys():
         current_start = int_dic[k][0][0]
         current_end = int_dic[k][0][1]
         current_ID = int_dic[k][0][2]
+
         new_int_dic[k] = []
         for i in range(1, len(int_dic[k])):
             new_start = int_dic[k][i][0]
@@ -53,13 +59,13 @@ if int_dic.values()[1][0] != int_dic.values()[1][1]:
                 current_end = new_end
                 current_ID = str(current_ID) + "," + str(new_ID)
             else:
-                new_int_dic[k].append((current_start,current_end, current_ID))
+                new_int_dic[k].append((current_start, current_end, current_ID))
                 current_start = new_start
                 current_end = new_end
                 current_ID = new_ID
 
-            if i == len(int_dic[k]):
-                new_int_dic[k].append((current_end,current_start, current_ID))
+            if i == len(int_dic[k])-1:
+                new_int_dic[k].append((current_start, current_end, current_ID))
 
     nb_elem = sum(len(int_dic[x]) for x in int_dic.keys())
     new_nb_elem = sum(len(new_int_dic[x]) for x in new_int_dic.keys())
@@ -68,8 +74,10 @@ if int_dic.values()[1][0] != int_dic.values()[1][1]:
 
     int_dic = new_int_dic
 
+print(int_dic)
 print("Reference dictionary ready !")
-print("Running overlap ... ")
+print("Running overlap... ")
+
 
 # Overlap interest to reference
 dic_output = {}
@@ -83,12 +91,12 @@ for chr in ref_dic.keys():
             ref_pos = str(chr) + "\t" + str(start) + "\t" + str(end)
 
             # Initialization of first possible overlapping interest position
-            while i < len(int_dic[chr]) and int_dic[chr][i][1] < start:
+            while i < len(int_dic[chr]) and int_dic[chr][i][1] <= start:
                 i += 1
             first_i = i
 
             # Adding all overlapping interest position to reference position
-            while i < len(int_dic[chr]) and int_dic[chr][i][0] <= end:
+            while i < len(int_dic[chr]) and int_dic[chr][i][0] < end:
                 if ref_pos in dic_output.keys():
                     dic_output[ref_pos].append(int_dic[chr][i])
                 else:
@@ -97,17 +105,24 @@ for chr in ref_dic.keys():
 
             # Adding reference position without overlap
             if ref_pos not in dic_output.keys():
-                dic_output[ref_pos] = ["NA"]
+                dic_output[ref_pos] = [('NA', 'NA', 'NA')]
 
 
+print("Writting output... ")
 output = open(output_file, 'w')
 if os.stat(output_file).st_size == 0:
-    output.write("chr\tstart\tend\t"+interest_name+"\n")
+    output.write("chr\tstart\tend\toverlap_start\toverlap_end\toverlap_ID\n")
 
 for ref_pos, int_pos in dic_output.items():
     output.write(ref_pos + "\t")
+    count = 0
+
     for i in int_pos:
-        output.write(str(i) + ",")
-    output.write("\n")
+        count += 1
+        if count == len(int_pos):
+            output.write(str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2]))
+            output.write("\n")
 
 output.close()
+print("All done !")
+
