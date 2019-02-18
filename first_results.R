@@ -95,3 +95,23 @@ dataLengths <- rbind(real, simul)
 ggplot(dataLengths, aes(Distance, fill = Data)) + 
   geom_histogram(alpha = 0.5, position = 'identity', binwidth = 10000) + 
   scale_color_brewer(palette="Dark2") + theme_minimal() + ggtitle("No uniq")
+
+####################################################################################################################
+##################################### Corrélation activité peaks/enhancers #########################################
+####################################################################################################################
+setwd("/home/laverre/Documents/Regulatory_Landscape/result/expression_correlation")
+cor_all <- read.table("correlation_expression.txt", header=T)
+cor_low <- read.table("expression_correlation.txt", header=T)
+
+par(mfrow=c(1,1))
+hist(cor[cor$sense == 'bait-PIR',]$spearman_pval)
+hist(cor[cor$sense == 'PIR-bait',]$spearman_pval)
+
+vect_enh <- read.table("vect_enh")
+vect_peak <- read.table("vect_peak")
+vect_enh <- t(vect_enh[,-1])
+vect_peak <- t(vect_peak[,-c(1:7)])
+
+plot(log(cor[cor$vect_peak != 0 & cor$vect_enh != 0,]$vect_enh+1),log(cor[cor$vect_peak != 0 & cor$vect_enh != 0,]$vect_peak+1))
+abline(lm(log(cor[cor$vect_peak != 0 & cor$vect_enh != 0,]$vect_enh+1) ~ log(cor[cor$vect_peak != 0 & cor$vect_enh != 0,]$vect_peak+1)))
+cor(log(vect_enh), log(vect_peak), method = "pearson")

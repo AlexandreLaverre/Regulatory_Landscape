@@ -9,7 +9,7 @@ import re
 reference_file = sys.argv[1]
 interest_file = sys.argv[2]
 output_file = sys.argv[3]
-
+merge = sys.argv[4]
 
 def sorted_dictionary(file):
     dic = {}
@@ -45,37 +45,38 @@ int_dic = sorted_dictionary(interest_file)
 # Testing overlap in interest dic
 if list(int_dic.values())[0][0][0] != list(int_dic.values())[0][0][1]:
     print("Length of interest seq. > 1 pb ")
-    new_int_dic = {}
-    for k in int_dic.keys():
-        current_start = int_dic[k][0][0]
-        current_end = int_dic[k][0][1]
-        current_ID = int_dic[k][0][2]
+    if merge == "T":
+        new_int_dic = {}
+        for k in int_dic.keys():
+            current_start = int_dic[k][0][0]
+            current_end = int_dic[k][0][1]
+            current_ID = int_dic[k][0][2]
 
-        new_int_dic[k] = []
-        for i in range(1, len(int_dic[k])):
-            new_start = int_dic[k][i][0]
-            new_end = int_dic[k][i][1]
-            new_ID = int_dic[k][i][2]
-            if current_end >= new_start >= current_start:
-                current_end = new_end
-                current_ID = str(current_ID) + "," + str(new_ID)
-            else:
-                new_int_dic[k].append((current_start, current_end, current_ID))
-                current_start = new_start
-                current_end = new_end
-                current_ID = new_ID
+            new_int_dic[k] = []
+            for i in range(1, len(int_dic[k])):
+                new_start = int_dic[k][i][0]
+                new_end = int_dic[k][i][1]
+                new_ID = int_dic[k][i][2]
+                if current_end >= new_start >= current_start:
+                    current_end = new_end
+                    current_ID = str(current_ID) + "," + str(new_ID)
+                else:
+                    new_int_dic[k].append((current_start, current_end, current_ID))
+                    current_start = new_start
+                    current_end = new_end
+                    current_ID = new_ID
 
-            if i == len(int_dic[k])-1:
-                new_int_dic[k].append((current_start, current_end, current_ID))
+                if i == len(int_dic[k])-1:
+                    new_int_dic[k].append((current_start, current_end, current_ID))
 
-    nb_elem = sum(len(int_dic[x]) for x in int_dic.keys())
-    new_nb_elem = sum(len(new_int_dic[x]) for x in new_int_dic.keys())
-    if nb_elem != new_nb_elem:
-        print("There is overlap in interest file !")
-    else:
-        print("There is no overlap in interest file !")
+        nb_elem = sum(len(int_dic[x]) for x in int_dic.keys())
+        new_nb_elem = sum(len(new_int_dic[x]) for x in new_int_dic.keys())
+        if nb_elem != new_nb_elem:
+            print("There is overlap in interest file !")
+        else:
+            print("There is no overlap in interest file !")
 
-    int_dic = new_int_dic
+        int_dic = new_int_dic
 
 else:
     print("Length of interest seq. = 1 pb")
@@ -91,11 +92,12 @@ for chr in ref_dic.keys():
     for pos in ref_dic[chr]:
         start = pos[0]
         end = pos[1]
+        ref_pos = str(chr) + "\t" + str(start) + "\t" + str(end)
+
         if chr in int_dic.keys():
-            i = first_i
-            ref_pos = str(chr) + "\t" + str(start) + "\t" + str(end)
 
             # Initialization of first possible overlapping interest position
+            i = first_i
             while i < len(int_dic[chr]) and int_dic[chr][i][1] < start:
                 i += 1
             first_i = i
@@ -111,6 +113,9 @@ for chr in ref_dic.keys():
             # Adding reference position without overlap
             if ref_pos not in dic_output.keys():
                 dic_output[ref_pos] = [('NA', 'NA', 'NA')]
+
+        else:
+            dic_output[ref_pos] = [('NA', 'NA', 'NA')]
 
 
 print("Writting output... ")
