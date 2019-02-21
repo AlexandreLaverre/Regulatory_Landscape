@@ -15,7 +15,7 @@ def sorted_dictionary(file):
     dic = {}
     with open(file, 'r') as f:
         start = 0
-        if bool(re.search('start', f.readline())) is True:      # Check if header is present
+        if bool(re.search('tart', f.readline())) is True:      # Check if header is present
             start = 1
 
         f.seek(0)
@@ -59,7 +59,7 @@ if list(int_dic.values())[0][0][0] != list(int_dic.values())[0][0][1]:
                 new_ID = int_dic[k][i][2]
                 if current_end >= new_start >= current_start:
                     current_end = new_end
-                    current_ID = str(current_ID) + "," + str(new_ID)
+                    current_ID = str(current_ID) + "_" + str(new_ID)
                 else:
                     new_int_dic[k].append((current_start, current_end, current_ID))
                     current_start = new_start
@@ -131,10 +131,11 @@ for ref_pos, int_pos in dic_output.items():
     for i in int_pos:
         count += 1
         if count == len(int_pos):
-            output.write(str(i[2]))
-            output.write("\n")
+            #output.write(str(i[2]) + "\n")
+            output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1])+"\n")
         else:
-            output.write(str(i[2]) + ",")
+            #output.write(str(i[2]) + ",")
+            output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1]) + ",")
 
 output.close()
 print("All done !")

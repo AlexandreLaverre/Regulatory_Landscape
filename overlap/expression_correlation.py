@@ -9,10 +9,15 @@ import sys
 
 startTime = datetime.now()
 
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/human/expression_correlation/"
-path_overlap = "/home/laverre/Documents/Regulatory_Landscape/data/human/overlap/"
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/expression_correlation/"
+path_overlap = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/overlap/"
 path_result = "/home/laverre/Documents/Regulatory_Landscape/result/expression_correlation/"
 
+"""
+path_data = "/beegfs/data/alaverre/data/expression_correlation/"+sp+"/"
+path_overlap = "/beegfs/data/alaverre/data/fragments_overlap/"+sp+"/"
+path_result = "/beegfs/data/alaverre/result/expression_correlation/"+sp+"/"
+"""
 
 def frag_dictionary(file):
     dic = {}
@@ -35,10 +40,10 @@ def frag_dictionary(file):
     return dic
 
 
-def expr_dictionary(file, first_line, first_cell):
+def expr_dictionary(file, first_cell):
     dic = {}
     with open(file, 'r') as f:
-        for i in f.readlines()[first_line:]:
+        for i in f.readlines()[1:]:
             i = i.strip('\n')
             i = i.split('\t')
             ID = str(i[0])                          # key = peaks ID
@@ -50,28 +55,22 @@ def expr_dictionary(file, first_line, first_cell):
 
 
 # Restriction fragment - CAGE peaks
-frag_peaks = frag_dictionary(path_overlap+"human_frag_overlap_CAGE_peaks.txt")
+frag_peaks = frag_dictionary(path_overlap+"mouse_frag_overlap_CAGE_peaks.txt")
 print("Restriction fragment - CAGE peaks ok !")
 
-
 # Restriction fragment - enhancers peaks
-frag_enh = frag_dictionary(path_overlap+"human_frag_overlap_enhancers.txt")
+frag_enh = frag_dictionary(path_overlap+"mouse_frag_overlap_enhancers.txt")
 print("Restriction fragment - enhancers peaks ok !")
 
-
 # CAGE peaks expression
-line = 1840
 cell = 7
-exp_CAGE = expr_dictionary(path_data+"hg38_fair+new_CAGE_peaks_phase1and2_tpm_ann.osc.txt", line, cell)
+exp_CAGE = expr_dictionary(path_data+"mouse.CAGE_peaks.tpm.ann.matrix_rearrange", cell)
 print("CAGE peaks expression ok !")
 
-
 # enhancers peaks expression
-line = 1
 cell = 1
-exp_enh = expr_dictionary(path_data+"F5.hg38.enhancers.expression.tpm.matrix", line, cell)
+exp_enh = expr_dictionary(path_data+"mouse.enhancers.expression.tpm.matrix", cell)
 print("Enhancers peaks expression ok !")
-
 
 # pc-HIC interactions
 inter = {}
@@ -95,6 +94,7 @@ output = open(path_result+"expression_correlation.txt", 'w')
 if os.stat(path_result+"expression_correlation.txt").st_size == 0:
     output.write("peaks\tenh\tspearman_cor\tspearman_pval\tpearson_cor\tpearson_pval\tbait\tPIR\tsense\n")
 
+
 nb_pairs = 0
 for bait in inter.keys():
     if frag_peaks[bait] != "NA":        # Get CAGE peaks in bait
@@ -106,6 +106,7 @@ for bait in inter.keys():
                         for enh in frag_enh[PIR]:
                             if enh in exp_enh.keys():
                                 vect_enh = exp_enh[enh]  # Get expression of enh peak
+
                                 cor_spearman = stats.spearmanr(vect_peak, vect_enh)
                                 cor_pearson = stats.pearsonr([np.log(i+1) for i in vect_peak],
                                                              [np.log(i+1) for i in vect_enh])
@@ -134,8 +135,8 @@ for bait in inter.keys():
                                              str(cor_pearson[1]) + "\t" + bait + "\t" + PIR + "\t" + "PIR-bait" + "\n")
 
 
-print("Fragments number: ")
 print("Pairs number:", nb_pairs)
 print("All done !")
 print("Execution time :", datetime.now() - startTime)
 output.close()
+
