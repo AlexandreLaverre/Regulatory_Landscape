@@ -23,7 +23,7 @@ with open("../data/"+sp+"/all_interactions/all_interactions.txt") as f3:
         total += 1
 
         if i[0] == i[3]:
-            if 25000 < abs(midbait-midcontact) < 5000000:
+            if 25000 < abs(midbait-midcontact) < 10000000:
                 vect_dist.append(midbait - midcontact)
 
                 if frag in contact.keys():
@@ -33,7 +33,7 @@ with open("../data/"+sp+"/all_interactions/all_interactions.txt") as f3:
                     frag_size.append(int(i[2]) - int(i[1]))
             if 25000 > abs(midbait-midcontact):
                 too_short += 1
-            if abs(midbait-midcontact) > 5000000:
+            if abs(midbait-midcontact) > 10000000:
                 too_large += 1
         else:
             trans += 1
@@ -78,7 +78,7 @@ contact_simul = {}
 frag_size_simul = []
 vect_dist_simul = []
 midbait_out = 0
-with open("../data/"+sp+"/Simulations/simulations_2Mb_bin5kb.txt") as f3:
+with open("../data/"+sp+"/Simulations/simulations_mouse_10Mb_bin5kb_fragoverbin.txt") as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -87,16 +87,16 @@ with open("../data/"+sp+"/Simulations/simulations_2Mb_bin5kb.txt") as f3:
         frag = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
         PIR = (str(i[3]) + ":" + str(i[4]))
 
-        #if 25000 < abs(midbait - midcontact) < 5000000:
-        vect_dist_simul.append(midbait - midcontact)
+        if 25000 < abs(midbait - midcontact) < 10000000:
+            vect_dist_simul.append(midbait - midcontact)
 
-        if frag in contact_simul.keys():
-            contact_simul[frag].append(PIR)
+            if frag in contact_simul.keys():
+                contact_simul[frag].append(PIR)
+            else:
+                contact_simul[frag] = [PIR]
+                frag_size_simul.append(int(i[2]) - int(i[1]))
         else:
-            contact_simul[frag] = [PIR]
-            frag_size_simul.append(int(i[2]) - int(i[1]))
-        #else:
-        #    midbait_out += 1
+            midbait_out += 1
 
 nb_contact_simul = []
 for i in contact_simul.keys():
@@ -158,14 +158,14 @@ print("Nb interactions identiques:", len(same_interaction), "soit", (len(same_in
 
 #print("Nb total interactions simulées:", sum(len(contact_simul[i]) for i in contact_simul.keys()))
 
-#dist_real = open("../data/"+sp+"/dist_real.txt", "w")
-dist_simul = open("../data/"+sp+"/Simulations/dist_simul_simulations_2Mb_bin5kb_no_uniq.txt", "w")
+dist_real = open("../data/"+sp+"/dist_real.txt", "w")
+dist_simul = open("../data/"+sp+"/Simulations/dist_simulations_mouse_10Mb_bin5kb_fragoverbin.txt", "w")
 # Output comparaison distribution dans R
-#for i in vect_dist:
-#    dist_real.write(str(i)+'\n')
+for i in vect_dist:
+    dist_real.write(str(i)+'\n')
 
 for i in vect_dist_simul:
     dist_simul.write(str(i)+'\n')
 
-#dist_real.close()
+dist_real.close()
 dist_simul.close()

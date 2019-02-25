@@ -120,8 +120,6 @@ for bait in dist.keys():
 
         dic_prob[str(frag[0])+'\t'+str(frag[1])] = np.mean(p)
 
-    #print(dic_prob)
-
     # Adjust probability to sum to 1
     frag_prob = {frag: proba / sum(dic_prob.values()) for frag, proba in dic_prob.items()}
 

@@ -100,18 +100,38 @@ ggplot(dataLengths, aes(Distance, fill = Data)) +
 ##################################### Corrélation activité peaks/enhancers #########################################
 ####################################################################################################################
 setwd("/home/laverre/Documents/Regulatory_Landscape/result/expression_correlation")
-cor_all <- read.table("correlation_expression.txt", header=T)
-cor_low <- read.table("expression_correlation.txt", header=T)
+cor_mouse <- read.table("expression_correlation_mouse.txt", header=T)
+cor_human <- read.table("expression_correlation_human.txt", header=T)
 
-par(mfrow=c(1,1))
-hist(cor[cor$sense == 'bait-PIR',]$spearman_pval)
-hist(cor[cor$sense == 'PIR-bait',]$spearman_pval)
+par(mfrow=c(2,1))
+hist(cor_human$spearman_cor, xlim=c(-0.4, 1), breaks=50, main="Human - peaks-enh activity correlation", xlab="Spearman")
+abline(v = median(cor_human$spearman_cor), col="red", lwd=3, lty=2)
+hist(cor_human$pearson_cor, xlim=c(-0.4, 1), breaks=100, main="", xlab="Pearson")
+abline(v = median(cor_human$pearson_cor), col="red", lwd=3, lty=2)
+
+hist(cor_mouse$spearman_cor, xlim=c(-0.4, 1), breaks=50, main="mouse - peaks-enh activity correlation", xlab="Spearman")
+abline(v = median(cor_mouse$spearman_cor), col="red", lwd=3, lty=2)
+hist(cor_mouse$pearson_cor, xlim=c(-0.4, 1), breaks=100, main="", xlab="Pearson")
+abline(v = median(cor_mouse$pearson_cor), col="red", lwd=3, lty=2)
+
+
 
 vect_enh <- read.table("vect_enh")
 vect_peak <- read.table("vect_peak")
 vect_enh <- t(vect_enh[,-1])
-vect_peak <- t(vect_peak[,-c(1:7)])
+vect_peak <- t(vect_peak[,-c(1:15)])
+cor <- as.data.frame(cbind(vect_enh, vect_peak))
+colnames(cor) <- c("vect_enh", "vect_peak")
+
+par(mfrow=c(1,1))
+plot(log(vect_enh+1), log(vect_peak+1))
+abline(lm(log(vect_enh+1) ~ log(vect_peak+1)))
+
+plot(log(cor[cor$vect_enh != 0,]$vect_enh+1),log(cor[cor$vect_enh != 0,]$vect_peak+1))
+abline(lm(log(cor[cor$vect_enh != 0,]$vect_enh+1) ~ log(cor[cor$vect_enh != 0,]$vect_peak+1)))
+
 
 plot(log(cor[cor$vect_peak != 0 & cor$vect_enh != 0,]$vect_enh+1),log(cor[cor$vect_peak != 0 & cor$vect_enh != 0,]$vect_peak+1))
 abline(lm(log(cor[cor$vect_peak != 0 & cor$vect_enh != 0,]$vect_enh+1) ~ log(cor[cor$vect_peak != 0 & cor$vect_enh != 0,]$vect_peak+1)))
-cor(log(vect_enh), log(vect_peak), method = "pearson")
+
+cor(log(cor[cor$vect_enh != 0,]$vect_enh+1), log(cor[cor$vect_enh != 0,]$vect_peak+1), method = "pearson")

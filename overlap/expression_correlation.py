@@ -79,12 +79,16 @@ with open(path_data+"all_interactions_head.txt", 'r') as f:
         i = i.strip("\n")
         i = i.split("\t")
         bait = (i[0] + ":" + i[1] + ":" + i[2])  # keys = bait
+        midbait = ((int(i[1]) + int(i[2])) / 2)
         PIR = (i[3] + ":" + i[4] + ":" + i[5])   # value = PIR
+        midPIR = ((int(i[4]) + int(i[5])) / 2)
 
-        if bait in inter.keys():
-            inter[bait].append(PIR)
-        else:
-            inter[bait] = [PIR]
+        if i[0] == i[3]:
+            if 25000 < abs(midbait-midPIR) < 10000000:
+                if bait in inter.keys():
+                    inter[bait].append(PIR)
+                else:
+                    inter[bait] = [PIR]
 
 # Correlation
 
