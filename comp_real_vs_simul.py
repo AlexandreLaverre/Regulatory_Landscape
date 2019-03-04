@@ -3,8 +3,9 @@
 
 from matplotlib import pyplot as plt
 import numpy as np
+from scipy.stats import wasserstein_distance
 
-sp = "mouse" ##sys.argv[1]
+sp = "human" ##sys.argv[1]
 
 contact = {}
 frag_size = []
@@ -23,7 +24,7 @@ with open("../data/"+sp+"/all_interactions/all_interactions.txt") as f3:
         total += 1
 
         if i[0] == i[3]:
-            if 25000 < abs(midbait-midcontact) < 10000000:
+            if abs(midbait-midcontact) < 10000000:
                 vect_dist.append(midbait - midcontact)
 
                 if frag in contact.keys():
@@ -31,8 +32,8 @@ with open("../data/"+sp+"/all_interactions/all_interactions.txt") as f3:
                 else:
                     contact[frag] = [PIR]
                     frag_size.append(int(i[2]) - int(i[1]))
-            if 25000 > abs(midbait-midcontact):
-                too_short += 1
+            #if 25000 > abs(midbait-midcontact):
+            #    too_short += 1
             if abs(midbait-midcontact) > 10000000:
                 too_large += 1
         else:
@@ -78,7 +79,7 @@ contact_simul = {}
 frag_size_simul = []
 vect_dist_simul = []
 midbait_out = 0
-with open("../data/"+sp+"/Simulations/simulations_mouse_10Mb_bin5kb_fragoverbin.txt") as f3:
+with open("../data/"+sp+"/Simulations/simulations_human_25-10Mb_bin5kb_fragoverbin.txt") as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -87,7 +88,7 @@ with open("../data/"+sp+"/Simulations/simulations_mouse_10Mb_bin5kb_fragoverbin.
         frag = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
         PIR = (str(i[3]) + ":" + str(i[4]))
 
-        if 25000 < abs(midbait - midcontact) < 10000000:
+        if 25000 < abs(midbait - midcontact) <= 10000000:
             vect_dist_simul.append(midbait - midcontact)
 
             if frag in contact_simul.keys():
@@ -156,10 +157,13 @@ print("Nb total interactions simulées uniques:", sum(len(set(contact_simul[i]))
 print("Nb interactions absentes:", sum(len(contact[i]) for i in contact.keys())-sum(len(contact_simul[i]) for i in contact_simul.keys()), "soit", (((sum(len(contact[i]) for i in contact.keys())-sum(len(contact_simul[i]) for i in contact_simul.keys()))/sum(len(contact_simul[i]) for i in contact_simul.keys())))*100, "%")
 print("Nb interactions identiques:", len(same_interaction), "soit", (len(same_interaction)/sum(len(contact_simul[i]) for i in contact_simul.keys()))*100, "%")
 
+
+print("Wesserstein distance:", wasserstein_distance(vect_dist, vect_dist_simul))
+
 #print("Nb total interactions simulées:", sum(len(contact_simul[i]) for i in contact_simul.keys()))
 
-dist_real = open("../data/"+sp+"/dist_real.txt", "w")
-dist_simul = open("../data/"+sp+"/Simulations/dist_simulations_mouse_10Mb_bin5kb_fragoverbin.txt", "w")
+dist_real = open("../data/"+sp+"/Simulations/dist_real.txt", "w")
+dist_simul = open("../data/"+sp+"/Simulations/dist_simulations_25-10Mb_bin5kb_fragoverbin.txt", "w")
 # Output comparaison distribution dans R
 for i in vect_dist:
     dist_real.write(str(i)+'\n')

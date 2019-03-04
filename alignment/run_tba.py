@@ -17,29 +17,27 @@ human_dict = SeqIO.to_dict(SeqIO.parse(human_genome, "fasta"))
 with open(path+file, 'r') as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
-	i = i.split("\t")
-	
+        i = i.split("\t")
         os.mkdir(path+'mouse_frag_%s/' % i[0])
-	os.chdir(path+'mouse_frag_%s/' % i[0])
-	
+        os.chdir(path+'mouse_frag_%s/' % i[0])
+
         mouse_seq = mouse_dict[i[0]]
         mouse_seq.id = "mouse"
         mouse_seq.description = ""
-        output_mouse = open("./mouse" , "w+")
+        output_mouse = open("./mouse", "w+")
         SeqIO.write(mouse_seq, output_mouse, "fasta")
-	output_mouse.close()
+        output_mouse.close()
 
         human_seq = human_dict[i[0]]
         human_seq.id = "human"
         human_seq.description = ""
         output_human = open("./human" , "w+")
         SeqIO.write(human_seq, output_human, "fasta")
-	output_human.close()
+        output_human.close()
 
-	os.system("all_bz '(mouse human)' ")
-	os.system("tba '(mouse human)' *.*.maf tba.maf")
-	os.system("gzip tba.maf")
-	os.system("mv tba.maf.gz "+path+"tba_alignments/"+i[0]+"."+i[1]+".maf.gz")
-	os.system("rm -r "+path+"mouse_frag_"+i[0])
-	
-	
+        os.system("all_bz '(mouse human)' ")
+        os.system("tba '(mouse human)' *.*.maf tba.maf")
+        os.system("gzip tba.maf")
+        os.system("mv tba.maf.gz "+path+"tba_alignments/"+i[0]+"."+i[1]+".maf.gz")
+        os.system("rm -r "+path+"mouse_frag_"+i[0])
+

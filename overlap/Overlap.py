@@ -131,11 +131,11 @@ for ref_pos, int_pos in dic_output.items():
     for i in int_pos:
         count += 1
         if count == len(int_pos):
-            output.write(str(i[2]) + "\n")
-            #output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1])+"\n")
+            #output.write(str(i[2]) + "\n")
+            output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1])+"\n")
         else:
-            output.write(str(i[2]) + ",")
-            #output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1]) + ",")
+            #output.write(str(i[2]) + ",")
+            output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1]) + ",")
 
 output.close()
 print("All done !")

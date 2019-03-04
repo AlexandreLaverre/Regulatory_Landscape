@@ -4,15 +4,16 @@
 from Bio import SeqIO
 import sys
 
-sp = "human" #sys.argv[1]
-sp2 = "mouse" #sys.argv[2]
+sp2 = "human" #sys.argv[1]
+sp = "mouse" #sys.argv[2]
 
-ref_genome = "../data/"+sp2+"/genome/"+sp2+".GRCm38.dna.primary_assembly.fa"
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"
+ref_genome = path_data+sp2+"/genome/"+sp2+".GRCh38.dna.primary_assembly.fa"
 ref_dict = SeqIO.to_dict(SeqIO.parse(ref_genome, "fasta"))
 
-output = open("../data/"+sp+"/genome/"+sp+"2"+sp2+"_restriction_fragments_0.1.fa", "w")
+output = open(path_data+sp+"/genome/"+sp+"2"+sp2+"_restriction_fragments_0.2.fa", "w")
 
-with open("../data/"+sp+"/genome/"+sp+"2"+sp2+"_restriction_fragments_0.1.bed", 'r') as f1:
+with open(path_data+sp+"/genome/"+sp+"_frag_to_"+sp2+"_0.2.lift", 'r') as f1:
     for i in f1.readlines():
         i = i.split("\t")
         chr = i[0].strip("chr")
