@@ -5,11 +5,13 @@ import os
 import sys
 import re
 
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/"
 
-reference_file = sys.argv[1]
-interest_file = sys.argv[2]
-output_file = sys.argv[3]
-merge = sys.argv[4]
+reference_file = path_data + sys.argv[1]
+interest_file = path_data + sys.argv[2]
+output_file = path_data + sys.argv[3]
+collapse = sys.argv[4]
+
 
 def sorted_dictionary(file):
     dic = {}
@@ -45,7 +47,7 @@ int_dic = sorted_dictionary(interest_file)
 # Testing overlap in interest dic
 if list(int_dic.values())[0][0][0] != list(int_dic.values())[0][0][1]:
     print("Length of interest seq. > 1 pb ")
-    if merge == "T":
+    if collapse == "T":
         new_int_dic = {}
         for k in int_dic.keys():
             current_start = int_dic[k][0][0]
@@ -117,12 +119,39 @@ for chr in ref_dic.keys():
         else:
             dic_output[ref_pos] = [('NA', 'NA', 'NA')]
 
+print("Counting base pair...")
+count_bp = {}
+length_pos = {}
+for ref_pos in dic_output.keys():
+    for overlap in dic_output[ref_pos]:
+        frag_pos = ref_pos.split('\t')
+        length_frag = int(frag_pos[2]) - int(frag_pos[1])
+        length_pos[ref_pos] = length_frag
+        if overlap[2] != 'NA':
+            overlap_start = int(overlap[0])
+            overlap_end = int(overlap[1])
+
+            if overlap_start < int(frag_pos[1]):
+                overlap_start = int(frag_pos[1])
+            if overlap_end > int(frag_pos[2]):
+                overlap_end = int(frag_pos[2])
+
+            length_overlap = overlap_end - overlap_start
+
+            if ref_pos in count_bp.keys():
+                count_bp[ref_pos] = int(count_bp[ref_pos]) + length_overlap
+            else:
+                count_bp[ref_pos] = length_overlap
+
+        else:
+            count_bp[ref_pos] = 0
+
 
 print("Writting output... ")
 
 output = open(output_file, 'w')
 if os.stat(output_file).st_size == 0:
-    output.write("chr\tstart\tend\toverlap_ID\n")
+    output.write("chr\tstart\tend\toverlap_ID\tlength_frag\tnb_bp_overlap\t%\n")
 
 for ref_pos, int_pos in dic_output.items():
     output.write(ref_pos + "\t")
@@ -131,11 +160,12 @@ for ref_pos, int_pos in dic_output.items():
     for i in int_pos:
         count += 1
         if count == len(int_pos):
-            #output.write(str(i[2]) + "\n")
-            output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1])+"\n")
+            output.write(str(i[2]) + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + '\t' +
+                         str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
+            #output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1])+"\n")
         else:
-            #output.write(str(i[2]) + ",")
-            output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1]) + ",")
+            output.write(str(i[2]) + ",")
+            #output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1]) + ",")
 
 output.close()
 print("All done !")
