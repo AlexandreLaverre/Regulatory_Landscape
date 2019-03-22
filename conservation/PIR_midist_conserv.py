@@ -4,8 +4,11 @@
 import os
 import numpy as np
 
+sp1 = "mouse"
+sp2 = "human"
+
 frag_conserv = {}
-with open("../../result/alignments/mouse2human/AlignmentStatistics_TBA_mouse2human_withoutnull.txt") as f2:
+with open("../../result/alignments/"+sp1+"2"+sp2+"/AlignmentStatistics_TBA_"+sp1+"2"+sp2+"_withoutnull_0.1.txt") as f2:
     for i in f2.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -18,23 +21,71 @@ with open("../../result/alignments/mouse2human/AlignmentStatistics_TBA_mouse2hum
 
         frag_conserv[frag] = (frag_align, midfrag, score)
 
-exon_pb = {}
-with open("../../data/mouse/overlap/mouse_frag_overlap_exons.txt") as f2:
-    for i in f2.readlines()[1:]:
-        i = i.strip("\n")
-        i = i.split("\t")
-        frag = ('chr' + str(i[0]) + ':' + str(i[1]) + ':' + str(i[2]))
 
-        length = str(int(i[4]))
-        pb = str(int(i[5]))
+def dic_pb(file):
+    elem_pb = {}
+    with open("../../data/"+sp1+"/overlap/"+sp1+file) as f2:
+        for i in f2.readlines()[1:]:
+            i = i.strip("\n")
+            i = i.split("\t")
+            frag = ('chr' + str(i[0]) + ':' + str(i[1]) + ':' + str(i[2]))
 
-        exon_pb[frag] = str(length + '\t' + pb)
+            length = str(int(i[4]))
+            pb = str(int(i[5]))
 
-#
-#Simulations/simulations_mouse_10Mb_bin5kb_fragoverbin_chr.txt
+            if file == "_frag_overlap_all_exons.txt":
+                elem_pb[frag] = str(length + '\t' + pb)
+            else:
+                elem_pb[frag] = str(pb)
+
+    return elem_pb
+
+
+all = "_frag_overlap_all_exons.txt"
+all_exon = dic_pb(all)
+coding = "_frag_overlap_coding_exons.txt"
+coding_exon = dic_pb(coding)
+nocoding = "_frag_overlap_nocoding_exons.txt"
+nocoding_exon = dic_pb(nocoding)
+repeat = "_frag_overlap_repeatmasker.txt"
+repeat_pb = dic_pb(repeat)
+phastcons = "_frag_overlap_phastcons_noexonic250.txt"
+phastcons_pb = dic_pb(phastcons)
+
+
+def dic_count(file):
+    elem_pb = {}
+    with open("../../data/"+sp1+"/overlap/"+sp1+file) as f2:
+        for i in f2.readlines()[1:]:
+            i = i.strip("\n")
+            i = i.split("\t")
+            frag = ('chr' + str(i[0]) + ':' + str(i[1]) + ':' + str(i[2]))
+
+            if i[3] == "NA":
+                count = 0
+            else:
+                count = len(i[3].split(","))
+
+            elem_pb[frag] = str(count)
+
+    return elem_pb
+
+
+CAGE = "_frag_overlap_CAGE.txt"
+CAGE_pb = dic_count(CAGE)
+#ENCODE = "_frag_overlap_ENCODE.txt"
+#ENCODE_pb = dic_count(ENCODE)
+#GRO_seq = "_frag_overlap_GRO_seq.txt"
+#GRO_seq_pb = dic_count(GRO_seq)
+#RoadMap = "_frag_overlap_RoadMap.txt"
+#RoadMap_pb = dic_count(RoadMap)
+
+
+#all_interactions/all_interactions_chr.txt
+#Simulations/simulations_"+sp1+"_10Mb_bin5kb_fragoverbin_chr.txt
 inter = {}
 conserv = {}
-with open("../../data/mouse/all_interactions/all_interactions_chr.txt") as f3:
+with open("../../data/"+sp1+"/all_interactions/all_interactions_chr.txt") as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -58,13 +109,15 @@ with open("../../data/mouse/all_interactions/all_interactions_chr.txt") as f3:
                     conserv[PIR] = str(0)
 
 
-output = open("../../result/alignments/mouse2human/PIR_midist_conserv.txt", 'w')
-if os.stat("../../result/alignments/mouse2human/PIR_midist_conserv.txt").st_size == 0:
-    output.write("PIR\tnb_contact\tmidist_obs\tPIR_score\tlength\texon_pb\n")
+output = open("../../result/alignments/"+sp1+"2"+sp2+"/PIR_cons_all_overlap.txt", 'w')
+if os.stat("../../result/alignments/"+sp1+"2"+sp2+"/PIR_cons_all_overlap.txt").st_size == 0:
+    output.write("PIR\tnb_contact\tmidist_obs\tPIR_score\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\t"
+                 "repeat_pb\tphastcons_noexonic250\tCAGE_pb\n") #\tENCODE_pb\tGRO_seq_pb\tRoadMap_pb\n")
 
 for PIR in inter.keys():
     output.write(PIR + '\t' + str(len(inter[PIR])) + '\t' + str(np.median(inter[PIR])) + '\t' + conserv[PIR]
-                 + '\t' + exon_pb[PIR] + '\n')
+                 + '\t' + all_exon[PIR] + '\t' + coding_exon[PIR] + '\t' + nocoding_exon[PIR] + '\t' + repeat_pb[PIR]
+                 + '\t' + phastcons_pb[PIR] + '\t' + CAGE_pb[PIR] + '\n')
+                 #+ '\t' + ENCODE_pb[PIR] + '\t' + GRO_seq_pb[PIR] + '\t' + RoadMap_pb[PIR]
 
 output.close()
-
