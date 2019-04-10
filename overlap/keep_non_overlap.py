@@ -65,7 +65,7 @@ def collapse_intraoverlap(dic):
                     new_end = dic[k][i][1]
                     new_ID = dic[k][i][2]
                     if current_end >= new_start >= current_start:
-                        if current_end > new_end:
+                        if new_end > current_end:
                             current_end = new_end
                         current_ID = str(current_ID) + "_" + str(new_ID)
 

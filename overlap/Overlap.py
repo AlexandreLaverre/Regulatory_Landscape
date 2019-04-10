@@ -65,9 +65,10 @@ def collapse_intraoverlap(dic):
                     new_end = dic[k][i][1]
                     new_ID = dic[k][i][2]
                     if current_end >= new_start >= current_start:
-                        if current_end > new_end:
-                            current_end = new_end
                         current_ID = str(current_ID) + "_" + str(new_ID)
+
+                        if new_end > current_end:
+                            current_end = new_end
 
                     else:
                         new_dic[k].append((current_start, current_end, current_ID))
@@ -87,13 +88,16 @@ def collapse_intraoverlap(dic):
                 print("There is no overlap in", name_dic, "file !")
 
             return new_dic
-
+        else:
+            print("No intra-overlap test asked")
+            return dic
     else:
         print("Length of", name_dic, "seq. = 1 pb")
+        return dic
 
 
-name_dic = 'reference'
-ref_dic = collapse_intraoverlap(ref_dic)
+#name_dic = 'reference'
+#ref_dic = collapse_intraoverlap(ref_dic)
 name_dic = 'interest'
 int_dic = collapse_intraoverlap(int_dic)
 
@@ -179,13 +183,15 @@ for ref_pos, int_pos in dic_output.items():
                              str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos] / length_pos[ref_pos]) * 100) + "\n")
 
             else:
-                output.write(str(chr)+':'+str(i[0])+':'+str(i[1]) + "\t" + str(length_pos[ref_pos]) + "\t" +
-                             str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
-            #output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1])+"\n")
+                # output.write(str(chr)+':'+str(i[0])+':'+str(i[1]) + "\t" + str(length_pos[ref_pos]) + "\t" +
+                #            str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
+                output.write(str(i[2]) + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + '\t' +
+                             str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
+
         else:
 
-            output.write(str(chr) + ':' + str(i[0]) + ':' + str(i[1])+',')
-            #output.write(str(i[2]) + ",")
+            #output.write(str(chr) + ':' + str(i[0]) + ':' + str(i[1])+',') # chr:start:end
+            output.write(str(i[2]) + ",")  # Only ID
             #output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1]) + ",")
 
 output.close()
