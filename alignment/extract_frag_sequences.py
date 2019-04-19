@@ -31,6 +31,7 @@ with open(path_data+sp2+"/genome/Digest_hg38_HindIII_None.bed", "r") as f1:
                 cut_sequence = cut_sequence.reverse_complement()
 
             cut_sequence.id = str(i[3] + ":+")
+            print(cut_sequence)
             #cut_sequence.description = "position in ref_genome"
 
             SeqIO.write(cut_sequence, output, "fasta")

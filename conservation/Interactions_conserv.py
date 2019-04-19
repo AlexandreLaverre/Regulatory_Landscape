@@ -2,14 +2,15 @@
 # coding=utf-8
 
 import os
+import numpy as np
 
 # Conservation mouse interaction in human:
-origin_sp = "mouse"
-target_sp = "human"
+origin_sp = "human"
+target_sp = "mouse"
 
 # Align score for each fragment in origin sp in target sp
 frag_conserv = {}
-with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull_0.1.txt") as f1:
+with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -36,8 +37,7 @@ with open("../../data/"+target_sp+"/overlap/"+origin_sp+"2"+target_sp+"_frag_ove
 print("Overlap aligned with target sp frag : done !")
 
 target_interaction = {}
-dist_target = {}
-#target_interaction_reverse = {}
+stats_target = {}
 # Interaction in target sp
 with open("../../data/"+target_sp+"/all_interactions/all_interactions_chr.txt") as f3:
     for i in f3.readlines()[1:]:
@@ -49,18 +49,17 @@ with open("../../data/"+target_sp+"/all_interactions/all_interactions_chr.txt") 
         PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
         dist_obs = abs(midbait - midcontact)
 
+        contact_strength = [float(x) for x in i[6:] if x != "NA"]
+        nb_tissu = len(contact_strength)
+        median_strength = np.median(contact_strength)
+
         if i[0] == i[3]:
-            dist_target[bait + '-' + PIR] = dist_obs
+            stats_target[bait + '-' + PIR] = (dist_obs, nb_tissu, median_strength)
 
             if bait in target_interaction.keys():
                 target_interaction[bait].append(PIR)
             else:
                 target_interaction[bait] = [PIR]
-
-            #if PIR in target_interaction_reverse.keys():
-            #    target_interaction[PIR].append(bait)
-            #else:
-            #    target_interaction[PIR] = [bait]
 
 print("Interaction in target sp : done !")
 
@@ -68,11 +67,10 @@ print("Interaction in target sp : done !")
 # all_interactions/all_interactions_chr.txt
 # Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt
 conserv_inter = {}
-dist_origin = {}
-dist_conserv = {}
+stats_origin = {}
 PIR_list = []
 bait_list = []
-with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt") as f3:
+with open("../../data/"+origin_sp+"/all_interactions/all_interactions_chr.txt") as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -82,13 +80,16 @@ with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_b
         PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
         dist_obs = abs(midbait - midcontact)
 
+        contact_strength = [float(x) for x in i[6:] if x != "NA"]
+        nb_tissu = len(contact_strength)
+        median_strength = np.median(contact_strength)
+
         PIR_list.append(PIR)
         bait_list.append(bait)
 
         if i[0] == i[3]:
             if 25000 < abs(midbait - midcontact) <= 10000000:
-                dist_origin[bait + '-' + PIR] = dist_obs
-
+                stats_origin[bait + '-' + PIR] = (dist_obs, nb_tissu, median_strength)
                 if bait in frag_conserv.keys():
                     if PIR in frag_conserv.keys():
                         for target_bait in overlap_target[frag_conserv[bait][0]]:
@@ -99,6 +100,9 @@ with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_b
                                     else:
                                         if bait + '-' + PIR not in conserv_inter.keys():
                                             conserv_inter[bait + '-' + PIR] = "conserv_no_interact"
+                                else:
+                                    if bait + '-' + PIR not in conserv_inter.keys():
+                                        conserv_inter[bait + '-' + PIR] = "bait_no_interact"
                     else:
                         if bait + '-' + PIR not in conserv_inter.keys():
                             conserv_inter[bait + '-' + PIR] = "PIR_not_conserv"
@@ -117,27 +121,28 @@ for bait in set(bait_list):
 
 print("Writting output...")
 
-output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_simul.txt2", 'w')
-if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_simul.txt2").st_size == 0:
-    output.write("origin_interaction\torigin_dist\ttarget_interaction\ttarget_dist\tbait_score\tPIR_score\n")
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction.txt2", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction.txt2").st_size == 0:
+    output.write("origin_interaction\torigin_dist\torigin_nb_tissu\torigin_strength\t"
+                 "target_interaction\ttarget_dist\ttarget_nb_tissu\ttarget_strength\tbait_score\tPIR_score\n")
 
-
-# Old
 for inter in conserv_inter.keys():
     bait = inter.split('-')[0]
     PIR = inter.split('-')[1]
-    if conserv_inter[inter] in dist_target.keys():
-        output.write(inter + '\t' + str(dist_origin[inter]) + '\t' + str(conserv_inter[inter]) + '\t' +
-                     str(dist_target[conserv_inter[inter]]) + '\t' + str(frag_conserv[bait][1]) + '\t' +
+    if conserv_inter[inter] in stats_target.keys():
+        output.write(inter + '\t' + str(stats_origin[inter][0]) + '\t' + str(stats_origin[inter][1]) + '\t' +
+                     str(stats_origin[inter][2]) + '\t' + str(conserv_inter[inter]) + '\t' +
+                     str(stats_target[conserv_inter[inter]][0]) + '\t' + str(stats_target[conserv_inter[inter]][1])
+                     + '\t' + str(stats_target[conserv_inter[inter]][2]) + '\t' + str(frag_conserv[bait][1]) + '\t' +
                      str(frag_conserv[PIR][1]) + '\n')
 
     else:
-        output.write(inter + '\t' + str(dist_origin[inter]) + '\t' + str(conserv_inter[inter]) + '\t' +
-                     "NA" + '\t' + str(frag_conserv[bait][1]) + '\t' + str(frag_conserv[PIR][1]) + '\n')
+        output.write(inter + '\t' + str(stats_origin[inter][0]) + '\t' + str(stats_origin[inter][1]) + '\t' +
+                     str(stats_origin[inter][2]) + '\t' + str(conserv_inter[inter]) + '\t' + "NA" + '\t' + "NA" +
+                     '\t' + "NA" + '\t' + str(frag_conserv[bait][1]) + '\t' + str(frag_conserv[PIR][1]) + '\n')
 
 print("All done ! ")
 output.close()
-
 
 '''
 # New

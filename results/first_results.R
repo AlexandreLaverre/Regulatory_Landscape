@@ -1,6 +1,10 @@
-# Distance ~ conservation
+setwd("/home/laverre/Documents/Regulatory_Landscape/result/alignments/mouse2human/")
+
 inter_conserv <- read.table("interaction_conserv.txt", header=T)
 inter_simul <- read.table("interaction_conserv_simul.txt", header=T)
+
+
+# Distance ~ conservation
 
 hist(inter_conserv$PIR_score, main="Mean interactions score ", xlab="align score (%)")
 abline(v = median(inter_conserv[!is.na(inter_conserv$PIR_score),]$PIR_score), col="red", lwd=3, lty=2)

@@ -65,9 +65,10 @@ def collapse_intraoverlap(dic):
                     new_end = dic[k][i][1]
                     new_ID = dic[k][i][2]
                     if current_end >= new_start >= current_start:
+                        current_ID = str(current_ID) + "_" + str(new_ID)
+
                         if new_end > current_end:
                             current_end = new_end
-                        current_ID = str(current_ID) + "_" + str(new_ID)
 
                     else:
                         new_dic[k].append((current_start, current_end, current_ID))
@@ -87,16 +88,18 @@ def collapse_intraoverlap(dic):
                 print("There is no overlap in", name_dic, "file !")
 
             return new_dic
-
+        else:
+            print("No intra-overlap test asked")
+            return dic
     else:
         print("Length of", name_dic, "seq. = 1 pb")
+        return dic
 
 
 name_dic = 'reference'
 ref_dic = collapse_intraoverlap(ref_dic)
 name_dic = 'interest'
 int_dic = collapse_intraoverlap(int_dic)
-
 
 print("Interest dictionary ready")
 print("Running overlap... ")
