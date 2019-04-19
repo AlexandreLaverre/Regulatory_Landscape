@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+# coding=utf-8
+
+import os
+import numpy as np
+
+# Conservation mouse interaction in human:
+origin_sp = "human"
+target_sp = "mouse"
+
+# Align score for each fragment in origin sp in target sp
+frag_conserv = {}
+with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull.txt") as f1:
+    for i in f1.readlines()[1:]:
+        i = i.strip("\n")
+        i = i.split("\t")
+        origin_frag = i[0].split(':')
+        origin_frag = str(origin_frag[0]+':' + str(int(origin_frag[1])+1) + ':' + str(origin_frag[2]))
+
+        align = i[1].split(':')
+        frag_align = (str(align[0]) + ":" + str(int(align[1])+1) + ":" + str(align[2]))
+        score = int(i[5])/int(i[2])
+
+        frag_conserv[origin_frag] = (frag_align, score)
+
+print("Score align : done ! ")
+
+
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv.txt", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv.txt").st_size == 0:
+    output.write("origin_interaction\torigin_dist\tnb_tissu\tstrength\tbait_lift\tbait_score\tPIR_lift\tPIR_score\ttarget_dist\n")
+
+
+print("Calculating and writting output...")
+
+# Interaction in origin sp
+# all_interactions/all_interactions_chr.txt
+# Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt
+with open("../../data/"+origin_sp+"/all_interactions/all_interactions_chr.txt") as f3:
+    for i in f3.readlines()[1:]:
+        i = i.strip("\n")
+        i = i.split("\t")
+        midbait = ((int(i[1]) + int(i[2])) / 2)
+        midcontact = ((int(i[4]) + int(i[5])) / 2)
+        bait = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
+        PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
+        origin_dist = abs(midbait - midcontact)
+
+        contact_strength = [float(x) for x in i[6:] if x != "NA"]
+        nb_tissu = len(contact_strength)
+        median_strength = np.median(contact_strength)
+
+        if i[0] == i[3]:
+            if 25000 < abs(midbait - midcontact) <= 10000000:
+                if bait in frag_conserv.keys():
+                    bait_lift = frag_conserv[bait]
+                    if PIR in frag_conserv.keys():
+                        PIR_lift = frag_conserv[PIR]
+
+                        if bait_lift[0].split(':')[0] == PIR_lift[0].split(':')[0]:
+                            midbait_lift = ((int(bait_lift[0].split(':')[1]) + int(bait_lift[0].split(':')[2])) / 2)
+                            midPIR_lift = ((int(PIR_lift[0].split(':')[1]) + int(PIR_lift[0].split(':')[2])) / 2)
+                            target_dist = abs(midbait_lift - midPIR_lift)
+
+                        else:
+                            target_dist = "NA"
+
+                        output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_tissu) + '\t' +
+                                     str(median_strength) + '\t' + bait_lift[0] + '\t' + str(bait_lift[1]) + '\t' +
+                                     PIR_lift[0] + '\t' + str(PIR_lift[1]) + '\t' + str(target_dist) + '\n')
+
+                    else:
+                        output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_tissu) + '\t' +
+                                     str(median_strength) + '\t' + bait_lift[0] + '\t' + str(bait_lift[1]) + '\t'
+                                     + "NA" + '\t' + "NA" + '\t' + "NA" + '\n')
+                else:
+                    output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_tissu) + '\t' +
+                                 str(median_strength) + '\t' + "NA" + '\t' + "NA" + '\t' + "NA" + '\t' + "NA" +
+                                 '\t' + "NA" + '\n')
+
+output.close()
+print("All done ! ")
