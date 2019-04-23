@@ -5,12 +5,12 @@ import os
 import numpy as np
 
 # Conservation mouse interaction in human:
-origin_sp = "human"
-target_sp = "mouse"
+origin_sp = "mouse"
+target_sp = "human"
 
 # Align score for each fragment in origin sp in target sp
 frag_conserv = {}
-with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull.txt") as f1:
+with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull_0.1.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -70,7 +70,7 @@ conserv_inter = {}
 stats_origin = {}
 PIR_list = []
 bait_list = []
-with open("../../data/"+origin_sp+"/all_interactions/all_interactions_chr.txt") as f3:
+with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt") as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -121,8 +121,8 @@ for bait in set(bait_list):
 
 print("Writting output...")
 
-output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction.txt2", 'w')
-if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction.txt2").st_size == 0:
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_simul.txt", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_simul.txt").st_size == 0:
     output.write("origin_interaction\torigin_dist\torigin_nb_tissu\torigin_strength\t"
                  "target_interaction\ttarget_dist\ttarget_nb_tissu\ttarget_strength\tbait_score\tPIR_score\n")
 

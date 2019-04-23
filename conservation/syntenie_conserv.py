@@ -5,12 +5,12 @@ import os
 import numpy as np
 
 # Conservation mouse interaction in human:
-origin_sp = "human"
-target_sp = "mouse"
+origin_sp = "mouse"
+target_sp = "human"
 
 # Align score for each fragment in origin sp in target sp
 frag_conserv = {}
-with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull.txt") as f1:
+with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull_0.1.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -26,8 +26,8 @@ with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatisti
 print("Score align : done ! ")
 
 
-output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv.txt", 'w')
-if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv.txt").st_size == 0:
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_simul_with_notconserv.txt2", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_simul_with_notconserv.txt2").st_size == 0:
     output.write("origin_interaction\torigin_dist\tnb_tissu\tstrength\tbait_lift\tbait_score\tPIR_lift\tPIR_score\ttarget_dist\n")
 
 
@@ -36,7 +36,7 @@ print("Calculating and writting output...")
 # Interaction in origin sp
 # all_interactions/all_interactions_chr.txt
 # Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt
-with open("../../data/"+origin_sp+"/all_interactions/all_interactions_chr.txt") as f3:
+with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt") as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
