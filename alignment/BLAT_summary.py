@@ -8,14 +8,15 @@ from Bio import SeqIO
 
 # sys.argv[1] from : ls 'data/"+sp1+"/genome/"+sp1+"_restriction_fragments_mask/'
 
-sp = sys.argv[2]
+sp = "human"   # sys.argv[2]
 path = "/home/laverre/Documents/Regulatory_Landscape/"
 path_result = path + "result/BLAT_duplication/"
 path_data = path + "data/"+sp+"/genome/restriction_fragments_mask/"
 
-seq_file = path_data + sys.argv[1]
-BLAT_file = path_result + "BLAT_output/" + sys.argv[1] + "_output.psl"
-output_file = path_result + sys.argv[1] + "_blat_summary.txt"
+
+seq_file = path_data + "human_restriction_fragments_mask.fa_chr1"
+BLAT_file = path_result + "BLAT_output/human_restriction_fragments_mask.fa_chr1_output.psl"   # path_result + "BLAT_output/" + sys.argv[1] + "_output.psl"
+output_file = path_result + "human_restriction_fragments_mask.fa_chr1_blat_summary.txt2"
 
 # Counting N in frag
 seq_dict = SeqIO.to_dict(SeqIO.parse(seq_file, "fasta"))

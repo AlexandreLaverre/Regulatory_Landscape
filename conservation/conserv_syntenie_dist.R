@@ -6,7 +6,7 @@ sp_origin = 'human'
 sp_target = 'mouse'
 
 obs <- read.table(paste(sp_origin,"2",sp_target,"_conservation_syntenie_with_notconserv.txt", sep=""), header=T)
-simul <- read.table(paste(sp_origin,"2",sp_target,"_conservation_syntenie_simul_with_notconserv.txt", sep=""), header=T)
+simul <- read.table(paste(sp_origin,"2",sp_target,"_conservation_syntenie_with_notconserv_simul.txt", sep=""), header=T)
 
 obs$class <-cut(obs$origin_dist, breaks=seq(from=25000, to=10000000, by=50000), include.lowest = T)
 simul$class <- cut(simul$origin_dist, breaks=seq(from=25000, to=10000000, by=50000), include.lowest = T)
@@ -156,7 +156,7 @@ text(seq(2,10,2), par("usr")[3]-0.005, labels = c("0.1 - 0.2","0.3 - 0.4","0.5 -
 
 
 ############## Ratio log2 ~ distance ############## 
-intergenic <- read.table(paste("intergenic_distance_",sp_origin,"2",sp_target,".txt",sep=""), header=T)
+intergenic <- read.table(paste("interfrag_distance_",sp_origin,"2",sp_target,".txt",sep=""), header=T)
 colnames(intergenic) <- c("gene", "origin_dist", "target_dist")
 intergenic$ratio <- log2(intergenic$target_dist/intergenic$origin_dist)
 intergenic2 <- intergenic[which(intergenic$origin_dist < 3000000 ),]

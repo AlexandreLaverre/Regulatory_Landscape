@@ -2,8 +2,8 @@ library(ggplot2)
 library(gridExtra)
 setwd("/home/laverre/Documents/Regulatory_Landscape/result/conservation/")
 
-sp_origin = 'mouse'
-sp_target = 'human'
+sp_origin = 'human'
+sp_target = 'mouse'
 
 obs <- read.table(paste(sp_origin,"2",sp_target,"_conservation_interaction.txt", sep=""), header=T)
 simul <- read.table(paste(sp_origin,"2",sp_target,"_conservation_interaction_simul.txt", sep=""), header=T)

@@ -4,8 +4,8 @@
 import os
 import numpy as np
 # Conservation mouse interaction in human:
-origin_sp = "mouse"  # or "human"
-target_sp = "human"  # or "mouse"
+origin_sp = "human"  # or "human"
+target_sp = "mouse"  # or "mouse"
 data = ""      # or "_simul"
 
 cons_bait = {}
@@ -18,7 +18,7 @@ with open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_sy
         bait = i[0].split('-')[0]
 
         if bait not in cons_bait.keys():
-            cons_bait[bait] = [0, 0, 0, 0, 0, 0]  # (nb_PIR, nb_align, nb_synt, nb_inter, nb_TSS, nb_dvpt)
+            cons_bait[bait] = [0, 0, 0, 0, 0, 0, 0]  # (nb_PIR, nb_align, nb_synt, nb_inter, nb_TSS, nb_dvpt, nb_immun)
 
         cons_bait[bait][0] += 1
         if i[6] != 'NA':  # PIR lift
@@ -56,13 +56,21 @@ for bait in cons_bait.keys():
     else:
         med_inter[bait] = 0
 
-print("Calculating nb TSS involved in developmental process... ")
+print("Calculating nb TSS involved in developmental & immun process... ")
 dvpt = []
 with open("../../data/"+origin_sp+"/annotations/Gene_dvpt_process_QuickGO_uniq.txt") as f1:
     for i in f1.readlines():
         i = i.strip("\n")
         i = i.split("\t")
         dvpt.append(i[0])
+
+immun = []
+with open("../../data/"+origin_sp+"/annotations/Gene_immune_process_QuickGO_uniq.txt") as f1:
+    for i in f1.readlines():
+        i = i.strip("\n")
+        i = i.split("\t")
+        immun.append(i[0])
+
 
 print("Calculating nb TSS... ")
 with open("../../data/"+origin_sp+"/overlap/"+origin_sp+"_frag_overlap_TSS.txt") as f1:
@@ -79,16 +87,19 @@ with open("../../data/"+origin_sp+"/overlap/"+origin_sp+"_frag_overlap_TSS.txt")
                 for x in TSS:
                     if x in dvpt:
                         cons_bait[frag][5] += 1
+                    if x in immun:
+                        cons_bait[frag][6] += 1
 
 output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_by_bait"+data+".txt", 'w')
 if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_by_bait"+data+".txt").st_size == 0:
-    output.write("bait\tPIR\tPIR_lift\tmed_lift\tPIR_synt\tPIR_int\tmed_inter\tTSS\tTSS_dvpt\n")
+    output.write("bait\tPIR\tPIR_lift\tmed_lift\tPIR_synt\tPIR_int\tmed_inter\tTSS\tTSS_dvpt\tTSS_immun\n")
 
 print("Writting output...")
 for bait in cons_bait.keys():
     output.write(str(bait) + '\t' + str(cons_bait[bait][0]) + '\t' + str(cons_bait[bait][1]) + '\t' +
                  str(med_lift[bait]) + '\t' + str(cons_bait[bait][2]) + '\t' + str(cons_bait[bait][3]) + '\t' +
-                 str(med_inter[bait]) + '\t' + str(cons_bait[bait][4]) + '\t' + str(cons_bait[bait][5]) + '\n')
+                 str(med_inter[bait]) + '\t' + str(cons_bait[bait][4]) + '\t' + str(cons_bait[bait][5]) + '\t' +
+                 str(cons_bait[bait][6]) + '\n')
 
 output.close()
 print("All done ! ")
