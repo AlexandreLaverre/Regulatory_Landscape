@@ -10,7 +10,7 @@ target_sp = "human"
 
 # Align score for each fragment in origin sp in target sp
 frag_conserv = {}
-with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull_0.1.txt") as f1:
+with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -25,10 +25,23 @@ with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatisti
 
 print("Score align : done ! ")
 
+# Duplication score
+frag_dupli = {}
+with open("../../data/"+origin_sp+"/"+origin_sp+"_restriction_fragments_duplication_0.8.txt") as f1:
+    for i in f1.readlines()[1:]:
+        i = i.strip("\n")
+        i = i.split("\t")
+        frag = i[0].split(':')
+        frag = str(frag[0]+':' + str(int(frag[1])+1) + ':' + str(frag[2]))
 
-output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_simul_with_notconserv.txt2", 'w')
-if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_simul_with_notconserv.txt2").st_size == 0:
-    output.write("origin_interaction\torigin_dist\tnb_tissu\tstrength\tbait_lift\tbait_score\tPIR_lift\tPIR_score\ttarget_dist\n")
+        frag_dupli[frag] = int(i[3])-1
+
+print("Score dupli : done ! ")
+
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv.txt2", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv.txt2").st_size == 0:
+    output.write("origin_interaction\torigin_dist\tnb_tissu\tstrength\tbait_lift\tbait_score\tbait_dupli\t"
+                 "PIR_lift\tPIR_score\tPIR_dupli\ttarget_dist\n")
 
 
 print("Calculating and writting output...")
@@ -36,7 +49,7 @@ print("Calculating and writting output...")
 # Interaction in origin sp
 # all_interactions/all_interactions_chr.txt
 # Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt
-with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt") as f3:
+with open("../../data/"+origin_sp+"/all_interactions/all_interactions_chr.txt") as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -52,6 +65,16 @@ with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_b
 
         if i[0] == i[3]:
             if 25000 < abs(midbait - midcontact) <= 10000000:
+                if bait in frag_dupli.keys():
+                    bait_dupli = frag_dupli[bait]
+                else:
+                    bait_dupli = "NA"
+
+                if PIR in frag_dupli.keys():
+                    PIR_dupli = frag_dupli[PIR]
+                else:
+                    PIR_dupli = "NA"
+
                 if bait in frag_conserv.keys():
                     bait_lift = frag_conserv[bait]
                     if PIR in frag_conserv.keys():
@@ -67,16 +90,17 @@ with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_b
 
                         output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_tissu) + '\t' +
                                      str(median_strength) + '\t' + bait_lift[0] + '\t' + str(bait_lift[1]) + '\t' +
-                                     PIR_lift[0] + '\t' + str(PIR_lift[1]) + '\t' + str(target_dist) + '\n')
+                                     str(bait_dupli) + '\t' + PIR_lift[0] + '\t' + str(PIR_lift[1]) + '\t' +
+                                     str(PIR_dupli) + '\t' + str(target_dist) + '\n')
 
                     else:
                         output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_tissu) + '\t' +
-                                     str(median_strength) + '\t' + bait_lift[0] + '\t' + str(bait_lift[1]) + '\t'
-                                     + "NA" + '\t' + "NA" + '\t' + "NA" + '\n')
+                                     str(median_strength) + '\t' + bait_lift[0] + '\t' + str(bait_lift[1]) + '\t' +
+                                     str(bait_dupli) + '\t' + "NA" + '\t' + "NA" + '\t' + str(PIR_dupli) + '\t' + "NA" + '\n')
                 else:
                     output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_tissu) + '\t' +
-                                 str(median_strength) + '\t' + "NA" + '\t' + "NA" + '\t' + "NA" + '\t' + "NA" +
-                                 '\t' + "NA" + '\n')
+                                 str(median_strength) + '\t' + "NA" + '\t' + "NA" + '\t' + str(bait_dupli) +
+                                 '\t' + "NA" + '\t' + "NA" + '\t' + str(PIR_dupli) + '\t' + "NA" + '\n')
 
 output.close()
 print("All done ! ")
