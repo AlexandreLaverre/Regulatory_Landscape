@@ -5,12 +5,13 @@ import os
 import numpy as np
 
 # Conservation mouse interaction in human:
-origin_sp = "mouse"
-target_sp = "human"
+origin_sp = "human"
+target_sp = "mouse"
+data = "_simul"  # or "_simul"
 
 # Align score for each fragment in origin sp in target sp
 frag_conserv = {}
-with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull_0.1.txt") as f1:
+with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -50,11 +51,20 @@ with open("../../data/"+target_sp+"/all_interactions/all_interactions_chr.txt") 
         dist_obs = abs(midbait - midcontact)
 
         contact_strength = [float(x) for x in i[6:] if x != "NA"]
-        nb_tissu = len(contact_strength)
         median_strength = np.median(contact_strength)
 
+        # Nb cell type
+        if target_sp == "mouse":
+            types = [i[6], min(i[7:11]), min(i[11], i[12]), i[13], min(i[14], i[15]), i[16], min(i[17:20])]
+            nb_type = len([float(x) for x in types if x != "NA"])
+
+        else:
+            types = [min(i[6], i[22], i[30]), i[7], min(i[8:11]), i[11], i[12], i[13], i[14], i[15], i[16], i[17],
+                     min(i[18], i[31]), i[19], i[20], i[21], min(i[23], i[24], i[25], i[29]), min(i[26], i[27], i[28])]
+            nb_type = len([float(x) for x in types if x != "NA"])
+
         if i[0] == i[3]:
-            stats_target[bait + '-' + PIR] = (dist_obs, nb_tissu, median_strength)
+            stats_target[bait + '-' + PIR] = (dist_obs, nb_type, median_strength)
 
             if bait in target_interaction.keys():
                 target_interaction[bait].append(PIR)
@@ -64,13 +74,16 @@ with open("../../data/"+target_sp+"/all_interactions/all_interactions_chr.txt") 
 print("Interaction in target sp : done !")
 
 # Interaction in origin sp to interaction in target sp
-# all_interactions/all_interactions_chr.txt
-# Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt
+if data == "_simul":
+    input = "/Simulations/simulations_" + origin_sp + "_10Mb_bin5kb_fragoverbin_chr.txt"
+else:
+    input = "/all_interactions/all_interactions_chr.txt"
+
 conserv_inter = {}
 stats_origin = {}
 PIR_list = []
 bait_list = []
-with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt") as f3:
+with open("../../data/"+origin_sp+input) as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -81,15 +94,27 @@ with open("../../data/"+origin_sp+"/Simulations/simulations_"+origin_sp+"_10Mb_b
         dist_obs = abs(midbait - midcontact)
 
         contact_strength = [float(x) for x in i[6:] if x != "NA"]
-        nb_tissu = len(contact_strength)
         median_strength = np.median(contact_strength)
+
+        # Nb cell type
+        if origin_sp == "mouse" and data == "":
+            types = [i[6], min(i[7:11]), min(i[11], i[12]), i[13], min(i[14], i[15]), i[16], min(i[17:20])]
+            nb_type = len([float(x) for x in types if x != "NA"])
+
+        elif origin_sp == "human" and data == "":
+            types = [min(i[6], i[22], i[30]), i[7], min(i[8:11]), i[11], i[12], i[13], i[14], i[15], i[16], i[17],
+                     min(i[18], i[31]), i[19], i[20], i[21], min(i[23], i[24], i[25], i[29]), min(i[26], i[27], i[28])]
+            nb_type = len([float(x) for x in types if x != "NA"])
+
+        else:
+            nb_type = "NA"
 
         PIR_list.append(PIR)
         bait_list.append(bait)
 
         if i[0] == i[3]:
             if 25000 < abs(midbait - midcontact) <= 10000000:
-                stats_origin[bait + '-' + PIR] = (dist_obs, nb_tissu, median_strength)
+                stats_origin[bait + '-' + PIR] = (dist_obs, nb_type, median_strength)
                 if bait in frag_conserv.keys():
                     if PIR in frag_conserv.keys():
                         for target_bait in overlap_target[frag_conserv[bait][0]]:
@@ -121,8 +146,8 @@ for bait in set(bait_list):
 
 print("Writting output...")
 
-output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_simul.txt", 'w')
-if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_simul.txt").st_size == 0:
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction"+data+".txt2", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction"+data+".txt2").st_size == 0:
     output.write("origin_interaction\torigin_dist\torigin_nb_tissu\torigin_strength\t"
                  "target_interaction\ttarget_dist\ttarget_nb_tissu\ttarget_strength\tbait_score\tPIR_score\n")
 
@@ -143,22 +168,3 @@ for inter in conserv_inter.keys():
 
 print("All done ! ")
 output.close()
-
-'''
-# New
-for inter in conserv_inter.keys():
-    bait = inter.split('-')[0]
-    PIR = inter.split('-')[1]
-    for pair in conserv_inter[inter]:
-        if pair in dist_target.keys():
-            output.write(inter + '\t' + str(dist_origin[inter]) + '\t' + str(pair) + '\t' +
-                         str(dist_target[pair]) + '\t' + str(frag_conserv[bait][1]) + '\t' +
-                         str(frag_conserv[PIR][1]) + '\n')
-
-        else:
-            output.write(inter + '\t' + str(dist_origin[inter]) + '\t' + str(pair) + '\t' +
-                         "NA" + '\t' + str(frag_conserv[bait][1]) + '\t' + str(frag_conserv[PIR][1]) + '\n')
-
-print("All done ! ")
-output.close()
-'''

@@ -7,6 +7,7 @@ import numpy as np
 # Conservation mouse interaction in human:
 origin_sp = "mouse"
 target_sp = "human"
+data = ""  # or "_simul"
 
 # Align score for each fragment in origin sp in target sp
 frag_conserv = {}
@@ -25,7 +26,7 @@ with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatisti
 
 print("Score align : done ! ")
 
-# Duplication score
+# Duplication score
 frag_dupli = {}
 with open("../../data/"+origin_sp+"/"+origin_sp+"_restriction_fragments_duplication_0.8.txt") as f1:
     for i in f1.readlines()[1:]:
@@ -33,23 +34,24 @@ with open("../../data/"+origin_sp+"/"+origin_sp+"_restriction_fragments_duplicat
         i = i.split("\t")
         frag = i[0].split(':')
         frag = str(frag[0]+':' + str(int(frag[1])+1) + ':' + str(frag[2]))
-
         frag_dupli[frag] = int(i[3])-1
 
 print("Score dupli : done ! ")
 
-output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv.txt2", 'w')
-if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv.txt2").st_size == 0:
-    output.write("origin_interaction\torigin_dist\tnb_tissu\tstrength\tbait_lift\tbait_score\tbait_dupli\t"
-                 "PIR_lift\tPIR_score\tPIR_dupli\ttarget_dist\n")
-
 
 print("Calculating and writting output...")
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv"+data+".txt3", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv"+data+".txt3").st_size == 0:
+    output.write("origin_interaction\torigin_dist\tnb_type\tnb_sample\tstrength\tbait_lift\tbait_score\tbait_dupli\t"
+                 "PIR_lift\tPIR_score\tPIR_dupli\ttarget_dist\n")
 
 # Interaction in origin sp
-# all_interactions/all_interactions_chr.txt
-# Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt
-with open("../../data/"+origin_sp+"/all_interactions/all_interactions_chr.txt") as f3:
+if data == "_simul":
+    input = "/Simulations/simulations_" + origin_sp + "_10Mb_bin5kb_fragoverbin_chr.txt"
+else:
+    input = "/all_interactions/all_interactions_chr.txt"
+
+with open("../../data/"+origin_sp+input) as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -60,8 +62,21 @@ with open("../../data/"+origin_sp+"/all_interactions/all_interactions_chr.txt") 
         origin_dist = abs(midbait - midcontact)
 
         contact_strength = [float(x) for x in i[6:] if x != "NA"]
-        nb_tissu = len(contact_strength)
+        nb_sample = len(contact_strength)
         median_strength = np.median(contact_strength)
+
+        # Nb cell type
+        if origin_sp == "mouse" and data == "":
+            types = [i[6], min(i[7:11]), min(i[11], i[12]), i[13], min(i[14], i[15]), i[16], min(i[17:20])]
+            nb_type = len([float(x) for x in types if x != "NA"])
+
+        elif origin_sp == "human" and data == "":
+            types = [min(i[6], i[22], i[30]), i[7], min(i[8:11]), i[11], i[12], i[13], i[14], i[15], i[16], i[17],
+                     min(i[18], i[31]), i[19], i[20], i[21], min(i[23], i[24], i[25], i[29]), min(i[26], i[27], i[28])]
+            nb_type = len([float(x) for x in types if x != "NA"])
+
+        else:
+            nb_type = "NA"
 
         if i[0] == i[3]:
             if 25000 < abs(midbait - midcontact) <= 10000000:
@@ -88,19 +103,21 @@ with open("../../data/"+origin_sp+"/all_interactions/all_interactions_chr.txt") 
                         else:
                             target_dist = "NA"
 
-                        output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_tissu) + '\t' +
-                                     str(median_strength) + '\t' + bait_lift[0] + '\t' + str(bait_lift[1]) + '\t' +
-                                     str(bait_dupli) + '\t' + PIR_lift[0] + '\t' + str(PIR_lift[1]) + '\t' +
-                                     str(PIR_dupli) + '\t' + str(target_dist) + '\n')
+                        output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_type) + '\t' +
+                                     str(nb_sample) + '\t' + str(median_strength) + '\t' + bait_lift[0] + '\t' +
+                                     str(bait_lift[1]) + '\t' + str(bait_dupli) + '\t' + PIR_lift[0] + '\t' +
+                                     str(PIR_lift[1]) + '\t' + str(PIR_dupli) + '\t' + str(target_dist) + '\n')
 
                     else:
-                        output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_tissu) + '\t' +
-                                     str(median_strength) + '\t' + bait_lift[0] + '\t' + str(bait_lift[1]) + '\t' +
-                                     str(bait_dupli) + '\t' + "NA" + '\t' + "NA" + '\t' + str(PIR_dupli) + '\t' + "NA" + '\n')
+                        output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_type) + '\t' +
+                                     str(nb_sample) + '\t' + str(median_strength) + '\t' + bait_lift[0] + '\t' +
+                                     str(bait_lift[1]) + '\t' + str(bait_dupli) + '\t' + "NA" + '\t' + "NA" +
+                                     '\t' + str(PIR_dupli) + '\t' + "NA" + '\n')
                 else:
-                    output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_tissu) + '\t' +
-                                 str(median_strength) + '\t' + "NA" + '\t' + "NA" + '\t' + str(bait_dupli) +
-                                 '\t' + "NA" + '\t' + "NA" + '\t' + str(PIR_dupli) + '\t' + "NA" + '\n')
+                    output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_type) + '\t' +
+                                 str(nb_sample) + '\t' + str(median_strength) + '\t' + "NA" + '\t' + "NA" +
+                                 '\t' + str(bait_dupli) + '\t' + "NA" + '\t' + "NA" + '\t' + str(PIR_dupli) +
+                                 '\t' + "NA" + '\n')
 
 output.close()
 print("All done ! ")
