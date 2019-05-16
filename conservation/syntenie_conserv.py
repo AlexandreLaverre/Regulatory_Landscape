@@ -5,8 +5,8 @@ import os
 import numpy as np
 
 # Conservation mouse interaction in human:
-origin_sp = "mouse"
-target_sp = "human"
+origin_sp = "human"
+target_sp = "mouse"
 data = ""  # or "_simul"
 
 # Align score for each fragment in origin sp in target sp
@@ -42,8 +42,8 @@ print("Score dupli : done ! ")
 print("Calculating and writting output...")
 output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv"+data+".txt3", 'w')
 if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_syntenie_with_notconserv"+data+".txt3").st_size == 0:
-    output.write("origin_interaction\torigin_dist\tnb_type\tnb_sample\tstrength\tbait_lift\tbait_score\tbait_dupli\t"
-                 "PIR_lift\tPIR_score\tPIR_dupli\ttarget_dist\n")
+    output.write("origin_interaction\torigin_dist\tnb_type\tstrength\tbait_lift\tbait_score\tbait_dupli\tbait_length\t"
+                 "PIR_lift\tPIR_score\tPIR_dupli\tPIR_length\ttarget_dist\n")
 
 # Interaction in origin sp
 if data == "_simul":
@@ -56,13 +56,16 @@ with open("../../data/"+origin_sp+input) as f3:
         i = i.strip("\n")
         i = i.split("\t")
         midbait = ((int(i[1]) + int(i[2])) / 2)
+        bait_length = int(i[2]) - int(i[1])
+
         midcontact = ((int(i[4]) + int(i[5])) / 2)
+        PIR_length = int(i[5]) - int(i[4])
+
         bait = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
         PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
         origin_dist = abs(midbait - midcontact)
 
         contact_strength = [float(x) for x in i[6:] if x != "NA"]
-        nb_sample = len(contact_strength)
         median_strength = np.median(contact_strength)
 
         # Nb cell type
@@ -104,20 +107,21 @@ with open("../../data/"+origin_sp+input) as f3:
                             target_dist = "NA"
 
                         output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_type) + '\t' +
-                                     str(nb_sample) + '\t' + str(median_strength) + '\t' + bait_lift[0] + '\t' +
-                                     str(bait_lift[1]) + '\t' + str(bait_dupli) + '\t' + PIR_lift[0] + '\t' +
-                                     str(PIR_lift[1]) + '\t' + str(PIR_dupli) + '\t' + str(target_dist) + '\n')
+                                     str(median_strength) + '\t' + bait_lift[0] + '\t' + str(bait_lift[1]) + '\t' +
+                                     str(bait_dupli) + '\t' + str(bait_length) + '\t' + PIR_lift[0] + '\t' +
+                                     str(PIR_lift[1]) + '\t' + str(PIR_dupli) + '\t' + str(PIR_length) + '\t' +
+                                     str(target_dist) + '\n')
 
                     else:
                         output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_type) + '\t' +
-                                     str(nb_sample) + '\t' + str(median_strength) + '\t' + bait_lift[0] + '\t' +
-                                     str(bait_lift[1]) + '\t' + str(bait_dupli) + '\t' + "NA" + '\t' + "NA" +
-                                     '\t' + str(PIR_dupli) + '\t' + "NA" + '\n')
+                                     str(median_strength) + '\t' + bait_lift[0] + '\t' + str(bait_lift[1]) + '\t' +
+                                     str(bait_dupli) + '\t' + str(bait_length) + '\t' + "NA" + '\t' + "NA" +
+                                     '\t' + str(PIR_dupli) + '\t' + str(PIR_length) + '\t' + "NA" + '\n')
                 else:
                     output.write(bait + '-' + PIR + '\t' + str(origin_dist) + '\t' + str(nb_type) + '\t' +
-                                 str(nb_sample) + '\t' + str(median_strength) + '\t' + "NA" + '\t' + "NA" +
-                                 '\t' + str(bait_dupli) + '\t' + "NA" + '\t' + "NA" + '\t' + str(PIR_dupli) +
-                                 '\t' + "NA" + '\n')
+                                 str(median_strength) + '\t' + "NA" + '\t' + "NA" + '\t' + str(bait_dupli) + '\t' +
+                                 str(bait_length) + '\t' + "NA" + '\t' + "NA" + '\t' + str(PIR_dupli) + '\t' +
+                                 str(PIR_length) + '\t' + "NA" + '\n')
 
 output.close()
 print("All done ! ")

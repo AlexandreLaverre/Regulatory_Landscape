@@ -35,28 +35,7 @@ conserv <- conserv[which(conserv$midist_obs < 3000000),]
 simul <- simul[which(simul$midist_obs < 3000000),]
 conserv$class <-cut(conserv$midist_obs, breaks=seq(from=25000, to=3000000, by=50000), include.lowest = T)
 simul$class <-cut(simul$midist_obs, breaks=seq(from=25000, to=3000000, by=50000), include.lowest = T)
-class_leg <- c("25-75Kb", "475-525Kb", "975Kb-1.02Mb", "1.47-1.52Mb", "1.97-2.02Mb","2.47-2.52Mb")
-
-## coding_exon
-conserv_dist <- data.frame(inter = sapply(levels(conserv$class), function(x) mean(conserv[which(conserv$class == x),]$part_coding_exon)))
-conserv_dist$int_start <- sapply(levels(conserv$class), function(x) t.test(conserv[which(conserv$class == x),]$part_coding_exon)[["conf.int"]][1])
-conserv_dist$int_end <- sapply(levels(conserv$class), function(x) t.test(conserv[which(conserv$class == x),]$part_coding_exon)[["conf.int"]][2])
-
-simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(simul[which(simul$class == x),]$part_coding_exon)))
-simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$part_coding_exon)[["conf.int"]][1])
-simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$part_coding_exon)[["conf.int"]][2])
-
-plot(conserv_dist$inter[1:50], type="b", col="red", ylim=c(1.5,7), main="Coding exon", xlab="",ylab="Mean fragment proportion (%)", xaxt = "n")
-for (row in 1:nrow(conserv_dist[1:50,])){
-  segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
-
-points(simul_dist$inter[1:50], type="b", col="blue")
-for (row in 1:nrow(simul_dist[1:50,])){
-  segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
-
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10), par("usr")[3]-0.1, labels = class_leg, pos = 1, xpd = TRUE, cex=0.8)
-legend("topright", fill=c("red","blue"), legend = c("Paysage observé", "Paysage simulé"), bty='n')
+class_leg <- c("25Kb",  "1Mb",  "2Mb")
 
 ## TSS
 conserv_dist <- data.frame(inter = sapply(levels(conserv$class), function(x) mean(conserv[which(conserv$class == x),]$part_TSS)))
@@ -67,16 +46,38 @@ simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(si
 simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$part_TSS)[["conf.int"]][1])
 simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$part_TSS)[["conf.int"]][2])
 
-plot(conserv_dist$inter[1:50], type="b", col="red", ylim=c(0,0.02), main="TSS", xlab="",ylab="Mean fragment proportion (%)", xaxt = "n")
+plot(conserv_dist$inter[1:50], type="b", col="red", cex=0.7, ylim=c(0,0.02), main="TSS", xlab="",ylab="Mean fragment proportion (%)", xaxt = "n")
 for (row in 1:nrow(conserv_dist[1:50,])){
   segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
 
-points(simul_dist$inter[1:50], type="b", col="blue")
+points(simul_dist$inter[1:50], type="b", col="blue", cex=0.7)
 for (row in 1:nrow(simul_dist[1:50,])){
   segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
 
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10), par("usr")[3]-0.1, labels = class_leg, pos = 1, xpd = TRUE, cex=0.8)
+axis(1, at=seq(1,51,20), labels=F)
+text(seq(1,51,20), par("usr")[3]-0.0003, labels = class_leg, pos = 1, xpd = TRUE)
+
+## coding_exon
+conserv_dist <- data.frame(inter = sapply(levels(conserv$class), function(x) mean(conserv[which(conserv$class == x),]$part_coding_exon)))
+conserv_dist$int_start <- sapply(levels(conserv$class), function(x) t.test(conserv[which(conserv$class == x),]$part_coding_exon)[["conf.int"]][1])
+conserv_dist$int_end <- sapply(levels(conserv$class), function(x) t.test(conserv[which(conserv$class == x),]$part_coding_exon)[["conf.int"]][2])
+
+simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(simul[which(simul$class == x),]$part_coding_exon)))
+simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$part_coding_exon)[["conf.int"]][1])
+simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$part_coding_exon)[["conf.int"]][2])
+
+plot(conserv_dist$inter[1:50], type="b", col="red", cex=0.7, ylim=c(1.5,7), main="Coding.gene exon", xlab="",ylab="", xaxt = "n")
+for (row in 1:nrow(conserv_dist[1:50,])){
+  segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
+
+points(simul_dist$inter[1:50], type="b", col="blue", cex=0.7)
+for (row in 1:nrow(simul_dist[1:50,])){
+  segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
+
+axis(1, at=seq(1,51,20), labels=F)
+text(seq(1,51,20), par("usr")[3]-0.1, labels = class_leg, pos = 1, xpd = TRUE)
+#legend("topright", fill=c("red","blue"), legend = c("Paysage observé", "Paysage simulé"), bty='n')
+
 
 ## nocoding_exon
 conserv_dist <- data.frame(inter = sapply(levels(conserv$class), function(x) mean(conserv[which(conserv$class == x),]$part_nocoding_exon)))
@@ -87,16 +88,16 @@ simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(si
 simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$part_nocoding_exon)[["conf.int"]][1])
 simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$part_nocoding_exon)[["conf.int"]][2])
 
-plot(conserv_dist$inter[1:50], type="b", col="red", ylim=c(0.3, 2.8),main="Non coding exon", xlab="",ylab="", xaxt = "n")
+plot(conserv_dist$inter[1:50], type="b", col="red", cex=0.7, ylim=c(0.3, 2.8),main="Non-coding.gene exon", xlab="",ylab="", xaxt = "n")
 for (row in 1:nrow(conserv_dist[1:50,])){
   segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
 
-points(simul_dist$inter[1:50], type="b", col="blue")
+points(simul_dist$inter[1:50], type="b", col="blue", cex=0.7)
 for (row in 1:nrow(simul_dist[1:50,])){
   segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
 
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10), par("usr")[3]-0.03, labels = class_leg, pos = 1, xpd = TRUE, cex=0.8)
+axis(1, at=seq(1,51,20), labels=F)
+text(seq(1,51,20), par("usr")[3]-0.03, labels = class_leg, pos = 1, xpd = TRUE)
 
 ## phastcons
 conserv_dist <- data.frame(inter = sapply(levels(conserv$class), function(x) mean(conserv[which(conserv$class == x),]$part_phastcons)))
@@ -107,16 +108,16 @@ simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(si
 simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$part_phastcons)[["conf.int"]][1])
 simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$part_phastcons)[["conf.int"]][2])
 
-plot(conserv_dist$inter[1:50], type="b", col="red", ylim=c(3, 6),main="Phastcons Element", xlab="",ylab="Mean fragment proportion (%)", xaxt = "n")
+plot(conserv_dist$inter[1:50], type="b", col="red", cex=0.7, ylim=c(3, 6),main="Phastcons Element", xlab="",ylab="Mean fragment proportion (%)", xaxt = "n")
 for (row in 1:nrow(conserv_dist[1:50,])){
   segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
 
-points(simul_dist$inter[1:50], type="b", col="blue")
+points(simul_dist$inter[1:50], type="b", col="blue", cex=0.7)
 for (row in 1:nrow(simul_dist[1:50,])){
   segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
 
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10), par("usr")[3]-0.04, labels = class_leg, pos = 1, xpd = TRUE, cex=0.8)
+axis(1, at=seq(1,51,20), labels=F)
+text(seq(1,51,20), par("usr")[3]-0.03, labels = class_leg, pos = 1, xpd = TRUE)
 
 ## repeat
 conserv_dist <- data.frame(inter = sapply(levels(conserv$class), function(x) mean(conserv[which(conserv$class == x),]$part_repeat)))
@@ -127,16 +128,16 @@ simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(si
 simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$part_repeat)[["conf.int"]][1])
 simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$part_repeat)[["conf.int"]][2])
 
-plot(conserv_dist$inter[1:50], type="b", col="red", ylim=c(38, 55),main="Repeat Element", xlab="",ylab="", xaxt = "n")
+plot(conserv_dist$inter[1:50], type="b", col="red", ylim=c(38, 55),main="Repeat Element", xlab="",ylab="", xaxt = "n", cex=0.7)
 for (row in 1:nrow(conserv_dist[1:50,])){
   segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
 
-points(simul_dist$inter[1:50], type="b", col="blue")
+points(simul_dist$inter[1:50], type="b", col="blue", cex=0.7)
 for (row in 1:nrow(simul_dist[1:50,])){
   segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
 
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10), par("usr")[3]-0.5, labels = class_leg, pos = 1, xpd = TRUE, cex=0.8)
+axis(1, at=seq(1,51,20), labels=F)
+text(seq(1,51,20), par("usr")[3]-0.03, labels = class_leg, pos = 1, xpd = TRUE)
 
 
 ################### Defining class of proportion (%) ###################
@@ -150,8 +151,7 @@ conserv$part_phastcons <-cut(conserv$part_phastcons, breaks=seq(from=0, to=100, 
 simul$part_phastcons <-cut(simul$part_phastcons, breaks=seq(from=0, to=100, by=10), include.lowest = T, include.highest=T)
 leg <- c("0-10", "10-20", "20-30", "30-40", "40-50","50-60", "60-70", "70-80", "80-90", "90-100")
 
-### Overlap potential enhancers ### 
-# Quelle est la proportion de fragments chevauchant avec des potentiels enhancers ?
+# Quelle est la proportion de fragments chevauchant avec les différents composants ?
 par(mfrow=c(2,2), mai = c(0.3, 0.7, 0.3, 0.1))
 # coding_exon
 conserv_dist <- data.frame(inter = sapply(levels(conserv$part_coding_exon), function(x) (nrow(conserv[which(conserv$part_coding_exon == x),])/nrow(conserv))*100))
@@ -162,7 +162,7 @@ simul_dist <- data.frame(inter = sapply(levels(simul$part_coding_exon), function
 simul_dist$int_start <- sapply(levels(simul$part_coding_exon), function(x) (prop.test(x = nrow(simul[which(simul$part_coding_exon == x),]), n=nrow(simul), p=0.5)$conf.int[1])*100)
 simul_dist$int_end <- sapply(levels(simul$part_coding_exon), function(x) (prop.test(x = nrow(simul[which(simul$part_coding_exon == x),]), n=nrow(simul), p=0.5)$conf.int[2])*100)
 
-plot(conserv_dist$inter, type="b", col="red",  main="Coding exon",ylab="Fragments (%)",xlab="", xaxt = "n")
+plot(conserv_dist$inter, type="b", col="red",  main="Coding.gene exon",ylab="Fragments (%)",xlab="", xaxt = "n")
 for (row in 1:nrow(conserv_dist[1:50,])){segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
 points(simul_dist$inter[1:50], type="b", col="blue")
 for (row in 1:nrow(simul_dist[1:50,])){segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
@@ -219,7 +219,7 @@ axis(1, at=seq(1,10,1), labels=F)
 text(seq(1,10,1), par("usr")[3]-0.2, labels = leg, pos = 1, xpd = TRUE)
 
 ####################################### Conserv by potential enhancer #############################################
-# Quelle est la conservation des fragments chevauchant ces potentiels enhancers ?
+# Quelle est la conservation des fragments chevauchant ces composants ?
 par(mfrow=c(2,2), mai = c(0.3, 0.7, 0.3, 0.1))
 #bas, gauche, haut, droite
 

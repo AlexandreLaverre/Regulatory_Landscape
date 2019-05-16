@@ -5,9 +5,11 @@ import os
 import numpy as np
 
 # Conservation mouse interaction in human:
-origin_sp = "human"
-target_sp = "mouse"
+origin_sp = "mouse"
+target_sp = "human"
 data = "_simul"  # or "_simul"
+
+print("Origin sp:", origin_sp, "; data:", data)
 
 # Align score for each fragment in origin sp in target sp
 frag_conserv = {}
@@ -25,6 +27,18 @@ with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatisti
         frag_conserv[origin_frag] = (frag_align, score)
 
 print("Score align : done ! ")
+
+# Duplication score
+frag_dupli = {}
+with open("../../data/"+origin_sp+"/"+origin_sp+"_restriction_fragments_duplication_0.8.txt") as f1:
+    for i in f1.readlines()[1:]:
+        i = i.strip("\n")
+        i = i.split("\t")
+        frag = i[0].split(':')
+        frag = str(frag[0]+':' + str(int(frag[1])+1) + ':' + str(frag[2]))
+        frag_dupli[frag] = int(i[3])-1
+
+print("Score dupli : done ! ")
 
 # Overlap homologous fragment from origin sp to fragment in target sp
 overlap_target = {}
@@ -81,6 +95,8 @@ else:
 
 conserv_inter = {}
 stats_origin = {}
+bait_length = {}
+PIR_length = {}
 PIR_list = []
 bait_list = []
 with open("../../data/"+origin_sp+input) as f3:
@@ -89,8 +105,11 @@ with open("../../data/"+origin_sp+input) as f3:
         i = i.split("\t")
         midbait = ((int(i[1]) + int(i[2])) / 2)
         midcontact = ((int(i[4]) + int(i[5])) / 2)
+
         bait = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
         PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
+        bait_length[bait] = int(i[2]) - int(i[1])
+        PIR_length[PIR] = int(i[5]) - int(i[4])
         dist_obs = abs(midbait - midcontact)
 
         contact_strength = [float(x) for x in i[6:] if x != "NA"]
@@ -111,6 +130,12 @@ with open("../../data/"+origin_sp+input) as f3:
 
         PIR_list.append(PIR)
         bait_list.append(bait)
+
+        if bait not in frag_dupli.keys():
+            frag_dupli[bait] = "NA"
+
+        if PIR not in frag_dupli.keys():
+            frag_dupli[PIR] = "NA"
 
         if i[0] == i[3]:
             if 25000 < abs(midbait - midcontact) <= 10000000:
@@ -148,8 +173,9 @@ print("Writting output...")
 
 output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction"+data+".txt2", 'w')
 if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction"+data+".txt2").st_size == 0:
-    output.write("origin_interaction\torigin_dist\torigin_nb_tissu\torigin_strength\t"
-                 "target_interaction\ttarget_dist\ttarget_nb_tissu\ttarget_strength\tbait_score\tPIR_score\n")
+    output.write("origin_interaction\torigin_dist\torigin_nb_tissu\torigin_strength\ttarget_interaction\t"
+                 "target_dist\ttarget_nb_tissu\ttarget_strength\tbait_score\tbait_length\tbait_dupli\t"
+                 "PIR_score\tPIR_length\tPIR_dupli\n")
 
 for inter in conserv_inter.keys():
     bait = inter.split('-')[0]
@@ -159,12 +185,15 @@ for inter in conserv_inter.keys():
                      str(stats_origin[inter][2]) + '\t' + str(conserv_inter[inter]) + '\t' +
                      str(stats_target[conserv_inter[inter]][0]) + '\t' + str(stats_target[conserv_inter[inter]][1])
                      + '\t' + str(stats_target[conserv_inter[inter]][2]) + '\t' + str(frag_conserv[bait][1]) + '\t' +
-                     str(frag_conserv[PIR][1]) + '\n')
+                     str(bait_length[bait]) + '\t' + str(frag_dupli[bait]) + '\t' + str(frag_conserv[PIR][1]) + '\t' +
+                     str(PIR_length[PIR]) + '\t' + str(frag_dupli[PIR]) + '\n')
 
     else:
         output.write(inter + '\t' + str(stats_origin[inter][0]) + '\t' + str(stats_origin[inter][1]) + '\t' +
                      str(stats_origin[inter][2]) + '\t' + str(conserv_inter[inter]) + '\t' + "NA" + '\t' + "NA" +
-                     '\t' + "NA" + '\t' + str(frag_conserv[bait][1]) + '\t' + str(frag_conserv[PIR][1]) + '\n')
+                     '\t' + "NA" + '\t' + str(frag_conserv[bait][1]) + '\t' + str(bait_length[bait]) + '\t' +
+                     str(frag_dupli[bait]) + '\t' + str(frag_conserv[PIR][1]) + '\t' + str(PIR_length[PIR]) + '\t' +
+                     str(frag_dupli[PIR]) + '\n')
 
 print("All done ! ")
 output.close()

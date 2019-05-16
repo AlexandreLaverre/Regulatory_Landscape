@@ -1,9 +1,9 @@
 ###### MidDistance ~ Conservation #####
 library(ggplot2)
 library(gridExtra)
-setwd("/home/laverre/Documents/Regulatory_Landscape/result/alignments/mouse2human/")
-conserv <- read.table("PIR_cons_all_overlap.txt", header=T)
-simul <- read.table("PIR_cons_all_overlap_simul.txt", header=T)
+setwd("/home/laverre/Documents/Regulatory_Landscape/result/alignments/human2mouse/")
+conserv <- read.table("PIR_cons_all_overlap.txt3", header=T)
+simul <- read.table("PIR_cons_all_overlap_simul.txt3", header=T)
 
 ### Overlap potential enhancers ### 
 # Quelle est la proportion de fragments chevauchant avec des potentiels enhancers ?
@@ -181,7 +181,7 @@ conserv <- conserv[which(conserv$midist_obs < 3000000),]
 simul <- simul[which(simul$midist_obs < 3000000),]
 conserv$class <-cut(conserv$midist_obs, breaks=seq(from=25000, to=3000000, by=50000), include.lowest = T)
 simul$class <-cut(simul$midist_obs, breaks=seq(from=25000, to=3000000, by=50000), include.lowest = T)
-class_leg <- c("25-75Kb", "475-525Kb", "975Kb-1.02Mb", "1.47-1.52Mb", "1.97-2.02Mb","2.47-2.52Mb")
+class_leg <- c("25Kb", "1Mb", "2Mb")
 
 ## CAGE
 conserv_dist <- data.frame(inter = sapply(levels(conserv$class), function(x) mean(conserv[which(conserv$class == x),]$CAGE_pb)))
@@ -192,16 +192,16 @@ simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(si
 simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$CAGE_pb)[["conf.int"]][1])
 simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$CAGE_pb)[["conf.int"]][2])
 
-plot(conserv_dist$inter[1:50], type="b", col="red",  ylim=c(0.01,0.21), main="CAGE peaks", xlab="",ylab="Mean nb peaks", xaxt = "n")
+plot(conserv_dist$inter[1:50], type="b", col="red", cex=0.7,  ylim=c(0.03,0.25), main="CAGE peaks", xlab="",ylab="Mean nb peaks", xaxt = "n")
 for (row in 1:nrow(conserv_dist[1:50,])){
   segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
 
-points(simul_dist$inter[1:50], type="b", col="blue")
+points(simul_dist$inter[1:50], type="b", col="blue", cex=0.7)
 for (row in 1:nrow(simul_dist[1:50,])){
   segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
 
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10), par("usr")[3]-0.01, labels = class_leg, pos = 1, xpd = TRUE, cex=0.8)
+axis(1, at=seq(1,51,20), labels=F)
+text(seq(1,51,20), par("usr")[3]-0.001, labels = class_leg, pos = 1, xpd = TRUE)
 #legend("topright", fill=c("red","blue"), legend = c("Paysage observé", "Paysage simulé"), bty='n')
 
 ## ENCODE
@@ -213,16 +213,16 @@ simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(si
 simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$ENCODE_pb)[["conf.int"]][1])
 simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$ENCODE_pb)[["conf.int"]][2])
 
-plot(conserv_dist$inter[1:50], type="b", col="red", ylim=c(0.4, 1.4),main="ENCODE peaks", xlab="",ylab="", xaxt = "n")
+plot(conserv_dist$inter[1:50], type="b", col="red", cex=0.7, ylim=c(0.35, 1.4),main="ENCODE peaks", xlab="",ylab="", xaxt = "n")
 for (row in 1:nrow(conserv_dist[1:50,])){
   segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
 
-points(simul_dist$inter[1:50], type="b", col="blue")
+points(simul_dist$inter[1:50], type="b", col="blue", cex=0.7)
 for (row in 1:nrow(simul_dist[1:50,])){
   segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
 
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10), par("usr")[3]-0.06, labels = class_leg, pos = 1, xpd = TRUE, cex=0.8)
+axis(1, at=seq(1,51,20), labels=F)
+text(seq(1,51,20), par("usr")[3]-0.03, labels = class_leg, pos = 1, xpd = TRUE)
 
 ## GRO_seq
 conserv_dist <- data.frame(inter = sapply(levels(conserv$class), function(x) mean(conserv[which(conserv$class == x),]$GRO_seq_pb)))
@@ -233,16 +233,16 @@ simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(si
 simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$GRO_seq_pb)[["conf.int"]][1])
 simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$GRO_seq_pb)[["conf.int"]][2])
 
-plot(conserv_dist$inter[1:50], type="b", col="red", ylim=c(0.25, 0.95),main="GRO_seq peaks", xlab="",ylab="Mean nb peaks", xaxt = "n")
+plot(conserv_dist$inter[1:50], type="b", col="red", cex=0.7, ylim=c(0.20, 0.95),main="GRO_seq peaks", xlab="",ylab="Mean nb peaks", xaxt = "n")
 for (row in 1:nrow(conserv_dist[1:50,])){
   segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
 
-points(simul_dist$inter[1:50], type="b", col="blue")
+points(simul_dist$inter[1:50], type="b", col="blue", cex=0.7)
 for (row in 1:nrow(simul_dist[1:50,])){
   segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
 
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10), par("usr")[3]-0.04, labels = class_leg, pos = 1, xpd = TRUE, cex=0.8)
+axis(1, at=seq(1,51,20), labels=F)
+text(seq(1,51,20), par("usr")[3]-0.02, labels = class_leg, pos = 1, xpd = TRUE)
 
 ## RoadMap
 conserv_dist <- data.frame(inter = sapply(levels(conserv$class), function(x) mean(conserv[which(conserv$class == x),]$RoadMap_pb)))
@@ -253,13 +253,13 @@ simul_dist <- data.frame(inter = sapply(levels(simul$class), function(x) mean(si
 simul_dist$int_start <- sapply(levels(simul$class), function(x)  t.test(simul[which(simul$class == x),]$RoadMap_pb)[["conf.int"]][1])
 simul_dist$int_end <- sapply(levels(simul$class), function(x) t.test(simul[which(simul$class == x),]$RoadMap_pb)[["conf.int"]][2])
 
-plot(conserv_dist$inter[1:50], type="b", col="red", ylim=c(0.4, 1.65),main="RoadMap peaks", xlab="",ylab="", xaxt = "n")
+plot(conserv_dist$inter[1:50], type="b", col="red", cex=0.7, ylim=c(0.35, 1.65),main="RoadMap peaks", xlab="",ylab="", xaxt = "n")
 for (row in 1:nrow(conserv_dist[1:50,])){
   segments(x0=row,y0=conserv_dist[row,]$int_start,x1=row,y1=conserv_dist[row,]$int_end, col='red', lwd=0.3)}
 
-points(simul_dist$inter[1:50], type="b", col="blue")
+points(simul_dist$inter[1:50], type="b", col="blue", cex=0.7)
 for (row in 1:nrow(simul_dist[1:50,])){
   segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
 
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10), par("usr")[3]-0.06, labels = class_leg, pos = 1, xpd = TRUE, cex=0.8)
+axis(1, at=seq(1,51,20), labels=F)
+text(seq(1,51,20), par("usr")[3]-0.03, labels = class_leg, pos = 1, xpd = TRUE)

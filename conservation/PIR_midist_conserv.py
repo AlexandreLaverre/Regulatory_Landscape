@@ -4,8 +4,10 @@
 import os
 import numpy as np
 
-sp2 = "mouse"
 sp1 = "human"
+sp2 = "mouse"
+data = ""
+
 
 frag_conserv = {}
 with open("../../result/alignments/"+sp1+"2"+sp2+"/AlignmentStatistics_TBA_"+sp1+"2"+sp2+"_withoutnull.txt") as f2:
@@ -70,23 +72,30 @@ def dic_count(file):
 
     return elem_pb
 
+
 TSS = "_frag_overlap_TSS.txt"
 TSS_count = dic_count(TSS)
 CAGE = "_frag_overlap_CAGE.txt"
 CAGE_count = dic_count(CAGE)
-ENCODE = "_frag_overlap_ENCODE.txt"
-ENCODE_count = dic_count(ENCODE)
-GRO_seq = "_frag_overlap_GRO_seq.txt"
-GRO_seq_count = dic_count(GRO_seq)
-RoadMap = "_frag_overlap_RoadMap.txt"
-RoadMap_count = dic_count(RoadMap)
+
+if sp1 == "human":
+    ENCODE = "_frag_overlap_ENCODE.txt"
+    ENCODE_count = dic_count(ENCODE)
+    GRO_seq = "_frag_overlap_GRO_seq.txt"
+    GRO_seq_count = dic_count(GRO_seq)
+    RoadMap = "_frag_overlap_RoadMap.txt"
+    RoadMap_count = dic_count(RoadMap)
 
 
-#all_interactions/all_interactions_chr.txt
-#Simulations/simulations_"+sp1+"_10Mb_bin5kb_fragoverbin_chr.txt
+# Matching with contacted fragments
 inter = {}
 conserv = {}
-with open("../../data/"+sp1+"/all_interactions/all_interactions_chr.txt") as f3:
+if data == "_simul":
+    infile = "/Simulations/simulations_"+sp1+"_10Mb_bin5kb_fragoverbin_chr.txt"
+else:
+    infile = "/all_interactions/all_interactions_chr.txt"
+
+with open("../../data/"+sp1+infile) as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -110,15 +119,26 @@ with open("../../data/"+sp1+"/all_interactions/all_interactions_chr.txt") as f3:
                     conserv[PIR] = str(0)
 
 
-output = open("../../result/alignments/"+sp1+"2"+sp2+"/PIR_cons_all_overlap.txt3", 'w')
-if os.stat("../../result/alignments/"+sp1+"2"+sp2+"/PIR_cons_all_overlap.txt3").st_size == 0:
-    output.write("PIR\tnb_contact\tmidist_obs\tPIR_score\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\t"
-                 "repeat_pb\tphastcons_noexonic250\tTSS_count\tCAGE_count\tENCODE_count\tGRO_seq_count\tRoadMap_count\n")
+output = open("../../result/alignments/"+sp1+"2"+sp2+"/PIR_cons_all_overlap"+data+".txt3", 'w')
 
-for PIR in inter.keys():
-    output.write(PIR + '\t' + str(len(inter[PIR])) + '\t' + str(np.median(inter[PIR])) + '\t' + conserv[PIR]
-                 + '\t' + all_exon[PIR] + '\t' + coding_exon[PIR] + '\t' + nocoding_exon[PIR] + '\t' + repeat_pb[PIR]
-                 + '\t' + phastcons_pb[PIR] + '\t' + TSS_count[PIR] + '\t' + CAGE_count[PIR]
-                 + '\t' + ENCODE_count[PIR] + '\t' + GRO_seq_count[PIR] + '\t' + RoadMap_count[PIR] + '\n')
+if sp1 == "human":
+    if os.stat("../../result/alignments/"+sp1+"2"+sp2+"/PIR_cons_all_overlap"+data+".txt3").st_size == 0:
+        output.write("PIR\tnb_contact\tmidist_obs\tPIR_score\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\t"
+                     "repeat_pb\tphastcons_noexonic250\tTSS_count\tCAGE_count\tENCODE_count\tGRO_seq_count\tRoadMap_count\n")
+
+    for PIR in inter.keys():
+        output.write(PIR + '\t' + str(len(inter[PIR])) + '\t' + str(np.median(inter[PIR])) + '\t' + conserv[PIR]
+                     + '\t' + all_exon[PIR] + '\t' + coding_exon[PIR] + '\t' + nocoding_exon[PIR] + '\t' + repeat_pb[PIR]
+                     + '\t' + phastcons_pb[PIR] + '\t' + TSS_count[PIR] + '\t' + CAGE_count[PIR]
+                     + '\t' + ENCODE_count[PIR] + '\t' + GRO_seq_count[PIR] + '\t' + RoadMap_count[PIR] + '\n')
+else:
+    if os.stat("../../result/alignments/"+sp1+"2"+sp2+"/PIR_cons_all_overlap"+data+".txt3").st_size == 0:
+        output.write("PIR\tnb_contact\tmidist_obs\tPIR_score\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\t"
+                     "repeat_pb\tphastcons_noexonic250\tTSS_count\tCAGE_count\n")
+
+    for PIR in inter.keys():
+        output.write(PIR + '\t' + str(len(inter[PIR])) + '\t' + str(np.median(inter[PIR])) + '\t' + conserv[PIR]
+                     + '\t' + all_exon[PIR] + '\t' + coding_exon[PIR] + '\t' + nocoding_exon[PIR] + '\t' + repeat_pb[PIR]
+                     + '\t' + phastcons_pb[PIR] + '\t' + TSS_count[PIR] + '\t' + CAGE_count[PIR] + '\n')
 
 output.close()
