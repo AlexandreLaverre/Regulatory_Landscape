@@ -26,10 +26,10 @@ def sorted_dictionary(file):
             i = i.split("\t")
             pos = (int(i[1]), int(i[2]), str(i[3]))  # value = position (start + end) + ID
 
-            if i[0] in dic.keys():
-                dic[i[0]].append(pos)     # keys = chromosome
+            if str(i[0]) in dic.keys():
+                dic[str(i[0])].append(pos)     # keys = chromosome
             else:
-                dic[i[0]] = [pos]
+                dic[str(i[0])] = [pos]
 
     # Sorting tuples for each key
     for k in dic.keys():
@@ -172,7 +172,7 @@ if os.stat(output_file).st_size == 0:
 
 for ref_pos, int_pos in dic_output.items():
     output.write(ref_pos + "\t")
-    chr = ref_pos.strip('\t')[0]
+    chr = ref_pos.split('\t')[0]
     count = 0
 
     for i in int_pos:
@@ -185,14 +185,14 @@ for ref_pos, int_pos in dic_output.items():
             else:
                 # output.write(str(chr)+':'+str(i[0])+':'+str(i[1]) + "\t" + str(length_pos[ref_pos]) + "\t" +
                 #            str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
-                output.write(str(i[2]) + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + '\t' +
+                output.write(str(chr) + ':' + str(i[0]) + ':' + str(i[1]) + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + '\t' +
                              str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
 
         else:
 
-            #output.write(str(chr) + ':' + str(i[0]) + ':' + str(i[1])+',') # chr:start:end
-            output.write(str(i[2]) + ",")  # Only ID
-            #output.write(str(i[2])+":"+str(i[0])+"-"+str(i[1]) + ",")
+            output.write(str(chr) + ':' + str(i[0]) + ':' + str(i[1])+',') # chr:start:end
+            #output.write(str(i[2]) + ",")  # Only ID
+
 
 output.close()
 print("All done !")
