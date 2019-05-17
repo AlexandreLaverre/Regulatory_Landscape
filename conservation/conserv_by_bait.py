@@ -21,12 +21,12 @@ with open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_sy
             cons_bait[bait] = [0, 0, 0, 0, 0, 0, 0]  # (nb_PIR, nb_align, nb_synt, nb_inter, nb_TSS, nb_dvpt, nb_immun)
 
         cons_bait[bait][0] += 1
-        if i[6] != 'NA':  # PIR lift
+        if i[8] != 'NA':  # PIR lift
             cons_bait[bait][1] += 1
             score_lift[bait] = []
-            score_lift[bait].append(float(i[7]))
+            score_lift[bait].append(float(i[9]))
 
-        if i[8] != 'NA':  # same chr
+        if i[12] != 'NA':  # same chr
             cons_bait[bait][2] += 1
 
 med_lift = {}
@@ -47,7 +47,7 @@ with open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_in
         if i[5] != 'NA':  # interaction cons
             cons_bait[bait][3] += 1
             score_inter[bait] = []
-            score_inter[bait].append(float(i[9]))
+            score_inter[bait].append(float(i[11]))
             
 med_inter = {}
 for bait in cons_bait.keys():
@@ -58,14 +58,14 @@ for bait in cons_bait.keys():
 
 print("Calculating nb TSS involved in developmental & immun process... ")
 dvpt = []
-with open("../../data/"+origin_sp+"/annotations/Gene_dvpt_process_QuickGO_uniq.txt") as f1:
+with open("../../data/"+origin_sp+"/annotations/GO_annotations/Gene_dvpt_process_QuickGO_uniq.txt") as f1:
     for i in f1.readlines():
         i = i.strip("\n")
         i = i.split("\t")
         dvpt.append(i[0])
 
 immun = []
-with open("../../data/"+origin_sp+"/annotations/Gene_immune_process_QuickGO_uniq.txt") as f1:
+with open("../../data/"+origin_sp+"/annotations/GO_annotations/Gene_immune_process_QuickGO_uniq.txt") as f1:
     for i in f1.readlines():
         i = i.strip("\n")
         i = i.split("\t")
@@ -73,7 +73,7 @@ with open("../../data/"+origin_sp+"/annotations/Gene_immune_process_QuickGO_uniq
 
 
 print("Calculating nb TSS... ")
-with open("../../data/"+origin_sp+"/overlap/"+origin_sp+"_frag_overlap_TSS.txt") as f1:
+with open("../../data/"+origin_sp+"/overlap/"+origin_sp+"_frag_overlap_TSS.txt2") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -90,8 +90,8 @@ with open("../../data/"+origin_sp+"/overlap/"+origin_sp+"_frag_overlap_TSS.txt")
                     if x in immun:
                         cons_bait[frag][6] += 1
 
-output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_by_bait"+data+".txt", 'w')
-if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_by_bait"+data+".txt").st_size == 0:
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_by_bait"+data+".txt2", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_by_bait"+data+".txt2").st_size == 0:
     output.write("bait\tPIR\tPIR_lift\tmed_lift\tPIR_synt\tPIR_int\tmed_inter\tTSS\tTSS_dvpt\tTSS_immun\n")
 
 print("Writting output...")

@@ -5,7 +5,7 @@ import os
 import sys
 import re
 
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/"
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/human/"
 
 reference_file = path_data + sys.argv[1]
 interest_file = path_data + sys.argv[2]
@@ -124,7 +124,10 @@ for chr in ref_dic.keys():
             # Adding all overlapping interest position to reference position
             while i < len(int_dic[chr]) and int_dic[chr][i][0] <= end:  #+ 250:
                 if ref_pos in dic_output.keys():
-                    dic_output[ref_pos].append(int_dic[chr][i])
+                    if any(int_dic[chr][i][2] in overlap for overlap in dic_output[ref_pos]):
+                        a = 1
+                    else:
+                        dic_output[ref_pos].append(int_dic[chr][i])
                 else:
                     dic_output[ref_pos] = [int_dic[chr][i]]
                 i += 1
@@ -185,13 +188,13 @@ for ref_pos, int_pos in dic_output.items():
             else:
                 # output.write(str(chr)+':'+str(i[0])+':'+str(i[1]) + "\t" + str(length_pos[ref_pos]) + "\t" +
                 #            str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
-                output.write(str(chr) + ':' + str(i[0]) + ':' + str(i[1]) + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + '\t' +
+                output.write(str(i[2]) + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + '\t' +
                              str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
 
         else:
 
-            output.write(str(chr) + ':' + str(i[0]) + ':' + str(i[1])+',') # chr:start:end
-            #output.write(str(i[2]) + ",")  # Only ID
+            #output.write(str(chr) + ':' + str(i[0]) + ':' + str(i[1])+',') # chr:start:end
+            output.write(str(i[2]) + ",")  # Only ID
 
 
 output.close()
