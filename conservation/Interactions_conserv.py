@@ -5,15 +5,15 @@ import os
 import numpy as np
 
 # Conservation mouse interaction in human:
-origin_sp = "mouse"
-target_sp = "human"
+origin_sp = "human"
+target_sp = "mouse"
 data = "_simul"  # or "_simul"
 
 print("Origin sp:", origin_sp, "; data:", data)
 
 # Align score for each fragment in origin sp in target sp
 frag_conserv = {}
-with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_TBA_"+origin_sp+"2"+target_sp+"_withoutnull.txt") as f1:
+with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatistics_pecan_Excluding_all_Exons.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -22,9 +22,10 @@ with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatisti
 
         align = i[1].split(':')
         frag_align = (str(align[0]) + ":" + str(int(align[1])+1) + ":" + str(align[2]))
-        score = int(i[5])/int(i[2])
+        score_all_ungapped = int(i[4]) / (int(i[8])+1)
 
-        frag_conserv[origin_frag] = (frag_align, score)
+        if score_all_ungapped > 0.4:
+            frag_conserv[origin_frag] = (frag_align, score_all_ungapped)
 
 print("Score align : done ! ")
 
@@ -42,7 +43,7 @@ print("Score dupli : done ! ")
 
 # Overlap homologous fragment from origin sp to fragment in target sp
 overlap_target = {}
-with open("../../data/"+target_sp+"/overlap/"+origin_sp+"2"+target_sp+"_frag_overlap_"+target_sp+"_chr.txt") as f2:
+with open("../../data/"+target_sp+"/overlap/"+origin_sp+"2"+target_sp+"_frag_overlap_"+target_sp+"_chr_pecan.txt") as f2:
     for i in f2.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -171,8 +172,8 @@ for bait in set(bait_list):
 
 print("Writting output...")
 
-output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction"+data+".txt2", 'w')
-if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction"+data+".txt2").st_size == 0:
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_pecan_0.4"+data+".txt", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_pecan_0.4"+data+".txt").st_size == 0:
     output.write("origin_interaction\torigin_dist\torigin_nb_tissu\torigin_strength\ttarget_interaction\t"
                  "target_dist\ttarget_nb_tissu\ttarget_strength\tbait_score\tbait_length\tbait_dupli\t"
                  "PIR_score\tPIR_length\tPIR_dupli\n")

@@ -5,7 +5,7 @@ import os
 import sys
 import re
 
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/opossum/"
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/cow/"
 
 reference_file = path_data + sys.argv[1]
 interest_file = path_data + sys.argv[2]
@@ -96,8 +96,6 @@ def collapse_intraoverlap(dic):
         return dic
 
 
-#name_dic = 'reference'
-#ref_dic = collapse_intraoverlap(ref_dic)
 name_dic = 'interest'
 int_dic = collapse_intraoverlap(int_dic)
 
@@ -111,18 +109,18 @@ for chr in ref_dic.keys():
     for pos in ref_dic[chr]:
         start = pos[0]
         end = pos[1]
-        ref_pos = str(chr) + "\t" + str(start) + "\t" + str(end) #+ "\t" + str(pos[2])
+        ref_pos = str(chr) + '\t' + str(start) + "\t" + str(end) + '\t' + str(pos[2])  # only ID
 
         if chr in int_dic.keys():
 
             # Initialization of first possible overlapping interest position
             i = first_i
-            while i < len(int_dic[chr]) and int_dic[chr][i][1] < start:  # -250:
+            while i < len(int_dic[chr]) and int_dic[chr][i][1] < start:
                 i += 1
             first_i = i
 
             # Adding all overlapping interest position to reference position
-            while i < len(int_dic[chr]) and int_dic[chr][i][0] <= end:  #+ 250:
+            while i < len(int_dic[chr]) and int_dic[chr][i][0] <= end:
                 if ref_pos in dic_output.keys():
                     if any(int_dic[chr][i][2] in overlap for overlap in dic_output[ref_pos]):
                         a = 1
@@ -139,67 +137,28 @@ for chr in ref_dic.keys():
         else:
             dic_output[ref_pos] = [('NA', 'NA', 'NA')]
 
-print("Counting base pair...")
-count_bp = {}
-length_pos = {}
-for ref_pos in dic_output.keys():
-    for overlap in dic_output[ref_pos]:
-        frag_pos = ref_pos.split('\t')
-        length_frag = int(frag_pos[2]) - int(frag_pos[1])
-        length_pos[ref_pos] = length_frag
-        # correction bug
-        if length_pos[ref_pos] == 0:
-            length_pos[ref_pos] = 1
-
-        if overlap[2] != 'NA':
-            overlap_start = int(overlap[0])
-            overlap_end = int(overlap[1])
-
-            if overlap_start < int(frag_pos[1]):  # -250:
-                overlap_start = int(frag_pos[1])
-            if overlap_end > int(frag_pos[2]):  # +250:
-                overlap_end = int(frag_pos[2])
-
-            length_overlap = overlap_end - overlap_start
-
-            if ref_pos in count_bp.keys():
-                count_bp[ref_pos] = int(count_bp[ref_pos]) + length_overlap
-            else:
-                count_bp[ref_pos] = length_overlap
-
-        else:
-            count_bp[ref_pos] = 0
-
 
 print("Writting output... ")
 
 output = open(output_file, 'w')
 if os.stat(output_file).st_size == 0:
-    output.write("chr\tstart\tend\toverlap_ID\tlength_frag\tnb_bp_overlap\t%\n")
+    output.write("ID\tchr\tstart\tend\toverlap_ID\n")
 
 for ref_pos, int_pos in dic_output.items():
-    output.write(ref_pos + "\t")   # add chr if not chr in ID ref
-    chr = ref_pos.split('\t')[0]
+    frag = ref_pos.split('\t')
+    output.write(frag[3] + '\t' + frag[0] + "\t" + frag[1] + "\t" + frag[2] + "\t")  # chr + start + end (ref 1)
     count = 0
 
     for i in int_pos:
         count += 1
         if count == len(int_pos):
             if str(i[0]) == 'NA':
-                output.write('NA' + "\t" + str(length_pos[ref_pos]) + "\t" +
-                             str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos] / length_pos[ref_pos]) * 100) + "\n")
-
+                output.write('NA' + "\n")
             else:
-                # output.write(str(chr)+':'+str(i[0])+':'+str(i[1]) + "\t" + str(length_pos[ref_pos]) + "\t" +
-                #            str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
-                output.write(str(i[2]) + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + '\t' +
-                             str((count_bp[ref_pos]/length_pos[ref_pos])*100) + "\n")
+                output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1]) + "\n")
 
         else:
-
-            output.write(str(chr) + ':' + str(i[0]) + ':' + str(i[1])+',') # chr:start:end
-            #output.write(str(i[2]) + ",")  # Only ID
-
+            output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1])+',')
 
 output.close()
 print("All done !")

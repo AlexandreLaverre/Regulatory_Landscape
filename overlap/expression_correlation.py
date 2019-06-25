@@ -9,8 +9,8 @@ import sys
 
 startTime = datetime.now()
 
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/expression_correlation/"
-path_overlap = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/overlap/"
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/human/"
+path_overlap = "/home/laverre/Documents/Regulatory_Landscape/data/human/overlap/"
 path_result = "/home/laverre/Documents/Regulatory_Landscape/result/expression_correlation/"
 
 """
@@ -55,26 +55,26 @@ def expr_dictionary(file, first_cell):
 
 
 # Restriction fragment - CAGE peaks
-frag_peaks = frag_dictionary(path_overlap+"mouse_frag_overlap_CAGE_peaks.txt")
+frag_peaks = frag_dictionary(path_overlap+"human_overlap_CAGE_peaks_filtered.txt")
 print("Restriction fragment - CAGE peaks ok !")
 
 # Restriction fragment - enhancers peaks
-frag_enh = frag_dictionary(path_overlap+"mouse_frag_overlap_enhancers.txt")
+frag_enh = frag_dictionary(path_overlap+"human_overlap_CAGE_enh_filtered.txt")
 print("Restriction fragment - enhancers peaks ok !")
 
 # CAGE peaks expression
-cell = 7
-exp_CAGE = expr_dictionary(path_data+"mouse.CAGE_peaks.tpm.ann.matrix_rearrange", cell)
+cell = 1
+exp_CAGE = expr_dictionary(path_data+"/CAGE/human.CAGE_peaks.expression.tpm.ann.matrix_filtered", cell)
 print("CAGE peaks expression ok !")
 
-# enhancers peaks expression
+# enhancers expression
 cell = 1
-exp_enh = expr_dictionary(path_data+"mouse.enhancers.expression.tpm.matrix", cell)
+exp_enh = expr_dictionary(path_data+"/CAGE/human.enhancers.expression.tpm.matrix_filtered", cell)
 print("Enhancers peaks expression ok !")
 
 # pc-HIC interactions
 inter = {}
-with open(path_data+"all_interactions_head.txt", 'r') as f:
+with open(path_data+"/Simulations/simulations_human_10Mb_bin5kb_fragoverbin_chr.txt", 'r') as f:
     for i in f.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -94,8 +94,8 @@ with open(path_data+"all_interactions_head.txt", 'r') as f:
 
 print("Making correlations... ")
 
-output = open(path_result+"expression_correlation.txt", 'w')
-if os.stat(path_result+"expression_correlation.txt").st_size == 0:
+output = open(path_result+"expression_correlation.txt_new_simul", 'w')
+if os.stat(path_result+"expression_correlation.txt_new_simul").st_size == 0:
     output.write("peaks\tenh\tspearman_cor\tspearman_pval\tpearson_cor\tpearson_pval\tbait\tPIR\tsense\n")
 
 
