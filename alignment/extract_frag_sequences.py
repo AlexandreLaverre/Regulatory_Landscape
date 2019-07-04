@@ -4,8 +4,8 @@
 from Bio import SeqIO
 import sys
 
-sp = "mouse"  # sys.argv[1]
-sp2 = "opossum"  # sys.argv[2]
+sp = "human"  # sys.argv[1]
+sp2 = "elephant"  # sys.argv[2]
 
 path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"
 # ref_genome = path_data+sp+"/genome/"+sp+".GRCm38.dna_sm.primary_assembly.fa"  # h if sp = human
