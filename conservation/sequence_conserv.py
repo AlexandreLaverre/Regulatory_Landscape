@@ -119,7 +119,9 @@ def conserv_seq(origin_sp, target_sp, data):
 
     # Matching with contacted fragments
     inter = {}
-    conserv = {}
+    inter_bait = {}
+    link = {}
+    link_bait = {}
     if data == "_simul":
         infile = "/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt"
     else:
@@ -139,40 +141,75 @@ def conserv_seq(origin_sp, target_sp, data):
             if i[0] == i[3]:
                 if 25000 < abs(midbait - midcontact) <= 10000000:
 
+                    ### PIR side
+                    if PIR in link.keys():
+                        link[PIR].append(bait)
+                    else:
+                        link[PIR] = [bait]
                     if PIR in inter.keys():
                         inter[PIR].append(dist_obs)
                     else:
                         inter[PIR] = [dist_obs]
-
                     if PIR not in score_extract_all.keys():
                         not_conserv += 1
                         score_extract_all[PIR] = (str(0) + '\t' + str(0) + '\t' + str(0) + '\t' + str(0))
-
                     if PIR not in score_extract_genes.keys():
                         score_extract_genes[PIR] = str(0)
-
                     if PIR not in frag_dupli.keys():
                         not_dupli += 1
                         frag_dupli[PIR] = 'NA'
 
+                    ## Bait side
+                    if bait in link_bait.keys():
+                        link_bait[bait].append(PIR)
+                    else:
+                        link_bait[bait] = [PIR]
+                    if bait in inter_bait.keys():
+                        inter_bait[bait].append(dist_obs)
+                    else:
+                        inter_bait[bait] = [dist_obs]
+                    if bait not in score_extract_all.keys():
+                        not_conserv += 1
+                        score_extract_all[bait] = (str(0) + '\t' + str(0) + '\t' + str(0) + '\t' + str(0))
+                    if bait not in score_extract_genes.keys():
+                        score_extract_genes[bait] = str(0)
+                    if bait not in frag_dupli.keys():
+                        not_dupli += 1
+                        frag_dupli[bait] = 'NA'
+
     print("Not conserved frag:", not_conserv, "; No dupli info:", not_dupli, 'over', len(inter.keys()), 'contacted frag')
 
+
     print("Writting output...")
-    output = open("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt", 'w')
+    output = open("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt2", 'w')
+    output_bait = open("../../result/alignments/Bait_cons_all_overlap_PECAN_" + origin_sp + "2" + target_sp + data + ".txt2",'w')
 
     if origin_sp == "human":
-        if os.stat("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt").st_size == 0:
-            output.write("PIR\tnb_contact\tmidist_obs\tTotal_ungapped\tTotal_identical\tAllexon_ungapped\tAllexon_identical"
+        if os.stat("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt2").st_size == 0:
+            output.write("PIR\tnb_PIRcontact\tnb_baitcontact\tmidist_obs\tTotal_ungapped\tTotal_identical\tAllexon_ungapped\tAllexon_identical"
                          "\tAllgene_ungapped\tDuplication\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb"
                          "\tphastcons_noexonic250\tTSS_count\tCAGE_count\tENCODE_count\tGRO_seq_count\tRoadMap_count\n")
 
         for PIR in inter.keys():
-            output.write(PIR + '\t' + str(len(inter[PIR])) + '\t' + str(np.median(inter[PIR])) + '\t' + score_extract_all[PIR]
+            bait_contact = [len(inter_bait[bait]) for bait in link[PIR]]
+            output.write(PIR + '\t' + str(len(inter[PIR])) + '\t' + str(np.mean(bait_contact)) + '\t' + str(np.median(inter[PIR])) + '\t' + score_extract_all[PIR]
                          + '\t' + score_extract_genes[PIR] + '\t' + frag_dupli[PIR] + '\t' + all_exon[PIR] + '\t' + coding_exon[PIR]
                          + '\t' + nocoding_exon[PIR] + '\t' + repeat_pb[PIR] + '\t' + phastcons_pb[PIR] + '\t' + TSS_count[PIR]
                          + '\t' + CAGE_count[PIR] + '\t' + ENCODE_count[PIR] + '\t' + GRO_seq_count[PIR] + '\t' + RoadMap_count[PIR] + '\n')
+
+        if os.stat("../../result/alignments/Bait_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt2").st_size == 0:
+            output_bait.write("Bait\tnb_Baitcontact\tnb_PIRcontact\tmidist_obs\tTotal_ungapped\tTotal_identical\tAllexon_ungapped\tAllexon_identical"
+                         "\tAllgene_ungapped\tDuplication\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb"
+                         "\tphastcons_noexonic250\tTSS_count\tCAGE_count\tENCODE_count\tGRO_seq_count\tRoadMap_count\n")
+
+        for Bait in inter_bait.keys():
+            PIR_contact = [len(inter[PIR]) for PIR in link_bait[Bait]]
+            output_bait.write(Bait + '\t' + str(len(inter_bait[Bait])) + '\t' + str(np.mean(PIR_contact)) + '\t' + str(np.median(inter_bait[Bait])) + '\t' + score_extract_all[Bait]
+                         + '\t' + score_extract_genes[Bait] + '\t' + frag_dupli[Bait] + '\t' + all_exon[Bait] + '\t' + coding_exon[Bait]
+                         + '\t' + nocoding_exon[Bait] + '\t' + repeat_pb[Bait] + '\t' + phastcons_pb[Bait] + '\t' + TSS_count[Bait]
+                         + '\t' + CAGE_count[Bait] + '\t' + ENCODE_count[Bait] + '\t' + GRO_seq_count[Bait] + '\t' + RoadMap_count[Bait] + '\n')
     else:
-        if os.stat("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt").st_size == 0:
+        if os.stat("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt2").st_size == 0:
             output.write("PIR\tnb_contact\tmidist_obs\tTotal_ungapped\tTotal_identical\tAllexon_ungapped\tAllexon_identical"
                          "\tAllgene_ungapped\tDuplication\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb"
                          "\tphastcons_noexonic250\tTSS_count\tCAGE_count\n")
@@ -187,7 +224,7 @@ def conserv_seq(origin_sp, target_sp, data):
 
 
 origin_sp = "human"
-target_sps = ["mouse", "dog", "cow", "elephant", "opossum", "chicken"]
+target_sps = ["mouse"] #, "dog", "cow", "elephant", "opossum", "chicken"]
 datas = ["_simul", ""]
 
 for sp in target_sps:
