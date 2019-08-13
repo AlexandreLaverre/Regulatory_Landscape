@@ -7,45 +7,64 @@ import os
 origin_sp = "mouse"  # or "human"
 target_sp = "human"  # or "mouse"
 data = ""  # or "_simul"
+cell_type = "Bcell"
+
+
+dic_specific = {}
+with open("../../data/"+origin_sp+"/all_interactions/all_interactions_chr_"+cell_type+".txt") as specific:
+    for i in specific.readlines()[1:]:
+        i = i.strip("\n")
+        i = i.split("\t")
+        interaction = str(i[0]+':'+i[1]+':'+i[2]+'-'+i[3]+':'+i[4]+':'+i[5])
+        dic_specific[interaction] = 0
 
 
 print("Calculating align and synteny conservation... ")
 
 cons_bait = {}
 with open("../../result/conservation/" + origin_sp + "2" + target_sp + "_conservation_syntenie_with_notconserv"
-          + data + ".txt") as f1:
+          + data + ".txt2") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
-        bait = i[0].split('-')[0]
+        interaction = i[0]
 
-        if bait not in cons_bait.keys():
-            cons_bait[bait] = [0, 0, 0, 0]  # (nb_PIR, nb_align, nb_synt, nb_inter)
+        if interaction in dic_specific.keys():
+            bait = i[0].split('-')[0]
 
-        cons_bait[bait][0] += 1
-        if i[8] != 'NA':  # PIR lift
-            cons_bait[bait][1] += 1
+            if bait not in cons_bait.keys():
+                cons_bait[bait] = [0, 0, 0, 0]  # (nb_PIR, nb_align, nb_synt, nb_inter)
 
-        if i[12] != 'NA':  # PIR in synteny
-            cons_bait[bait][2] += 1
+            cons_bait[bait][0] += 1  # total PIR
+
+            if i[9] != 'NA':
+                if float(i[9]) >= 0.4:  # conserv seq PIR
+                    cons_bait[bait][1] += 1
+
+            if i[12] != 'NA':
+                if float(i[12]) < 10000000:  # conserv synteny PIR
+                    cons_bait[bait][2] += 1
 
 
 print("Calculating interaction conservation... ")
 
-with open("../../result/conservation/" + origin_sp + "2" + target_sp + "_conservation_interaction" + data + ".txt") as f2:
+with open("../../result/conservation/" + origin_sp + "2" + target_sp + "_conservation_interaction_pecan_0.4_" + cell_type + data + ".txt") as f2:
     for i in f2.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
-        bait = i[0].split('-')[0]
+        interaction = i[0]
 
-        if i[5] != 'NA':  # interaction cons
-            cons_bait[bait][3] += 1
+        if interaction in dic_specific.keys():
+            bait = i[0].split('-')[0]
+
+            if i[5] != 'NA':  # interaction cons
+                cons_bait[bait][3] += 1
 
 
 print("Linking bait to TSS gene ID... ")
 
 cons_gene = {}
-with open("../../data/" + origin_sp + "/overlap/" + origin_sp + "_frag_overlap_TSS.txt2") as f1:
+with open("../../data/" + origin_sp + "/overlap/" + origin_sp + "_frag_overlap_TSS.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -72,9 +91,9 @@ for TSS in cons_gene.keys():
 
 print("Writting output...")
 
-output = open("../../result/conservation/" + origin_sp + "2" + target_sp + "_conservation_by_gene" + data + ".txt", 'w')
-if os.stat("../../result/conservation/" + origin_sp + "2" + target_sp + "_conservation_by_gene" + data + ".txt").st_size == 0:
-    output.write("TSS\tnb_PIR\tnb_PIR_lift\tnb_PIR_synt\tnb_PIR_int\n")
+output = open("../../result/conservation/" + origin_sp + "2" + target_sp + "_conservation_by_gene_0.4_" + cell_type + data + ".txt2", 'w')
+if os.stat("../../result/conservation/" + origin_sp + "2" + target_sp + "_conservation_by_gene_0.4_" + cell_type + data + ".txt2").st_size == 0:
+    output.write("TSS\tnb_contact\tnb_seq_conserv\tnb_synt_conserv\tnb_int_conserv\n")
 
 for TSS in sum_cons_gene.keys():
     output.write(str(TSS) + '\t' + str(sum_cons_gene[TSS][0]) + '\t' + str(sum_cons_gene[TSS][1]) + '\t' +
