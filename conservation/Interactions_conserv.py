@@ -5,9 +5,9 @@ import os
 import numpy as np
 
 # Conservation mouse interaction in human:
-origin_sp = "mouse"
-target_sp = "human"
-data = "_simul"  # or "_simul"
+origin_sp = "human"
+target_sp = "mouse"
+data = ""  # or "_simul"
 
 print("Origin sp:", origin_sp, "; data:", data)
 
@@ -24,7 +24,7 @@ with open("../../result/alignments/"+origin_sp+"2"+target_sp+"/AlignmentStatisti
         frag_align = (str(align[0]) + ":" + str(int(align[1])+1) + ":" + str(align[2]))
         score_all_ungapped = int(i[4]) / (int(i[8])+1)
 
-        if score_all_ungapped > 0:  # or 0.4
+        if score_all_ungapped > 0.4:  # or 0.4
             frag_conserv[origin_frag] = (frag_align, score_all_ungapped)
 
 print("Score align : done ! ")
@@ -111,7 +111,7 @@ with open("../../data/"+origin_sp+input) as f3:
         PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
         bait_length[bait] = int(i[2]) - int(i[1])
         PIR_length[PIR] = int(i[5]) - int(i[4])
-        dist_obs = abs(midbait - midcontact)
+        dist_obs = midbait - midcontact
 
         contact_strength = [float(x) for x in i[6:] if x != "NA"]
         median_strength = np.median(contact_strength)
@@ -127,6 +127,8 @@ with open("../../data/"+origin_sp+input) as f3:
             nb_type = len([float(x) for x in types if x != "NA"])
 
         else:
+            contact_strength = "NA"
+            median_strength = "NA"
             nb_type = "NA"
 
         PIR_list.append(PIR)
@@ -172,8 +174,8 @@ for bait in set(bait_list):
 
 print("Writting output...")
 
-output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_pecan"+data+".txt", 'w')
-if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_pecan"+data+".txt").st_size == 0:
+output = open("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_pecan_0.4_noabs"+data+".txt", 'w')
+if os.stat("../../result/conservation/"+origin_sp+"2"+target_sp+"_conservation_interaction_pecan_0.4_noabs"+data+".txt").st_size == 0:
     output.write("origin_interaction\torigin_dist\torigin_nb_tissu\torigin_strength\ttarget_interaction\t"
                  "target_dist\ttarget_nb_tissu\ttarget_strength\tbait_score\tbait_length\tbait_dupli\t"
                  "PIR_score\tPIR_length\tPIR_dupli\n")
