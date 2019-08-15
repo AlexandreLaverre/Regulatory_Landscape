@@ -16,31 +16,27 @@ def conserv_seq(origin_sp, target_sp, data):
                 i = i.split("\t")
                 frag = i[0].split(':')
                 frag = str(frag[0]+':' + str(int(frag[1])+1) + ':' + str(frag[2]))
+                all_ungapped = int(i[4])
+                all_identical = int(i[5])
+                all_length = int(i[8])
+                exclude_ungapped = int(i[6])
+                exclude_identical = int(i[7])
+                all_exclude = int(i[9])
 
-                all_ungapped = int(i[4]) / (int(i[8])+1)
-                all_identical = int(i[5]) / (int(i[8])+1)
-
-                exclude_ungapped = int(i[6]) / (int(i[9])+1)
-                exclude_identical = int(i[7]) / (int(i[9])+1)
-
-                if file == all_exon:
-                    frag_conserv[frag] = (str(all_ungapped) + '\t' + str(all_identical) + '\t' +
-                                          str(exclude_ungapped) + '\t' + str(exclude_identical))
-                else:
-                    frag_conserv[frag] = (str(exclude_ungapped))
+                frag_conserv[frag] = [all_ungapped, all_identical, all_length, exclude_ungapped, exclude_identical, all_exclude]
 
         return frag_conserv
 
     all_exon = "AlignmentStatistics_PECAN_ExcludingExons_"+origin_sp+"2"+target_sp+".txt"
     score_extract_all = dic_score(all_exon)
-    all_genes = "AlignmentStatistics_PECAN_ExcludingGenes_"+origin_sp+"2"+target_sp+".txt"
-    score_extract_genes = dic_score(all_genes)
+    # all_genes = "AlignmentStatistics_PECAN_ExcludingGenes_"+origin_sp+"2"+target_sp+".txt"
+    # score_extract_genes = dic_score(all_genes)
     # coding_exon = "AlignmentStatistics_pecan_Excluding_coding_Exons.txt"
     # score_extract_coding = dic_score(coding_exon)
     # nocoding_exon = "AlignmentStatistics_pecan_Excluding_nocoding_Exons.txt"
     # score_extract_nocoding = dic_score(nocoding_exon)
 
-    print("Calcul alignment scores done ! ")
+    print("Alignment infos done ! ")
 
     # Composition in base pairs
     def dic_pb(file):
@@ -55,9 +51,9 @@ def conserv_seq(origin_sp, target_sp, data):
                 pb = str(int(i[5]))
 
                 if file == "_frag_overlap_all_exons.txt":
-                    elem_pb[frag] = str(length + '\t' + pb)
+                    elem_pb[frag] = [length, pb]
                 else:
-                    elem_pb[frag] = str(pb)
+                    elem_pb[frag] = pb
 
         return elem_pb
 
@@ -86,7 +82,7 @@ def conserv_seq(origin_sp, target_sp, data):
                 else:
                     count = len(i[3].split(","))
 
-                elem_pb[frag] = str(count)
+                elem_pb[frag] = count
 
         return elem_pb
 
@@ -94,7 +90,6 @@ def conserv_seq(origin_sp, target_sp, data):
     TSS_count = dic_count(TSS)
     CAGE = "_frag_overlap_CAGE.txt"
     CAGE_count = dic_count(CAGE)
-
     if origin_sp == "human":
         ENCODE = "_frag_overlap_ENCODE.txt"
         ENCODE_count = dic_count(ENCODE)
@@ -113,7 +108,7 @@ def conserv_seq(origin_sp, target_sp, data):
             i = i.split("\t")
             frag = i[0].split(':')
             frag = str(frag[0]+':' + str(int(frag[1])+1) + ':' + str(frag[2]))
-            frag_dupli[frag] = str(int(i[3])-1)
+            frag_dupli[frag] = int(i[3])-1
 
     print("Score dupli done ! ")
 
@@ -132,33 +127,12 @@ def conserv_seq(origin_sp, target_sp, data):
         for i in f3.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
-            midbait = ((int(i[1]) + int(i[2])) / 2)
-            midcontact = ((int(i[4]) + int(i[5])) / 2)
             bait = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
-            PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
-            dist_obs = abs(midbait - midcontact)
+            merged_PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
+            dist_obs = i[6]
 
             if i[0] == i[3]:
-                if 25000 < abs(midbait - midcontact) <= 10000000:
-
-                    ### PIR side
-                    if PIR in link.keys():
-                        link[PIR].append(bait)
-                    else:
-                        link[PIR] = [bait]
-                    if PIR in inter.keys():
-                        inter[PIR].append(dist_obs)
-                    else:
-                        inter[PIR] = [dist_obs]
-                    if PIR not in score_extract_all.keys():
-                        not_conserv += 1
-                        score_extract_all[PIR] = (str(0) + '\t' + str(0) + '\t' + str(0) + '\t' + str(0))
-                    if PIR not in score_extract_genes.keys():
-                        score_extract_genes[PIR] = str(0)
-                    if PIR not in frag_dupli.keys():
-                        not_dupli += 1
-                        frag_dupli[PIR] = 'NA'
-
+                if 25000 < int(dist_obs) <= 10000000:
                     ## Bait side
                     if bait in link_bait.keys():
                         link_bait[bait].append(PIR)
@@ -170,15 +144,47 @@ def conserv_seq(origin_sp, target_sp, data):
                         inter_bait[bait] = [dist_obs]
                     if bait not in score_extract_all.keys():
                         not_conserv += 1
-                        score_extract_all[bait] = (str(0) + '\t' + str(0) + '\t' + str(0) + '\t' + str(0))
-                    if bait not in score_extract_genes.keys():
-                        score_extract_genes[bait] = str(0)
+                        score_extract_all[bait] = [0, 0, 0, 0, 0, 0]
                     if bait not in frag_dupli.keys():
                         not_dupli += 1
                         frag_dupli[bait] = 'NA'
 
-    print("Not conserved frag:", not_conserv, "; No dupli info:", not_dupli, 'over', len(inter.keys()), 'contacted frag')
+                    ## PIR side
+                    if merged_PIR in link.keys():
+                        link[merged_PIR].append(bait)
+                    else:
+                        link[merged_PIR] = [bait]
+                    if merged_PIR in inter.keys():
+                        inter[merged_PIR].append(dist_obs)
+                    else:
+                        inter[merged_PIR] = [dist_obs]
 
+                    if len(i[7].split(',')) > 1:
+                        for PIR in i[7].split(','):
+                            if PIR not in score_extract_all.keys():
+                                not_conserv += 1
+                                score_extract_all[PIR] = [0, 0, 0, 0, 0, 0]
+                            if PIR not in frag_dupli.keys():
+                                not_dupli += 1
+                                frag_dupli[PIR] = 'NA'
+
+                        ### Merging info of merged fragment
+                            score_extract_all[merged_PIR] += score_extract_all[PIR]
+                            frag_dupli[merged_PIR] += frag_dupli[PIR]
+                            all_exon[merged_PIR] += all_exon[PIR]
+                            coding_exon[merged_PIR] += coding_exon[PIR]
+                            nocoding_exon[merged_PIR] += nocoding_exon[PIR]
+                            repeat_pb[merged_PIR] += repeat_pb[PIR]
+                            phastcons_pb[merged_PIR] += phastcons_pb[PIR]
+                            TSS_count[merged_PIR] += TSS_count[PIR]
+                            CAGE_count[merged_PIR] += CAGE_count[PIR]
+
+                            if origin_sp == "human":
+                                ENCODE_count[merged_PIR] += ENCODE_count[PIR]
+                                GRO_seq_count[merged_PIR] += GRO_seq_count[PIR]
+                                RoadMap_count[merged_PIR] += RoadMap_count[PIR]
+
+    print("Not conserved frag:", not_conserv, "; No dupli info:", not_dupli, 'over', len(inter.keys()), 'contacted frag')
 
     print("Writting output...")
     output = open("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt2", 'w')
