@@ -51,7 +51,7 @@ def sorted_dictionary(file):
                 median_strength = "NA"
                 nb_type = "NA"
 
-            PIR = (i[3], i[4], i[5], nb_type, median_strength)
+            PIR = (i[3], i[4], i[5], 'NA', nb_type, median_strength)
             if bait not in dic.keys():
                 dic[bait] = {str(i[3]): [PIR]}
             elif str(i[3]) not in dic[bait].keys():
@@ -120,11 +120,24 @@ print("\t\t\t Before \t After")
 print("nb pairs\t", nb_elem, "\t", new_nb_elem)
 print("med contact\t", med_contact, "\t\t", new_med_contact)
 print("max contact\t", max(nb_contact), "\t\t", max(new_nb_contact))
+
+# PIR overlap bait
+PIR_bait = {}
+with open("../../data/" + sp + "/" + sp + "_merged_PIR_overlap_bait" + data + ".txt") as f1:
+    for i in f1.readlines()[1:]:
+        i = i.strip("\n")
+        i = i.split("\t")
+        frag = str(i[0] + ':' + str(i[1]) + ':' + str(i[2]))
+        if str(i[3]) == "unbait":
+            PIR_bait[frag] = "unbaited"
+        else:
+            PIR_bait[frag] = "baited"
+
 print("Writting output... ")
 
 output = open(output_file, 'w')
 if os.stat(output_file).st_size == 0:
-    output.write("bait_chr\tbait_start\tbait_end\tchr\tstart\tend\tdist\tmerged_info\tnb_type\tmed_strength\tnb_contact\n")
+    output.write("bait_chr\tbait_start\tbait_end\tchr\tstart\tend\tbaited_frag\tdist\tmerged_info\tnb_type\tmed_strength\tnb_contact\n")
 
 for bait, contacted in new_dic.items():
     for i in contacted:
@@ -135,12 +148,13 @@ for bait, contacted in new_dic.items():
         else:
             dist_obs = "NA"
 
+        frag = str(i[0] + ':' + str(i[1]) + ':' + str(i[2]))
         if data == "":
-            output.write(bait + "\t" + i[0] + "\t" + i[1] + "\t" + i[2] + "\t" + str(dist_obs) + "\t" + i[3] + "\t" +
-                         str(i[4]) + "\t" + str(i[5]) + "\t" + str(len(new_dic[bait])) + "\n")
+            output.write(bait + "\t" + i[0] + "\t" + i[1] + "\t" + i[2] + "\t" + str(PIR_bait[frag]) + "\t" +
+                         str(dist_obs) + "\t" + i[3] + "\t" + str(i[4]) + "\t" + str(i[5]) + "\t" + str(len(new_dic[bait])) + "\n")
         else:
-            output.write(bait + "\t" + i[0] + "\t" + i[1] + "\t" + i[2] + "\t" + str(dist_obs) + "\t" + i[3] + "\t" +
-                         "NA" + "\t" + "NA" + "\t" + str(len(new_dic[bait])) + "\n")
+            output.write(bait + "\t" + i[0] + "\t" + i[1] + "\t" + i[2] + "\t" + str(PIR_bait[frag]) + "\t" +
+                         str(dist_obs) + "\t" + i[3] + "\t" + "NA" + "\t" + "NA" + "\t" + str(len(new_dic[bait])) + "\n")
 
 output.close()
 print("All done !")

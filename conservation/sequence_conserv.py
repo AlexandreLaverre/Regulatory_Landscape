@@ -23,7 +23,8 @@ def conserv_seq(origin_sp, target_sp, data):
                 exclude_identical = int(i[7])
                 all_exclude = int(i[9])
 
-                frag_conserv[frag] = [all_ungapped, all_identical, all_length, exclude_ungapped, exclude_identical, all_exclude]
+                frag_conserv[frag] = np.array([all_ungapped, all_identical, all_length, exclude_ungapped,
+                                               exclude_identical, all_exclude])
 
         return frag_conserv
 
@@ -46,14 +47,8 @@ def conserv_seq(origin_sp, target_sp, data):
                 i = i.strip("\n")
                 i = i.split("\t")
                 frag = ('chr' + str(i[0]) + ':' + str(i[1]) + ':' + str(i[2]))
-
-                length = str(int(i[4]))
-                pb = str(int(i[5]))
-
-                if file == "_frag_overlap_all_exons.txt":
-                    elem_pb[frag] = [length, pb]
-                else:
-                    elem_pb[frag] = pb
+                pb = int(i[5])
+                elem_pb[frag] = pb
 
         return elem_pb
 
@@ -115,12 +110,18 @@ def conserv_seq(origin_sp, target_sp, data):
     # Matching with contacted fragments
     inter = {}
     inter_bait = {}
+    contact_unbaited = {}
+    PIR_baited = {}
+    CAGE_contact = {}
+    RoadMap_contact = {}
+    ENCODE_contact = {}
+    GRO_seq_contact = {}
     link = {}
     link_bait = {}
     if data == "_simul":
-        infile = "/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr.txt"
+        infile = "/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr_merged.txt"
     else:
-        infile = "/all_interactions/all_interactions_chr.txt"
+        infile = "/all_interactions/all_interactions_chr_merged.txt"
 
     not_conserv = not_dupli = 0
     with open("../../data/"+origin_sp+infile) as f3:
@@ -129,25 +130,28 @@ def conserv_seq(origin_sp, target_sp, data):
             i = i.split("\t")
             bait = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
             merged_PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
-            dist_obs = i[6]
 
             if i[0] == i[3]:
-                if 25000 < int(dist_obs) <= 10000000:
+                dist_obs = float(i[7])
+                if 25000 < dist_obs <= 10000000:
+                    PIR_baited[merged_PIR] = i[6]
+
                     ## Bait side
                     if bait in link_bait.keys():
-                        link_bait[bait].append(PIR)
+                        link_bait[bait].append(merged_PIR)
                     else:
-                        link_bait[bait] = [PIR]
+                        link_bait[bait] = [merged_PIR]
                     if bait in inter_bait.keys():
                         inter_bait[bait].append(dist_obs)
                     else:
                         inter_bait[bait] = [dist_obs]
+
                     if bait not in score_extract_all.keys():
                         not_conserv += 1
-                        score_extract_all[bait] = [0, 0, 0, 0, 0, 0]
+                        score_extract_all[bait] = np.array([0, 0, 0, 0, 0, 0])
                     if bait not in frag_dupli.keys():
                         not_dupli += 1
-                        frag_dupli[bait] = 'NA'
+                        frag_dupli[bait] = 0
 
                     ## PIR side
                     if merged_PIR in link.keys():
@@ -159,79 +163,144 @@ def conserv_seq(origin_sp, target_sp, data):
                     else:
                         inter[merged_PIR] = [dist_obs]
 
-                    if len(i[7].split(',')) > 1:
-                        for PIR in i[7].split(','):
-                            if PIR not in score_extract_all.keys():
-                                not_conserv += 1
-                                score_extract_all[PIR] = [0, 0, 0, 0, 0, 0]
-                            if PIR not in frag_dupli.keys():
-                                not_dupli += 1
-                                frag_dupli[PIR] = 'NA'
+                    # Adding PIR with no information
+                    for PIR in i[8].split(','):
+                        if PIR not in score_extract_all.keys():
+                            not_conserv += 1
+                            score_extract_all[PIR] = np.array([0, 0, 0, 0, 0, 0])
+                        if PIR not in frag_dupli.keys():
+                            not_dupli += 1
+                            frag_dupli[PIR] = 0
 
-                        ### Merging info of merged fragment
-                            score_extract_all[merged_PIR] += score_extract_all[PIR]
-                            frag_dupli[merged_PIR] += frag_dupli[PIR]
-                            all_exon[merged_PIR] += all_exon[PIR]
-                            coding_exon[merged_PIR] += coding_exon[PIR]
-                            nocoding_exon[merged_PIR] += nocoding_exon[PIR]
-                            repeat_pb[merged_PIR] += repeat_pb[PIR]
-                            phastcons_pb[merged_PIR] += phastcons_pb[PIR]
-                            TSS_count[merged_PIR] += TSS_count[PIR]
-                            CAGE_count[merged_PIR] += CAGE_count[PIR]
+                    if len(i[8].split(',')) > 1:
+                        for PIR in i[8].split(','):
+                        # Merging info of merged fragment
+                            if merged_PIR not in score_extract_all.keys():
+                                score_extract_all[merged_PIR] = score_extract_all[PIR]
+                            else:
+                                score_extract_all[merged_PIR] += score_extract_all[PIR]
 
-                            if origin_sp == "human":
-                                ENCODE_count[merged_PIR] += ENCODE_count[PIR]
-                                GRO_seq_count[merged_PIR] += GRO_seq_count[PIR]
-                                RoadMap_count[merged_PIR] += RoadMap_count[PIR]
+                        frag_dupli[merged_PIR] = sum(frag_dupli[PIR] for PIR in i[8].split(','))
+                        all_exon[merged_PIR] = sum(all_exon[PIR] for PIR in i[8].split(','))
+                        coding_exon[merged_PIR] = sum(coding_exon[PIR] for PIR in i[8].split(','))
+                        nocoding_exon[merged_PIR] = sum(nocoding_exon[PIR] for PIR in i[8].split(','))
+                        repeat_pb[merged_PIR] = sum(repeat_pb[PIR] for PIR in i[8].split(','))
+                        phastcons_pb[merged_PIR] = sum(phastcons_pb[PIR] for PIR in i[8].split(','))
+                        TSS_count[merged_PIR] = sum(TSS_count[PIR] for PIR in i[8].split(','))
+                        CAGE_count[merged_PIR] = sum(CAGE_count[PIR] for PIR in i[8].split(','))
+
+                        if origin_sp == "human":
+                            ENCODE_count[merged_PIR] = sum(ENCODE_count[PIR] for PIR in i[8].split(','))
+                            GRO_seq_count[merged_PIR] = sum(GRO_seq_count[PIR] for PIR in i[8].split(','))
+                            RoadMap_count[merged_PIR] = sum(RoadMap_count[PIR] for PIR in i[8].split(','))
+
+                    if bait not in contact_unbaited.keys():
+                        contact_unbaited[bait] = []
+                        CAGE_contact[bait] = 0
+                        RoadMap_contact[bait] = 0
+                        ENCODE_contact[bait] = 0
+                        GRO_seq_contact[bait] = 0
+
+                    if i[6] == "unbaited":
+                        contact_unbaited[bait].append(merged_PIR)
+                    if CAGE_count[merged_PIR] > 0:
+                        CAGE_contact[bait] += 1
+                    if origin_sp == "human":
+                        if RoadMap_count[merged_PIR] > 0:
+                            RoadMap_contact[bait] += 1
+                        if ENCODE_count[merged_PIR] > 0:
+                            ENCODE_contact[bait] += 1
+                        if GRO_seq_count[merged_PIR] > 0:
+                            GRO_seq_contact[bait] += 1
 
     print("Not conserved frag:", not_conserv, "; No dupli info:", not_dupli, 'over', len(inter.keys()), 'contacted frag')
 
     print("Writting output...")
-    output = open("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt2", 'w')
-    output_bait = open("../../result/alignments/Bait_cons_all_overlap_PECAN_" + origin_sp + "2" + target_sp + data + ".txt2",'w')
+    output = open("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt3", 'w')
+    output_bait = open("../../result/alignments/Bait_cons_all_overlap_PECAN_" + origin_sp + "2" + target_sp + data + ".txt3",'w')
 
     if origin_sp == "human":
-        if os.stat("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt2").st_size == 0:
-            output.write("PIR\tnb_PIRcontact\tnb_baitcontact\tmidist_obs\tTotal_ungapped\tTotal_identical\tAllexon_ungapped\tAllexon_identical"
-                         "\tAllgene_ungapped\tDuplication\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb"
-                         "\tphastcons_noexonic250\tTSS_count\tCAGE_count\tENCODE_count\tGRO_seq_count\tRoadMap_count\n")
+        if os.stat("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt3").st_size == 0:
+            output.write("chr\tstart\tend\tnb_PIRcontact\tnb_baitcontact\tmidist_obs\tbaited\tall_ungapped\tall_identical\tall_length"
+                         "\texclude_ungapped\texclude_identical\tall_exclude\tduplication\tall_exon_pb"
+                         "\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb\tphastcons_noexonic250\tTSS_count\tCAGE_count"
+                         "\tENCODE_count\tGRO_seq_count\tRoadMap_count\n")
 
         for PIR in inter.keys():
             bait_contact = [len(inter_bait[bait]) for bait in link[PIR]]
-            output.write(PIR + '\t' + str(len(inter[PIR])) + '\t' + str(np.mean(bait_contact)) + '\t' + str(np.median(inter[PIR])) + '\t' + score_extract_all[PIR]
-                         + '\t' + score_extract_genes[PIR] + '\t' + frag_dupli[PIR] + '\t' + all_exon[PIR] + '\t' + coding_exon[PIR]
-                         + '\t' + nocoding_exon[PIR] + '\t' + repeat_pb[PIR] + '\t' + phastcons_pb[PIR] + '\t' + TSS_count[PIR]
-                         + '\t' + CAGE_count[PIR] + '\t' + ENCODE_count[PIR] + '\t' + GRO_seq_count[PIR] + '\t' + RoadMap_count[PIR] + '\n')
+            output.write(PIR.split(':')[0] + '\t' + PIR.split(':')[1] + '\t' + PIR.split(':')[2]
+                         + '\t' + str(len(inter[PIR])) + '\t' + str(np.mean(bait_contact)) + '\t' + str(np.median(inter[PIR]))
+                         + '\t' + str(PIR_baited[PIR])
+                         + '\t' + str(score_extract_all[PIR][0]) + '\t' + str(score_extract_all[PIR][1])
+                         + '\t' + str(score_extract_all[PIR][2]) + '\t' + str(score_extract_all[PIR][3])
+                         + '\t' + str(score_extract_all[PIR][4]) + '\t' + str(score_extract_all[PIR][5])
+                         + '\t' + str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t' + str(coding_exon[PIR])
+                         + '\t' + str(nocoding_exon[PIR]) + '\t' + str(repeat_pb[PIR]) + '\t' + str(phastcons_pb[PIR])
+                         + '\t' + str(TSS_count[PIR]) + '\t' + str(CAGE_count[PIR]) + '\t' + str(ENCODE_count[PIR])
+                         + '\t' + str(GRO_seq_count[PIR]) + '\t' + str(RoadMap_count[PIR]) + '\n')
 
-        if os.stat("../../result/alignments/Bait_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt2").st_size == 0:
-            output_bait.write("Bait\tnb_Baitcontact\tnb_PIRcontact\tmidist_obs\tTotal_ungapped\tTotal_identical\tAllexon_ungapped\tAllexon_identical"
-                         "\tAllgene_ungapped\tDuplication\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb"
-                         "\tphastcons_noexonic250\tTSS_count\tCAGE_count\tENCODE_count\tGRO_seq_count\tRoadMap_count\n")
+        if os.stat("../../result/alignments/Bait_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt3").st_size == 0:
+            output_bait.write("chr\tstart\tend\tnb_Baitcontact\tnb_unbaited_contact\tnb_PIRcontact\tmidist_obs\tall_ungapped\tall_identical\tall_length"
+                              "\texclude_ungapped\texclude_identical\tall_exclude\tduplication\tall_exon_pb\tcoding_exon_pb"
+                              "\tnocoding_exon_pb\trepeat_pb\tphastcons_noexonic250\tTSS_count\tCAGE_contact\tENCODE_contact"
+                              "\tGRO_seq_contact\tRoadMap_contact\n")
 
         for Bait in inter_bait.keys():
             PIR_contact = [len(inter[PIR]) for PIR in link_bait[Bait]]
-            output_bait.write(Bait + '\t' + str(len(inter_bait[Bait])) + '\t' + str(np.mean(PIR_contact)) + '\t' + str(np.median(inter_bait[Bait])) + '\t' + score_extract_all[Bait]
-                         + '\t' + score_extract_genes[Bait] + '\t' + frag_dupli[Bait] + '\t' + all_exon[Bait] + '\t' + coding_exon[Bait]
-                         + '\t' + nocoding_exon[Bait] + '\t' + repeat_pb[Bait] + '\t' + phastcons_pb[Bait] + '\t' + TSS_count[Bait]
-                         + '\t' + CAGE_count[Bait] + '\t' + ENCODE_count[Bait] + '\t' + GRO_seq_count[Bait] + '\t' + RoadMap_count[Bait] + '\n')
+
+            output_bait.write(Bait.split(':')[0] + '\t' + Bait.split(':')[1] + '\t' + Bait.split(':')[2] + '\t' +
+                              str(len(inter_bait[Bait])) + '\t' + str(len(contact_unbaited[Bait])) + '\t' +
+                              str(np.mean(PIR_contact)) + '\t' +
+                              str(np.median(inter_bait[Bait])) + '\t' + str(score_extract_all[Bait][0]) + '\t' +
+                              str(score_extract_all[Bait][1]) + '\t' + str(score_extract_all[Bait][2]) + '\t' +
+                              str(score_extract_all[Bait][3]) + '\t' + str(score_extract_all[Bait][4]) + '\t' +
+                              str(score_extract_all[Bait][5]) + '\t' + str(frag_dupli[Bait]) + '\t' +
+                              str(all_exon[Bait]) + '\t' + str(coding_exon[Bait]) + '\t' + str(nocoding_exon[Bait]) + '\t' +
+                              str(repeat_pb[Bait]) + '\t' + str(phastcons_pb[Bait]) + '\t' + str(TSS_count[Bait]) + '\t' +
+                              str(CAGE_contact[Bait]) + '\t' + str(ENCODE_contact[Bait]) + '\t' + str(GRO_seq_contact[Bait])
+                              + '\t' + str(RoadMap_contact[Bait]) + '\n')
     else:
-        if os.stat("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt2").st_size == 0:
-            output.write("PIR\tnb_contact\tmidist_obs\tTotal_ungapped\tTotal_identical\tAllexon_ungapped\tAllexon_identical"
-                         "\tAllgene_ungapped\tDuplication\tlength\tall_exon_pb\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb"
-                         "\tphastcons_noexonic250\tTSS_count\tCAGE_count\n")
+        if os.stat("../../result/alignments/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt3").st_size == 0:
+            output.write("chr\tstart\tend\tnb_PIRcontact\tnb_baitcontact\tmidist_obs\baited\ttall_ungapped\tall_identical\tall_length"
+                         "\texclude_ungapped\texclude_identical\tall_exclude\tduplication\tall_exon_pb\tcoding_exon_pb"
+                         "\tnocoding_exon_pb\trepeat_pb\tphastcons_noexonic250\tTSS_count\tCAGE_count\n")
 
         for PIR in inter.keys():
-            output.write(PIR + '\t' + str(len(inter[PIR])) + '\t' + str(np.median(inter[PIR])) + '\t' + score_extract_all[PIR]
-                         + '\t' + score_extract_genes[PIR] + '\t' + frag_dupli[PIR] + '\t' + all_exon[PIR] + '\t' + coding_exon[PIR]
-                         + '\t' + nocoding_exon[PIR] + '\t' + repeat_pb[PIR] + '\t' + phastcons_pb[PIR] + '\t' + TSS_count[PIR]
-                         + '\t' + CAGE_count[PIR] + '\n')
+            bait_contact = [len(inter_bait[bait]) for bait in link[PIR]]
+            output.write(PIR.split(':')[0] + '\t' + PIR.split(':')[1] + '\t' + PIR.split(':')[2]
+                         + '\t' + str(len(inter[PIR])) + '\t' + str(np.mean(bait_contact)) + '\t' + str(np.median(inter[PIR]))
+                         + '\t' + str(PIR_baited[PIR])
+                         + '\t' + str(score_extract_all[PIR][0]) + '\t' + str(score_extract_all[PIR][1])
+                         + '\t' + str(score_extract_all[PIR][2]) + '\t' + str(score_extract_all[PIR][3])
+                         + '\t' + str(score_extract_all[PIR][4]) + '\t' + str(score_extract_all[PIR][5])
+                         + '\t' + str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t' + str(coding_exon[PIR])
+                         + '\t' + str(nocoding_exon[PIR]) + '\t' + str(repeat_pb[PIR]) + '\t' + str(phastcons_pb[PIR])
+                         + '\t' + str(TSS_count[PIR]) + '\t' + str(CAGE_count[PIR]) + '\n')
+
+        if os.stat("../../result/alignments/Bait_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+".txt3").st_size == 0:
+            output_bait.write("chr\tstart\tend\tnb_Baitcontact\ttnb_unbaited_contact\tnb_PIRcontact\tmidist_obs\tall_ungapped\tall_identical\tall_length"
+                              "\texclude_ungapped\texclude_identical\tall_exclude\tduplication\tall_exon_pb\tcoding_exon_pb"
+                              "\tnocoding_exon_pb\trepeat_pb\tphastcons_noexonic250\tTSS_count\tCAGE_count\n")
+
+        for Bait in inter_bait.keys():
+            PIR_contact = [len(inter[PIR]) for PIR in link_bait[Bait]]
+            output_bait.write(Bait.split(':')[0] + '\t' + Bait.split(':')[1] + '\t' + Bait.split(':')[2] + '\t' +
+                              str(len(inter_bait[Bait])) + str(len(contact_unbaited[Bait])) + '\t' +
+                              str(np.mean(PIR_contact)) + '\t' +
+                              str(np.median(inter_bait[Bait])) + '\t' + str(score_extract_all[Bait][0]) + '\t' +
+                              str(score_extract_all[Bait][1]) + '\t' + str(score_extract_all[Bait][2]) + '\t' +
+                              str(score_extract_all[Bait][3]) + '\t' + str(score_extract_all[Bait][4]) + '\t' +
+                              str(score_extract_all[Bait][5]) + '\t' + str(frag_dupli[Bait]) + '\t' +
+                              str(all_exon[Bait]) + '\t' + str(coding_exon[Bait]) + '\t' + str(nocoding_exon[Bait]) + '\t' +
+                              str(repeat_pb[Bait]) + '\t' + str(phastcons_pb[Bait]) + '\t' + str(TSS_count[Bait]) + '\t' +
+                              str(CAGE_count[Bait]) + '\n')
 
     output.close()
 
 
 origin_sp = "human"
 target_sps = ["mouse"] #, "dog", "cow", "elephant", "opossum", "chicken"]
-datas = ["_simul", ""]
+datas = ["", "_simul"]
 
 for sp in target_sps:
     for data in datas:

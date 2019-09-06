@@ -5,12 +5,13 @@ import os
 import sys
 import re
 
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/chicken/"
+sp = sys.argv[1]
+interest = sys.argv[2]
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+sp+"/"
 
-reference_file = path_data + sys.argv[1]
-interest_file = path_data + sys.argv[2]
-output_file = path_data + sys.argv[3]
-collapse = sys.argv[4]
+reference_file = path_data + sp + "_all_restriction_fragments.bed"
+interest_file = path_data + sp + "_" + interest + ".bed"
+output_file = path_data + sp + "_overlap_" + interest + ".txt"
 
 
 def sorted_dictionary(file):
@@ -49,48 +50,45 @@ int_dic = sorted_dictionary(interest_file)
 def collapse_intraoverlap(dic):
     if list(dic.values())[0][0][0] != list(dic.values())[0][0][1]:
         print("Length of", name_dic, "seq. > 1 pb ")
-        if collapse == "T":
-            new_dic = {}
-            for k in dic.keys():
-                current_start = dic[k][0][0]
-                current_end = dic[k][0][1]
-                current_ID = dic[k][0][2]
+        new_dic = {}
+        for k in dic.keys():
+            current_start = dic[k][0][0]
+            current_end = dic[k][0][1]
+            current_ID = dic[k][0][2]
 
-                new_dic[k] = []
-                if len(dic[k]) == 1:
+            new_dic[k] = []
+            if len(dic[k]) == 1:
+                new_dic[k].append((current_start, current_end, current_ID))
+
+            for i in range(1, len(dic[k])):
+                new_start = dic[k][i][0]
+                new_end = dic[k][i][1]
+                new_ID = dic[k][i][2]
+                if current_end >= new_start >= current_start:
+                    current_ID = str(current_ID) + "_" + str(new_ID)
+
+                    if new_end > current_end:
+                        current_end = new_end
+
+                else:
+                    new_dic[k].append((current_start, current_end, current_ID))
+                    current_start = new_start
+                    current_end = new_end
+                    current_ID = new_ID
+
+                if i == len(dic[k])-1:
                     new_dic[k].append((current_start, current_end, current_ID))
 
-                for i in range(1, len(dic[k])):
-                    new_start = dic[k][i][0]
-                    new_end = dic[k][i][1]
-                    new_ID = dic[k][i][2]
-                    if current_end >= new_start >= current_start:
-                        current_ID = str(current_ID) + "_" + str(new_ID)
-
-                        if new_end > current_end:
-                            current_end = new_end
-
-                    else:
-                        new_dic[k].append((current_start, current_end, current_ID))
-                        current_start = new_start
-                        current_end = new_end
-                        current_ID = new_ID
-
-                    if i == len(dic[k])-1:
-                        new_dic[k].append((current_start, current_end, current_ID))
-
-            nb_elem = sum(len(dic[x]) for x in dic.keys())
-            new_nb_elem = sum(len(new_dic[x]) for x in new_dic.keys())
-            if nb_elem != new_nb_elem:
-                print("There is overlap in", name_dic, "file !")
-                print("Before collapse:", nb_elem, "elements; After collapse:", new_nb_elem)
-            else:
-                print("There is no overlap in", name_dic, "file !")
-
-            return new_dic
+        nb_elem = sum(len(dic[x]) for x in dic.keys())
+        new_nb_elem = sum(len(new_dic[x]) for x in new_dic.keys())
+        if nb_elem != new_nb_elem:
+            print("There is overlap in", name_dic, "file !")
+            print("Before collapse:", nb_elem, "elements; After collapse:", new_nb_elem)
         else:
-            print("No intra-overlap test asked")
-            return dic
+            print("There is no overlap in", name_dic, "file !")
+
+        return new_dic
+
     else:
         print("Length of", name_dic, "seq. = 1 pb")
         return dic
