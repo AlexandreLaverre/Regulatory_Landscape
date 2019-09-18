@@ -5,7 +5,7 @@ import os
 import sys
 import re
 
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/human/"
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/"
 
 reference_file = path_data + sys.argv[1]
 interest_file = path_data + sys.argv[2]
