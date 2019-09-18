@@ -7,7 +7,7 @@ import numpy as np
 
 # Conservation mouse interaction in human:
 sp = "human"
-data = ""  # or "_simul"
+data = "_simul"  # or "_simul"
 path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+sp+"/"
 
 if data == "_simul":
@@ -78,8 +78,8 @@ for bait in dic.keys():
     for contacted_chr in dic[bait].keys():
         current_start = dic[bait][contacted_chr][0][1]
         current_end = dic[bait][contacted_chr][0][2]
-        current_nb = dic[bait][contacted_chr][0][3]
-        current_strength = dic[bait][contacted_chr][0][4]
+        current_nb = dic[bait][contacted_chr][0][4]
+        current_strength = dic[bait][contacted_chr][0][5]
         current_ID = (str(contacted_chr)+':'+str(current_start)+':'+str(current_end))
 
         if len(dic[bait][contacted_chr]) == 1:
@@ -89,8 +89,8 @@ for bait in dic.keys():
             for i in range(1, len(dic[bait][contacted_chr])):
                 new_start = dic[bait][contacted_chr][i][1]
                 new_end = dic[bait][contacted_chr][i][2]
-                new_nb = dic[bait][contacted_chr][i][3]
-                new_strength = dic[bait][contacted_chr][i][4]
+                new_nb = dic[bait][contacted_chr][i][4]
+                new_strength = dic[bait][contacted_chr][i][5]
                 new_ID = (str(contacted_chr) + ':' + str(new_start) + ':' + str(new_end))
 
                 if int(new_start) == int(current_end)+1:
@@ -106,8 +106,8 @@ for bait in dic.keys():
                     current_strength = new_strength
                     current_ID = new_ID
 
-                if i == len(dic[bait][contacted_chr])-1:
-                    new_dic[bait].append((contacted_chr, current_start, current_end, current_ID, current_nb, current_strength))
+                    if i == len(dic[bait][contacted_chr])-1:
+                        new_dic[bait].append((contacted_chr, current_start, current_end, current_ID, current_nb, current_strength))
 
 nb_contact = [len(dic[bait][contacted_chr]) for bait in dic.keys() for contacted_chr in dic[bait].keys()]
 new_nb_contact = [len(new_dic[bait]) for bait in new_dic.keys()]

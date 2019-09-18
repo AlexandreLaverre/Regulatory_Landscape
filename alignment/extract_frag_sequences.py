@@ -4,24 +4,31 @@
 from Bio import SeqIO
 import sys
 
-sp = "mouse"  # sys.argv[1]
+sp = "human"  # sys.argv[1]
 sp2 = "rabbit"  # sys.argv[2]
 
 path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"
 # ref_genome = path_data+sp+"/genome/"+sp+".GRCm38.dna_sm.primary_assembly.fa"  # h if sp = human
 # ref_dict = SeqIO.to_dict(SeqIO.parse(ref_genome, "fasta"))
 
-target_genome = path_data+sp2+"/"+sp2+".dna_sm.toplevel.fa"  # m if sp2 = mouse
+target_genome = path_data+sp2+"/"+sp2+".dna_sm.toplevel.fa"
 target_dict = SeqIO.to_dict(SeqIO.parse(target_genome, "fasta"))
 
+# chromosome correspondence
+chr_corr = {}
+with open(path_data + sp2 + "/"+sp2+"_chromosomes_UCSC_Ensembl.txt", "r") as f2:
+    for i in f2.readlines()[1:]:
+        i = i.split("\t")
+        UCSC = i[0]
+        Ensembl = i[1]
+        chr_corr[UCSC] = Ensembl
 
-with open(path_data+sp+"/genome/"+sp+"2"+sp2+"_restriction_fragments_0.1.bed", "r") as f1:  #
+with open(path_data+sp2 + "/"+sp+"2"+sp2+"_restriction_fragments_0.1.bed", "r") as f1:  #
     # output_sp1 = open(path_data + sp + "/genome/"+sp+"_restriction_fragments_softmask.fa", "w")
-    output_sp2 = open(path_data + sp2 + "/"+sp+"2"+sp2+"_restriction_fragments_softmask.fa", "w")
+    output_sp2 = open(path_data + sp2 + "/"+sp+"2"+sp2+"_restriction_fragments_softmask.fa2", "w")
     for i in f1.readlines():
         i = i.split("\t")
-        frag_ref = i[3].split(':')
-
+        # frag_ref = i[3].split(':')
         # chr_ref = frag_ref[0].strip("chr")
         # if chr_ref in ref_dict.keys():
         #     sequence_ref = ref_dict[chr_ref]
@@ -30,7 +37,7 @@ with open(path_data+sp+"/genome/"+sp+"2"+sp2+"_restriction_fragments_0.1.bed", "
         #
         #     SeqIO.write(cut_sequence, output_sp1, "fasta")
 
-        chr_target = i[0].strip("chr")
+        chr_target = chr_corr[i[0]]
 
         if chr_target in target_dict.keys():
             sequence_target = target_dict[chr_target]
@@ -45,4 +52,3 @@ with open(path_data+sp+"/genome/"+sp+"2"+sp2+"_restriction_fragments_0.1.bed", "
 
 # output_sp1.close()
 output_sp2.close()
-
