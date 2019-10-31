@@ -22,9 +22,9 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
   
   print(paste(dim(this.genes)[1], "genes"))
   
-  ylim=c(-0.3,0.5)
+  ylim=c(-2,2)
   ypos.bystrand=c(1,-1)
-  names(ypos.bystrand)=c("+", "-")
+  names(ypos.bystrand)=c("1", "-1")
   height=0.2
 
   arrowheight=0.25
@@ -41,7 +41,7 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
     this.end=this.genes$end[which(this.genes$id==g)]
     this.name=this.genes$name[which(this.genes$id==g)]
 
-    ypos=ypos.bystrand[this.strand]
+    ypos=ypos.bystrand[as.character(this.strand)]
 
     if(this.start<xlim[1]){
       this.start=xlim[1]
@@ -53,12 +53,16 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
  
     rect(this.start, ypos-height/2, this.end, ypos+height/2, col=this.col, border=this.col)
 
-    if(this.strand=="+"){
+    if(this.strand=="1"){
       segments(this.start, ypos+height/2, this.start, ypos+height/2+arrowheight)
       arrows(this.start, ypos+height/2+arrowheight, this.start+arrowsize, ypos+height/2+arrowheight, col="gray20", length=0.05, xpd=NA, lwd=1.5)
     } else{
-      segments(this.end, ypos+height/2, this.end, ypos+height/2+arrowheight)
-      arrows(this.end, ypos+height/2+arrowheight, this.end-arrowsize, ypos+height/2+arrowheight, col="gray20", length=0.05, xpd=NA, lwd=1.5)
+      if(this.strand=="-1"){
+        segments(this.end, ypos+height/2, this.end, ypos+height/2+arrowheight)
+        arrows(this.end, ypos+height/2+arrowheight, this.end-arrowsize, ypos+height/2+arrowheight, col="gray20", length=0.05, xpd=NA, lwd=1.5)
+      } else{
+        stop("unknown strand!")
+      }
     }
 
     if(g==focus.gene){
