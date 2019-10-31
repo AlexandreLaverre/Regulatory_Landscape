@@ -21,6 +21,7 @@ origin_conserv_seq[which(origin_conserv_seq$chicken == "NaN"),]$chicken <- 0
 origin_conserv_seq <- origin_conserv_seq[,-(10:15)]
 for (sp_target in species){origin_conserv_seq[[sp_target]] <- Align_score(sp_origin, sp_target, "")}
 
+# Uniq cell type
 conserv <- origin_conserv_seq[,18:26]
 o <- order(apply(conserv, 2, mean), decreasing = T)
 obs_conserv <- data.frame(score = apply(conserv[,o], 2, mean))
@@ -56,10 +57,27 @@ origin_conserv_seq$class <-cut(origin_conserv_seq$midist_obs, breaks=seq(from=25
 origin_conserv_seq_simul$class <-cut(origin_conserv_seq_simul$midist_obs, breaks=seq(from=25000, to=3000000, by=50000), include.lowest = T)
 class_leg <- c("50Kb", "500Kb", "1Mb", "1.5Mb", "2Mb","2.5Mb")
 
-# Observed
-obs_dist <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])))
+# Observed 
+obs_dist<- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])))
 obs_dist$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][1])
 obs_dist$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][2])
+
+# Observed 1 cell
+obs_dist_1 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$nb_cell ==  1 & origin_conserv_seq$class == x),][[sp_target]])))
+obs_dist_1$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell ==  1 & origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][1])
+obs_dist_1$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell ==  1 & origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][2])
+
+# 1 - 3 cell
+obs_dist_2 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 1 & origin_conserv_seq$nb_cell <= 3 & origin_conserv_seq$class == x),][[sp_target]])))
+obs_dist_2$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 1 & origin_conserv_seq$nb_cell <= 3 & origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][1])
+obs_dist_2$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 1 & origin_conserv_seq$nb_cell <= 3 & origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][2])
+
+# > 3 cell
+obs_dist_3 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 3 &  origin_conserv_seq$class == x),][[sp_target]])))
+obs_dist_3$int_start <- sapply(levels(origin_conserv_seq$class), function(x) 
+  tryCatch(t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 3 &  origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][1], error=function(e) NA))
+obs_dist_3$int_end <- sapply(levels(origin_conserv_seq$class), function(x) 
+  tryCatch(t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 3 &  origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][2], error=function(e) NA))
 
 # Observed with enhancers
 obs_dist_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),][[sp_target]])))
@@ -116,3 +134,49 @@ obs_nb_cell <- boxplot(origin_conserv_seq$human~origin_conserv_seq$nb_cell, plot
 obs_nb_cell_enh <- boxplot(origin_conserv_seq[which(origin_conserv_seq$CAGE_count >1),]$human~origin_conserv_seq[which(origin_conserv_seq$CAGE_count >1),]$nb_cell, plot=F)
 
 save.image("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/Fig4.Rdata")
+
+
+
+
+
+
+## Nb cell ~ Distance
+
+# Observed
+obs_cell <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x),]$nb_cell)))
+obs_cell$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),]$nb_cell)[["conf.int"]][1])
+obs_cell$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),]$nb_cell)[["conf.int"]][2])
+
+# Observed with enhancers
+obs_cell_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$nb_cell)))
+obs_cell_enh$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$nb_cell)[["conf.int"]][1])
+obs_cell_enh$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$nb_cell)[["conf.int"]][2])
+
+plot(obs_cell$inter[1:50], type="l", col="red",main=paste("Cell ~ Distance", sep=""),
+     xlab="", ylab="Mean nb cell", xaxt = "n", ylim=c(1,4))
+for (row in 1:nrow(obs_cell[1:50,])){
+  segments(x0=row,y0=obs_cell[row,]$int_start,x1=row,y1=obs_cell[row,]$int_end, col='red', lwd=0.3)}
+
+lines(obs_cell_enh$inter[1:50], type="l", col="forestgreen")
+for (row in 1:nrow(obs_cell_enh[1:50,])){
+  segments(x0=row,y0=obs_cell_enh[row,]$int_start,x1=row,y1=obs_cell_enh[row,]$int_end, col='forestgreen', lwd=0.3)}
+
+axis(1, at=seq(1,51,10), labels=F)
+text(seq(1,51,10),par("usr")[3]-0.2, class_leg, xpd = TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

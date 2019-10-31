@@ -45,6 +45,8 @@ def conserv_seq(origin_sp, target_sp, data):
 
     all = "_merged_overlap_all_exons_bp.txt"
     all_exon = dic_pb(all)
+    all_250 = "_merged_overlap_all_exons250_bp.txt"
+    all_exon250 = dic_pb(all_250)
     coding = "_merged_overlap_coding_exons_bp.txt"
     coding_exon = dic_pb(coding)
     nocoding = "_merged_overlap_nocoding_exons_bp.txt"
@@ -165,7 +167,7 @@ def conserv_seq(origin_sp, target_sp, data):
 
     if os.stat("../../result/conservation/Sequence_conservation/PIR_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+merge+".txt").st_size == 0:
         output.write("chr\tstart\tend\tCAGE_count\tnb_PIRcontact\tnb_baitcontact\tmidist_obs\tbaited\tnb_cell\ttall_ungapped\tall_identical\tall_length"
-                     "\texclude_ungapped\texclude_identical\tall_exclude\tduplication\tall_exon_pb\tcoding_exon_pb"
+                     "\texclude_ungapped\texclude_identical\tall_exclude\tduplication\tall_exon_pb\tall_exon250\tcoding_exon_pb"
                      "\tnocoding_exon_pb\trepeat_pb\tphastcons_noexonic250\tTSS_count\n")
 
     for PIR in inter.keys():
@@ -178,9 +180,9 @@ def conserv_seq(origin_sp, target_sp, data):
                      + '\t' + str(score_extract_all[PIR][0]) + '\t' + str(score_extract_all[PIR][1])
                      + '\t' + str(score_extract_all[PIR][2]) + '\t' + str(score_extract_all[PIR][3])
                      + '\t' + str(score_extract_all[PIR][4]) + '\t' + str(score_extract_all[PIR][5])
-                     + '\t' + str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t' + str(coding_exon[PIR])
-                     + '\t' + str(nocoding_exon[PIR]) + '\t' + str(repeat_pb[PIR]) + '\t' + str(phastcons_pb[PIR])
-                     + '\t' + str(TSS_count[PIR]) + '\n')
+                     + '\t' + str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t' + str(all_exon250)
+                     + '\t' + str(coding_exon[PIR]) + '\t' + str(nocoding_exon[PIR]) + '\t' + str(repeat_pb[PIR])
+                     + '\t' + str(phastcons_pb[PIR]) + '\t' + str(TSS_count[PIR]) + '\n')
 
     #if os.stat("../../result/alignments/Bait_cons_all_overlap_PECAN_"+origin_sp+"2"+target_sp+data+merge+".txt").st_size == 0:
     #    output_bait.write("chr\tstart\tend\tCAGE_count\tnb_contact\tnb_unbaited_contact\tnb_PIRcontact\tmidist_obs\tall_ungapped\tall_identical\tall_length"
