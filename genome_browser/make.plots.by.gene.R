@@ -84,7 +84,7 @@ layout(m)
 ######################################################################
 
 par(mar=c(1.5, 2.1, 0.25, 1.1))
-plot.annotations.genes(gene.annot, gene.biotypes=c("protein_coding", "lncRNA"), focus.gene=gene, xlim=c(xstart, xend))
+plot.annotations.genes(gene.annot, gene.biotypes="all", focus.gene=gene, xlim=c(xstart, xend))
 
 ######################################################################
 
