@@ -4,6 +4,7 @@ objects=ls()
 
 if(!("load"%in%objects)){
   load=TRUE
+  process=TRUE
 }
 
 ######################################################################
@@ -20,38 +21,45 @@ source("plot.annotations.R")
 
 ######################################################################
 
-## sp="human"
-## samples= names(interactions[[sp]])
-## nbsamples=length(samples)
-## gene="ENSG00000164690"
+if(process==TRUE){
   
-## gene.annot=gene.coords[[sp]]
-## this.gene.start=gene.annot$start[which(gene.annot$id==gene)]
-## this.gene.end=gene.annot$end[which(gene.annot$id==gene)]
+  sp="human"
+  samples= names(interactions[[sp]])
+  nbsamples=length(samples)
+  gene="ENSG00000164690"
+  
+  gene.annot=gene.coords[[sp]]
+  this.gene.start=gene.annot$start[which(gene.annot$id==gene)]
+  this.gene.end=gene.annot$end[which(gene.annot$id==gene)]
 
-## bait.annot=annot.baits.TSS[[sp]]
-## bait.thisgene=bait.annot[which(bait.annot$gene_ID==gene),]
+  exon.annot=exon.coords[[sp]]
+  
+  bait.annot=annot.baits.TSS[[sp]]
+  bait.thisgene=bait.annot[which(bait.annot$gene_ID==gene),]
+  
+  interactions.thisgene=data.frame()
+  
+  for(sample in samples){
+    this.int=interactions[[sp]][[sample]]
+    this.int$bait_ID=paste(this.int$bait_chr, this.int$bait_start, this.int$bait_end, sep=",")
+    this.int=this.int[which(this.int$bait_ID%in%bait.thisgene$bait_ID),]
+    
+    if(dim(this.int)[1]>0){
+      this.int$sample=rep(sample, dim(this.int)[1])
+      
+      if(dim(interactions.thisgene)[1]>0){
+        interactions.thisgene=rbind(interactions.thisgene, this.int, stringsAsFactors=F)
+      } else{
+        interactions.thisgene=this.int
+      }
+    }
+  }
+  
+  xstart=min(c(this.gene.start, interactions.thisgene$otherEnd_start))
+  xend=max(c(this.gene.end, interactions.thisgene$otherEnd_end))
 
-## interactions.thisgene=data.frame()
-
-## for(sample in samples){
-##   this.int=interactions[[sp]][[sample]]
-##   this.int$bait_ID=paste(this.int$bait_chr, this.int$bait_start, this.int$bait_end, sep=",")
-##   this.int=this.int[which(this.int$bait_ID%in%bait.thisgene$bait_ID),]
-
-##   if(dim(this.int)[1]>0){
-##     this.int$sample=rep(sample, dim(this.int)[1])
-
-##     if(dim(interactions.thisgene)[1]>0){
-##       interactions.thisgene=rbind(interactions.thisgene, this.int, stringsAsFactors=F)
-##     } else{
-##       interactions.thisgene=this.int
-##     }
-##   }
-## }
-
-## xstart=min(c(this.gene.start, interactions.thisgene$otherEnd_start))
-## xend=max(c(this.gene.end, interactions.thisgene$otherEnd_end))
+  process=TRUE
+}
 
 ######################################################################
 
