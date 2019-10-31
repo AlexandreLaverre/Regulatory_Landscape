@@ -14,6 +14,7 @@ if(load==TRUE){
   load("RData/data.interactions.per.sample.RData")
   load("RData/data.interactions.annotations.RData")
   load("RData/data.merged.interactions.RData")
+  load("RData/data.enhancers.RData")
 
   load=FALSE
 }
@@ -32,6 +33,7 @@ if(process==TRUE){
   gene.annot=gene.coords[[sp]]
   this.gene.start=gene.annot$start[which(gene.annot$id==gene)]
   this.gene.end=gene.annot$end[which(gene.annot$id==gene)]
+  this.chr=gene.annot$chr[which(gene.annot$id==gene)]
 
   exon.annot=exon.coords[[sp]]
   
@@ -66,12 +68,23 @@ if(process==TRUE){
   xstart=min(c(this.gene.start, interactions.thisgene$otherEnd_start))
   xend=max(c(this.gene.end, interactions.thisgene$otherEnd_end))
 
+
+  ## enhancer coordinates
+
+  this.enhancers=enhancer.coords[[sp]]
+  
   process=TRUE
 }
 
 ######################################################################
 
-figheight=(nbsamples+3)*0.25
+panelheight.enhancers=2
+panelheight.annotations=3
+panelheight.interactions=4
+
+nbpanels=panelheight.annotations+panelheight.enhancers+panelheight.interactions
+
+figheight=nbpanels*0.25
 
 pdf(file=paste("figures/", gene, "_",xstart,"_", xend, ".pdf",sep=""), width=8, height=figheight)
 
@@ -79,33 +92,48 @@ pdf(file=paste("figures/", gene, "_",xstart,"_", xend, ".pdf",sep=""), width=8, 
 
 m=matrix(rep(NA, nbsamples+3), nrow=nbsamples+3)
 
-for(i in 1:3){
+for(i in 1:panelheight.annotations){
   m[i,]=1
 }
 
-for(i in 4:(nbsamples+3)){
-  m[i,]=i-2
+for(i in (panelheight.annotations+1):(panelheight.annotations+panelheight.enhancers)){
+  m[i,]=2
+}
+
+
+for(i in (panelheight.annotations+paneleheight.enhancers+1):nbpanels){
+  m[i,]=3
 }
 
 layout(m)
 
 ######################################################################
 
+## plot annotations
+
 par(mar=c(1.5, 2.1, 0.25, 1.1))
 plot.annotations.genes(gene.annot, gene.biotypes=c("protein_coding", "lincRNA", "lncRNA", "processed_transcript"), focus.gene=gene, xlim=c(xstart, xend), axis=T, axisunit="Mb")
 
 ######################################################################
 
-for(sample in samples){
-  plot(1, type="n", xlim=c(xstart, xend), ylim=c(0, 1), xaxs="i", yaxs="i", xlab="", axes=F)
-  
-  this.int=interactions.thisgene[which(interactions.thisgene$sample==sample),]
+## plot enhancers
 
-  if(dim(this.int)[1]>0){
-    rect(this.int$otherEnd_start, 0.15, this.int$otherEnd_end, 0.95, col="red", border="red")
-  }
+plot.enhancers(this.enhancers, chr=this.chr, xlim=c(xstart, xend), col="gray40")
+
+
+
+######################################################################
+
+## for(sample in samples){
+##   plot(1, type="n", xlim=c(xstart, xend), ylim=c(0, 1), xaxs="i", yaxs="i", xlab="", axes=F)
   
-}
+##   this.int=interactions.thisgene[which(interactions.thisgene$sample==sample),]
+
+##   if(dim(this.int)[1]>0){
+##     rect(this.int$otherEnd_start, 0.15, this.int$otherEnd_end, 0.95, col="red", border="red")
+##   }
+  
+## }
 
 ######################################################################
 
