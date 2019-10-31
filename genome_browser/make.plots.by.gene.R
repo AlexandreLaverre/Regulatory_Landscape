@@ -13,6 +13,7 @@ if(load==TRUE){
   load("RData/data.annotations.RData")
   load("RData/data.interactions.per.sample.RData")
   load("RData/data.interactions.annotations.RData")
+  load("RData/data.merged.interactions.RData")
 
   load=FALSE
 }
@@ -36,6 +37,8 @@ if(process==TRUE){
   
   bait.annot=annot.baits.TSS[[sp]]
   bait.thisgene=bait.annot[which(bait.annot$gene_ID==gene),]
+
+  ## interactions by sample, before merging fragments
   
   interactions.thisgene=data.frame()
   
@@ -54,6 +57,11 @@ if(process==TRUE){
       }
     }
   }
+
+  ## merged interactions
+
+  this.merged.int=merged.interactions[[sp]][which(merged.interactions[[sp]][,"bait_ID"]%in%bait.thisgene$bait_ID),]
+  
   
   xstart=min(c(this.gene.start, interactions.thisgene$otherEnd_start))
   xend=max(c(this.gene.end, interactions.thisgene$otherEnd_end))
