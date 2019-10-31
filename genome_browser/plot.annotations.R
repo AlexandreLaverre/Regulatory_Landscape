@@ -35,13 +35,13 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
   ## abline(h=0, col="gray40")
 
   for(g in this.genes$id){
-    this.strand=this.genes$strand[which(this.genes$id==g)]
+    this.strand=as.chraracter(this.genes$strand[which(this.genes$id==g)])
     this.col=this.genes$color[which(this.genes$id==g)]
     this.start=this.genes$start[which(this.genes$id==g)]
     this.end=this.genes$end[which(this.genes$id==g)]
     this.name=this.genes$name[which(this.genes$id==g)]
 
-    ypos=ypos.bystrand[as.character(this.strand)]
+    ypos=ypos.bystrand[this.strand]
 
     if(this.start<xlim[1]){
       this.start=xlim[1]
