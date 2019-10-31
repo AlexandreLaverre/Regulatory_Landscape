@@ -1,6 +1,6 @@
 #####################################################################
 
-plot.annotations.genes<-function(gene.coords, focus.gene, xlim, col.focus="navy", col.other="gray60", axis=T){
+plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes=c("protein_coding"), xlim, col.focus="navy", col.other="gray60", axis=T){
 
   if(!focus.gene%in%gene.coords$id){
     stop(paste("cannot find", focus.gene, "in annotations"))
@@ -8,6 +8,7 @@ plot.annotations.genes<-function(gene.coords, focus.gene, xlim, col.focus="navy"
   ## extract chr
   this.chr=gene.coords$chr[which(gene.coords$id==focus.gene)]
   this.genes=gene.coords[which(gene.coords$chr==this.chr & ((gene.coords$start>=xlim[1] & gene.coords$start<=xlim[2]) | (gene.coords$end>=xlim[1] & gene.coords$end<=xlim[2]) | (gene.coords$start<=xlim[1] & gene.coords$end>=xlim[2]))),]
+  this.genes=this.genes[which(this.genes$biotype%in%gene.biotypes),]
 
   if(!focus.gene%in%this.genes$id){
    stop(paste(focus.gene, "does not overlap with region")) 
