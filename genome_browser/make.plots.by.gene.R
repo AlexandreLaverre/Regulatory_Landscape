@@ -20,6 +20,8 @@ if(load==TRUE){
 }
 
 source("plot.annotations.R")
+source("plot.enhancers.R")
+source("plot.interactions.R")
 
 ######################################################################
 
