@@ -80,13 +80,13 @@ if(process==TRUE){
 
 ######################################################################
 
-panelheight.enhancers=2
-panelheight.annotations=3
-panelheight.interactions=4
+panelheight.enhancers=4
+panelheight.annotations=6
+panelheight.interactions=2
 
 nbpanels=panelheight.annotations+panelheight.enhancers+panelheight.interactions
 
-figheight=nbpanels*0.25
+figheight=nbpanels*0.15
 
 pdf(file=paste("figures/", gene, "_",xstart,"_", xend, ".pdf",sep=""), width=8, height=figheight)
 
@@ -120,13 +120,16 @@ plot.annotations.genes(gene.annot, gene.biotypes=c("protein_coding", "lincRNA", 
 
 ## plot enhancers
 
+par(mar=c(0.5, 2.1, 0.5, 1.1))
 plot.enhancers(this.enhancers, chr=this.chr, xlim=c(xstart, xend), col="gray40")
 
 ######################################################################
 
 ## plot interactions
 
-
+par(mar=c(0.5, 2.1, 0.5, 1.1))
+plot.interactions(this.merged.int, xlim=c(xstart, xend), focus.bait=bait.thisgene$baitID, col.contact="navy", col.otherbait="red")
+              
 
 ######################################################################
 

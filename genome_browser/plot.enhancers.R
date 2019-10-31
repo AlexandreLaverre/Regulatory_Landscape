@@ -22,7 +22,7 @@ plot.enhancers<-function(enhancer.coords, chr, xlim, col="gray40"){
     
     this.ypos=ypos[sample]
 
-    rect(this.coords$start, this.ypos-height/2, this.coords$end, this.ypos+height/2, col=col, border=col)
+    rect(this.coords$start, this.ypos-height/2, this.coords$end, this.ypos+height/2, col=col, border=NA)
   }
 }
 
