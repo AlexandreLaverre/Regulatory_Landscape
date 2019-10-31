@@ -12,8 +12,8 @@ merged.interactions=list()
 for(sp in c("human", "mouse")){
 
   this.mi=read.table(paste(pathInteractions, sp,"/all_interactions_merged.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-  this.mi$bait_chr=unlist(lapply(this.mi$bait_chr, function(x) substr(x, 3, nchar(x))))
-  this.mi$chr=unlist(lapply(this.mi$chr, function(x) substr(x, 3, nchar(x))))
+  this.mi$bait_chr=unlist(lapply(this.mi$bait_chr, function(x) substr(x, 4, nchar(x))))
+  this.mi$chr=unlist(lapply(this.mi$chr, function(x) substr(x, 4, nchar(x))))
   
   this.mi$bait_ID=paste(this.mi$bait_chr, this.mi$bait_start, this.mi$bait_end, sep=",")
 
