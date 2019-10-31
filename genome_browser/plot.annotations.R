@@ -1,6 +1,6 @@
 #####################################################################
 
-plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", xlim, col.focus="navy", col.other="gray60", axis=T){
+plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", xlim, col.focus="navy", col.other="gray60", axis=T, axisunit=NA, cex.name=1){
 
   if(!focus.gene%in%gene.coords$id){
     stop(paste("cannot find", focus.gene, "in annotations"))
@@ -9,7 +9,7 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
   this.chr=gene.coords$chr[which(gene.coords$id==focus.gene)]
   this.genes=gene.coords[which(gene.coords$chr==this.chr & ((gene.coords$start>=xlim[1] & gene.coords$start<=xlim[2]) | (gene.coords$end>=xlim[1] & gene.coords$end<=xlim[2]) | (gene.coords$start<=xlim[1] & gene.coords$end>=xlim[2]))),]
 
-  if(gene.biotypes!="all"){
+  if(!all(gene.biotypes=="all")){
     this.genes=this.genes[which(this.genes$biotype%in%gene.biotypes),]
   }
   
@@ -22,12 +22,12 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
   
   print(paste(dim(this.genes)[1], "genes"))
   
-  ylim=c(-2,2)
+  ylim=c(-3,3)
   ypos.bystrand=c(1,-1)
-  names(ypos.bystrand)=c("1", "-1")
-  height=0.2
+  names(ypos.bystrand)=c("+", "-")
+  height=0.75
 
-  arrowheight=0.25
+  arrowheight=0.75
   arrowsize=diff(xlim)/50
   
   plot(1, type="n", xlab="", ylab="", xlim=xlim, ylim=ylim, axes=F, xaxs="i", yaxs="i") ## empty plot
@@ -51,27 +51,48 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
       this.end=xlim[2]
     }
  
-    rect(this.start, ypos-height/2, this.end, ypos+height/2, col=this.col, border=this.col)
+    rect(this.start, ypos-height/2, this.end, ypos+height/2, col=this.col, border=this.col, xpd=NA)
 
-    if(this.strand=="1"){
-      segments(this.start, ypos+height/2, this.start, ypos+height/2+arrowheight)
-      arrows(this.start, ypos+height/2+arrowheight, this.start+arrowsize, ypos+height/2+arrowheight, col="gray20", length=0.05, xpd=NA, lwd=1.5)
+    if(this.strand=="+"){
+      segments(this.start, ypos+height/2, this.start, ypos+height/2+arrowheight, col=this.col)
+      arrows(this.start, ypos+height/2+arrowheight, this.start+arrowsize, ypos+height/2+arrowheight, length=0.05, xpd=NA, lwd=1.5, col=this.col)
+      if(g==focus.gene){
+        text(this.name, x=(this.start+this.end)/2, y=ypos+height*0.75, adj=c(0.5, 0), cex=cex.name, font=3)
+      }
     } else{
-      if(this.strand=="-1"){
-        segments(this.end, ypos+height/2, this.end, ypos+height/2+arrowheight)
-        arrows(this.end, ypos+height/2+arrowheight, this.end-arrowsize, ypos+height/2+arrowheight, col="gray20", length=0.05, xpd=NA, lwd=1.5)
+      if(this.strand=="-"){
+        segments(this.end, ypos+height/2, this.end, ypos+height/2+arrowheight, col=this.col)
+        arrows(this.end, ypos+height/2+arrowheight, this.end-arrowsize, ypos+height/2+arrowheight, length=0.05, xpd=NA, lwd=1.5, col=this.col)
+
+         if(g==focus.gene){
+           text(this.name, x=(this.start+this.end)/2, y=ypos-height*0.75, adj=c(0.5, 1), cex=cex.name, font=3)
+         }
+        
       } else{
+        print(this.strand)
         stop("unknown strand!")
       }
     }
 
-    if(g==focus.gene){
-      text(this.name, x=(this.start+this.end)/2, y=ypos+height*0.75, adj=c(0.5, 0), cex=1.1, font=3)
-    }
+   
   }
 
   if(axis){
-    axis(side=1, mgp=c(3, 0.5, 0))
+    if(is.na(axisunit)){
+       axis(side=1, mgp=c(3, 0.5, 0))
+     } else{
+       if(axisunit%in%c("kb", "Kb", "k", "K")){
+         xax=pretty(xlim/1e3)
+         xval=paste(xax, "kb", sep="")
+         axis(side=1, at=xax*1e3, labels=xval, mgp=c(3, 0.5, 0))
+       } else{
+         if(axisunit%in%c("Mb", "mb", "m", "M")){
+           xax=pretty(xlim/1e6)
+           xval=paste(xax, "Mb", sep="")
+           axis(side=1, at=xax*1e6, labels=xval, mgp=c(3, 0.5, 0))
+         }
+       }
+     }
   }
 }
 

@@ -63,20 +63,20 @@ if(process==TRUE){
 
 ######################################################################
 
-figheight=(nbsamples+1)*0.25
+figheight=(nbsamples+3)*0.25
 
 pdf(file=paste("figures/", gene, "_",xstart,"_", xend, ".pdf",sep=""), width=8, height=figheight)
 
 ######################################################################
 
-m=matrix(rep(NA, nbsamples+2), nrow=nbsamples+2)
+m=matrix(rep(NA, nbsamples+3), nrow=nbsamples+3)
 
-for(i in 1:2){
+for(i in 1:3){
   m[i,]=1
 }
 
-for(i in 3:(nbsamples+2)){
-  m[i,]=i-1
+for(i in 4:(nbsamples+3)){
+  m[i,]=i-2
 }
 
 layout(m)
@@ -84,7 +84,7 @@ layout(m)
 ######################################################################
 
 par(mar=c(1.5, 2.1, 0.25, 1.1))
-plot.annotations.genes(gene.annot, gene.biotypes="all", focus.gene=gene, xlim=c(xstart, xend))
+plot.annotations.genes(gene.annot, gene.biotypes=c("protein_coding", "lincRNA", "lncRNA", "processed_transcript"), focus.gene=gene, xlim=c(xstart, xend), axis=T, axisunit="Mb")
 
 ######################################################################
 
