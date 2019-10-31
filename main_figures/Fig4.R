@@ -43,15 +43,33 @@ axis(1, at=seq(1,9,1), labels=F)
 text(seq(1,9,1), par("usr")[3]-0.04, labels = row.names(obs_conserv), pos = 1, xpd = TRUE, cex=CEX)
 
 
+
 ####### B - Conservation ~ Distance to promoters (mouse/human) #######
 plot(obs_dist$inter[1:50], type="l", col="red", cex=CEX_lines, main=paste(sp_origin, " to ", sp_target, " conservation", sep=""),
-     xlab="", ylab="Ungapped Non-exonic Score", xaxt = "n", ylim=c(0.22,0.45), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
+           xlab="", ylab="Ungapped Non-exonic Score", xaxt = "n", ylim=c(0.1,0.45), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
 for (row in 1:nrow(obs_dist[1:50,])){
   segments(x0=row,y0=obs_dist[row,]$int_start,x1=row,y1=obs_dist[row,]$int_end, col='red', lwd=0.3)}
+
+#######  Conservation ~ Nb cell ~ Distance
+plot(obs_dist_1$inter[1:50], type="l", col="red", cex=CEX_lines, main=paste(sp_origin, " to ", sp_target, " conservation", sep=""),
+     xlab="", ylab="Ungapped Non-exonic Score", xaxt = "n", ylim=c(0.1,0.45), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
+for (row in 1:nrow(obs_dist_1[1:50,])){
+  segments(x0=row,y0=obs_dist_1[row,]$int_start,x1=row,y1=obs_dist_1[row,]$int_end, col='red', lwd=0.3)}
+
+lines(obs_dist_2$inter[1:50], type="l", col="forestgreen", cex=CEX_lines)
+for (row in 1:nrow(obs_dist_2[1:50,])){
+  segments(x0=row,y0=obs_dist_2[row,]$int_start,x1=row,y1=obs_dist_2[row,]$int_end, col='forestgreen', lwd=0.3)}
+
+lines(obs_dist_3$inter[1:50], type="l", col="orange", cex=CEX_lines)
+for (row in 1:nrow(obs_dist_3[1:50,])){
+  segments(x0=row,y0=obs_dist_3[row,]$int_start,x1=row,y1=obs_dist_3[row,]$int_end, col='orange', lwd=0.3)}
+
+legend("bottomleft", fill=c("red","forestgreen","orange"), legend = c("1 cell", "2-3 cell", ">3 cell"), bty='n', cex=CEX)
 
 lines(simul_dist$inter[1:50], type="l", col="blue", cex=CEX_lines)
 for (row in 1:nrow(simul_dist[1:50,])){
   segments(x0=row,y0=simul_dist[row,]$int_start,x1=row,y1=simul_dist[row,]$int_end, col='blue', lwd=0.3)}
+
 
 lines(obs_dist_enh$inter[1:50], type="l", col="forestgreen", cex=CEX_lines)
 for (row in 1:nrow(obs_dist[1:50,])){
@@ -59,6 +77,7 @@ for (row in 1:nrow(obs_dist[1:50,])){
 
 axis(1, at=seq(1,51,10), labels=F)
 text(seq(1,51,10),par("usr")[3]-0.02, class_leg, xpd = TRUE, cex=CEX)
+
 
 
 #######  C - Overlap with PhastCons element #######
@@ -78,6 +97,8 @@ for (row in 1:nrow(obs_phastcons_enh[1:50,])){
 axis(1, at=seq(1,51,10), labels=F)
 text(seq(1,51,10),par("usr")[3]-0.03, class_leg, xpd = TRUE, cex=CEX)
 
+
+
 #######  D - Overlap with Repeat element #######
 plot(obs_repeat$inter[1:50], type="l", col="red", cex=CEX_lines,main=paste("Repeat composition", sep=""),
      xlab="", ylab="Repeat proportion", xaxt = "n", ylim=c(0.2,0.5), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
@@ -95,16 +116,18 @@ for (row in 1:nrow(obs_repeat_enh[1:50,])){
 axis(1, at=seq(1,51,10), labels=F)
 text(seq(1,51,10),par("usr")[3]-0.03, class_leg, xpd = TRUE, cex=CEX)
 
+
+
 #######  E - Conservation between mouse and human ~ Number of cell  #######
-plot(obs_nb_cell$stats[3,], type="b", col="red", main=paste(sp_origin, " contacted sequences conservation",sep=""), cex=CEX_lines, ylim=c(0.2,0.4),
-     xlab="", ylab="Ungapped Non-exonic Score", xaxt='n', cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
-for (row in 1:ncol(obs_nb_cell$stats)){segments(x0=row,y0=obs_nb_cell$conf[1,row],x1=row,y1=obs_nb_cell$conf[2,row], col='red')}
-
-points(obs_nb_cell_enh$stats[3,], col="forestgreen", type="b", cex=CEX_lines)
-for (row in 1:ncol(obs_nb_cell_enh$stats)){segments(x0=row,y0=obs_nb_cell_enh$conf[1,row],x1=row,y1=obs_nb_cell_enh$conf[2,row], col='forestgreen')}
-
-axis(1, at=seq(1,7,1), labels=F)
-text(seq(1,7,1), par("usr")[3]-0.01, labels = obs_nb_cell$names, pos = 1, xpd = TRUE, cex=CEX)
+# plot(obs_nb_cell$stats[3,], type="b", col="red", main=paste(sp_origin, " contacted sequences conservation",sep=""), cex=CEX_lines, ylim=c(0.2,0.4),
+#      xlab="", ylab="Ungapped Non-exonic Score", xaxt='n', cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
+# for (row in 1:ncol(obs_nb_cell$stats)){segments(x0=row,y0=obs_nb_cell$conf[1,row],x1=row,y1=obs_nb_cell$conf[2,row], col='red')}
+# 
+# points(obs_nb_cell_enh$stats[3,], col="forestgreen", type="b", cex=CEX_lines)
+# for (row in 1:ncol(obs_nb_cell_enh$stats)){segments(x0=row,y0=obs_nb_cell_enh$conf[1,row],x1=row,y1=obs_nb_cell_enh$conf[2,row], col='forestgreen')}
+# 
+# axis(1, at=seq(1,7,1), labels=F)
+# text(seq(1,7,1), par("usr")[3]-0.01, labels = obs_nb_cell$names, pos = 1, xpd = TRUE, cex=CEX)
 
 dev.off()
 
