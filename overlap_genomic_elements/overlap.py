@@ -117,12 +117,12 @@ for chr in ref_dic.keys():
 
             # Initialization of first possible overlapping interest position
             i = first_i
-            while i < len(int_dic[chr]) and int_dic[chr][i][1] < start:
+            while i < len(int_dic[chr]) and int_dic[chr][i][1] < start - 250:
                 i += 1
             first_i = i
 
             # Adding all overlapping interest position to reference position
-            while i < len(int_dic[chr]) and int_dic[chr][i][0] <= end:
+            while i < len(int_dic[chr]) and int_dic[chr][i][0] <= end + 250:
                 if ref_pos in dic_output.keys():
                     if any(int_dic[chr][i][2] in overlap for overlap in dic_output[ref_pos]):
                         a = 1
@@ -155,9 +155,9 @@ for ref_pos in dic_output.keys():
             overlap_start = int(overlap[0])
             overlap_end = int(overlap[1])
 
-            if overlap_start < int(frag_pos[1]):  # -250:
+            if overlap_start < int(frag_pos[1]):
                 overlap_start = int(frag_pos[1])
-            if overlap_end > int(frag_pos[2]):  # +250:
+            if overlap_end > int(frag_pos[2]):
                 overlap_end = int(frag_pos[2])
 
             length_overlap = overlap_end - overlap_start
