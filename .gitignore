@@ -1,5 +1,8 @@
 */*Rdata
+*/*/*Rdata
+*/*/*RData
+*/*RData
 .idea
 */*Rhistory
 genome_browser/figures
-
+genome_browser/RData
