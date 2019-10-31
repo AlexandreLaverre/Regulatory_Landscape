@@ -26,6 +26,6 @@ for(sp in c("human", "mouse")){
 
 #####################################################################
 
-save(merged.interactions, file="RData/data.merged.interaction.RData")
+save(merged.interactions, file="RData/data.merged.interactions.RData")
 
 #####################################################################
