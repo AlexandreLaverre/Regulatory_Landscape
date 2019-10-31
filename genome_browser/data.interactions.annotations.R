@@ -1,6 +1,6 @@
 #####################################################################
 
-pathAnouk="/beegfs/data/necsulea/RegulatoryLandscapes/"
+pathAnouk="/beegfs/data/necsulea/RegulatoryLandscapes_AN/"
 pathAlex="/beegfs/data/alaverre/Regulatory_landscape/"
 
 pathInteractions=paste(pathAlex, "result/Supplementary_dataset1_original_fragments/", sep="")
