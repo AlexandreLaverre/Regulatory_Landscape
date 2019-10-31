@@ -90,7 +90,7 @@ pdf(file=paste("figures/", gene, "_",xstart,"_", xend, ".pdf",sep=""), width=8, 
 
 ######################################################################
 
-m=matrix(rep(NA, nbsamples+3), nrow=nbsamples+3)
+m=matrix(rep(NA, nbpanels), nrow=nbpanels)
 
 for(i in 1:panelheight.annotations){
   m[i,]=1
@@ -101,7 +101,7 @@ for(i in (panelheight.annotations+1):(panelheight.annotations+panelheight.enhanc
 }
 
 
-for(i in (panelheight.annotations+paneleheight.enhancers+1):nbpanels){
+for(i in (panelheight.annotations+panelheight.enhancers+1):nbpanels){
   m[i,]=3
 }
 
@@ -119,6 +119,10 @@ plot.annotations.genes(gene.annot, gene.biotypes=c("protein_coding", "lincRNA", 
 ## plot enhancers
 
 plot.enhancers(this.enhancers, chr=this.chr, xlim=c(xstart, xend), col="gray40")
+
+######################################################################
+
+## plot interactions
 
 
 
