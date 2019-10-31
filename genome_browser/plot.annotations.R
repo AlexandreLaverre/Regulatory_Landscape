@@ -23,11 +23,12 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
   print(paste(dim(this.genes)[1], "genes"))
   
   ylim=c(-0.3,0.5)
-  ypos=0
+  ypos.bystrand=c(1,-1)
+  names(ypos.bystrand)=c("+", "-")
   height=0.2
 
   arrowheight=0.25
-  arrowsize=diff(xlim)/30
+  arrowsize=diff(xlim)/50
   
   plot(1, type="n", xlab="", ylab="", xlim=xlim, ylim=ylim, axes=F, xaxs="i", yaxs="i") ## empty plot
   
@@ -39,6 +40,8 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
     this.start=this.genes$start[which(this.genes$id==g)]
     this.end=this.genes$end[which(this.genes$id==g)]
     this.name=this.genes$name[which(this.genes$id==g)]
+
+    ypos=ypos.bystrand[this.strand]
 
     if(this.start<xlim[1]){
       this.start=xlim[1]
@@ -52,13 +55,15 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
 
     if(this.strand=="+"){
       segments(this.start, ypos+height/2, this.start, ypos+height/2+arrowheight)
-      arrows(this.start, ypos+height/2+arrowheight, this.start+arrowsize, ypos+height/2+arrowheight, col="gray20", length=0.075, xpd=NA, lwd=1.5)
+      arrows(this.start, ypos+height/2+arrowheight, this.start+arrowsize, ypos+height/2+arrowheight, col="gray20", length=0.05, xpd=NA, lwd=1.5)
     } else{
       segments(this.end, ypos+height/2, this.end, ypos+height/2+arrowheight)
-      arrows(this.end, ypos+height/2+arrowheight, this.end-arrowsize, ypos+height/2+arrowheight, col="gray20", length=0.075, xpd=NA, lwd=1.5)
+      arrows(this.end, ypos+height/2+arrowheight, this.end-arrowsize, ypos+height/2+arrowheight, col="gray20", length=0.05, xpd=NA, lwd=1.5)
     }
 
-    text(this.name, x=(this.start+this.end)/2, y=ypos+height*0.75, adj=c(0.5, 0), cex=1.1, font=3)
+    if(g==focus.gene){
+      text(this.name, x=(this.start+this.end)/2, y=ypos+height*0.75, adj=c(0.5, 0), cex=1.1, font=3)
+    }
   }
 
   if(axis){
