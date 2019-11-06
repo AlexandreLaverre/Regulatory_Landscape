@@ -1,10 +1,10 @@
 ######################################################################
 
-define.plot.coordinates<-function(splist, focus.genes, gene.coords, merged.interactions){
+define.plot.coordinates<-function(sp.list, focus.genes, gene.coords, merged.interactions){
   gene.position=list()
   xlim.range=list()
 
-  for(sp in splist){
+  for(sp in sp.list){
     ## first define gene position
     
     this.gene=focus.genes[sp]
@@ -58,7 +58,7 @@ define.plot.coordinates<-function(splist, focus.genes, gene.coords, merged.inter
 
   final.coordinates=list()
 
-  for(sp in splist){
+  for(sp in sp.list){
     this.chr=gene.position[[sp]][["chr"]]
     this.strand=gene.position[[sp]][["strand"]]
     this.tss=gene.position[[sp]][["tss"]]
