@@ -38,7 +38,7 @@ if(process==TRUE){
   this.chr=gene.annot$chr[which(gene.annot$id==gene)]
 
   exon.annot=exon.coords[[sp]]
-  
+   
   bait.annot=annot.baits.TSS[[sp]]
   bait.thisgene=bait.annot[which(bait.annot$gene_ID==gene),]
 
@@ -114,6 +114,7 @@ layout(m)
 ## plot annotations
 
 par(mar=c(1.5, 2.1, 0.25, 1.1))
+
 plot.annotations.genes(gene.annot, gene.biotypes=c("protein_coding", "lincRNA", "lncRNA", "processed_transcript"), focus.gene=gene, xlim=c(xstart, xend), axis=T, axisunit="Mb")
 
 ######################################################################
