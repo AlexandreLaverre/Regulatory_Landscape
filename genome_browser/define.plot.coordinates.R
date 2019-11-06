@@ -1,6 +1,6 @@
 ######################################################################
 
-define.plot.coordinates<-function(sp.list, focus.genes, gene.coords, merged.interactions){
+define.plot.coordinates<-function(sp.list, focus.genes, gene.coords, annot.baits.TSS, merged.interactions){
   gene.position=list()
   xlim.range=list()
 
@@ -31,7 +31,7 @@ define.plot.coordinates<-function(sp.list, focus.genes, gene.coords, merged.inte
 
     ## bait position
 
-    this.bait.annot=annots.baits.TSS[[sp]]
+    this.bait.annot=annot.baits.TSS[[sp]]
     this.bait.id=this.bait.annot[which(this.bait.annot$gene_ID==this.gene), "bait_ID"]
 
     ## merged interactions
@@ -72,7 +72,7 @@ define.plot.coordinates<-function(sp.list, focus.genes, gene.coords, merged.inte
       this.end=this.tss-max.size3 
     }
 
-    final.coordinates[[sp]]=("chr"=this.chr, "strand"=this.strand, "tss"=this.tss, "start"=this.start, "end"=this.end)
+    final.coordinates[[sp]]=list("chr"=this.chr, "strand"=this.strand, "tss"=this.tss, "start"=this.start, "end"=this.end)
   }
 
   return(final.coordinates)

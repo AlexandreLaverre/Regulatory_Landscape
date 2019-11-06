@@ -29,7 +29,7 @@ if(process==TRUE){
   genes=c("ENSG00000164690", "ENSMUSG00000002633")
   names(genes)=c("human", "mouse")
 
-  plot.coords=define.plot.coordinates(sp.list=c("human", "mouse"), focus.genes=genes, gene.coords=gene.coords, merged.interactions=merged.interactions)
+  plot.coords=define.plot.coordinates(sp.list=c("human", "mouse"), focus.genes=genes, gene.coords=gene.coords, annot.baits.TSS=annot.baits.TSS, merged.interactions=merged.interactions)
 
 
   print(plot.coords)
