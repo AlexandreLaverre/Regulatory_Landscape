@@ -5,6 +5,10 @@ objects=ls()
 if(!("load"%in%objects)){
   load=TRUE
   process=TRUE
+  
+  source("plot.annotations.R")
+  source("plot.enhancers.R")
+  source("plot.interactions.R")
 }
 
 ######################################################################
@@ -18,11 +22,6 @@ if(load==TRUE){
 
   load=FALSE
 }
-
-source("plot.annotations.R")
-source("plot.enhancers.R")
-source("plot.interactions.R")
-
 ######################################################################
 
 if(process==TRUE){
@@ -115,7 +114,7 @@ layout(m)
 
 par(mar=c(1.5, 2.1, 0.25, 1.1))
 
-plot.annotations.genes(gene.annot, gene.biotypes=c("protein_coding", "lincRNA", "lncRNA", "processed_transcript"), focus.gene=gene, xlim=c(xstart, xend), axis=T, axisunit="Mb")
+plot.annotations.genes(gene.annot, gene.biotypes=c("protein_coding"), focus.gene=gene, xlim=c(xstart, xend), axis=T, axisunit="Mb")
 
 ######################################################################
 

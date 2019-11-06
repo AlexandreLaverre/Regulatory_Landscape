@@ -4,7 +4,7 @@ plot.interactions<-function(interactions, xlim, focus.bait, col.contact="indianr
 
   ylim=c(-1, 1)
 
-  plot(1,type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim)
+  plot(1,type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
   height=0.5
   ypos=0
