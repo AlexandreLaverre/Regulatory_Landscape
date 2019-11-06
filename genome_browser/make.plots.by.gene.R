@@ -121,7 +121,7 @@ plot.annotations.genes(gene.annot, gene.biotypes=c("protein_coding"), focus.gene
 ## plot enhancers
 
 par(mar=c(0.5, 2.1, 0.5, 1.1))
-plot.enhancers(this.enhancers, chr=this.chr, xlim=c(xstart, xend), col="gray40")
+plot.enhancers(this.enhancers, chr=this.chr, xlim=c(xstart, xend), col="gray40", separate=FALSE)
 
 ######################################################################
 
@@ -130,7 +130,6 @@ plot.enhancers(this.enhancers, chr=this.chr, xlim=c(xstart, xend), col="gray40")
 par(mar=c(0.5, 2.1, 0.5, 1.1))
 plot.interactions(this.merged.int, xlim=c(xstart, xend), focus.bait=bait.thisgene$baitID, col.contact="navy", col.otherbait="red")
               
-
 ######################################################################
 
 ## for(sample in samples){

@@ -1,13 +1,22 @@
 #####################################################################
 
-plot.enhancers<-function(enhancer.coords, chr, xlim, col="gray40"){
+plot.enhancers<-function(enhancer.coords, chr, xlim, col="gray40", separate=T){
   nbsamples=length(enhancer.coords)
-  ylim=c(0.5, nbsamples+0.5)
 
-  ypos=1:nbsamples
-  names(ypos)=names(enhancer.coords)
+  if(separate){
+    ylim=c(0.5, nbsamples+0.5)
+    
+    ypos=1:nbsamples
+    names(ypos)=names(enhancer.coords)
+    
+    height=0.2
+  } else{
+    ylim=c(0.5,1.5)
+    height=0.1
+    ypos=rep(1, nbsamples)
+    names(ypos)=names(enhancer.coords)
+  }
 
-  height=0.2
   
   plot(1, type="n", xlab="", axes=F, yaxs="i", xaxs="i", ylab="", xlim=xlim, ylim=ylim)
          
