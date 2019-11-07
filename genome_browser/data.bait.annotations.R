@@ -7,24 +7,26 @@ pathInteractions=paste(pathAlex, "result/Supplementary_dataset1_original_fragmen
 
 #####################################################################
 
-annot.baits.TSS=list()
+bait.overlapTSS=list()
 
 for(sp in c("human", "mouse")){ 
-  bait.coords=read.table(paste(pathInteractions, sp, "/bait_coord.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-  bait.coords$fragment_ID=paste(bait.coords$chr, bait.coords$start, bait.coords$end, sep=",")
-    
-  frag.overlapTSS=read.table(paste(pathInteractions, sp, "/fragments_overlap_TSS.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-  frag.overlapTSS$fragment_ID=paste(frag.overlapTSS$chr, frag.overlapTSS$start, frag.overlapTSS$end, sep=",")
-  bait.overlapTSS=frag.overlapTSS[which(frag.overlapTSS$fragment_ID%in%bait.coords$fragment_ID),]
+ 
+  ovtss=read.table(paste(pathInteractions, sp, "/bait_overlap_TSS_1kb.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+
+  ovtss$chr=unlist(lapply(ovtss$chr, function(x) substr(x, 4, nchar(x))))
+  ovtss$ID=paste(ovtss$chr, ovtss$start, ovtss$end, sep=",")
   
-  bait.overlapTSS=bait.overlapTSS[which(!is.na(bait.overlapTSS$gene_ID)),]
-  bait.overlapTSS$nbgenes=unlist(lapply(bait.overlapTSS$gene_ID, function(x) length(unlist(strsplit(x, split=",")))))
+  ovtss=ovtss[which(!is.na(ovtss$gene_ID)),]
+  
+  ovtss$nbgenes=unlist(lapply(ovtss$gene_ID, function(x) length(unlist(strsplit(x, split=",")))))
   
 
-  all.bait.ids=rep(bait.overlapTSS$fragment_ID, bait.overlapTSS$nbgenes)
-  all.gene.ids=unlist(lapply(bait.overlapTSS$gene_ID, function(x) unlist(strsplit(x, split=","))))
+  all.bait.ids=rep(ovtss$fragment_ID, ovtss$nbgenes)
+  all.gene.ids=unlist(lapply(ovtss$gene_ID, function(x) unlist(strsplit(x, split=","))))
 
-  annot.baits.TSS[[sp]]=data.frame("gene_ID"=all.gene.ids, "bait_ID"=all.bait.ids, stringsAsFactors=F)
+  stop()
+
+  bait.overlapTSS[[sp]]=data.frame("gene_ID"=all.gene.ids, "bait_ID"=all.bait.ids, stringsAsFactors=F)
 
 }
 
