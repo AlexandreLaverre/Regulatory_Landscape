@@ -59,6 +59,7 @@ define.plot.coordinates<-function(sp.list, focus.genes, gene.coords, annot.baits
   final.coordinates=list()
 
   for(sp in sp.list){
+    this.gene=focus.genes[sp]
     this.chr=gene.position[[sp]][["chr"]]
     this.strand=gene.position[[sp]][["strand"]]
     this.tss=gene.position[[sp]][["tss"]]
