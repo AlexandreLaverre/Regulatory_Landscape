@@ -72,7 +72,10 @@ define.plot.coordinates<-function(sp.list, focus.genes, gene.coords, annot.baits
       this.end=this.tss-max.size3 
     }
 
-    final.coordinates[[sp]]=list("chr"=this.chr, "strand"=this.strand, "tss"=this.tss, "start"=this.start, "end"=this.end)
+    this.bait.annot=annot.baits.TSS[[sp]]
+    this.bait.id=this.bait.annot[which(this.bait.annot$gene_ID==this.gene), "bait_ID"]
+
+    final.coordinates[[sp]]=list("chr"=this.chr, "strand"=this.strand, "tss"=this.tss, "start"=this.start, "end"=this.end, "baitID"=this.bait.id)
   }
 
   return(final.coordinates)
