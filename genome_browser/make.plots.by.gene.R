@@ -15,7 +15,8 @@ if(!("load"%in%objects)){
 ######################################################################
 
 if(load==TRUE){
-  load("RData/data.annotations.RData")
+  load("RData/data.gene.annotations.RData")
+  load("RData/data.bait.annotatios.RData")
   load("RData/data.interactions.per.sample.RData")
   load("RData/data.merged.interactions.RData")
   load("RData/data.enhancers.RData")
