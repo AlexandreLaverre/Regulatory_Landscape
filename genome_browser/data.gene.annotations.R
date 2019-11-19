@@ -52,7 +52,7 @@ for(sp in c("Human", "Mouse")){
 
 #####################################################################
 
-save(list=c("gene.coords", "exon.coords"), file="RData/data.annotations.RData")
+save(list=c("gene.coords", "exon.coords"), file="RData/data.gene.annotations.RData")
 
 #####################################################################
 
