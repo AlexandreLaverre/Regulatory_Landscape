@@ -9,6 +9,7 @@ if(!("load"%in%objects)){
   source("plot.annotations.R")
   source("plot.enhancers.R")
   source("plot.interactions.R")
+  source("define.plot.coordinates.R")
 }
 
 ######################################################################
@@ -16,7 +17,6 @@ if(!("load"%in%objects)){
 if(load==TRUE){
   load("RData/data.annotations.RData")
   load("RData/data.interactions.per.sample.RData")
-  load("RData/data.interactions.annotations.RData")
   load("RData/data.merged.interactions.RData")
   load("RData/data.enhancers.RData")
 
@@ -26,12 +26,11 @@ if(load==TRUE){
 
 if(process==TRUE){
 
-  ## ## Shh
-  ## genes=c("ENSG00000164690", "ENSMUSG00000002633")
-  ## names(genes)=c("human", "mouse")
-
-  ## Dlx1
-  genes=c("ENSG00000144355", "ENSMUSG00000041911")
+  ## Shh
+  genes=c("ENSG00000164690", "ENSMUSG00000002633")
+  
+  ## ## Dlx1
+  ## genes=c("ENSG00000144355", "ENSMUSG00000041911")
 
   plot.coords=define.plot.coordinates(sp.list=c("human", "mouse"), focus.genes=genes, gene.coords=gene.coords, annot.baits.TSS=annot.baits.TSS, merged.interactions=merged.interactions)
 
