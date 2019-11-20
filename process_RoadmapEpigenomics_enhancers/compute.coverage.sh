@@ -12,8 +12,12 @@ else
     if [ ${cluster} = "in2p3" ]; then
 	export path=/sps/biometr/necsulea/RegulatoryLandscapes
     else
-	echo "unknown cluster"
-	exit
+	if [ ${cluster} = "in2p3_local" ]; then
+	    export path=/sps/biometr/necsulea/RegulatoryLandscapes
+	else
+	    echo "unknown cluster"
+	    exit
+	fi
     fi
 fi
 
@@ -50,6 +54,10 @@ else
 	
 	if [ ${cluster} = "in2p3" ]; then
 	    qsub -q huge -l s_rss=6G,sps=1 -o ${pathScripts}/std_output_coverage_${sample}_${type}.txt -e ${pathScripts}/std_error_coverage_${sample}_${type}.txt ${pathScripts}/bsub_script_coverage
+	fi
+
+	if [ ${cluster} = "in2p3_local" ]; then
+	  perl ${pathScripts}/compute.coverage.pl --pathCoordinates=${pathResults}/${prefix}.bed  --pathCoverage=${pathCoverage}/${sample}.bedGraph.gz --pathOutput=${pathResults}/${prefix}_coverage_${sample}.txt
 	fi
     fi	    
 fi
