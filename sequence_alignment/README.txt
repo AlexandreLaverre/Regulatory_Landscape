@@ -48,9 +48,7 @@ run_pecan.sh ${origin_sp} {target_sp} ${interest_coordinates}
 ##### Extract sequences of interest coordinates 
 # 1 - Download hard masked fasta from Ensembl
 # 2 - Extract sequences of interest genome coordinates
-./extract_frag_seq.py ${specie} ${specie} ${interest_coordinates} 
-
-# Split it by chromosome to parralelize : output = ${interest_coordinates}_masked_${chr}.fa
+./extract_rm_seq_dupli.py ${specie}
 
 # Run BLAT
 ./run_blat.sh ${specie} 	# Identity treshold used = 95% 

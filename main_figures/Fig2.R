@@ -1,6 +1,6 @@
-setwd("/home/laverre/Documents/Regulatory_Landscape/public_scripts/main_figures/")
+setwd("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/")
 
-load("Fig2_cell.Rdata")
+load("Fig2.Rdata")
 
 CEX = 1.2
 LWD = 1.2

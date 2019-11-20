@@ -7,17 +7,14 @@ import numpy as np
 from Bio import SeqIO
 import collections
 
-# sys.argv[1] from : ls 'data/"+sp1+"/genome/"+sp1+"_restriction_fragments_mask/'
-
 sp = sys.argv[1]
 treshold = sys.argv[2]  # ex : 0.8
-path = "/home/laverre/Documents/Regulatory_Landscape/"
-path_result = path + "result/BLAT_duplication/"
-path_data = path + "data/"+sp+"/genome/restriction_fragments_mask/"
+file = sys.argv[3]  # from ls : path + sp + "_restriction_fragments_mask/
 
-seq_file = path_data + sys.argv[3]
-BLAT_file = path_result + "BLAT_output/output_psl/" + sys.argv[3] + "_output.psl"
-output_file = path_result + sys.argv[3] + "_blat_summary_seuil" + treshold +".txt"
+path = "/beegfs/data/alaverre/Regulatory_landscape/test/result/"+sp+"2other/duplication_rate/"
+output_file = path + file + "_blat_summary_treshold_" + treshold + ".txt"
+seq_file = path + sp + "_restriction_fragments_mask/" + file
+BLAT_file = path + "output.psl/" + file + "_output.psl"
 
 # Counting N in frag
 seq_dict = SeqIO.to_dict(SeqIO.parse(seq_file, "fasta"))
@@ -27,7 +24,6 @@ for frag in seq_dict.keys():
     nb_N = sequence.seq.count("N")
     frag = frag.strip(':+')
     N_dict[frag] = nb_N
-
 
 # Looking for available BLAT match
 dic_match = collections.defaultdict(dict)
@@ -40,13 +36,14 @@ with open(BLAT_file) as f1:
 
         length = int(i[10])
         length_without_N = length - N_dict[frag]
-        dic_no_N[frag] = (str(length), str(length_without_N))   # str(np.around((N_dict[frag]/length)*100, decimals=2))
+        dic_no_N[frag] = (
+        str(length), str(length_without_N))  # str(np.around((N_dict[frag]/length)*100, decimals=2))
         match_part = int(i[0])  # np.around((int(i[0])/length_without_N)*100, decimals=2)
 
-        match_ID = ('chr'+str(i[13])+':'+str(i[15])+':'+str(i[16]))
+        match_ID = (str(i[13]) + ':' + str(i[15]) + ':' + str(i[16]))
         match_chr = str(i[13])
 
-        if match_part/length_without_N > float(treshold):
+        if match_part / length_without_N > float(treshold):
             if frag not in dic_match.keys():
                 dic_match[frag] = {}
 
@@ -120,4 +117,4 @@ for frag in new_dic_match.keys():
             output.write(str(i) + ',')
 
 output.close()
-print(sys.argv[1], "done !")
+print(file, " done !")

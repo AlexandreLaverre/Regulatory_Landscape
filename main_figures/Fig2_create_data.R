@@ -1,9 +1,10 @@
-setwd("/home/laverre/Documents/Regulatory_Landscape/public_scripts/main_figures/")
+setwd("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/")
 
-human <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/all_interactions_chr_merged.txt_test_cell", header=T)
+human <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/all_interactions_chr_merged.txt_cell_names", header=T)
+human <- human[,1:12]
 human_simul <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/human/Simulations/simulations_human_10Mb_bin5kb_fragoverbin_chr_merged.txt", header=T)
-#mouse <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/mouse/all_interactions/all_interactions_chr_merged.txt_test_med", header=T)
-#mouse_simul <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/mouse/Simulations/simulations_mouse_10Mb_bin5kb_fragoverbin_chr_merged.txt", header=T)
+mouse <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/mouse/all_interactions/all_interactions_chr_merged.txt_test_med", header=T)
+mouse_simul <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/mouse/Simulations/simulations_mouse_10Mb_bin5kb_fragoverbin_chr_merged.txt", header=T)
 
 human$bait_chr <- factor(human$bait_chr, levels=levels(human$chr))
 human$cis <- ifelse(human$bait_chr == human$chr, "TRUE", "FALSE")

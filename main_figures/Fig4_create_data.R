@@ -1,7 +1,7 @@
 setwd("/home/laverre/Documents/Regulatory_Landscape/result/conservation/Sequence_conservation/")
 
 Align_score <- function(sp_origin, sp_target, data){
-  dataframe <- read.table(paste("PIR_cons_all_overlap_PECAN_", sp_origin,"2",sp_target,data,"_merged.txt", sep=""), header=T)
+  dataframe <- read.table(paste(sp_origin, "/contacted_sequences/PIR_cons_all_overlap_PECAN_", sp_origin,"2",sp_target,data,"_merged.txt_onlyconserv", sep=""), header=T)
   
   dataframe$Allexon_ungapped <- dataframe$exclude_ungapped/dataframe$all_exclude
   dataframe[which(dataframe$Allexon_ungapped == "NaN"),]$Allexon_ungapped <- 0
@@ -10,173 +10,199 @@ Align_score <- function(sp_origin, sp_target, data){
 }
 
 sp_origin = "mouse"
-species <- c("opossum", "rat", "human", "rabbit", "dog", "elephant", "cow", "macaque")
+species <- c("chicken", "opossum", "rat", "human", "rabbit", "dog", "elephant", "cow", "macaque")
 
 ####### A - Dataframe : sequence conservation target to other species ####### 
 # Observed
-origin_conserv_seq <- read.table(paste("PIR_cons_all_overlap_PECAN_", sp_origin,"2chicken_merged.txt", sep=""), header=T)
+origin_conserv_seq <- read.table(paste("contacted_sequence_composition_", sp_origin,"_merged.txt", sep=""), header=T)
 origin_conserv_seq$length <- origin_conserv_seq$end - origin_conserv_seq$start
-origin_conserv_seq$chicken<- origin_conserv_seq$exclude_ungapped/origin_conserv_seq$all_exclude
-origin_conserv_seq[which(origin_conserv_seq$chicken == "NaN"),]$chicken <- 0
-origin_conserv_seq <- origin_conserv_seq[,-(10:15)]
 for (sp_target in species){origin_conserv_seq[[sp_target]] <- Align_score(sp_origin, sp_target, "")}
 
 # Uniq cell type
-conserv <- origin_conserv_seq[,18:26]
-o <- order(apply(conserv, 2, mean), decreasing = T)
-obs_conserv <- data.frame(score = apply(conserv[,o], 2, mean))
-obs_conserv$int_start <- apply(conserv[,o], 2, function(x) t.test(x)[["conf.int"]][1])
-obs_conserv$int_end <- apply(conserv[,o], 2, function(x) t.test(x)[["conf.int"]][2]) 
+conserv <- origin_conserv_seq[,species]
+o <- order(apply(conserv, 2, median), decreasing = T)
+# median
+# obs_conserv <- data.frame(score = apply(conserv[,o], 2, median))
+# obs_conserv$int_start <- apply(conserv[,o], 2, function(x) boxplot.stats(x)[["conf"]][1])
+# obs_conserv$int_end <- apply(conserv[,o], 2, function(x) boxplot.stats(x)[["conf"]][2]) 
+# median 
+obs_conserv <- data.frame(score = apply(conserv[,o], 2, median))
+obs_conserv$int_start <- apply(conserv[,o], 2, function(x) boxplot.stats(x)[["conf"]][1])
+obs_conserv$int_end <- apply(conserv[,o], 2, function(x) boxplot.stats(x)[["conf"]][2])
 
-#obs_conserv <- boxplot(conserv[,o], plot=F)
 
 # Observed with enhancers
-conserv_enh <- origin_conserv_seq[which(origin_conserv_seq$CAGE_count >1),18:26]
-obs_conserv_enh <- data.frame(score = apply(conserv_enh[,o], 2, mean))
-obs_conserv_enh$int_start <- apply(conserv_enh[,o], 2, function(x) t.test(x)[["conf.int"]][1])
-obs_conserv_enh$int_end <- apply(conserv_enh[,o], 2, function(x) t.test(x)[["conf.int"]][2]) 
+conserv_enh <- origin_conserv_seq[which(origin_conserv_seq$CAGE_count >1),species]
+# median
+# obs_conserv_enh <- data.frame(score = apply(conserv_enh[,o], 2, median))
+# obs_conserv_enh$int_start <- apply(conserv_enh[,o], 2, function(x) boxplot.stats(x)[["conf"]][1])
+# obs_conserv_enh$int_end <- apply(conserv_enh[,o], 2, function(x) boxplot.stats(x)[["conf"]][2]) 
+# median 
+obs_conserv_enh <- data.frame(score = apply(conserv_enh[,o], 2, median))
+obs_conserv_enh$int_start <- apply(conserv_enh[,o], 2, function(x) boxplot.stats(x)[["conf"]][1])
+obs_conserv_enh$int_end <- apply(conserv_enh[,o], 2, function(x) boxplot.stats(x)[["conf"]][1])
 
 # Simulated
-origin_conserv_seq_simul <- read.table(paste("PIR_cons_all_overlap_PECAN_", sp_origin,"2chicken_simul_merged.txt", sep=""), header=T)
+origin_conserv_seq_simul <- read.table(paste("contacted_sequence_composition_", sp_origin,"_simul_merged.txt", sep=""), header=T)
 origin_conserv_seq_simul$length <- origin_conserv_seq_simul$end - origin_conserv_seq_simul$start
-origin_conserv_seq_simul$chicken<- origin_conserv_seq_simul$exclude_ungapped/origin_conserv_seq_simul$all_exclude
-origin_conserv_seq_simul[which(origin_conserv_seq_simul$chicken == "NaN"),]$chicken <- 0
-origin_conserv_seq_simul <- origin_conserv_seq_simul[,-(10:15)]
 
 for (sp_target in species){origin_conserv_seq_simul[[sp_target]] <- Align_score(sp_origin, sp_target, "_simul")}
 
-conserv_simul <- origin_conserv_seq_simul[,18:26]
-simul_conserv <- data.frame(score = apply(conserv_simul[,o], 2, mean))
-simul_conserv$int_start <- apply(conserv_simul[,o], 2, function(x) t.test(x)[["conf.int"]][1])
-simul_conserv$int_end <- apply(conserv_simul[,o], 2, function(x) t.test(x)[["conf.int"]][2]) 
+conserv_simul <- origin_conserv_seq_simul[,species]
+# median
+# simul_conserv <- data.frame(score = apply(conserv_simul[,o], 2, median))
+# simul_conserv$int_start <- apply(conserv_simul[,o], 2, function(x) boxplot.stats(x)[["conf"]][1])
+# simul_conserv$int_end <- apply(conserv_simul[,o], 2, function(x) boxplot.stats(x)[["conf"]][2])
+# median
+simul_conserv <- data.frame(score = apply(conserv_simul[,o], 2, median))
+simul_conserv$int_start <- apply(conserv_simul[,o], 2, function(x) boxplot.stats(x)[["conf"]][1])
+simul_conserv$int_end <- apply(conserv_simul[,o], 2, function(x) boxplot.stats(x)[["conf"]][2])
 
 
-####### B - Conservation ~ Distance to promoters (mouse/human) #######
+####### B - Conservation ~ Distance to promoters (human/mouse) #######
 sp_target = "human"
 origin_conserv_seq$class <-cut(origin_conserv_seq$midist_obs, breaks=seq(from=25000, to=3000000, by=50000), include.lowest = T)
 origin_conserv_seq_simul$class <-cut(origin_conserv_seq_simul$midist_obs, breaks=seq(from=25000, to=3000000, by=50000), include.lowest = T)
 class_leg <- c("50Kb", "500Kb", "1Mb", "1.5Mb", "2Mb","2.5Mb")
 
 # Observed 
-obs_dist<- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])))
-obs_dist$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][1])
-obs_dist$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][2])
+obs_dist<- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])))
+obs_dist$int_start <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])[["conf"]][1])
+obs_dist$int_end <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x),][[sp_target]])[["conf"]][2])
 
 # Observed 1 cell
-obs_dist_1 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$nb_cell ==  1 & origin_conserv_seq$class == x),][[sp_target]])))
-obs_dist_1$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell ==  1 & origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][1])
-obs_dist_1$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell ==  1 & origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][2])
+obs_dist_1 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$nb_cell ==  1 & origin_conserv_seq$nb_cell <= 3 & origin_conserv_seq$class == x),][[sp_target]])))
+obs_dist_1$int_start <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$nb_cell ==  1 & origin_conserv_seq$nb_cell <= 3 & origin_conserv_seq$class == x),][[sp_target]])[["conf"]][1])
+obs_dist_1$int_end <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$nb_cell ==  1 & origin_conserv_seq$nb_cell <= 3 & origin_conserv_seq$class == x),][[sp_target]])[["conf"]][2])
 
 # 1 - 3 cell
-obs_dist_2 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 1 & origin_conserv_seq$nb_cell <= 3 & origin_conserv_seq$class == x),][[sp_target]])))
-obs_dist_2$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 1 & origin_conserv_seq$nb_cell <= 3 & origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][1])
-obs_dist_2$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 1 & origin_conserv_seq$nb_cell <= 3 & origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][2])
+obs_dist_2 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 3 & origin_conserv_seq$nb_cell <= 10 & origin_conserv_seq$class == x),][[sp_target]])))
+obs_dist_2$int_start <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 3 & origin_conserv_seq$nb_cell <= 10 & origin_conserv_seq$class == x),][[sp_target]])[["conf"]][1])
+obs_dist_2$int_end <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 3 & origin_conserv_seq$nb_cell <= 10 & origin_conserv_seq$class == x),][[sp_target]])[["conf"]][2])
+
+# # 1 - 3 cell
+# obs_dist_3 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 10 & origin_conserv_seq$nb_cell <= 20 & origin_conserv_seq$class == x),][[sp_target]])))
+# obs_dist_3$int_start <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 10 & origin_conserv_seq$nb_cell <= 20 & origin_conserv_seq$class == x),][[sp_target]])[["conf"]][1])
+# obs_dist_3$int_end <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 10 & origin_conserv_seq$nb_cell <= 20 & origin_conserv_seq$class == x),][[sp_target]])[["conf"]][2])
 
 # > 3 cell
-obs_dist_3 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 3 &  origin_conserv_seq$class == x),][[sp_target]])))
-obs_dist_3$int_start <- sapply(levels(origin_conserv_seq$class), function(x) 
-  tryCatch(t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 3 &  origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][1], error=function(e) NA))
-obs_dist_3$int_end <- sapply(levels(origin_conserv_seq$class), function(x) 
-  tryCatch(t.test(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 3 &  origin_conserv_seq$class == x),][[sp_target]])[["conf.int"]][2], error=function(e) NA))
+obs_dist_4 <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 10 &  origin_conserv_seq$class == x),][[sp_target]])))
+obs_dist_4$int_start <- sapply(levels(origin_conserv_seq$class), function(x) 
+  tryCatch(boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 10 &  origin_conserv_seq$class == x),][[sp_target]])[["conf"]][1], error=function(e) NA))
+obs_dist_4$int_end <- sapply(levels(origin_conserv_seq$class), function(x) 
+  tryCatch(boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$nb_cell > 10 &  origin_conserv_seq$class == x),][[sp_target]])[["conf"]][2], error=function(e) NA))
 
 # Observed with enhancers
-obs_dist_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),][[sp_target]])))
-obs_dist_enh$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),][[sp_target]])[["conf.int"]][1])
-obs_dist_enh$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),][[sp_target]])[["conf.int"]][2])
+obs_dist_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),][[sp_target]])))
+obs_dist_enh$int_start <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),][[sp_target]])[["conf"]][1])
+obs_dist_enh$int_end <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),][[sp_target]])[["conf"]][2])
 
 # Simulated
-simul_dist <- data.frame(inter = sapply(levels(origin_conserv_seq_simul$class), function(x) mean(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),][[sp_target]])))
-simul_dist$int_start <- sapply(levels(origin_conserv_seq_simul$class), function(x) t.test(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),][[sp_target]])[["conf.int"]][1])
-simul_dist$int_end <- sapply(levels(origin_conserv_seq_simul$class), function(x) t.test(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),][[sp_target]])[["conf.int"]][2])
+simul_dist <- data.frame(inter = sapply(levels(origin_conserv_seq_simul$class), function(x) median(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),][[sp_target]])))
+simul_dist$int_start <- sapply(levels(origin_conserv_seq_simul$class), function(x) boxplot.stats(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),][[sp_target]])[["conf"]][1])
+simul_dist$int_end <- sapply(levels(origin_conserv_seq_simul$class), function(x) boxplot.stats(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),][[sp_target]])[["conf"]][2])
+
+#######  C - Conservation between human and mouse ~ Number of cell  #######
+obs_nb_cell <- boxplot(origin_conserv_seq$human~origin_conserv_seq$nb_cell, plot=F)
+obs_nb_cell_enh <- boxplot(origin_conserv_seq[which(origin_conserv_seq$CAGE_count >1),]$human~origin_conserv_seq[which(origin_conserv_seq$CAGE_count >1),]$nb_cell, plot=F)
 
 
-#######  C - Overlap with PhastCons element #######
-origin_conserv_seq$phastcons_part <- origin_conserv_seq$phastcons_noexonic250 / origin_conserv_seq$length
-origin_conserv_seq_simul$phastcons_part <- origin_conserv_seq_simul$phastcons_noexonic250 / origin_conserv_seq_simul$length
-
-# Observed
-obs_phastcons <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x),]$phastcons_part)))
-obs_phastcons$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),]$phastcons_part)[["conf.int"]][1])
-obs_phastcons$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),]$phastcons_part)[["conf.int"]][2])
-
-# Observed with enhancers
-obs_phastcons_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$phastcons_part)))
-obs_phastcons_enh$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$phastcons_part)[["conf.int"]][1])
-obs_phastcons_enh$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$phastcons_part)[["conf.int"]][2])
-
-# Simulated
-simul_phastcons <- data.frame(inter = sapply(levels(origin_conserv_seq_simul$class), function(x) mean(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$phastcons_part)))
-simul_phastcons$int_start <- sapply(levels(origin_conserv_seq_simul$class), function(x) t.test(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$phastcons_part)[["conf.int"]][1])
-simul_phastcons$int_end <- sapply(levels(origin_conserv_seq_simul$class), function(x) t.test(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$phastcons_part)[["conf.int"]][2])
 
 #######  D - Overlap with PhastCons element #######
+origin_conserv_seq$phastcons_part <- origin_conserv_seq$phastcons_noexonic250 / (origin_conserv_seq$length-origin_conserv_seq$all_exon250)
+origin_conserv_seq_simul$phastcons_part <- origin_conserv_seq_simul$phastcons_noexonic250 / (origin_conserv_seq_simul$length-origin_conserv_seq_simul$all_exon250)
+
+# Observed
+obs_phastcons <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) 
+  median(na.omit(origin_conserv_seq[which(origin_conserv_seq$class == x),]$phastcons_part))))
+
+obs_phastcons$int_start <- sapply(levels(origin_conserv_seq$class), function(x)
+  boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x),]$phastcons_part, na.action=na.omit)[["conf"]][1])
+
+obs_phastcons$int_end <- sapply(levels(origin_conserv_seq$class), function(x)
+  boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x),]$phastcons_part)[["conf"]][2])
+
+# Observed with enhancers
+obs_phastcons_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x)
+  median(na.omit(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$phastcons_part))))
+
+obs_phastcons_enh$int_start <- sapply(levels(origin_conserv_seq$class), function(x)
+  boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$phastcons_part)[["conf"]][1])
+obs_phastcons_enh$int_end <- sapply(levels(origin_conserv_seq$class), function(x) 
+  boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$phastcons_part)[["conf"]][2])
+
+# Simulated
+simul_phastcons <- data.frame(inter = sapply(levels(origin_conserv_seq_simul$class), function(x) 
+  median(na.omit(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$phastcons_part))))
+simul_phastcons$int_start <- sapply(levels(origin_conserv_seq_simul$class), function(x) boxplot.stats(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$phastcons_part)[["conf"]][1])
+simul_phastcons$int_end <- sapply(levels(origin_conserv_seq_simul$class), function(x) boxplot.stats(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$phastcons_part)[["conf"]][2])
+
+
+#######  E - Overlap with Repeat element #######
 origin_conserv_seq$repeat_part <- origin_conserv_seq$repeat_pb / origin_conserv_seq$length
 origin_conserv_seq_simul$repeat_part <- origin_conserv_seq_simul$repeat_pb / origin_conserv_seq_simul$length
 
 # Observed
-obs_repeat <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x),]$repeat_part)))
-obs_repeat$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),]$repeat_part)[["conf.int"]][1])
-obs_repeat$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),]$repeat_part)[["conf.int"]][2])
+obs_repeat <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$class == x),]$repeat_part)))
+obs_repeat$int_start <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x),]$repeat_part)[["conf"]][1])
+obs_repeat$int_end <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x),]$repeat_part)[["conf"]][2])
 
 # Observed with enhancers
-obs_repeat_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$repeat_part)))
-obs_repeat_enh$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$repeat_part)[["conf.int"]][1])
-obs_repeat_enh$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$repeat_part)[["conf.int"]][2])
+obs_repeat_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$repeat_part)))
+obs_repeat_enh$int_start <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$repeat_part)[["conf"]][1])
+obs_repeat_enh$int_end <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$repeat_part)[["conf"]][2])
 
 # Simulated
-simul_repeat <- data.frame(inter = sapply(levels(origin_conserv_seq_simul$class), function(x) mean(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$repeat_part)))
-simul_repeat$int_start <- sapply(levels(origin_conserv_seq_simul$class), function(x) t.test(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$repeat_part)[["conf.int"]][1])
-simul_repeat$int_end <- sapply(levels(origin_conserv_seq_simul$class), function(x) t.test(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$repeat_part)[["conf.int"]][2])
+simul_repeat <- data.frame(inter = sapply(levels(origin_conserv_seq_simul$class), function(x) median(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$repeat_part)))
+simul_repeat$int_start <- sapply(levels(origin_conserv_seq_simul$class), function(x) boxplot.stats(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$repeat_part)[["conf"]][1])
+simul_repeat$int_end <- sapply(levels(origin_conserv_seq_simul$class), function(x) boxplot.stats(origin_conserv_seq_simul[which(origin_conserv_seq_simul$class == x),]$repeat_part)[["conf"]][2])
 
-
-#######  D - Conservation between mouse and human ~ Number of cell  #######
-obs_nb_cell <- boxplot(origin_conserv_seq$human~origin_conserv_seq$nb_cell, plot=F)
-obs_nb_cell_enh <- boxplot(origin_conserv_seq[which(origin_conserv_seq$CAGE_count >1),]$human~origin_conserv_seq[which(origin_conserv_seq$CAGE_count >1),]$nb_cell, plot=F)
-
-save.image("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/Fig4.Rdata")
+save.image("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/Fig4_mouse_median.Rdata")
 
 
 
 
-
-
-## Nb cell ~ Distance
-
-# Observed
-obs_cell <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x),]$nb_cell)))
-obs_cell$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),]$nb_cell)[["conf.int"]][1])
-obs_cell$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x),]$nb_cell)[["conf.int"]][2])
-
-# Observed with enhancers
-obs_cell_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) mean(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$nb_cell)))
-obs_cell_enh$int_start <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$nb_cell)[["conf.int"]][1])
-obs_cell_enh$int_end <- sapply(levels(origin_conserv_seq$class), function(x) t.test(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$nb_cell)[["conf.int"]][2])
-
-plot(obs_cell$inter[1:50], type="l", col="red",main=paste("Cell ~ Distance", sep=""),
-     xlab="", ylab="Mean nb cell", xaxt = "n", ylim=c(1,4))
-for (row in 1:nrow(obs_cell[1:50,])){
-  segments(x0=row,y0=obs_cell[row,]$int_start,x1=row,y1=obs_cell[row,]$int_end, col='red', lwd=0.3)}
-
-lines(obs_cell_enh$inter[1:50], type="l", col="forestgreen")
-for (row in 1:nrow(obs_cell_enh[1:50,])){
-  segments(x0=row,y0=obs_cell_enh[row,]$int_start,x1=row,y1=obs_cell_enh[row,]$int_end, col='forestgreen', lwd=0.3)}
-
-axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10),par("usr")[3]-0.2, class_leg, xpd = TRUE)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ## Nb cell ~ Distance
+# 
+# # Observed
+# obs_cell <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$class == x),]$nb_cell)))
+# obs_cell$int_start <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x),]$nb_cell)[["conf"]][1])
+# obs_cell$int_end <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x),]$nb_cell)[["conf"]][2])
+# 
+# # Observed with enhancers
+# obs_cell_enh <- data.frame(inter = sapply(levels(origin_conserv_seq$class), function(x) median(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$nb_cell)))
+# obs_cell_enh$int_start <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$nb_cell)[["conf"]][1])
+# obs_cell_enh$int_end <- sapply(levels(origin_conserv_seq$class), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq$class == x & origin_conserv_seq$CAGE_count > 0),]$nb_cell)[["conf"]][2])
+# 
+# plot(obs_cell$inter[1:50], type="l", col="red",main=paste("Cell ~ Distance", sep=""),
+#      xlab="", ylab="median nb cell", xaxt = "n", ylim=c(1,4))
+# for (row in 1:nrow(obs_cell[1:50,])){
+#   segments(x0=row,y0=obs_cell[row,]$int_start,x1=row,y1=obs_cell[row,]$int_end, col='red', lwd=0.3)}
+# 
+# lines(obs_cell_enh$inter[1:50], type="l", col="forestgreen")
+# for (row in 1:nrow(obs_cell_enh[1:50,])){
+#   segments(x0=row,y0=obs_cell_enh[row,]$int_start,x1=row,y1=obs_cell_enh[row,]$int_end, col='forestgreen', lwd=0.3)}
+# 
+# axis(1, at=seq(1,51,10), labels=F)
+# text(seq(1,51,10),par("usr")[3]-0.2, class_leg, xpd = TRUE)
+# 
+# 
+# 
+# ## Conserv / Cell types
+# conserv_cell <- data.frame(inter = sapply(colnames(origin_conserv_seq[,18:31]), function(x) median(origin_conserv_seq[which(origin_conserv_seq[[x]] > 0),]$mouse)))
+# conserv_cell$int_start <- sapply(colnames(origin_conserv_seq[,18:31]), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq[[x]] > 0),]$mouse)[["conf"]][1])
+# conserv_cell$int_end <- sapply(colnames(origin_conserv_seq[,18:31]), function(x) boxplot.stats(origin_conserv_seq[which(origin_conserv_seq[[x]] > 0),]$mouse)[["conf"]][2])
+# 
+# conserv_cell <- conserv_cell[order(conserv_cell$inter),]
+# 
+# plot(conserv_cell$inter, type="p", xaxt="n", ylim=c(0.26, 0.32), xlab="", ylab="median Align Score", main="human Conservation / Sample")
+# for (row in 1:nrow(conserv_cell)){
+#   segments(x0=row,y0=conserv_cell[row,]$int_start,x1=row,y1=conserv_cell[row,]$int_end)}
+# 
+# axis(1, at=seq(1,14,1), labels=F)
+# text(seq(1,14,1),par("usr")[3]-0.008, rownames(conserv_cell), xpd = TRUE, srt=45)
+# 
+# r2 <- data.frame(inter = sapply(colnames(origin_conserv_seq[,18:31]), function(x) summary(lm(origin_conserv_seq[[x]]~origin_conserv_seq$mouse))$r.squared))
+# 
+# 
+# 
