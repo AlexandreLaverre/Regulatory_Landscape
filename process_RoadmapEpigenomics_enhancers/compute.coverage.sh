@@ -52,6 +52,6 @@ else
 	    qsub -q huge -l s_rss=6G,sps=1 -o ${pathScripts}/std_output_coverage_${sample}_${type}.txt -e ${pathScripts}/std_error_coverage_${sample}_${type}.txt ${pathScripts}/bsub_script_coverage
 	fi
     fi	    
-done
+fi
 
 ###################################################################################
