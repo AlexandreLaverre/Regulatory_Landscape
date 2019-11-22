@@ -10,6 +10,8 @@ path_data = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/"
 reference_file = path_data + sys.argv[1]
 interest_file = path_data + sys.argv[2]
 output_file = path_data + sys.argv[3]
+intraoverlap = sys.argv[4]
+counting = "F"
 
 def sorted_dictionary(file):
     dic = {}
@@ -100,8 +102,9 @@ def collapse_intraoverlap(dic):
         return dic
 
 
-name_dic = 'interest'
-int_dic = collapse_intraoverlap(int_dic)
+if intraoverlap == "T":
+    name_dic = 'interest'
+    int_dic = collapse_intraoverlap(int_dic)
 
 print("Interest dictionary ready")
 print("Running overlap... ")
@@ -141,36 +144,37 @@ for chr in ref_dic.keys():
         else:
             dic_output[ref_pos] = [('NA', 'NA', 'NA', 'NA')]
 
-print("Counting base pair...")
-count_bp = {}
-length_pos = {}
-for ref_pos in dic_output.keys():
-    for overlap in dic_output[ref_pos]:
-        frag_pos = ref_pos.split('\t')
-        length_frag = int(frag_pos[2]) - int(frag_pos[1])
-        length_pos[ref_pos] = length_frag
+if counting == "T":
+    print("Counting base pair...")
+    count_bp = {}
+    length_pos = {}
+    for ref_pos in dic_output.keys():
+        for overlap in dic_output[ref_pos]:
+            frag_pos = ref_pos.split('\t')
+            length_frag = int(frag_pos[2]) - int(frag_pos[1])
+            length_pos[ref_pos] = length_frag
 
-        if length_pos[ref_pos] == 0:
-            length_pos[ref_pos] = 1
+            if length_pos[ref_pos] == 0:
+                length_pos[ref_pos] = 1
 
-        if overlap[2] != 'NA':
-            overlap_start = int(overlap[0])
-            overlap_end = int(overlap[1])
+            if overlap[2] != 'NA':
+                overlap_start = int(overlap[0])
+                overlap_end = int(overlap[1])
 
-            if overlap_start < int(frag_pos[1]):
-                overlap_start = int(frag_pos[1])
-            if overlap_end > int(frag_pos[2]):
-                overlap_end = int(frag_pos[2])
+                if overlap_start < int(frag_pos[1]):
+                    overlap_start = int(frag_pos[1])
+                if overlap_end > int(frag_pos[2]):
+                    overlap_end = int(frag_pos[2])
 
-            length_overlap = overlap_end - overlap_start
+                length_overlap = overlap_end - overlap_start
 
-            if ref_pos in count_bp.keys():
-                count_bp[ref_pos] = int(count_bp[ref_pos]) + length_overlap
+                if ref_pos in count_bp.keys():
+                    count_bp[ref_pos] = int(count_bp[ref_pos]) + length_overlap
+                else:
+                    count_bp[ref_pos] = length_overlap
+
             else:
-                count_bp[ref_pos] = length_overlap
-
-        else:
-            count_bp[ref_pos] = 0
+                count_bp[ref_pos] = 0
 
 print("Writting output... ")
 
