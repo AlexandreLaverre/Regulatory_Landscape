@@ -45,7 +45,7 @@ fi
 if [ -e ${pathResults}/${prefix}_coverage_${sample}.txt ]; then
     echo "already done"
 else
-    if [ -e ${pathCoverage}/${sample}.bedGraph.gz ]; then
+    if [ -e ${pathCoverage}/${sample}.fc.bedGraph.gz ]; then
 	
 	echo "#!/bin/bash" >  ${pathScripts}/bsub_script_coverage
 
@@ -59,7 +59,7 @@ else
 	      echo "#SBATCH --mem=25G" >>  ${pathScripts}/bsub_script_coverage ## 25g per CPU
 	  fi
 	  
-	  echo "perl ${pathScripts}/compute.coverage.pl --pathCoordinates=${pathResults}/${prefix}.bed  --pathCoverage=${pathCoverage}/${sample}.bedGraph.gz --pathOutput=${pathResults}/${prefix}_coverage_${sample}.txt" >> ${pathScripts}/bsub_script_coverage
+	  echo "perl ${pathScripts}/compute.coverage.pl --pathCoordinates=${pathResults}/${prefix}.bed  --pathCoverage=${pathCoverage}/${sample}.fc.bedGraph.gz --pathOutput=${pathResults}/${prefix}_coverage_${sample}.txt" >> ${pathScripts}/bsub_script_coverage
     	  
 	  
 	  if [ ${cluster} = "in2p3" ]; then
@@ -71,7 +71,7 @@ else
 	  fi
 	  
 	  if [ ${cluster} = "in2p3_local" ]; then
-	      perl ${pathScripts}/compute.coverage.pl --pathCoordinates=${pathResults}/${prefix}.bed  --pathCoverage=${pathCoverage}/${sample}.bedGraph.gz --pathOutput=${pathResults}/${prefix}_coverage_${sample}.txt
+	      perl ${pathScripts}/compute.coverage.pl --pathCoordinates=${pathResults}/${prefix}.bed  --pathCoverage=${pathCoverage}/${sample}.fc.bedGraph.gz --pathOutput=${pathResults}/${prefix}_coverage_${sample}.txt
 	  fi
     fi	    
 fi
