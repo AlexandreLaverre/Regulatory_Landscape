@@ -147,6 +147,8 @@ sub readContacts{
 		}
 	    }
 	}
+
+	$line=<$input>;
     }
     
     close($input);
