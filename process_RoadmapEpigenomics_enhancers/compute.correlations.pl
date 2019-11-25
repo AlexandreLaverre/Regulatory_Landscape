@@ -43,7 +43,7 @@ sub readContacts{
 
 	$nbread++;
 
-	if($nbread%100==0){
+	if($nbread%100000==0){
 	    print "Read ".$nbread." contacts.\n";
 	}
     }
