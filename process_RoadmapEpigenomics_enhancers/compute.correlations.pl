@@ -306,6 +306,8 @@ foreach my $prom (keys %contacts){
 	print "sd prom: ".$sd1." sd enh: ".$sd2." cov1 ".$cov1." cov2 ".$cov2." corr ".$corr."\n";
 	
 	print $output $prom."\t".$en."\t".$c."\n";
+
+	exit;
     }
     
     $nbdone++;
