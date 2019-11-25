@@ -22,6 +22,8 @@ sub readContacts{
     
     $line=<$input>;
 
+    my $nbread=0;
+    
     while($line){
 	chomp $line;
 	my @s=split("\t", $line);
@@ -38,6 +40,12 @@ sub readContacts{
 	}
 
 	$line=<$input>;
+
+	$nbread++;
+
+	if($nbread%10000==0){
+	    print "Read ".$nbread." contacts.\n";
+	}
     }
 
     close($input);
@@ -55,6 +63,8 @@ sub readExpressionData{
    
     $line=<$input>;
 
+    my $nbread=0;
+
     while($line){
 	chomp $line;
 	my @s=split("\t", $line);
@@ -70,6 +80,12 @@ sub readExpressionData{
 	}
 	
 	$line=<$input>;
+
+	$nbread++;
+
+	if($nbread%10000==0){
+	    print "Read ".$nbread." lines.\n";
+	}
     }
 
     close($input);
