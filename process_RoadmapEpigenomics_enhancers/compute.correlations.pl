@@ -290,8 +290,8 @@ foreach my $prom (keys %contacts){
 	
 	my $c=computeCorrelation(\@pexp, \@eexp);
 
-	print join("\t", @pexp)."\n";
-	print join("\t", @eexp)."\n";
+	print $prom."\t".join("\t", @pexp)."\n";
+	print $en."\t".join("\t", @eexp)."\n";
 
 	my $sd1=computeSD(\@pexp);
 	my $sd2=computeSD(\@eexp);

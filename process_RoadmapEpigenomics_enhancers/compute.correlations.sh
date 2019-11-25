@@ -16,6 +16,6 @@ perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/promot
 
 ###################################################################################
 
-perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/promoters_enhancers_in_contact_simulated_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/expression_correlations_promoters_enhancers_in_contact_simulated_data.txt
+#perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/promoters_enhancers_in_contact_simulated_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/expression_correlations_promoters_enhancers_in_contact_simulated_data.txt
 
 ###################################################################################
