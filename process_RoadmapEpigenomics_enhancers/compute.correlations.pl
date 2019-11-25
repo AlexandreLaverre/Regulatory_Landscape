@@ -100,10 +100,14 @@ sub computeSD{
     my $n=@{$x};
     my $meanx=(sum @{$x})/$n;
 
+    print "meanx ".$meanx."\n";
+
     my $scem=0;
 
     for(my $i=0; $i<$n; $i++){
 	$scem+=($x->[$i]-$meanx)^2;
+
+	print "scem :".$scem."\n";
     }
 
     my $sd=sqrt($scem/$n);
