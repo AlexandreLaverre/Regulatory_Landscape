@@ -34,6 +34,8 @@ sub readCoverage{
 
 	if(exists $combinedcoverage->{$id}){
 	    $combinedcoverage->{$id}{$sample}=$coverage; 
+	} else{
+	    $combinedcoverage->{$id}={$sample=>$coverage}; 
 	}
 	
 	$line=<$input>;
@@ -133,6 +135,8 @@ if($nbp!=$nbs){
 for(my $i=0; $i<$nbp; $i++){
     my $thispath=$paths[$i];
     my $thissample=$samples[$i];
+
+    print "Reading coverage from ".$thispath." for ".$thissample."\n";
     
     readCoverage($thispath, $thissample, \%coverage);
 }
