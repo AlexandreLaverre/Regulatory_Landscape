@@ -7,6 +7,7 @@ use strict;
 sub readCoordinatesBED{
     my $pathin=$_[0];
     my $coords=$_[1];
+    my $hashcoords=$_[2];
 
     open(my $input, $pathin);
     my $line=<$input>;
@@ -21,6 +22,8 @@ sub readCoordinatesBED{
 	my $start=$s[1]+0;
 	my $end=$s[2]+0;
 	my $id=$s[3];
+
+	$hashcoords->{$id}={"chr"=>$chr, "start"=>$start, "end"=>$end};
 
 	if(exists $unordered{$chr}){
 	    push(@{$unordered{$chr}{"start"}}, $start);
@@ -295,7 +298,7 @@ readContacts($parameters{"pathContacts"}, \%baitcoords, \%contactedcoords, \%con
 
 my $nbbaits=keys %contacts;
 
-print "Found contacts for ".$nbbaits."\n";
+print "Found contacts for ".$nbbaits." baits.\n";
 
 print "Done.\n";
 
@@ -304,7 +307,9 @@ print "Done.\n";
 print "Reading promoter regions...\n";
 
 my %promoters;
-readCoordinatesBED($parameters{"pathPromoters"}, \%promoters);
+my %hashpromoters;
+
+readCoordinatesBED($parameters{"pathPromoters"}, \%promoters, \%hashpromoters);
 
 print "Done.\n";
     
@@ -313,7 +318,9 @@ print "Done.\n";
 print "Reading enhancer regions...\n";
 
 my %enhancers;
-readCoordinatesBED($parameters{"pathEnhancers"}, \%enhancers);
+my %hashenhancers;
+
+readCoordinatesBED($parameters{"pathEnhancers"}, \%enhancers, \%hashenhancers);
 
 print "Done.\n";
     
@@ -351,20 +358,19 @@ print "Writing output...\n";
 
 open(my $output, ">".$parameters{"pathOutput"});
 
-print $output "IDBait\tIDContactedFragment\tIDPromoter\tIDEnhancer\n";
+print $output "IDBait\tIDContactedFragment\tIDPromoter\tChrPromoter\tStartPromoter\tEndPromoter\tIDEnhancer\tChrEnhancer\tStartEnhancer\tEndEnhancer\n";
 
 foreach my $idbait (keys %overlapbaitpromoters){
     foreach my $idfrag (@{$contacts{$idbait}}){
 	if(exists $overlapfragmentenhancers{$idfrag}){
 	    foreach my $idprom (@{$overlapbaitpromoters{$idbait}}){
 		foreach my $idenh (@{$overlapfragmentenhancers{$idfrag}}){
-		    print $output $idbait."\t".$idfrag."\t".$idprom."\t".$idenh."\n";
+		    print $output $idbait."\t".$idfrag."\t".$idprom."\t".$hashpromoters{$idprom}{"chr"}."\t".$hashpromoters{$idprom}{"start"}."\t".$hashpromoters{$idprom}{"end"}."\t".$idenh."\t".$hashenhancers{$idenh}{"chr"}."\t".$hashenhancers{$idenh}{"start"}."\t".$hashenhancers{$idenh}{"end"}."\n";
 		}
 	    }
 	}
     }
-    
-}
+ }
 
 print "Done.\n";
 
