@@ -105,6 +105,10 @@ sub computeSD{
     my $scem=0;
 
     for(my $i=0; $i<$n; $i++){
+	print $x->[$i]."\n";
+	print $x->[$i]-$meanx."\n";
+	print ($x->[$i]-$meanx)^2."\n";
+	
 	$scem+=($x->[$i]-$meanx)^2;
 
 	print "scem :".$scem."\n";
