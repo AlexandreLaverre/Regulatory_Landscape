@@ -43,9 +43,8 @@ sub readContacts{
 
 	$nbread++;
 
-	if($nbread%1000==0){
+	if($nbread%1000000==0){
 	    print "Read ".$nbread." contacts.\n";
-	    last;
 	}
     }
 
@@ -290,26 +289,14 @@ foreach my $prom (keys %contacts){
 	
 	my $c=computeCorrelation(\@pexp, \@eexp);
 
-	print $prom."\t".join("\t", @pexp)."\n";
-	print $en."\t".join("\t", @eexp)."\n";
-
-	my $sd1=computeSD(\@pexp);
-	my $sd2=computeSD(\@eexp);
-	my $cov1=computeCovariance(\@pexp, \@eexp);
-	my $cov2=computeCovariance(\@eexp, \@pexp);
-	my $corr=computeCorrelation(\@eexp, \@pexp);
-
-	print "sd prom: ".$sd1." sd enh: ".$sd2." cov1 ".$cov1." cov2 ".$cov2." corr ".$corr."\n";
-	
 	print $output $prom."\t".$en."\t".$c."\n";
 
-	exit;
     }
     
     $nbdone++;
 
     if($nbdone%100==0){
-	print $nbdone." enhancers done.\n";
+	print $nbdone." promoters done.\n";
     }
 }
 
