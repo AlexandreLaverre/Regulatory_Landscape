@@ -41,6 +41,6 @@ fi
 
 ###################################################################################
 
-perl ${pathScripts}/select.regions.pl --pathCombinedCoverage=${pathResults}/${prefix}_coverage_allsamples.txt --minCoverage=5 --minSamples=5 --pathOutput=${pathResults}/selected_${type}_minFC5_minSamples5_coverage_allsamples.bed
+perl ${pathScripts}/select.regions.pl --pathCombinedCoverage=${pathResults}/${prefix}_coverage_allsamples.txt --minCoverage=5 --minSamples=5 --pathOutput=${pathResults}/selected_${type}.bed
 
 ###################################################################################

@@ -112,7 +112,7 @@ while($line){
     if($nbok>=$minsamples){
 	my $id=$s[0];
 	my @t=split(",", $id);
-	print join("\t", @t)."\t".$id."\n"; ##bed format
+	print $output join("\t", @t)."\t".$id."\n"; ##bed format
 	
 	$nbkept++;
     }
