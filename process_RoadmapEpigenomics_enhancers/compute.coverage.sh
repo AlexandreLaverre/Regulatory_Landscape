@@ -27,17 +27,15 @@ export pathEnhancers=${pathRoadmap}/regulatory_regions/enhancer_regions
 export pathPromoters=${pathRoadmap}/regulatory_regions/promoter_regions
 export pathScripts=${path}/scripts/process_RoadmapEpigenomics_enhancers
 
-if [ ${type} = "enhancers" ]; then
+export prefix=${type}
+
+if [ ${type} = "all_enhancers" ]||[ ${type} = "enhancers_FOCS" ]; then
     export pathResults=${pathEnhancers}
-    export prefix="all_enhancers"
-else
-    if [ ${type} = "promoters" ]; then
-	export pathResults=${pathPromoters}
-	export prefix="all_promoters"
-    else
-	echo "unknown type"
-	exit
-    fi
+fi
+
+
+if [ ${type} = "all_promoters" ]||[ ${type} = "promoters_FOCS" ]; then
+    export pathResults=${pathPromoters}
 fi
 
 ###################################################################################

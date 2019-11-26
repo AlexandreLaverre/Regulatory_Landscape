@@ -37,10 +37,10 @@ do
 
     ## from FOCS paper
     
-    if [ -e  ${pathData}/hg38/regulatory_regions/${type}_regions/${type}.positions.FOCS.bed ]; then
+    if [ -e  ${pathData}/hg38/regulatory_regions/${type}_regions/${type}_FOCS.bed ]; then
 	echo "already done"
     else
-	liftOver ${pathData}/hg19/regulatory_regions/${type}_regions/${type}.positions.FOCS.bed ${pathAlignments}/hg19ToHg38.over.chain.gz ${pathData}/hg38/regulatory_regions/${type}_regions/${type}.positions.FOCS.bed  ${pathData}/hg38/regulatory_regions/${type}_regions/${type}.positions.FOCS.unmapped
+	liftOver ${pathData}/hg19/regulatory_regions/${type}_regions/${type}_FOCS.bed ${pathAlignments}/hg19ToHg38.over.chain.gz ${pathData}/hg38/regulatory_regions/${type}_regions/${type}_FOCS.bed  ${pathData}/hg38/regulatory_regions/${type}_regions/${type}_.FOCS.unmapped
     fi
     
 done
