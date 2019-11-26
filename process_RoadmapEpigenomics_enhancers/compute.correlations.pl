@@ -155,6 +155,55 @@ sub computeCorrelation{
 
 ####################################################################################
 
+sub transformValuesToRanks{
+    my $x=$_[0];
+    my $r=$_[1];
+    
+    my %hashpos;
+
+    foreach my $val (@{$x}){
+	if(exists $hashpos{$val}){
+	    $hashpos{$val}++;
+	} else{
+	    $hashpos{$val}=1; 
+	}
+    }
+
+    my @uniquevals=keys %hashpos;
+    my @sortedvals=sort {$a<=>$b} @uniquevals;
+
+    my %ranks;
+
+    my $currentrank=0;
+    
+    foreach my $val (@sortedvals){
+	my $nb=$hashpos{$val};
+
+	if($nb==1){
+	    my $rank=$currentrank+1;
+	    $ranks{$val}=$rank;
+	    $currentrank++;
+	} else{
+	    my $rankstart=$currentrank+1;
+	    my $rankend=$currentrank+$nb;
+
+	    my @allranks=($rankstart..$rankend);
+	    my $sumrank=sum @allranks;
+	    my $meanrank=($sumrank+0.0)/$nb;
+	    $ranks{$val}=$meanrank;
+
+	    $currentrank=$currentrank+$nb;
+	}
+    }
+
+    for(my $i=0; $i<@{$x}; $i++){
+	push(@{$r}, $ranks{$x->[$i]});
+    }
+
+}
+
+####################################################################################
+
 sub printHelp{
     my $parnames=$_[0];
     my $parvalues=$_[1];
@@ -227,6 +276,16 @@ print "\n";
 ####################################################################################
 ####################################################################################
 
+# my @x=(10, 35, 3, 40, 40, 40, 40, 10, 100, 100);
+# my @r;
+# transformValuesToRanks(\@x, \@r);
+# print join("\t", @r)."\n";
+# exit(1);
+
+####################################################################################
+####################################################################################
+
+
 print "Reading contacts...\n";
 
 my %promoters;
@@ -274,30 +333,54 @@ print "Done.\n";
 
 print "Computing correlations and writing output...\n";
 
+open(my $input, $parameters{"pathContacts"});
 open(my $output, ">".$parameters{"pathOutput"});
 
-print $output "IDPromoter\tIDEnhancer\tPearsonCorrelation\n";
+my $line=<$input>;
+chomp $line;
+my @s=split("\t", $line);
+my %header;
 
+for(my $i=0; $i<@s; $i++){
+    $header{$s[$i]}=$i;
+}
+
+print $output $line."\tPearsonCorrelation\tSpearmanCorrelation\n";
+
+    
 my $nbdone=0;
 
-foreach my $prom (keys %contacts){
+$line=<$input>;
+
+
+while($line){
+    chomp $line;
+    my @s=split("\t", $line);
+    
+    my $prom=$s[$header{"IDPromoter"}];
+    my $en=$s[$header{"IDEnhancer"}];
     
     my @pexp=@{$promoterexp{$prom}};
+    my @pr;
+    transformValuesToRanks(\@pexp, \@pr);
     
-    foreach my $en (keys %{$contacts{$prom}}){
-	my @eexp=@{$enhancerexp{$en}};
-	
-	my $c=computeCorrelation(\@pexp, \@eexp);
-
-	print $output $prom."\t".$en."\t".$c."\n";
-
-    }
+    my @eexp=@{$enhancerexp{$en}};
+    my @er;
+    transformValuesToRanks(\@eexp, \@er);
+    
+    my $c=computeCorrelation(\@pexp, \@eexp);
+    my $r=computeCorrelation(\@pr, \@er);
+    
+    print $output $line."\t".$c."\t".$r."\n";
+    
     
     $nbdone++;
 
-    if($nbdone%100==0){
+    if($nbdone%1000==0){
 	print $nbdone." promoters done.\n";
     }
+
+    $line=<$input>;
 }
 
 close($output);
