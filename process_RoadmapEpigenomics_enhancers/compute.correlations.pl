@@ -377,7 +377,7 @@ while($line){
     $nbdone++;
 
     if($nbdone%1000==0){
-	print $nbdone." promoters done.\n";
+	print $nbdone." contacts done.\n";
     }
 
     $line=<$input>;
