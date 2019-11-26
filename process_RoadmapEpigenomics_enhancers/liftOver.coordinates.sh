@@ -35,6 +35,13 @@ do
 	liftOver ${pathData}/hg19/regulatory_regions/${type}_regions/all_${type}s.bed ${pathAlignments}/hg19ToHg38.over.chain.gz ${pathData}/hg38/regulatory_regions/${type}_regions/all_${type}s.bed ${pathData}/hg38/regulatory_regions/${type}_regions/all_${type}s.unmapped
     fi
 
+    ## from FOCS paper
+    
+    if [ -e  ${pathData}/hg38/regulatory_regions/${type}_regions/${type}.positions.FOCS.bed ]; then
+	echo "already done"
+    else
+	liftOver ${pathData}/hg19/regulatory_regions/${type}_regions/${type}.positions.FOCS.bed ${pathAlignments}/hg19ToHg38.over.chain.gz ${pathData}/hg38/regulatory_regions/${type}_regions/${type}.positions.FOCS.bed  ${pathData}/hg38/regulatory_regions/${type}_regions/${type}.positions.FOCS.unmapped
+    fi
     
 done
 
