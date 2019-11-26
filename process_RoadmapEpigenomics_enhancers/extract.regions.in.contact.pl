@@ -200,9 +200,9 @@ sub overlapCoordinates{
 
 		    if($M<=$m){
 			if(exists $overlap->{$id1}){
-			    push(@{$overlap->{$id1}}, $id2);
+			    $overlap->{$id1}{$id2}=1;
 			} else{
-			    $overlap->{$id1}=[$id2];
+			    $overlap->{$id1}={$id2=>1};
 			}
 		    }
 		    
@@ -358,17 +358,14 @@ print "Writing output...\n";
 
 open(my $output, ">".$parameters{"pathOutput"});
 
-# print $output "IDBait\tIDContactedFragment\tIDPromoter\tChrPromoter\tStartPromoter\tEndPromoter\tIDEnhancer\tChrEnhancer\tStartEnhancer\tEndEnhancer\n";
-
 print $output "IDBait\tIDContactedFragment\tIDPromoter\tIDEnhancer\n";
 
 foreach my $idbait (keys %overlapbaitpromoters){
     foreach my $idfrag (@{$contacts{$idbait}}){
 	if(exists $overlapfragmentenhancers{$idfrag}){
-	    foreach my $idprom (@{$overlapbaitpromoters{$idbait}}){
-		foreach my $idenh (@{$overlapfragmentenhancers{$idfrag}}){
-		    # print $output $idbait."\t".$idfrag."\t".$idprom."\t".$hashpromoters{$idprom}{"chr"}."\t".$hashpromoters{$idprom}{"start"}."\t".$hashpromoters{$idprom}{"end"}."\t".$idenh."\t".$hashenhancers{$idenh}{"chr"}."\t".$hashenhancers{$idenh}{"start"}."\t".$hashenhancers{$idenh}{"end"}."\n";
-
+	    foreach my $idprom (keys %{$overlapbaitpromoters{$idbait}}){
+		foreach my $idenh (keys %{$overlapfragmentenhancers{$idfrag}}){
+		
 		    print $output $idbait."\t".$idfrag."\t".$idprom."\t".$idenh."\n";
 		}
 	    }
