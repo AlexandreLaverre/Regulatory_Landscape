@@ -376,7 +376,7 @@ while($line){
     
     $nbdone++;
 
-    if($nbdone%1000==0){
+    if($nbdone%100000==0){
 	print $nbdone." contacts done.\n";
     }
 
