@@ -1,8 +1,17 @@
 #!/bin/bash
 
+export cluster=$1
+
 #####################################################################
 
-export path=/sps/biometr/necsulea/RegulatoryLandscapes
+if [ ${cluster} = "in2p3" ]; then
+    export path=/sps/biometr/necsulea/RegulatoryLandscapes
+fi
+
+if [ ${cluster} = "pbil" ]; then
+    export path=/beegfs/data/necsulea/RegulatoryLandscapes
+fi
+
 export pathData=${path}/data/RoadmapEpigenomics
 export pathAlignments=${path}/data/liftOver_files
 
