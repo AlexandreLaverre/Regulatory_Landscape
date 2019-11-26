@@ -358,15 +358,26 @@ print "Writing output...\n";
 
 open(my $output, ">".$parameters{"pathOutput"});
 
-print $output "IDBait\tIDContactedFragment\tIDPromoter\tIDEnhancer\n";
+print $output "IDBait\tIDContactedFragment\tDistance\tIDPromoter\tIDEnhancer\n";
 
 foreach my $idbait (keys %overlapbaitpromoters){
+    my @sb=split(",",$idbait);
+    my $startbait=$sb[1]+0;
+    my $endbait=$sb[2]+0;
+    my $midposbait=($startbait+$endbait)/2;
+    
     foreach my $idfrag (@{$contacts{$idbait}}){
 	if(exists $overlapfragmentenhancers{$idfrag}){
+	    my @sf=split(",",$idfrag);
+	    my $startfrag=$sb[1]+0;
+	    my $endfrag=$sb[2]+0;
+	    my $midposfrag=($startfrag+$endfrag)/2;
+
+	    my $dist=abs($midposbait-$midposfrag);
+	    
 	    foreach my $idprom (keys %{$overlapbaitpromoters{$idbait}}){
 		foreach my $idenh (keys %{$overlapfragmentenhancers{$idfrag}}){
-		
-		    print $output $idbait."\t".$idfrag."\t".$idprom."\t".$idenh."\n";
+		    print $output $idbait."\t".$idfrag."\t".$dist."\t".$idprom."\t".$idenh."\n";
 		}
 	    }
 	}
