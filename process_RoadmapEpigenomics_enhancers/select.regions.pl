@@ -87,7 +87,6 @@ open(my $input, $parameters{"pathCombinedCoverage"});
 open(my $output, ">".$parameters{"pathOutput"});
 
 my $line=<$input>; ## header
-print $output $line;
 
 $line=<$input>;
 
@@ -111,7 +110,10 @@ while($line){
     }
 
     if($nbok>=$minsamples){
-	print $output $line."\n";
+	my $id=$s[0];
+	my @t=split(",", $id);
+	print join("\t", @t)."\t".$id."\n"; ##bed format
+	
 	$nbkept++;
     }
 
