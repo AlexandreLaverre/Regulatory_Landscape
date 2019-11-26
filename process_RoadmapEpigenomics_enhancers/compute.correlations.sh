@@ -12,34 +12,43 @@ export pathScripts=${pathAnouk}/scripts/process_RoadmapEpigenomics_enhancers
 
 ###################################################################################
 
-if [ -e ${pathResults}/expression_correlations_promoters_enhancers_in_contact_real_data.txt ]; then
+if [ -e ${pathResults}/all_expression_correlations_promoters_enhancers_in_contact_real_data.txt ]; then
     echo "already done"
 else
-    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/promoters_enhancers_in_contact_real_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/expression_correlations_promoters_enhancers_in_contact_real_data.txt
+    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/all_promoters_enhancers_in_contact_real_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/all_expression_correlations_promoters_enhancers_in_contact_real_data.txt
 fi
 
-if [ -e ${pathResults}/expression_correlations_promoters_enhancers_in_contact_real_data_selected_regions.txt ]; then
+if [ -e ${pathResults}/selected_expression_correlations_promoters_enhancers_in_contact_real_data.txt ]; then
     echo "already done"
 else
-    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/promoters_enhancers_in_contact_real_data_selected_regions.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/expression_correlations_promoters_enhancers_in_contact_real_data_selected_regions.txt
+    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/selected_promoters_enhancers_in_contact_real_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/selected_expression_correlations_promoters_enhancers_in_contact_real_data.txt
 fi
 
+if [ -e ${pathResults}/FOCS_expression_correlations_promoters_enhancers_in_contact_real_data.txt ]; then
+    echo "already done"
+else
+    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/FOCS_promoters_enhancers_in_contact_real_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/promoters_FOCS_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/enhancers_FOCS_coverage_allsamples.txt --pathOutput=${pathResults}/FOCS_expression_correlations_promoters_enhancers_in_contact_real_data.txt
+fi
 
 ###################################################################################
 
-if [ -e ${pathResults}/expression_correlations_promoters_enhancers_in_contact_simulated_data.txt ]; then
+if [ -e ${pathResults}/all_expression_correlations_promoters_enhancers_in_contact_simulated_data.txt ]; then
     echo "already done"
 else
-    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/promoters_enhancers_in_contact_simulated_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/expression_correlations_promoters_enhancers_in_contact_simulated_data.txt
+    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/all_promoters_enhancers_in_contact_simulated_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/all_expression_correlations_promoters_enhancers_in_contact_simulated_data.txt
+fi
+
+if [ -e ${pathResults}/selected_expression_correlations_promoters_enhancers_in_contact_simulated_data.txt ]; then
+    echo "already done"
+else
+    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/selected_promoters_enhancers_in_contact_simulated_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/selected_expression_correlations_promoters_enhancers_in_contact_simulated_data.txt
 fi
 
 
-
-if [ -e ${pathResults}/expression_correlations_promoters_enhancers_in_contact_simulated_data_selected_regions.txt ]; then
+if [ -e ${pathResults}/FOCS_expression_correlations_promoters_enhancers_in_contact_simulated_data.txt ]; then
     echo "already done"
 else
-    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/promoters_enhancers_in_contact_simulated_data_selected_regions.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/all_promoters_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/all_enhancers_coverage_allsamples.txt --pathOutput=${pathResults}/expression_correlations_promoters_enhancers_in_contact_simulated_data_selected_regions.txt
+    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/FOCS_promoters_enhancers_in_contact_simulated_data.txt --pathPromoterExpression=${pathRoadmapHg19}/promoter_regions/promoters_FOCS_coverage_allsamples.txt --pathEnhancerExpression=${pathRoadmapHg19}/enhancer_regions/enhancers_FOCS_coverage_allsamples.txt --pathOutput=${pathResults}/FOCS_expression_correlations_promoters_enhancers_in_contact_simulated_data.txt
 fi
-
 
 ###################################################################################
