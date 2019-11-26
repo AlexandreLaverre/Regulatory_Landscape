@@ -40,7 +40,7 @@ do
     if [ -e  ${pathData}/hg38/regulatory_regions/${type}_regions/${type}s_FOCS.bed ]; then
 	echo "already done"
     else
-	liftOver ${pathData}/hg19/regulatory_regions/${type}_regions/${type}s_FOCS.bed ${pathAlignments}/hg19ToHg38.over.chain.gz ${pathData}/hg38/regulatory_regions/${type}_regions/${type}s_FOCS.bed  ${pathData}/hg38/regulatory_regions/${type}_regions/${type}s_.FOCS.unmapped
+	liftOver ${pathData}/hg19/regulatory_regions/${type}_regions/${type}s_FOCS.bed ${pathAlignments}/hg19ToHg38.over.chain.gz ${pathData}/hg38/regulatory_regions/${type}_regions/${type}s_FOCS.bed  ${pathData}/hg38/regulatory_regions/${type}_regions/${type}s_FOCS.unmapped
     fi
     
 done
