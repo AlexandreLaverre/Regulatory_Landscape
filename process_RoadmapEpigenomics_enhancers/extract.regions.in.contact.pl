@@ -369,8 +369,8 @@ foreach my $idbait (keys %overlapbaitpromoters){
     foreach my $idfrag (@{$contacts{$idbait}}){
 	if(exists $overlapfragmentenhancers{$idfrag}){
 	    my @sf=split(",",$idfrag);
-	    my $startfrag=$sb[1]+0;
-	    my $endfrag=$sb[2]+0;
+	    my $startfrag=$sf[1]+0;
+	    my $endfrag=$sf[2]+0;
 	    my $midposfrag=($startfrag+$endfrag)/2;
 
 	    my $dist=abs($midposbait-$midposfrag);
