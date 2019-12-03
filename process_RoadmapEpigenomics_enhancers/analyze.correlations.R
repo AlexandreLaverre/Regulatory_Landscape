@@ -71,7 +71,7 @@ for(dataset in datasets){
   xpos=1:length(medians.real)
   plot(xpos, medians.real, type="b", col="red", xlim=c(0.5, max(xpos)+0.5), ylim=ylim, pch=20, xlab="", ylab="Spearman's correlation coefficient", axes=F)
   axis(side=2)
-  axis(side=1, at=xpos, labels=rep("", length(xpos))
+  axis(side=1, at=xpos, labels=rep("", length(xpos)))
   mtext("Distance class (50 kb windows)", side=1, line=2, cex=1)
   
   segments(xpos, ci.low.real, xpos, ci.high.real, col="red")
