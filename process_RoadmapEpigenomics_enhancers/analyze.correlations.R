@@ -64,11 +64,14 @@ for(dataset in datasets){
 
   ylim=range(c(ci.low.real, ci.high.real, ci.low.simulated, ci.low.simulated))
 
-  pdf(file=paste("figures/SpearmanCorrelation_VariationWithDistance_",dataset,"_enhancers_promoters.pdf",sep=""), width=8.65, height=4.5)
+  pdf(file=paste("figures/SpearmanCorrelation_VariationWithDistance_",dataset,"_enhancers_promoters.pdf",sep=""), width=8.65, height=5.5)
+
+  par(mar=c(3.1,4.1,2.1,1.1))
   
   xpos=1:length(medians.real)
   plot(xpos, medians.real, type="b", col="red", xlim=c(0.5, max(xpos)+0.5), ylim=ylim, pch=20, xlab="", ylab="Spearman's correlation coefficient")
   mtext("Distance class (50 kb windows)", side=1, line=1, cex=0.8)
+  
   segments(xpos, ci.low.real, xpos, ci.high.real, col="red")
 
   lines(xpos, medians.simulated, type="b", col="blue", pch=20)
