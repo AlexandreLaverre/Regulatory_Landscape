@@ -83,6 +83,17 @@ for(sample in colnames(avgexp.mouse)){
   results[,paste("Mouse_",sample,sep="")]=avgexp.mouse[,sample]
 }
 
+results$Human_MeanRPKM=apply(results[,grep("^Human_", colnames(results))],1, mean)
+results$Mouse_MeanRPKM=apply(results[,grep("^Mouse_", colnames(results))],1, mean)
+
+results$MeanRPKM=(results$Human_MeanRPKM+results$Mouse_MeanRPKM)/2
+
+lm1=lm(results$ExpressionDivergence~log2(results$MeanRPKM+1))
+
+results$ResidualExpressionDivergence=lm1$residuals
+
+######################################################################################
+
 write.table(results, file="../../results/expression_divergence/ExpressionDivergence_CardosoMoreira2019.txt", row.names=F, col.names=T, sep="\t", quote=F)
 
 ######################################################################################
