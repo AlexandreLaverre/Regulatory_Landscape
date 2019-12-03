@@ -48,7 +48,7 @@ for(dataset in datasets){
   dev.off()
 
   pdf(file=paste("figures/SpearmanCorrelation_",dataset,"_enhancers_promoters.pdf",sep=""), width=4.65, height=8.65)
-  boxplot(real$SpearmanCorrelation, simulated$SpearmanCorrelation, notch=T, outline=F, names=c("observed", "simulated"), ylab="Pearson's correlation coefficient")
+  boxplot(real$SpearmanCorrelation, simulated$SpearmanCorrelation, notch=T, outline=F, names=c("observed", "simulated"), ylab="Spearman's correlation coefficient")
   dev.off()
 
 
@@ -67,7 +67,8 @@ for(dataset in datasets){
   pdf(file=paste("figures/SpearmanCorrelation_VariationWithDistance_",dataset,"_enhancers_promoters.pdf",sep=""), width=8.65, height=4.5)
   
   xpos=1:length(medians.real)
-  plot(xpos, medians.real, type="b", col="red", xlim=c(0.5, max(xpos)+0.5), ylim=ylim, pch=20)
+  plot(xpos, medians.real, type="b", col="red", xlim=c(0.5, max(xpos)+0.5), ylim=ylim, pch=20, xlab="", ylab="Spearman's correlation coefficient")
+  mtext("Distance class (50 kb windows)", side=1, line=1, cex=0.8)
   segments(xpos, ci.low.real, xpos, ci.high.real, col="red")
 
   lines(xpos, medians.simulated, type="b", col="blue", pch=20)
