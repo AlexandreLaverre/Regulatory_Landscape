@@ -78,6 +78,16 @@ human_simul$dist_class <- cut(human_simul$dist, breaks=seq(from=25000, to=500000
 human_enh_dist <- data.frame(matrix(vector(), length(levels(human$dist_class)), 1)) 
 human_enh_dist_simul <- data.frame(matrix(vector(), length(levels(human$dist_class)), 1)) 
 
+human$CAGE_old <- human$CAGE
+human$ENCODE_old <- human$ENCODE
+human$RoadMap_old <- human$RoadMap
+human$GRO_seq_old <- human$GRO_seq
+
+human$CAGE <- human$CAGE_old / human$length
+human$ENCODE <- human$ENCODE_old / human$length
+human$RoadMap <- human$RoadMap_old / human$length
+human$GRO_seq <- human$GRO_seq_old / human$length
+
 for (enhancer in enh_dataset){
   human_enh_dist[[paste0(enhancer)]] <- sapply(levels(human$dist_class), function(x) (nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$dist_class == x),])/nrow((human[which(human$dist_class == x),]))))
   human_enh_dist[[paste0(enhancer, "_conflow")]] <- sapply(levels(human$dist_class), function(x)  (prop.test(x = nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$dist_class == x),]), n=nrow(human[which(human$dist_class == x),]), p=0.5)$conf.int[1]))
@@ -88,6 +98,17 @@ for (enhancer in enh_dataset){
   human_enh_dist_simul[[paste0(enhancer, "_confup")]] <- sapply(levels(human_simul$dist_class), function(x)  (prop.test(x = nrow(human_simul[which(human_simul[[paste0(enhancer)]] == TRUE & human_simul$dist_class == x),]), n=nrow(human_simul[which(human_simul$dist_class == x),]), p=0.5)$conf.int[2]))
   
 }
+
+# for (enhancer in enh_dataset){
+#   human_enh_dist[[paste0(enhancer)]] <- sapply(levels(human$dist_class), function(x) (nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$dist_class == x),])/nrow((human[which(human$dist_class == x),]))))
+#   human_enh_dist[[paste0(enhancer, "_conflow")]] <- sapply(levels(human$dist_class), function(x)  (prop.test(x = nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$dist_class == x),]), n=nrow(human[which(human$dist_class == x),]), p=0.5)$conf.int[1]))
+#   human_enh_dist[[paste0(enhancer, "_confup")]] <- sapply(levels(human$dist_class), function(x)  (prop.test(x = nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$dist_class == x),]), n=nrow(human[which(human$dist_class == x),]), p=0.5)$conf.int[2]))
+#   
+#   human_enh_dist_simul[[paste0(enhancer)]] <- sapply(levels(human_simul$dist_class), function(x) (nrow(human_simul[which(human_simul[[paste0(enhancer)]] == TRUE & human_simul$dist_class == x),])/nrow((human_simul[which(human_simul$dist_class == x),]))))
+#   human_enh_dist_simul[[paste0(enhancer, "_conflow")]] <- sapply(levels(human_simul$dist_class), function(x)  (prop.test(x = nrow(human_simul[which(human_simul[[paste0(enhancer)]] == TRUE & human_simul$dist_class == x),]), n=nrow(human_simul[which(human_simul$dist_class == x),]), p=0.5)$conf.int[1]))
+#   human_enh_dist_simul[[paste0(enhancer, "_confup")]] <- sapply(levels(human_simul$dist_class), function(x)  (prop.test(x = nrow(human_simul[which(human_simul[[paste0(enhancer)]] == TRUE & human_simul$dist_class == x),]), n=nrow(human_simul[which(human_simul$dist_class == x),]), p=0.5)$conf.int[2]))
+#   
+# }
 
 human_enh_dist <- human_enh_dist[-1]
 rownames(human_enh_dist) <- levels(human$dist_class)

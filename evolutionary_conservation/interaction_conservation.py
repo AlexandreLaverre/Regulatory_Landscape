@@ -7,8 +7,8 @@ import numpy as np
 # Conservation mouse interaction in human:
 origin_sp = "mouse"
 target_sp = "human"
-data = "_simul"  # or "" for observed data
-data_target = "_simul"
+data = ""  # or "" for observed data
+data_target = ""
 
 
 path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"
@@ -83,10 +83,11 @@ with open(path_data+target_sp+input) as f3:
             target_dist = float(i[7])
             stats_target[bait + '-' + PIR] = (target_dist, nb_type, median_strength)
 
-            if bait in target_interaction.keys():
-                target_interaction[bait].append(PIR)
-            else:
-                target_interaction[bait] = [PIR]
+            if 25000 < abs(target_dist) <= 10000000:
+                if bait in target_interaction.keys():
+                    target_interaction[bait].append(PIR)
+                else:
+                    target_interaction[bait] = [PIR]
 
 #print("target", len(target_interaction.keys()))
 print("Interaction in target sp : done !")
@@ -99,6 +100,7 @@ else:
     input = "/all_interactions/all_interactions_chr_merged.txt_cell_names"
 
 conserv_inter = {}
+conserved_pairs = {}
 stats_origin = {}
 bait_length = {}
 PIR_length = {}
@@ -132,37 +134,52 @@ with open(path_data+origin_sp+input) as f3:
             frag_dupli[PIR] = "NA"
 
         stats_origin[bait + '-' + PIR] = (target_dist, nb_type, median_strength)
+
+        trans_interaction = not_in_range = bait_not_conserved = PIR_not_conserved = not_baited = not_interact = interact = 0
+        potential_bait = potential_PIR = 0
+        conserved_pairs[bait + '-' + PIR] = []
         if i[0] == i[3]:
             if 25000 < abs(target_dist) <= 10000000:
                 bait_list.append(bait)
                 if bait in frag_conserv.keys():
                     if PIR in frag_conserv.keys():
                         for target_bait in overlap_target[frag_conserv[bait][0]]:
-                            for target_PIR in overlap_target[frag_conserv[PIR][0]]:
-                                if target_bait in target_interaction.keys():
+                            potential_bait += 1
+                            if target_bait in target_interaction.keys():
+                                for target_PIR in overlap_target[frag_conserv[PIR][0]]:
+                                    potential_PIR += 1
                                     if target_PIR in target_interaction[target_bait]:
-                                        conserv_inter[bait + '-' + PIR] = target_bait + '-' + target_PIR
+                                        interact += 1
+                                        conserved_pairs[bait + '-' + PIR] = (target_bait + '-' + target_PIR)
                                     else:
-                                        if bait + '-' + PIR not in conserv_inter.keys():
-                                            conserv_inter[bait + '-' + PIR] = "conserv_no_interact"
-                                else:
-                                    count[target_bait] = 1
-                                    if bait + '-' + PIR not in conserv_inter.keys():
-                                        conserv_inter[bait + '-' + PIR] = "bait_no_interact"
+                                        not_interact += 1
+                            else:
+                                not_baited += 1
                     else:
-                        if bait + '-' + PIR not in conserv_inter.keys():
-                            conserv_inter[bait + '-' + PIR] = "PIR_not_conserv"
+                        PIR_not_conserved += 1
                 else:
-                    if bait + '-' + PIR not in conserv_inter.keys():
-                        conserv_inter[bait + '-' + PIR] = "bait_not_conserv"
+                    bait_not_conserved += 1
             else:
-                if bait + '-' + PIR not in conserv_inter.keys():
-                    conserv_inter[bait + '-' + PIR] = "interactions_not_in_range"
+                not_in_range += 1
         else:
-            if bait + '-' + PIR not in conserv_inter.keys():
-                conserv_inter[bait + '-' + PIR] = "trans_interactions"
+            trans_interaction += 1
+
+        conserv_inter[bait + '-' + PIR] = (trans_interaction, not_in_range, bait_not_conserved, PIR_not_conserved,
+                                           potential_bait, potential_PIR, not_baited, not_interact, interact)
 
 
+
+output = open(path_result + "/conservation/interaction_conservation/"+origin_sp+data+"_to_"+target_sp+data_target+"_"+str(seuil)+"_merged_all_infos.txt_target_correction", 'w')
+if os.stat(path_result + "/conservation/interaction_conservation/"+origin_sp+data+"_to_"+target_sp+data_target+"_"+str(seuil)+"_merged_all_infos.txt_target_correction").st_size == 0:
+    output.write("origin_interaction\ttrans_interaction\tnot_in_range\tbait_not_conserved\tPIR_not_conserved"
+                 "\tpotential_bait\tpotential_PIR\tnot_baited\tnot_interact\tinteract\tpairs\n")
+
+for inter in conserv_inter.keys():
+    output.write(inter + '\t' + str('\t'.join(str(x) for x in conserv_inter[inter])) + '\t' + str(conserved_pairs[inter]) + '\n')
+
+output.close()
+
+"""
 print("origin", len(set(bait_list)))
 print("nb bait no interact", len(count.keys()))
 
@@ -203,3 +220,4 @@ for inter in conserv_inter.keys():
 
 print("All done ! ")
 output.close()
+"""

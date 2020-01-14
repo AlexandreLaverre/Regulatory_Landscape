@@ -1,6 +1,6 @@
 setwd("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/")
 
-load("Fig4_mouse_mean.Rdata")
+load("Fig4_human_median.Rdata")
 
 
 ### Filtres ###
@@ -16,9 +16,9 @@ origin_conserv_seq_simul <- origin_conserv_seq_simul[which(origin_conserv_seq_si
 origin_conserv_seq <- origin_conserv_seq[which(origin_conserv_seq$baited == "unbaited"),]
 origin_conserv_seq_simul <- origin_conserv_seq_simul[which(origin_conserv_seq_simul$baited == "unbaited"),]
 
-CEX = 1.8
-CEX_lines = 1.3
-png("Fig4_mouse_mean.png", width = 800, height = 800)
+CEX = 1
+CEX_lines = 1
+png("Fig4_mouse_median.png", width = 800, height = 800)
 par(mfrow=c(4,1), mai = c(0.5, 0.7, 0.5, 0.2))
 
 layout(matrix(c(1,1,2,2,3,3,4,5), 4, 2, byrow = TRUE))
@@ -40,11 +40,21 @@ for (row in 1:nrow(simul_conserv)){
 
 legend("topright", fill=c("forestgreen","red","blue"), legend = c("Observed with enh", "Observed", "Simulated"), bty='n', cex=CEX)
 axis(1, at=seq(1,9,1), labels=F)
-text(seq(1,9,1), par("usr")[3]-0.04, labels = row.names(obs_conserv), pos = 1, xpd = TRUE, cex=CEX)
+text(seq(1,9,1), par("usr")[3]-0.04, row.names(obs_conserv), pos = 1, xpd = TRUE, cex=CEX)
 
 
+
+boxplot(origin_conserv_seq_simul$mouse, origin_conserv_seq$mouse, origin_conserv_seq[which(origin_conserv_seq$CAGE_count > 1),]$mouse,
+        notch=T, col=c("dodgerblue2", "firebrick1", "forestgreen"), ylim=c(0,1.1),
+        names=c("Simulated", "Observed", "With enhancers"), ylab="Alignment score")
+
+segments(1, 1.04, 2, 1.04) 
+text("***", x=1.5, y=1.07, cex=1.5)
+segments(2, 1.08, 3, 1.08) 
+text("***",x= 2.5, y=1.1, cex=1.5)
 
 ####### B - Conservation ~ Distance to promoters (mouse/mouse) #######
+
 plot(obs_dist$inter[1:50], type="l", col="red", cex=CEX_lines, main=paste(sp_origin, " to ", sp_target, " conservation", sep=""),
            xlab="", ylab="Ungapped Non-exonic Score", xaxt = "n", ylim=c(0.15,0.4), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
 for (row in 1:nrow(obs_dist[1:50,])){
@@ -90,7 +100,7 @@ text(seq(1,51,10),par("usr")[3]-0.02, class_leg, xpd = TRUE, cex=CEX)
 
 #######  C - Overlap with PhastCons element #######
 plot(obs_phastcons$inter[1:50], type="l", col="red", cex=CEX_lines,main=paste("PhastCons non-exonic composition", sep=""),
-     xlab="", ylab="Phastcons proportion", xaxt = "n", ylim=c(0.0,0.07), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
+     xlab="", ylab="Phastcons proportion", xaxt = "n", ylim=c(0,0.04), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
 for (row in 1:nrow(obs_phastcons[1:50,])){
   segments(x0=row,y0=obs_phastcons[row,]$int_start,x1=row,y1=obs_phastcons[row,]$int_end, col='red', lwd=0.3)}
 
@@ -103,13 +113,15 @@ for (row in 1:nrow(obs_phastcons_enh[1:50,])){
   segments(x0=row,y0=obs_phastcons_enh[row,]$int_start,x1=row,y1=obs_phastcons_enh[row,]$int_end, col='forestgreen', lwd=0.3)}
 
 axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10),par("usr")[3]-0.008, class_leg, xpd = TRUE, cex=CEX)
+text(seq(1,51,10),par("usr")[3]-0.004, class_leg, xpd = TRUE, cex=CEX)
 
 
 
 #######  D - Overlap with Repeat element #######
+CEX_lines = 1
+CEX = 1
 plot(obs_repeat$inter[1:50], type="l", col="red", cex=CEX_lines,main=paste("Repeat composition", sep=""),
-     xlab="", ylab="Repeat proportion", xaxt = "n", ylim=c(0.2,0.52), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
+     xlab="", ylab="Repeat proportion", xaxt = "n", ylim=c(0.35,0.5), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
 for (row in 1:nrow(obs_repeat[1:50,])){
   segments(x0=row,y0=obs_repeat[row,]$int_start,x1=row,y1=obs_repeat[row,]$int_end, col='red', lwd=0.3)}
 
@@ -122,20 +134,20 @@ for (row in 1:nrow(obs_repeat_enh[1:50,])){
   segments(x0=row,y0=obs_repeat_enh[row,]$int_start,x1=row,y1=obs_repeat_enh[row,]$int_end, col='forestgreen', lwd=0.3)}
 
 axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10),par("usr")[3]-0.04, class_leg, xpd = TRUE, cex=CEX)
+text(seq(1,51,10),par("usr")[3]-0.02, class_leg, xpd = TRUE, cex=CEX)
 
 
 
 #######  E - Conservation between mouse and mouse ~ Number of cell  #######
-# plot(obs_nb_cell$stats[3,], type="b", col="red", main=paste(sp_origin, " contacted sequences conservation",sep=""), cex=CEX_lines, ylim=c(0.2,0.4),
-#      xlab="", ylab="Ungapped Non-exonic Score", xaxt='n', cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
-# for (row in 1:ncol(obs_nb_cell$stats)){segments(x0=row,y0=obs_nb_cell$conf[1,row],x1=row,y1=obs_nb_cell$conf[2,row], col='red')}
-# 
-# points(obs_nb_cell_enh$stats[3,], col="forestgreen", type="b", cex=CEX_lines)
-# for (row in 1:ncol(obs_nb_cell_enh$stats)){segments(x0=row,y0=obs_nb_cell_enh$conf[1,row],x1=row,y1=obs_nb_cell_enh$conf[2,row], col='forestgreen')}
-# 
-# axis(1, at=seq(1,7,1), labels=F)
-# text(seq(1,7,1), par("usr")[3]-0.01, labels = obs_nb_cell$names, pos = 1, xpd = TRUE, cex=CEX)
+plot(obs_nb_cell$stats[3,], type="b", col="red", main=paste(sp_origin, " contacted sequences conservation",sep=""), cex=CEX_lines, ylim=c(0.2,0.4),
+    xlab="", ylab="Ungapped Non-exonic Score", xaxt='n', cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
+for (row in 1:ncol(obs_nb_cell$stats)){segments(x0=row,y0=obs_nb_cell$conf[1,row],x1=row,y1=obs_nb_cell$conf[2,row], col='red')}
+
+points(obs_nb_cell_enh$stats[3,], col="forestgreen", type="b", cex=CEX_lines)
+for (row in 1:ncol(obs_nb_cell_enh$stats)){segments(x0=row,y0=obs_nb_cell_enh$conf[1,row],x1=row,y1=obs_nb_cell_enh$conf[2,row], col='forestgreen')}
+
+axis(1, at=seq(1,7,1), labels=F)
+text(seq(1,7,1), par("usr")[3]-0.01, labels = obs_nb_cell$names, pos = 1, xpd = TRUE, cex=CEX)
 
 
 

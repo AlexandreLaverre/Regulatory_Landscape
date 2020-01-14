@@ -5,8 +5,8 @@ species <- c("macaque",  "dog", "cow", "elephant", "rabbit", "rat", "mouse", "op
 
 load(paste("Fig6_", sp_origin,".Rdata", sep=""))
 
-CEX = 2
-CEX_lines = 3
+CEX = 1
+CEX_lines = 1
 png("Fig6_human2.png", width = 800, height = 800)
 par(mfrow=c(3,1), mai = c(0.5, 0.7, 0.5, 0.2))
 
@@ -35,7 +35,7 @@ text(seq(2,36,4), par("usr")[3]-2, labels = species, pos = 1, xpd = TRUE,cex=CEX
 
 ### C - Syntenie conservation (cis) ~~ genomic distance ###
 plot(obs_dist$inter[1:50], type="l", col="red", cex=CEX_lines, main=paste(sp_origin, " to ", sp_target, " conserved syntenie (cis)", sep=""),
-     xlab="", ylab="Ungapped Non-exonic Score", xaxt = "n", ylim=c(70,100), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
+     xlab="", ylab="Conserved synteny (%)", xaxt = "n", ylim=c(55,85), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)
 for (row in 1:nrow(obs_dist[1:50,])){
   segments(x0=row,y0=obs_dist[row,]$int_start,x1=row,y1=obs_dist[row,]$int_end, col='red', lwd=0.3)}
 
@@ -49,7 +49,7 @@ for (row in 1:nrow(obs_dist[1:50,])){
   segments(x0=row,y0=obs_dist_enh[row,]$int_start,x1=row,y1=obs_dist_enh[row,]$int_end, col='forestgreen', lwd=0.3)}
 
 axis(1, at=seq(1,51,10), labels=F)
-text(seq(1,51,10),par("usr")[3]-2, class_leg, xpd = TRUE, cex=CEX)
+text(seq(1,51,10),par("usr")[3]-1.5, class_leg, xpd = TRUE, cex=CEX)
 
 ### D - Syntenie conservation (cis+2MB) ~~ genomic distance ###
 plot(obs_dist_2M$inter, type="l", col="red", cex=CEX_lines, main=paste(sp_origin, " to ", sp_target, " conserved syntenie (cis and <2Mb)", sep=""),
