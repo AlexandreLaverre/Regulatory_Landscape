@@ -1,11 +1,10 @@
-*/*Rdata
-*/*/*Rdata
-*/*/*RData
-*/*RData
+**/*RData
+**/*Rdata
 .idea
-*/*Rhistory
-genome_browser/figures
-genome_browser/RData
+**/*Rhistory
+**/figures
 *.png
 */*.png
 */*/*.png
+**/.DS_Store
+

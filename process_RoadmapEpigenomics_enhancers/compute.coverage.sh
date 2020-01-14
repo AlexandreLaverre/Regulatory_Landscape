@@ -27,17 +27,15 @@ export pathEnhancers=${pathRoadmap}/regulatory_regions/enhancer_regions
 export pathPromoters=${pathRoadmap}/regulatory_regions/promoter_regions
 export pathScripts=${path}/scripts/process_RoadmapEpigenomics_enhancers
 
-if [ ${type} = "enhancers" ]; then
+export prefix=${type}
+
+if [ ${type} = "all_enhancers" ]||[ ${type} = "enhancers_FOCS" ]; then
     export pathResults=${pathEnhancers}
-    export prefix="all_enhancers"
-else
-    if [ ${type} = "promoters" ]; then
-	export pathResults=${pathPromoters}
-	export prefix="all_promoters"
-    else
-	echo "unknown type"
-	exit
-    fi
+fi
+
+
+if [ ${type} = "all_promoters" ]||[ ${type} = "promoters_FOCS" ]; then
+    export pathResults=${pathPromoters}
 fi
 
 ###################################################################################
@@ -45,7 +43,7 @@ fi
 if [ -e ${pathResults}/${prefix}_coverage_${sample}.txt ]; then
     echo "already done"
 else
-    if [ -e ${pathCoverage}/${sample}.bedGraph.gz ]; then
+    if [ -e ${pathCoverage}/${sample}.fc.bedGraph.gz ]; then
 	
 	echo "#!/bin/bash" >  ${pathScripts}/bsub_script_coverage
 
@@ -59,7 +57,7 @@ else
 	      echo "#SBATCH --mem=25G" >>  ${pathScripts}/bsub_script_coverage ## 25g per CPU
 	  fi
 	  
-	  echo "perl ${pathScripts}/compute.coverage.pl --pathCoordinates=${pathResults}/${prefix}.bed  --pathCoverage=${pathCoverage}/${sample}.bedGraph.gz --pathOutput=${pathResults}/${prefix}_coverage_${sample}.txt" >> ${pathScripts}/bsub_script_coverage
+	  echo "perl ${pathScripts}/compute.coverage.pl --pathCoordinates=${pathResults}/${prefix}.bed  --pathCoverage=${pathCoverage}/${sample}.fc.bedGraph.gz --pathOutput=${pathResults}/${prefix}_coverage_${sample}.txt" >> ${pathScripts}/bsub_script_coverage
     	  
 	  
 	  if [ ${cluster} = "in2p3" ]; then
@@ -71,7 +69,7 @@ else
 	  fi
 	  
 	  if [ ${cluster} = "in2p3_local" ]; then
-	      perl ${pathScripts}/compute.coverage.pl --pathCoordinates=${pathResults}/${prefix}.bed  --pathCoverage=${pathCoverage}/${sample}.bedGraph.gz --pathOutput=${pathResults}/${prefix}_coverage_${sample}.txt
+	      perl ${pathScripts}/compute.coverage.pl --pathCoordinates=${pathResults}/${prefix}.bed  --pathCoverage=${pathCoverage}/${sample}.fc.bedGraph.gz --pathOutput=${pathResults}/${prefix}_coverage_${sample}.txt
 	  fi
     fi	    
 fi
