@@ -7,45 +7,61 @@ import numpy as np
 from matplotlib import pyplot as plt
 import os
 
+path = "/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/"
+#path = "/beegfs/data/alaverre/Regulatory_landscape/result/simulations/human_samples/"
+origin = "observed"
+
+if origin == "observed":
+    data = ""
+    extension = ".ibed"
+
+else:
+    data = "simulations_10Mb_bin5kb_fragoverbin_"
+    extension = "_bait_other.txt"
+
 ### Interaction's dictionary
-def dict_inter(data):
+def dict_inter(sample):
     interaction = {}
-    with open("/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/"+data, 'r') as f1:
+    with open(path+data+sample+extension, 'r') as f1:
         for i in f1.readlines()[1:]:
             i = i.split("\t")
-            inter = (i[0] + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[4]) + "\t" + str(i[5]) + "\t" + str(i[6]) + "\t")
-            score = float(i[9].strip("\n"))
-            #if i[0] == i[4]: only cis interactions
+            inter = (i[0] + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5].strip("\n")) + "\t")
+
+            if origin == "observed":
+                score = float(i[7].strip("\n"))
+            else:
+                score = 1
+
             interaction[inter] = score
 
     return interaction
 
-dict1 = dict_inter("Bcell.ibed")
-dict2 = dict_inter("CD34.ibed")
-dict3 = dict_inter("PEK_early.ibed")
-dict4 = dict_inter("PEK_late.ibed")
-dict5 = dict_inter("PEK_undiff.ibed")
-dict6 = dict_inter("pre_adipo.ibed")
-dict7 = dict_inter("cardio.ibed")
-dict8 = dict_inter("hESC.ibed")
-dict9 = dict_inter("hNEC.ibed")
-dict10 = dict_inter("MK.ibed")
-dict11 = dict_inter("EP.ibed")
-dict12 = dict_inter("Mon.ibed")
-dict13 = dict_inter("TCD8.ibed")
-dict14 = dict_inter("Ery.ibed")
-dict15 = dict_inter("Neu.ibed")
-dict16 = dict_inter("FoeT.ibed")
-dict17 = dict_inter("NB.ibed")
-dict18 = dict_inter("TCD4MF.ibed")
-dict19 = dict_inter("TCD4Non.ibed")
-dict20 = dict_inter("TCD4Act.ibed")
-dict21 = dict_inter("Mac0.ibed")
-dict22 = dict_inter("Mac1.ibed")
-dict23 = dict_inter("Mac2.ibed")
-dict24 = dict_inter("NCD4.ibed")
-dict25 = dict_inter("TB.ibed")
-dict26 = dict_inter("NCD8.ibed")
+dict1 = dict_inter("Bcell")
+dict2 = dict_inter("CD34")
+dict3 = dict_inter("PEK_early")
+dict4 = dict_inter("PEK_late")
+dict5 = dict_inter("PEK_undiff")
+dict6 = dict_inter("pre_adipo")
+dict7 = dict_inter("cardio")
+dict8 = dict_inter("hESC")
+dict9 = dict_inter("hNEC")
+dict10 = dict_inter("MK")
+dict11 = dict_inter("EP")
+dict12 = dict_inter("Mon")
+dict13 = dict_inter("TCD8")
+dict14 = dict_inter("Ery")
+dict15 = dict_inter("Neu")
+dict16 = dict_inter("FoeT")
+dict17 = dict_inter("NB")
+dict18 = dict_inter("TCD4MF")
+dict19 = dict_inter("TCD4Non")
+dict20 = dict_inter("TCD4Act")
+dict21 = dict_inter("Mac0")
+dict22 = dict_inter("Mac1")
+dict23 = dict_inter("Mac2")
+dict24 = dict_inter("NCD4")
+dict25 = dict_inter("TB")
+dict26 = dict_inter("NCD8")
 
 
 
@@ -76,9 +92,9 @@ for k, v in chain(dict1.items(), dict2.items(), dict3.items(), dict4.items(), di
 
 
 ### Output
-output = open("/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/all_interactions.txt", 'w')
-if os.stat("/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/all_interactions.txt").st_size == 0:
-    output.write("chr_bait\tstart_bait\tend_bait\tstart\tend\tBcell\tCD34\tPEK_early\tPEK_late\tPEK_undiff\tpre_adipo"
+output = open(path+origin+"_all_interactions.txt", 'w')
+if os.stat(path+origin+"_all_interactions.txt").st_size == 0:
+    output.write("chr_bait\tstart_bait\tend_bait\tchr\tstart\tend\tBcell\tCD34\tPEK_early\tPEK_late\tPEK_undiff\tpre_adipo"
                  "\tcardio\thESC\thNEC\tMK\tEP\tMon\tTCD8\tEry\tNeu\tFoeT\tNB\tTCD4MF\tTCD4Non\tTCD4Act\tMac0\tMac1\t"
                  "Mac2\tNCD4\tTB\tNCD8\n")
 
@@ -92,15 +108,15 @@ output.close()
 
 
 print("Nombre total d'interactions:", len(dict_final.keys()))
-print("Nombre d'interaction unique:", (sum(len(i) == 1 for i in dict_final.values())))
-print("Fréquence moyenne d'interaction :", (sum(len(i) for i in dict_final.values()))/len(dict_final.keys()))
+print("Nombre d'interaction unique:", (sum(i.count("NA") == len(i)-1 for i in dict_final.values())))
+print("Fréquence moyenne d'interaction :", (sum(i.count(1) for i in dict_final.values()))/len(dict_final.keys()))
 
-freq = [len(i) for i in dict_final.values()]
+freq = [i.count(1) for i in dict_final.values()]
 print("Médiane fréquence d'interaction :", np.median(freq))
 
-plt.hist(freq, min(len(set(freq)), 500), (0, 26))
-plt.title('Human frequency')
-plt.xlabel('cells')
-plt.ylabel('Frequency')
-plt.show()
-plt.savefig('/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/human_frequency.png')
+# plt.hist(freq, min(len(set(freq)), 500), (0, 26))
+# plt.title('Human frequency')
+# plt.xlabel('cells')
+# plt.ylabel('Frequency')
+# plt.show()
+# plt.savefig('/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/human_frequency.png')
