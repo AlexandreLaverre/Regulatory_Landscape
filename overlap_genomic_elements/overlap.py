@@ -26,7 +26,7 @@ def sorted_dictionary(file):
             i = i.split("\t")
             chr = 'chr' + str(i[0].strip('chr'))
             if file == reference_file:
-                ID = str(i[0])+':'+str(i[1])+':'+str(i[2])+':'+str(i[5])
+                ID = str(i[0])+':'+str(i[1])+':'+str(i[2])+':'+str(i[5]) # chr:start:end
                 #gene = "pb"
             else:
                 ID = chr + ':' + str(i[1]) + ':' + str(i[2])  # chr:start:end
