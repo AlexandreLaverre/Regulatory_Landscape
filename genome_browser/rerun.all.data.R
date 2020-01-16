@@ -5,6 +5,8 @@ for(file in c("data.gene.annotations.R", "data.bait.annotations.R", "data.intera
 
   rm(list=objects)
 
+  print(file)
+
   source(file)
 }
 
