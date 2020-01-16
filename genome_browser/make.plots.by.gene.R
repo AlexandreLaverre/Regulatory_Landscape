@@ -29,11 +29,13 @@ if(process==TRUE){
 
   ## Shh
   genes=c("ENSG00000164690", "ENSMUSG00000002633")
+  names(genes)=c("human", "mouse")
   
   ## ## Dlx1
   ## genes=c("ENSG00000144355", "ENSMUSG00000041911")
+  names(genes)=c("human", "mouse")
 
-  plot.coords=define.plot.coordinates(sp.list=c("human", "mouse"), focus.genes=genes, gene.coords=gene.coords, annot.baits.TSS=annot.baits.TSS, merged.interactions=merged.interactions)
+  plot.coords=define.plot.coordinates(sp.list=c("human", "mouse"), focus.genes=genes, gene.coords=gene.coords, annot.baits.TSS=bait.overlapTSS, merged.interactions=merged.interactions)
 
 
   print(plot.coords)
@@ -90,6 +92,7 @@ if(process==TRUE){
 }
 
 ######################################################################
+
 
 ## panelheight.enhancers=4
 ## panelheight.annotations=6
