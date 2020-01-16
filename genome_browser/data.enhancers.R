@@ -23,12 +23,27 @@ for(sp in c("human", "mouse")){
       dataset=datasets[i]
       
       print(dataset)
-      
-      this.coords=read.table(paste(pathEnhancers, sp, "/coord_enh/", files[i], sep=""), h=T, stringsAsFactors=F, sep="\t")
-      this.coords$chr=unlist(lapply(this.coords$chr, function(x) substr(x, 4, nchar(x))))
-      this.coords=this.coords[, c("chr", "start", "end")]
-      
-      enhancer.coords[[sp]][[dataset]]=this.coords
+
+      path=paste(pathEnhancers, sp, "/coord_enh/", files[i], sep="")
+
+      if(file.exists(path)){
+        header=readLines(path, n=1)
+        firstcol=unlist(strsplit(header, split="\t"))[1]
+
+        if(firstcol=="chr"){
+          this.coords=read.table(path, h=T, stringsAsFactors=F, sep="\t")
+        } else{
+          this.coords=read.table(path, h=F, stringsAsFactors=F, sep="\t")
+          colnames(this.coords)[1]="chr"
+          colnames(this.coords)[2]="start"
+          colnames(this.coords)[3]="end"
+        }
+        
+        this.coords$chr=unlist(lapply(this.coords$chr, function(x) substr(x, 4, nchar(x))))
+        this.coords=this.coords[, c("chr", "start", "end")]
+        
+        enhancer.coords[[sp]][[dataset]]=this.coords
+      }
     }
   }
 }
