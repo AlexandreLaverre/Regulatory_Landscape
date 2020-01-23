@@ -7,9 +7,9 @@ import glob
 # Conservation mouse interaction in human:
 sp = "mouse"
 data = "_simul"  # or "_simul"
-#path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+sp+"/"
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+sp+"/"
 
-path_data = "/beegfs/data/alaverre/Regulatory_landscape/result/simulations/"+sp+"_samples/"
+#path_data = "/beegfs/data/alaverre/Regulatory_landscape/result/simulations/"+sp+"_samples/"
 
 if data == "_simul":
     data_type = "simulated"
@@ -54,7 +54,6 @@ with open(all_interactions, 'r') as f:
         # Nb cell type
         if sp == "mouse":
             types = [i[6], min(i[7:11]), min(i[11], i[12]), i[13], min(i[14], i[15]), i[16], min(i[17:20])]
-
             nb_type = len([float(x) for x in types if x != "NA"])
 
         elif sp == "human":

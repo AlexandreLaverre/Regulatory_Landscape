@@ -7,9 +7,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 import os
 
-path = "/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/"
+path = "/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/human_samples/"
 #path = "/beegfs/data/alaverre/Regulatory_landscape/result/simulations/human_samples/"
 origin = "observed"
+sp = "human_"
 
 if origin == "observed":
     data = ""
@@ -22,7 +23,7 @@ else:
 ### Interaction's dictionary
 def dict_inter(sample):
     interaction = {}
-    with open(path+data+sample+extension, 'r') as f1:
+    with open(path+data+sp+sample+extension, 'r') as f1:
         for i in f1.readlines()[1:]:
             i = i.split("\t")
             inter = (i[0] + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5].strip("\n")) + "\t")
