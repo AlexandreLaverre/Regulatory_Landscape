@@ -1,0 +1,169 @@
+#! /usr/bin/env python
+
+workdir: "/beegfs/data/alaverre/Regulatory_landscape/test/"
+sp_origin = "human"
+list_sp = ["mouse"]     #["chicken", "opossum", "rat", "mouse", "rabbit", "dog", "elephant", "cow", "macaque"]
+infile = "human_samples_simulations_merged_regions.txt"
+interest_file = "samples_simulations" #"bait"
+nb_part = 10
+
+python_path = "/beegfs/data/soft/anaconda3/bin/python"
+path = "/beegfs/data/alaverre/Regulatory_landscape/test/"
+data_path = path+"data/"+sp_origin+"2other/"
+result_path = path+"result/"+sp_origin+"2other/"
+
+
+# snakemake -j 300 --rerun-incomplete --cluster "sbatch -p normal -N 1 -o /beegfs/data/alaverre/Regulatory_landscape/test/result/human2other/GRO_seq/slurm.out -e /beegfs/data/alaverre/Regulatory_landscape/test/result/human2other/GRO_seq/slurm.err -c {params.threads} --mem={params.mem} -t {params.time}"
+
+localrules : all, liftOver, extract_seq_target, extract_seq_origin, config_file, ID_part, overlap_exons, extract_stats
+
+rule all:
+    input :
+        expand(result_path+sp_origin+"2{sp_target}/pecan_alignments/AlignmentStatistics_Excluding_all_Exons_"+interest_file+".txt_ID_part{ID_part}",
+               ID_part=range(100,(100+nb_part)), sp_target=list_sp)
+
+rule liftOver:
+    message:
+        "LiftOver : Lift coordinate of origin specie to target specie"
+    input:
+        origin_fragments = "data/"+sp_origin+"2other/"+infile,
+        reference = "data/"+sp_origin+"2other/ref/"+sp_origin+"To{sp_target}.over.chain.gz"
+    output:
+        path_data = data_path+sp_origin+"2{sp_target}",
+        path_result = result_path+sp_origin+"2{sp_target}",
+        path_list = result_path+sp_origin+"2{sp_target}/list",
+        path_running = result_path+sp_origin+"2{sp_target}/pecan_alignments/running",
+        path_file =  result_path+sp_origin+"2{sp_target}/pecan_alignments/"+sp_origin+"2{sp_target}_"+interest_file,
+        lifted = data_path+sp_origin+"2{sp_target}/"+sp_origin+"2{sp_target}_"+interest_file+".bed",
+        unmapped = data_path+sp_origin+"2{sp_target}/"+sp_origin+"2{sp_target}_"+interest_file+"_unMapped",
+        done = result_path+sp_origin+"2{sp_target}/log_files/liftOver_"+sp_origin+"_{sp_target}_"+interest_file+"_done.txt"
+    params:
+        match = "0.1",
+    shell:
+        """
+        mkdir -p {output.path_data} {output.path_result} {output.path_list} {output.path_running} {output.path_file}
+        liftOver -minMatch={params.match} {input.origin_fragments} {input.reference} {output.lifted} {output.unmapped}
+        touch {output.done}
+        """
+
+
+rule extract_seq_target:
+    message:
+        "Extract lifted fragments sequences from target soft masked genome"
+    input:
+        liftOver = result_path+sp_origin+"2{sp_target}/log_files/liftOver_"+sp_origin+"_{sp_target}_"+interest_file+"_done.txt"
+    output:
+        done = result_path+sp_origin+"2{sp_target}/log_files/extract_align_"+sp_origin+"_{sp_target}_"+interest_file+"_done.txt"
+    params:
+        sp = lambda wildcards: wildcards.sp_target,
+    shell:
+        """
+        {python_path} script/extract_frag_seq_pbil.py {sp_origin} {params.sp} {interest_file}
+        touch {output.done}
+        """
+
+
+rule extract_seq_origin:
+    message:
+        "Extract lifted fragments sequences from origin soft masked genome"
+    output:
+        done = path+"log_files/extract_align_"+sp_origin+"_"+interest_file+"_done.txt"
+    shell:
+        """
+        {python_path} script/extract_frag_seq_pbil.py {sp_origin} {sp_origin} {interest_file}
+        touch {output.done}
+        """
+
+rule config_file:
+    message:
+        "Make list of pairs ID to align"
+    input:
+        liftOver = result_path+sp_origin+"2{sp_target}/log_files/liftOver_"+sp_origin+"_{sp_target}_"+interest_file+"_done.txt",
+        lifted = data_path+sp_origin+"2{sp_target}/"+sp_origin+"2{sp_target}_"+interest_file+".bed",
+    output:
+        ID_file = result_path+sp_origin+"2{sp_target}/"+sp_origin+"2{sp_target}_"+interest_file+"_ID.bed",
+        done = result_path+sp_origin+"2{sp_target}/log_files/"+interest_file+"_ID_file_done"
+    shell:
+        """
+        cut -f 4 {input.lifted} > ID_origin
+        sed -i 's/$/:+/g' ID_origin
+        cut -f 1,2,3,6 {input.lifted} > ID_target
+        sed -i 's/\t/:/g' ID_target
+        paste ID_origin ID_target > {output.ID_file}
+        sed -i 's/ /\t/g' {output.ID_file}
+        rm ID_origin ID_target 
+        touch {output.done}
+        """
+
+rule ID_part:
+    input:
+        result_path+sp_origin+"2{sp_target}/log_files/"+interest_file+"_ID_file_done",
+        ID_file = result_path+sp_origin+"2{sp_target}/"+sp_origin+"2{sp_target}_"+interest_file+"_ID.bed"
+    output:
+        ID_file_part = result_path+sp_origin+"2{sp_target}/list/"+interest_file+"_ID_part{ID_part}"
+    params:
+        sp = lambda wildcards: wildcards.sp_target,
+    shell:
+        """
+        split -d -n l/{nb_part} {input.ID_file} {result_path}/{sp_origin}2{params.sp}/list/{interest_file}_ID_part1
+        touch {output.ID_file_part}
+        """
+
+rule PECAN:
+    message:
+        "PECAN : align homologous fragments"
+    input:
+        list_ID = result_path+sp_origin+"2{sp_target}/list/"+interest_file+"_ID_part{ID_part}",
+        seq_origin = path+"log_files/extract_align_"+sp_origin+"_"+interest_file+"_done.txt",
+        seq_target = result_path+sp_origin+"2{sp_target}/log_files/extract_align_"+sp_origin+"_{sp_target}_"+interest_file+"_done.txt"
+    output:
+        done = result_path+sp_origin+"2{sp_target}/list/"+interest_file+"_PECAN_done_ID_part{ID_part}"
+    log:
+        err = result_path+sp_origin+"2{sp_target}/pecan_alignments/"+interest_file+"_PECAN_error_part{ID_part}"
+    params:
+        time = "24:00:00", mem = "10G", threads = "1" ,
+        sp = lambda wildcards: wildcards.sp_target
+    shell:
+        """
+        sed -i '1i ID.{sp_origin}\tID.{params.sp}' {input.list_ID}
+        {python_path} script/new_run_pecan.py {input.list_ID} {sp_origin} {params.sp} {interest_file} 2>> {log.err}
+        touch {output.done}
+        """
+
+rule overlap_exons:
+    message:
+        "Overlap converted target's fragments with target exons"
+    input:
+        lifted = data_path+sp_origin+"2{sp_target}/"+sp_origin+"2{sp_target}_"+interest_file+".bed",
+        exons = "data/exons/{sp_target}_all_exons.bed"
+    output:
+        overlap = "data/"+sp_origin+"2other/overlap_frag_exon/"+sp_origin+"2{sp_target}_"+interest_file+"_overlap_all_exons.txt"
+    shell:
+        "{python_path} script/overlap.py {input.lifted} {input.exons} {output.overlap}"
+
+
+rule extract_stats:
+    message:
+        "Extract alignment stats excluding exons positions"
+    input:
+        PECAN = result_path+sp_origin+"2{sp_target}/list/"+interest_file+"_PECAN_done_ID_part{ID_part}",
+        list_ID = result_path+sp_origin+"2{sp_target}/list/"+interest_file+"_ID_part{ID_part}",
+        overlap_origin = "data/"+sp_origin+"2other/overlap_frag_exon/"+sp_origin+"_"+interest_file+"_overlap_all_exons.txt",
+        overlap_target = "data/"+sp_origin+"2other/overlap_frag_exon/"+sp_origin+"2{sp_target}_"+interest_file+"_overlap_all_exons.txt",
+
+    output:
+        extract = result_path+sp_origin+"2{sp_target}/pecan_alignments/AlignmentStatistics_Excluding_all_Exons_"+interest_file+".txt_ID_part{ID_part}"
+    log:
+        err = result_path+sp_origin+"2{sp_target}/pecan_alignments/"+interest_file+"_extract_error_ID_part{ID_part}",
+        out = result_path+sp_origin+"2{sp_target}/pecan_alignments/"+interest_file+"_extract_output_ID_part{ID_part}"
+    params:
+        time = "02:00:00", mem = "1G", threads = "1" ,
+        sp = lambda wildcards: wildcards.sp_target,
+    shell:
+         'perl script/extract.aln.stats.excluding.regions.pl --species1={sp_origin} --species2={params.sp} '
+         '--pathPairs={input.list_ID} '
+         '--pathExcludedRegionsSpecies1={input.overlap_origin} '
+         '--pathExcludedRegionsSpecies2={input.overlap_target} '
+         '--dirAlignments={result_path}{sp_origin}2{params.sp}/pecan_alignments/{sp_origin}2{params.sp}_{interest_file} '
+         '--suffixAlignments=.mfa.gz --format=MFA --minAlignmentLength=10 '
+         '--pathOutput={output.extract} 2>> {log.err} 1>> {log.out}'
