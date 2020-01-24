@@ -1,11 +1,28 @@
 #! /usr/bin/env python
 
+##### PIPELINE TO FIND AND ALIGN HOMOLOGOUS SEQUENCES BETWEEN SPECIES #####
+# Data requirements:
+# input file: data/sp_origin2other/seqs_coord.txt  list of interested coordinates
+# soft masked genomes of interested species at data/genome_sm/sp.dna_sm.toplevel.fa.gz
+# reference aligned genomes from USCS at data/sp2other/ref/sp1TOsp2.over.chain.gz
+# exons coordinates of interested species at data/sp_all_exons.bed
+
+# Scripts requirements:
+# extract_frag_seq.py -> obtain DNA sequence from genomic coordinates
+# overlap.py -> obtain the overlapping coordinates between 2 files (i.e: sequences and exons)
+# pecan.py -> align pairs of homologous sequences
+# extract.aln.stats.excluding.regions.pl -> obtain final alignment statistics
+
+# Software requirements: LiftOver + PECAN + Snakemake
+
+# Execute command : snakemake -j 100 --rerun-incomplete --cluster "sbatch -p normal -N 1 -o /beegfs/data/alaverre/Regulatory_landscape/test/result/human2other/human2mouse/log_files/slurm.out -e /beegfs/data/alaverre/Regulatory_landscape/test/result/human2other/human2mouse/log_files/slurm.err -c {params.threads} --mem={params.mem} -t {params.time}"
+
 workdir: "/beegfs/data/alaverre/Regulatory_landscape/test/"
 sp_origin = "human"
 list_sp = ["mouse"]     #["chicken", "opossum", "rat", "mouse", "rabbit", "dog", "elephant", "cow", "macaque"]
-infile = "human_samples_simulations_merged_regions.txt"
-interest_file = "samples_simulations" #"bait"
-nb_part = 10
+infile = "human_merged_samples_simulated_fragments.txt"
+interest_file = "samples_simulations"
+nb_part = 15
 
 python_path = "/beegfs/data/soft/anaconda3/bin/python"
 path = "/beegfs/data/alaverre/Regulatory_landscape/test/"
@@ -13,18 +30,16 @@ data_path = path+"data/"+sp_origin+"2other/"
 result_path = path+"result/"+sp_origin+"2other/"
 
 
-# snakemake -j 300 --rerun-incomplete --cluster "sbatch -p normal -N 1 -o /beegfs/data/alaverre/Regulatory_landscape/test/result/human2other/GRO_seq/slurm.out -e /beegfs/data/alaverre/Regulatory_landscape/test/result/human2other/GRO_seq/slurm.err -c {params.threads} --mem={params.mem} -t {params.time}"
-
-localrules : all, liftOver, extract_seq_target, extract_seq_origin, config_file, ID_part, overlap_exons, extract_stats
+localrules : all, liftOver, extract_seq_target, extract_seq_origin, config_file, ID_part, overlap_exons
 
 rule all:
     input :
         expand(result_path+sp_origin+"2{sp_target}/pecan_alignments/AlignmentStatistics_Excluding_all_Exons_"+interest_file+".txt_ID_part{ID_part}",
-               ID_part=range(100,(100+nb_part)), sp_target=list_sp)
+               sp_target=list_sp, ID_part=range(100,(100+nb_part)))
 
 rule liftOver:
     message:
-        "LiftOver : Lift coordinate of origin specie to target specie"
+        "LiftOver : Lift genomic coordinates of origin specie to target specie"
     input:
         origin_fragments = "data/"+sp_origin+"2other/"+infile,
         reference = "data/"+sp_origin+"2other/ref/"+sp_origin+"To{sp_target}.over.chain.gz"
@@ -32,7 +47,7 @@ rule liftOver:
         path_data = data_path+sp_origin+"2{sp_target}",
         path_result = result_path+sp_origin+"2{sp_target}",
         path_list = result_path+sp_origin+"2{sp_target}/list",
-        path_running = result_path+sp_origin+"2{sp_target}/pecan_alignments/running",
+        path_running = result_path+sp_origin+"2{sp_target}/pecan_alignments/running_"+interest_file,
         path_file =  result_path+sp_origin+"2{sp_target}/pecan_alignments/"+sp_origin+"2{sp_target}_"+interest_file,
         lifted = data_path+sp_origin+"2{sp_target}/"+sp_origin+"2{sp_target}_"+interest_file+".bed",
         unmapped = data_path+sp_origin+"2{sp_target}/"+sp_origin+"2{sp_target}_"+interest_file+"_unMapped",
@@ -49,7 +64,7 @@ rule liftOver:
 
 rule extract_seq_target:
     message:
-        "Extract lifted fragments sequences from target soft masked genome"
+        "Extract lifted fragments sequences from target specie soft masked genome"
     input:
         liftOver = result_path+sp_origin+"2{sp_target}/log_files/liftOver_"+sp_origin+"_{sp_target}_"+interest_file+"_done.txt"
     output:
@@ -65,7 +80,7 @@ rule extract_seq_target:
 
 rule extract_seq_origin:
     message:
-        "Extract lifted fragments sequences from origin soft masked genome"
+        "Extract lifted fragments sequences from origin specie soft masked genome"
     output:
         done = path+"log_files/extract_align_"+sp_origin+"_"+interest_file+"_done.txt"
     shell:
@@ -96,6 +111,8 @@ rule config_file:
         """
 
 rule ID_part:
+    message:
+        "Make several lists of pairs to parallelize"
     input:
         result_path+sp_origin+"2{sp_target}/log_files/"+interest_file+"_ID_file_done",
         ID_file = result_path+sp_origin+"2{sp_target}/"+sp_origin+"2{sp_target}_"+interest_file+"_ID.bed"
@@ -117,9 +134,9 @@ rule PECAN:
         seq_origin = path+"log_files/extract_align_"+sp_origin+"_"+interest_file+"_done.txt",
         seq_target = result_path+sp_origin+"2{sp_target}/log_files/extract_align_"+sp_origin+"_{sp_target}_"+interest_file+"_done.txt"
     output:
-        done = result_path+sp_origin+"2{sp_target}/list/"+interest_file+"_PECAN_done_ID_part{ID_part}"
+        done = result_path+sp_origin+"2{sp_target}"+"/list/"+interest_file+"_PECAN_done_ID_part{ID_part}"
     log:
-        err = result_path+sp_origin+"2{sp_target}/pecan_alignments/"+interest_file+"_PECAN_error_part{ID_part}"
+        err = result_path+sp_origin+"2{sp_target}"+"/pecan_alignments/"+interest_file+"_PECAN_error"
     params:
         time = "24:00:00", mem = "10G", threads = "1" ,
         sp = lambda wildcards: wildcards.sp_target
@@ -131,6 +148,17 @@ rule PECAN:
         """
 
 rule overlap_exons:
+    message:
+        "Overlap converted target's fragments with target exons"
+    input:
+        origin_fragments = "data/"+sp_origin+"2other/"+infile,
+        exons = "data/exons/"+sp_origin+"_all_exons.bed"
+    output:
+        overlap = "data/"+sp_origin+"2other/overlap_frag_exon/"+sp_origin+"_"+interest_file+"_overlap_all_exons.txt"
+    shell:
+        "{python_path} script/overlap.py {input.origin_fragments} {input.exons} {output.overlap}"
+
+rule overlap_exons_lifted:
     message:
         "Overlap converted target's fragments with target exons"
     input:
@@ -152,10 +180,10 @@ rule extract_stats:
         overlap_target = "data/"+sp_origin+"2other/overlap_frag_exon/"+sp_origin+"2{sp_target}_"+interest_file+"_overlap_all_exons.txt",
 
     output:
-        extract = result_path+sp_origin+"2{sp_target}/pecan_alignments/AlignmentStatistics_Excluding_all_Exons_"+interest_file+".txt_ID_part{ID_part}"
+        extract = result_path+sp_origin+"2{sp_target}"+"/pecan_alignments/AlignmentStatistics_Excluding_all_Exons_"+interest_file+".txt_ID_part{ID_part}"
     log:
-        err = result_path+sp_origin+"2{sp_target}/pecan_alignments/"+interest_file+"_extract_error_ID_part{ID_part}",
-        out = result_path+sp_origin+"2{sp_target}/pecan_alignments/"+interest_file+"_extract_output_ID_part{ID_part}"
+        err = result_path+sp_origin+"2{sp_target}"+"/pecan_alignments/"+interest_file+"_extract_error_ID_part{ID_part}",
+        out = result_path+sp_origin+"2{sp_target}"+"/pecan_alignments/"+interest_file+"_extract_output_ID_part{ID_part}"
     params:
         time = "02:00:00", mem = "1G", threads = "1" ,
         sp = lambda wildcards: wildcards.sp_target,
