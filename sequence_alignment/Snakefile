@@ -30,7 +30,7 @@ data_path = path+"data/"+sp_origin+"2other/"
 result_path = path+"result/"+sp_origin+"2other/"
 
 
-localrules : all, liftOver, extract_seq_target, extract_seq_origin, config_file, ID_part, overlap_exons
+localrules : all, liftOver, extract_seq_target, extract_seq_origin, config_file, ID_part, overlap_exons, overlap_exons_lifted
 
 rule all:
     input :
