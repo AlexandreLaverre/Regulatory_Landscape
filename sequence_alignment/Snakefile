@@ -15,14 +15,14 @@
 
 # Software requirements: LiftOver + PECAN + Snakemake
 
-# Execute command : snakemake -j 100 --rerun-incomplete --cluster "sbatch -p normal -N 1 -o /beegfs/data/alaverre/Regulatory_landscape/test/result/human2other/human2mouse/log_files/slurm.out -e /beegfs/data/alaverre/Regulatory_landscape/test/result/human2other/human2mouse/log_files/slurm.err -c {params.threads} --mem={params.mem} -t {params.time}"
+# Execute command : snakemake -j 200 --rerun-incomplete --cluster "sbatch -p normal -N 1 -o /beegfs/data/alaverre/Regulatory_landscape/test/result/mouse2other/mouse2human/log_files/slurm.out -e /beegfs/data/alaverre/Regulatory_landscape/test/result/mouse2other/mouse2human/log_files/slurm.err -c {params.threads} --mem={params.mem} -t {params.time}"
 
 workdir: "/beegfs/data/alaverre/Regulatory_landscape/test/"
-sp_origin = "human"
-list_sp = ["mouse"]     #["chicken", "opossum", "rat", "mouse", "rabbit", "dog", "elephant", "cow", "macaque"]
-infile = "human_merged_samples_simulated_fragments.txt"
+sp_origin = "mouse"
+list_sp = ["human"]     #["chicken", "opossum", "rat", "mouse", "rabbit", "dog", "elephant", "cow", "macaque"]
+infile = "mouse_merged_samples_simulated_fragments.txt"
 interest_file = "samples_simulations"
-nb_part = 15
+nb_part = 50
 
 python_path = "/beegfs/data/soft/anaconda3/bin/python"
 path = "/beegfs/data/alaverre/Regulatory_landscape/test/"
