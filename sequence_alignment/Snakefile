@@ -81,10 +81,14 @@ rule extract_seq_target:
 rule extract_seq_origin:
     message:
         "Extract lifted fragments sequences from origin specie soft masked genome"
+    input:
+        origin_fragments = "data/"+sp_origin+"2other/"+infile,
     output:
+        intermediate_file = "data/"+sp_origin+"2other/"+sp_origin+"2"+sp_origin+"/"+sp_origin+"_"+infile+".bed",
         done = path+"log_files/extract_align_"+sp_origin+"_"+interest_file+"_done.txt"
     shell:
         """
+        cp {input.origin_fragments} {output.intermediate_file}
         {python_path} script/extract_frag_seq_pbil.py {sp_origin} {sp_origin} {interest_file}
         touch {output.done}
         """
