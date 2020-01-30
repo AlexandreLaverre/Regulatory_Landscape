@@ -70,10 +70,29 @@ celltype[grep("adipo", samples)]="adipocytes"
 celltype[grep("B", samples)]="Bcells"
 celltype[grep("ESC", samples)]="ESC"
 
-####################################################################################
-
-
+spcelltype=as.factor(paste(species, celltype, sep="_"))
 
 ####################################################################################
+
+meanexp=t(apply(exp.ortho.norm, 1, function(x) tapply(as.numeric(x), spcelltype, mean)))
+medianexp=t(apply(exp.ortho.norm, 1, function(x) tapply(as.numeric(x), spcelltype, median)))
+
+####################################################################################
+
+expdiv.median=list()
+expdiv.mean=list()
+
+for(cell in unique(celltype)){
+  expdiv.median[[cell]]=abs(medianexp[,paste("Human",cell,sep="_")]-medianexp[,paste("Mouse",cell,sep="_")])/apply(medianexp[,paste(c("Human", "Mouse"), cell, sep="_")], 1, max)
   
+  expdiv.mean[[cell]]=abs(meanexp[,paste("Human",cell,sep="_")]-meanexp[,paste("Mouse",cell,sep="_")])/apply(meanexp[,paste(c("Human", "Mouse"), cell, sep="_")], 1, max)
+  
+}
+
+expdiv.median=as.data.frame(expdiv.median)
+expdiv.mean=as.data.frame(expdiv.mean)
+
+####################################################################################
+
+
 
