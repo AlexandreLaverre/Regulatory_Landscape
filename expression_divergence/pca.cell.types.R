@@ -75,7 +75,7 @@ par(mar=c(4.1, 4.1, 2.1, 1.1))
 plot(pca$co[,1], pca$co[,2],  col="black", bg=col.celltype[celltype], pch=pch.sp[species], xlab=paste("coordinates on PC1 (", explained[1], "% explained variance)", sep=""),  ylab=paste("coordinates on PC2 (", explained[2], "% explained variance)", sep=""), cex=1.25)
 
 legend("topright", legend=c("adipocytes", "B cells", "ESC"), fill=col.celltype, inset=0.01)
-legend("bottomright", legend=c("human", "mouse"), pch=pch.sp, inset=c(0.2, 0.01))
+legend("bottomright", legend=c("human", "mouse"), pch=pch.sp, inset=0.01)
 
 dev.off()
 
