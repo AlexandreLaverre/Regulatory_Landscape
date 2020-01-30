@@ -50,7 +50,7 @@ rownames(exp.ortho)=paste(ortho$Human, ortho$Mouse, sep="_")
 
 norm.data=normalization(exp.ortho)
 exp.ortho.norm=norm.data[["expdata.norm"]]
-rownames(exp.ortho.normm)=rownames(exp.ortho.norm)
+rownames(exp.ortho.norm)=rownames(exp.ortho.norm)
 
 ####################################################################################
 
