@@ -51,7 +51,7 @@ celltype[grep("adipo", samples)]="adipocytes"
 celltype[grep("B", samples)]="Bcells"
 celltype[grep("ESC", samples)]="ESC"
 
-pch.sp=c(16, 17)
+pch.sp=c(21, 24)
 names(pch.sp)=c("Human", "Mouse")
 
 col.celltype=c("darkorange", "steelblue", "darkgreen")
@@ -72,7 +72,7 @@ explained=round(100*pca$eig/sum(pca$eig))
 pdf(file="figures/PCA_CellTypes_HumanMouse.pdf", width=7, height=7)
 
 par(mar=c(4.1, 4.1, 2.1, 1.1))
-plot(pca$co[,1], pca$co[,2],  col=col.celltype[celltype], pch=pch.sp[species], xlab=paste("coordinates on PC1 (", explained[1], "% explained variance)", sep=""),  ylab=paste("coordinates on PC2 (", explained[2], "% explained variance)", sep=""), cex=1.25)
+plot(pca$co[,1], pca$co[,2],  col="black", bg=col.celltype[celltype], pch=pch.sp[species], xlab=paste("coordinates on PC1 (", explained[1], "% explained variance)", sep=""),  ylab=paste("coordinates on PC2 (", explained[2], "% explained variance)", sep=""), cex=1.25)
 
 legend("topright", legend=c("adipocytes", "B cells", "ESC"), fill=col.celltype, inset=0.01)
 legend("top", legend=c("human", "mouse"), pch=pch.sp, inset=0.01)
