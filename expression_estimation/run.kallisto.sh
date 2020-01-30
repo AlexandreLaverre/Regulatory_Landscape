@@ -37,7 +37,7 @@ do
 
     export library="single"
     
-    for file in `ls ${pathRNASeq} | grep ^${sample} | grep _2.fastq.gz`
+    for file in `ls ${pathRNASeq} | grep ^${sample}$'\t' | grep _2.fastq.gz`
     do
 	export library="paired"
     done
