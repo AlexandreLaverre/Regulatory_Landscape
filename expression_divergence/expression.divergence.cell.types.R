@@ -1,5 +1,4 @@
 ####################################################################################
-####################################################################################
 
 options(stringsAsFactors=F)
 
@@ -14,8 +13,13 @@ path=paste(path, "/", sep="")
 
 pathExpression=paste(path, "results/expression_estimation/", sep="")
 pathOrtho=paste(path, "data/ensembl_ortho/", sep="")
+pathScriptsFigures=paste(path, "scripts/main_figures/", sep="")
 
 ensrelease=94
+
+####################################################################################
+
+source(paste(pathScriptsFigures, "normalization.R", sep=""))
 
 ####################################################################################
 
@@ -42,6 +46,18 @@ ortho=ortho[which(ortho$Human%in%rownames(exp.human) & ortho$Mouse%in%rownames(e
 ####################################################################################
 
 exp.ortho=cbind(exp.human[ortho$Human,], exp.mouse[ortho$Mouse,])
+rownames(exp.ortho)=paste(ortho$Human, ortho$Mouse, sep="_")
+
+norm.data=normalization(exp.ortho)
+exp.ortho.norm=norm.data[["expdata.norm"]]
+rownames(exp.ortho.normm)=rownames(exp.ortho.norm)
+
+####################################################################################
+
+write.table(exp.ortho, file=paste(pathExpression, "AllSpecies_AllSamples_OrthoGenes_KallistoTPM_FilteredTranscripts.txt", sep=""), row.names=T, col.names=T, sep="\t")
+
+write.table(exp.ortho.norm, file=paste(pathExpression, "AllSpecies_AllSamples_OrthoGenes_KallistoTPM_FilteredTranscripts_NormalizedHK.txt", sep=""), row.names=T, col.names=T, sep="\t")
+            
 
 ####################################################################################
 
