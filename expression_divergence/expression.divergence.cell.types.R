@@ -13,13 +13,13 @@ path=paste(path, "/", sep="")
 
 pathExpression=paste(path, "results/expression_estimation/", sep="")
 pathOrtho=paste(path, "data/ensembl_ortho/", sep="")
-pathScriptsFigures=paste(path, "scripts/main_figures/", sep="")
+pathScriptsExpression=paste(path, "scripts/expression_estimation/", sep="")
 
 ensrelease=94
 
 ####################################################################################
 
-source(paste(pathScriptsFigures, "normalization.R", sep=""))
+source(paste(pathScriptsExpression, "normalization.R", sep=""))
 
 ####################################################################################
 
