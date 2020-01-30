@@ -13,6 +13,7 @@ path=paste(path, "/", sep="")
 
 pathExpression=paste(path, "results/expression_estimation/", sep="")
 pathOrtho=paste(path, "data/ensembl_ortho/", sep="")
+pathExpressionDivergence=paste(path, "results/expression_divergence/", sep="")
 pathScriptsExpression=paste(path, "scripts/expression_estimation/", sep="")
 
 ensrelease=94
@@ -94,5 +95,8 @@ expdiv.mean=as.data.frame(expdiv.mean)
 
 ####################################################################################
 
+write.table(expdiv.median, file=paste(pathExpressionDivergence, "ExpressionDivergence_CellTypes_MedianTPM.txt", sep=""), row.names=T, col.names=T, sep="\t")
 
-
+write.table(expdiv.mean, file=paste(pathExpressionDivergence, "ExpressionDivergence_CellTypes_MeanTPM.txt", sep=""), row.names=T, col.names=T, sep="\t")
+            
+####################################################################################
