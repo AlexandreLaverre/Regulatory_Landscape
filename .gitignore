@@ -7,4 +7,4 @@
 */*.png
 */*/*.png
 **/.DS_Store
-
+/main_figures/figures.png/
