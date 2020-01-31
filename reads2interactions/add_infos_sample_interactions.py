@@ -7,13 +7,13 @@ import glob
 # Conservation mouse interaction in human:
 sp = "mouse"
 data = "_simul"  # or "_simul"
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+sp+"/"
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/" + sp + "/"
 
-#path_data = "/beegfs/data/alaverre/Regulatory_landscape/result/simulations/"+sp+"_samples/"
+# path_data = "/beegfs/data/alaverre/Regulatory_landscape/result/simulations/"+sp+"_samples/"
 
 if data == "_simul":
     data_type = "simulated"
-    #all_interactions = path_data + "/Simulations/simulations_" + sp + "_10Mb_bin5kb_fragoverbin_chr.txt"
+    # all_interactions = path_data + "/Simulations/simulations_" + sp + "_10Mb_bin5kb_fragoverbin_chr.txt"
     all_interactions = path_data + "simulated_all_interactions.txt"
 else:
     data_type = "observed"
@@ -29,13 +29,13 @@ print("data:", data_type)
 
 # PIR overlap bait
 PIR_bait = {}
-with open("/beegfs/data/alaverre/Regulatory_landscape/data/CHICAGO_files/"+sp+"/"+genome+"/Digest_"+genome+"_HindIII_None.txt.baitmap") as f1:
+with open(
+        "/beegfs/data/alaverre/Regulatory_landscape/data/CHICAGO_files/" + sp + "/" + genome + "/Digest_" + genome + "_HindIII_None.txt.baitmap") as f1:
     for i in f1.readlines():
         i = i.strip("\n")
         i = i.split("\t")
         frag = str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2])
         PIR_bait[frag] = "bait"
-
 
 # All interactions dic --> nb_type info
 all_dic = {}
@@ -62,7 +62,8 @@ with open(all_interactions, 'r') as f:
                      min(i[26], i[27], i[28])]
             nb_type = len([float(x) for x in types if x != "NA"])
 
-        all_dic[bait+':'+PIR] = (nb_type, PIR_status)
+        all_dic[bait + ':' + PIR] = (nb_type, PIR_status)
+
 
 # Sample interaction dic
 def sample_dictionary(sample):
@@ -76,7 +77,8 @@ def sample_dictionary(sample):
             if data == "_simul":
                 PIR = (str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5]), "NA", "NA")  # +"chr"
             else:
-                PIR = (str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5]), str(i[6]), str(i[7]))  # chr, start, end, N_reads, score # +"chr"
+                PIR = (str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5]), str(i[6]),
+                       str(i[7]))  # chr, start, end, N_reads, score # +"chr"
 
             if bait not in sample_dic.keys():
                 sample_dic[bait] = [PIR]
@@ -84,10 +86,11 @@ def sample_dictionary(sample):
                 sample_dic[bait].append(PIR)
 
     # Writting output
-    output_file = sample+"_infos"
+    output_file = sample + "_infos"
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
-        output.write("bait_chr\tbait_start\tbait_end\tchr\tstart\tend\tN_reads\tscore\tbaited_frag\tdist\tnb_contact\tnb_type\n")
+        output.write(
+            "bait_chr\tbait_start\tbait_end\tchr\tstart\tend\tN_reads\tscore\tbaited_frag\tdist\tnb_contact\tnb_type\n")
 
     for bait, contacted in sample_dic.items():
         for i in contacted:
@@ -99,10 +102,12 @@ def sample_dictionary(sample):
                 dist_obs = "NA"
 
             PIR = str(i[0])
-            output.write(bait + "\t" + PIR + "\t" + i[1] + "\t" + i[2] + "\t" + str(str(all_dic[bait+':'+PIR][1])) + "\t" +
-                         str(dist_obs) + "\t" + str(len(sample_dic[bait])) + "\t" + str(all_dic[bait+':'+PIR][0]) + "\n")
+            output.write(
+                bait + "\t" + PIR + "\t" + i[1] + "\t" + i[2] + "\t" + str(str(all_dic[bait + ':' + PIR][1])) + "\t" +
+                str(dist_obs) + "\t" + str(len(sample_dic[bait])) + "\t" + str(all_dic[bait + ':' + PIR][0]) + "\n")
 
     output.close()
+
 
 if data == "_simul":
     samples = glob.glob(path_data + "*txt")
