@@ -41,8 +41,10 @@ def composition_seq(origin_sp, data):
                 i = i.strip("\n")
                 i = i.split("\t")
                 frag = (str(i[1]) + ':' + str(i[2]) + ':' + str(i[3]))
-                elem_pb[frag] = 0 if i[4] == "NA" else len(i[4].split(","))
-
+                if file == "_bait_overlap_genes_1Kb.txt":
+                    elem_pb[frag] = [] if i[4] == "NA" else i[4].split(",")
+                else:
+                    elem_pb[frag] = 0 if i[4] == "NA" else len(i[4].split(","))
         return elem_pb
 
     TSS = "_merged_overlap_genes.txt"
@@ -178,7 +180,7 @@ def composition_seq(origin_sp, data):
     if os.stat("../../result/conservation/bait_composition_"+origin_sp+data+merge+".txt").st_size == 0:
         output_bait.write("chr\tstart\tend\tCAGE_contacted\tPIR_contacted\tunbaited_PIR_contacted\tPIR_complexity"
                           "\tmidist_obs\tduplication\tall_exon_pb\tall_exon250\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb"
-                          "\tphastcons_noexonic250\tTSS_count\tgenes_count1Kb\n")
+                          "\tphastcons_noexonic250\tTSS_count\tgenes_count1Kb\tgenes\n")
 
     for Bait in inter_bait.keys():
         PIR_contact = [len(inter[PIR]) for PIR in link_bait[Bait]]
@@ -189,7 +191,7 @@ def composition_seq(origin_sp, data):
                           + '\t' + str(all_exon[Bait]) + '\t' + str(all_exon250[Bait]) + '\t' + str(coding_exon[Bait])
                           + '\t' + str(nocoding_exon[Bait]) + '\t' + str(repeat_pb[Bait])
                           + '\t' + str(phastcons_pb[Bait]) + '\t' + str(TSS_count_bait[Bait])
-                          + '\t' + str(gene_count_bait[Bait]) + '\n')
+                          + '\t' + str(len(gene_count_bait[Bait])) + '\t' + str(",".join(gene_count_bait[Bait])) + '\n')
 
     output.close()
 
