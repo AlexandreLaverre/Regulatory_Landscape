@@ -5,13 +5,14 @@ import os
 import sys
 import re
 
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/"
+specie = sys.argv[1]
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+specie+"/"
 
-reference_file = path_data + sys.argv[1]
-interest_file = path_data + sys.argv[2]
-output_file = path_data + sys.argv[3]
-intraoverlap = sys.argv[4]
-counting = "F"
+reference_file = path_data + sys.argv[2]
+interest_file = path_data + sys.argv[3]
+output_file = path_data + sys.argv[4]
+intraoverlap = sys.argv[5]
+counting = sys.argv[6]
 
 def sorted_dictionary(file):
     dic = {}
@@ -50,7 +51,6 @@ def sorted_dictionary(file):
 
 ref_dic = sorted_dictionary(reference_file)
 print("Reference dictionary ready")
-
 int_dic = sorted_dictionary(interest_file)
 
 
@@ -176,11 +176,14 @@ if counting == "T":
             else:
                 count_bp[ref_pos] = 0
 
-print("Writting output... ")
 
+print("Writting output... ")
 output = open(output_file, 'w')
 if os.stat(output_file).st_size == 0:
-    output.write("ID\tchr\tstart\tend\toverlap_ID\n") #\tlength_frag\tnb_bp_overlap\t%TSS_ID\tgene_ID
+    if counting == "T":
+        output.write("ID\tchr\tstart\tend\toverlap_ID\tlength_frag\tnb_bp_overlap\t%overlap\n") #\tgene_ID
+    else:
+        output.write("ID\tchr\tstart\tend\toverlap_ID\n")
 
 for ref_pos, int_pos in dic_output.items():
     frag = ref_pos.split('\t')
@@ -190,17 +193,23 @@ for ref_pos, int_pos in dic_output.items():
     for i in int_pos:
         count += 1
         if count == len(int_pos):
-            if str(i[0]) == 'NA':
-                output.write('NA' + "\n")
+            if counting == "T":
+                if str(i[0]) == 'NA':
+                    output.write('NA' + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + "\t"
+                                 + str((count_bp[ref_pos] / length_pos[ref_pos]) * 100) + "\n")
+                else:
+                    output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1]) + "\t" + str(length_pos[ref_pos])
+                                 + "\t" + str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos] / length_pos[ref_pos]) * 100) + "\n")
             else:
-                output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1]) + "\n") # chr:start:end
+                if str(i[0]) == 'NA':
+                    output.write('NA' + "\n")
+                else:
+                    output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1]) + "\n")  # chr:start:end
+
                 #output.write(str(i[2]) + "\n") # only ID
                 #gene.append(str(i[3]))
                 #gene = set(gene)
                 #output.write(str(i[2]) + "\t" + str(','.join(str(x) for x in gene)) + "\n")  # ID + gene
-
-                #output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1]) + "\t" + str(length_pos[ref_pos]) + "\t" +
-                #             str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos] / length_pos[ref_pos]) * 100) + "\n")
 
         else:
             #gene.append(str(i[3]))
