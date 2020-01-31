@@ -1,4 +1,7 @@
 library(ape)
+library(vioplot)
+setwd("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/")
+
 par(mai = c(0.3, 0.2, 0.3, 0.2))
 layout(matrix(c(1,1,2,3),nrow = 1,byrow = TRUE))
 
@@ -9,9 +12,11 @@ plot(tree, cex=1.2, y.lim=c(0.4,10.3), x.lim=c(0,1.07), label.offset = 0.01)
 
 load("Fig4_human_mean.Rdata")
 
-vioplot(c(0,conserv_simul), at=c(0,4,8,12,16,20,24,28,32,36), col='cornflowerblue', axes=F, yaxt='n',names=c("human", colnames(conserv)), horizontal = T, las=1, cex.names = 0.8, main="Human conservation")
-vioplot(c(0,conserv), at=c(1,5,9,13,17,21,25,29,33,37), col='indianred', add=T, axes=F, horizontal = T)
-vioplot(c(0,conserv_enh), at=c(2,6,10,14,18,22,26,30,34,38), col='lightgreen', add=T, axes=F, horizontal = T)
+vioplot(c(0,conserv_simul), at=c(0,4,8,12,16,20,24,28,32,36), names=c("human", colnames(conserv)), border=NA,
+        col='cornflowerblue', axes=F, yaxt='n', horizontal = T, las=1, cex.names = 0.8, main="Human conservation")
+
+vioplot(c(0,conserv), at=c(1,5,9,13,17,21,25,29,33,37), col='indianred', add=T, axes=F, horizontal = T, border=NA)
+vioplot(c(0,conserv_enh), at=c(2,6,10,14,18,22,26,30,34,38), col='lightgreen', add=T, axes=F, horizontal = T, border=NA)
 axis(1, at=seq(0,1,0.2), labels=c("0.0", "0.2", "0.4", "0.6", "0.8", "1.0"))
 
 load("Fig4_mouse_mean.Rdata")
