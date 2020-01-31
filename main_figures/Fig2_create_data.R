@@ -2,9 +2,9 @@ setwd("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/")
 
 human <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/all_interactions_chr_merged.txt_cell_names", header=T)
 human <- human[,1:12]
-human_simul <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/human/Simulations/simulations_human_10Mb_bin5kb_fragoverbin_chr_merged.txt", header=T)
-mouse <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/mouse/all_interactions/all_interactions_chr_merged.txt_test_med", header=T)
-mouse_simul <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/mouse/Simulations/simulations_mouse_10Mb_bin5kb_fragoverbin_chr_merged.txt", header=T)
+human_simul <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/human/Simulations/simulations_human_10Mb_bin5kb_fragoverbin_chr_merged.txt", header=T, sep="\t")
+mouse <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/mouse/all_interactions/all_interactions_chr_merged.txt_cell_names", header=T)
+mouse_simul <- read.table("/home/laverre/Documents/Regulatory_Landscape/data/mouse/Simulations/simulations_mouse_10Mb_bin5kb_fragoverbin_chr_merged.txt", header=T, sep="\t")
 
 human$bait_chr <- factor(human$bait_chr, levels=levels(human$chr))
 human$cis <- ifelse(human$bait_chr == human$chr, "TRUE", "FALSE")
@@ -34,20 +34,24 @@ conf_up <- c()
 conf_low <- c()
 comp_test <- c()
 for (enhancer in enh_dataset){
-  overlap <- read.table(paste0("/home/laverre/Documents/Regulatory_Landscape/data/human/overlap/human_merged_overlap_", enhancer,".txt"), header=T)
+  overlap <- read.table(paste0("/home/laverre/Documents/Regulatory_Landscape/data/human/overlap/human_merged_overlap_", enhancer,".txt_counting_pb"), header=T)
   overlap <- overlap[which(overlap$overlap_ID != "NA"),]
   overlap$frag_name <- paste(overlap$chr, overlap$start, overlap$end)
   human[[paste0(enhancer)]] <- human$other_name %in% overlap$frag_name
+  human_simul[[paste0(enhancer)]] <- human_simul$other_name %in% overlap$frag_name
+  
+  human[[paste0(enhancer, "_proportion")]] <- ifelse(human$other_name %in% overlap$frag_name, overlap$X.overlap, 0)
+  human_simul[[paste0(enhancer, "_proportion")]] <- ifelse(human_simul$other_name %in% overlap$frag_name, overlap$X.overlap, 0)
   
   x <- prop.test(x = nrow(human[which(human[[paste0(enhancer)]] == TRUE),]), n=nrow(human), p=0.5)
   proportion <- c(proportion, x$estimate)
   conf_up <- c(conf_up, x$conf.int[1])
   conf_low <- c(conf_low, x$conf.int[2])
   
-  overlap <- read.table(paste0("/home/laverre/Documents/Regulatory_Landscape/data/human/overlap/human_simul_merged_overlap_", enhancer,".txt"), header=T)
-  overlap <- overlap[which(overlap$overlap_ID != "NA"),]
-  overlap$frag_name <- paste(overlap$chr, overlap$start, overlap$end)
-  human_simul[[paste0(enhancer)]] <- human_simul$other_name %in% overlap$frag_name
+  #overlap <- read.table(paste0("/home/laverre/Documents/Regulatory_Landscape/data/human/overlap/human_simul_merged_overlap_", enhancer,".txt"), header=T)
+  #overlap <- overlap[which(overlap$overlap_ID != "NA"),]
+  #overlap$frag_name <- paste(overlap$chr, overlap$start, overlap$end)
+  
   x <- prop.test(x = nrow(human[which(human_simul[[paste0(enhancer)]] == TRUE),]), n=nrow(human_simul), p=0.5)
   
   proportion <- c(proportion, x$estimate, 0)
@@ -62,6 +66,7 @@ for (enhancer in enh_dataset){
 human$nb_type <- as.factor(human$nb_type)
 human_enh_cell <- data.frame(matrix(vector(), length(levels(human$nb_type)), 1)) 
 
+# Proportion contening at least 1 enh
 for (enhancer in enh_dataset){
   human_enh_cell[[paste0(enhancer)]] <- sapply(levels(human$nb_type), function(x) (nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$nb_type == x),])/nrow((human[which(human$nb_type == x),]))))
   human_enh_cell[[paste0(enhancer, "_conflow")]] <- sapply(levels(human$nb_type), function(x)  (prop.test(x = nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$nb_type == x),]), n=nrow(human[which(human$nb_type == x),]), p=0.5)$conf.int[1]))
@@ -88,6 +93,7 @@ human$ENCODE <- human$ENCODE_old / human$length
 human$RoadMap <- human$RoadMap_old / human$length
 human$GRO_seq <- human$GRO_seq_old / human$length
 
+# Proportion contening at least 1 enh
 for (enhancer in enh_dataset){
   human_enh_dist[[paste0(enhancer)]] <- sapply(levels(human$dist_class), function(x) (nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$dist_class == x),])/nrow((human[which(human$dist_class == x),]))))
   human_enh_dist[[paste0(enhancer, "_conflow")]] <- sapply(levels(human$dist_class), function(x)  (prop.test(x = nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$dist_class == x),]), n=nrow(human[which(human$dist_class == x),]), p=0.5)$conf.int[1]))
@@ -98,7 +104,17 @@ for (enhancer in enh_dataset){
   human_enh_dist_simul[[paste0(enhancer, "_confup")]] <- sapply(levels(human_simul$dist_class), function(x)  (prop.test(x = nrow(human_simul[which(human_simul[[paste0(enhancer)]] == TRUE & human_simul$dist_class == x),]), n=nrow(human_simul[which(human_simul$dist_class == x),]), p=0.5)$conf.int[2]))
   
 }
-
+# Proportion of the sequences that is enhancer
+for (enhancer in enh_dataset){
+  human_enh_dist[[paste0(enhancer)]] <- sapply(levels(human$dist_class), function(x) mean(human[which(human$dist_class == x),][[paste0(enhancer, "_proportion")]]))
+  human_enh_dist[[paste0(enhancer, "_conflow")]] <- sapply(levels(human$dist_class), function(x)  t.test(human[which(human$dist_class == x),][[paste0(enhancer, "_proportion")]])[["conf.int"]][1])
+  human_enh_dist[[paste0(enhancer, "_confup")]] <- sapply(levels(human$dist_class), function(x)  t.test(human[which(human$dist_class == x),][[paste0(enhancer, "_proportion")]])[["conf.int"]][2])
+  
+  human_enh_dist_simul[[paste0(enhancer)]] <- sapply(levels(human_simul$dist_class), function(x) mean(human_simul[which(human_simul$dist_class == x),][[paste0(enhancer, "_proportion")]]))
+  human_enh_dist_simul[[paste0(enhancer, "_conflow")]] <- sapply(levels(human_simul$dist_class), function(x)  t.test(human_simul[which(human_simul$dist_class == x),][[paste0(enhancer, "_proportion")]])[["conf.int"]][1])
+  human_enh_dist_simul[[paste0(enhancer, "_confup")]] <- sapply(levels(human_simul$dist_class), function(x)  t.test(human_simul[which(human_simul$dist_class == x),][[paste0(enhancer, "_proportion")]])[["conf.int"]][2])
+  
+}
 # for (enhancer in enh_dataset){
 #   human_enh_dist[[paste0(enhancer)]] <- sapply(levels(human$dist_class), function(x) (nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$dist_class == x),])/nrow((human[which(human$dist_class == x),]))))
 #   human_enh_dist[[paste0(enhancer, "_conflow")]] <- sapply(levels(human$dist_class), function(x)  (prop.test(x = nrow(human[which(human[[paste0(enhancer)]] == TRUE & human$dist_class == x),]), n=nrow(human[which(human$dist_class == x),]), p=0.5)$conf.int[1]))

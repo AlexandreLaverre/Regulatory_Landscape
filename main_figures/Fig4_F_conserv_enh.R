@@ -16,7 +16,7 @@ type = "bait"
 
 LWD = 1.8
 CEX = 1.8
-png(paste(sp_origin, "_conserv_", type, "_median.png",sep=""), width = 800, height = 800)
+png(paste(sp_origin, "_conserv_", type, "_median_simul.png",sep=""), width = 800, height = 800)
 par(mfrow=c(3,2), mai = c(0.5, 0.7, 0.5, 0.2)) # bottom, left, top, right
 
 layout(matrix(c(1,2,3,4,5,5), 3, 2, byrow = TRUE), heights = c(0.40,0.40,0.2))
@@ -25,7 +25,7 @@ enh = c("CAGE", "ENCODE", "RoadMap", "GRO_seq")
 
 for (enhancer in enh){
   species <- c("chicken", "opossum", "rat", "mouse", "rabbit", "dog", "elephant", "cow", "macaque")
-  enh_cons <- read.table(paste(sp_origin, "/", enhancer, "/", sp_origin,"2rabbit_merged.txt", sep=""), header=T)
+  enh_cons <- read.table(paste(sp_origin, "/", enhancer, "/", sp_origin,"2rabbit_simul_merged.txt", sep=""), header=T)
   enh_cons <- enh_cons[,c(1,8,9,10)]
   for (sp_target in species){enh_cons[[sp_target]] <- Align_score(sp_origin, sp_target, "")}
   
