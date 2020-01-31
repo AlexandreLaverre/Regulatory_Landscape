@@ -10,17 +10,16 @@ target_sp = "human"
 data = ""  # or "" for observed data
 data_target = ""
 
-
 path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"
 path_result = "/home/laverre/Documents/Regulatory_Landscape/result/"
 seuil = 0.1
 
-
-print("Origin sp:", origin_sp, "; data:", data , "; to data :", data_target)
+print("Origin sp:", origin_sp, "; data:", data, "; to data :", data_target)
 
 # Align score for each fragment in origin sp in target sp
 frag_conserv = {}
-with open(path_result + "conservation/alignments/" + origin_sp + "/contacted_seq/AlignmentStatistics_Excluding_all_Exons_" + origin_sp + "2" + target_sp + "_merged_bait.txt") as f1:
+with open(
+        path_result + "conservation/alignments/" + origin_sp + "/contacted_seq/AlignmentStatistics_Excluding_all_Exons_" + origin_sp + "2" + target_sp + "_merged_bait.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -29,7 +28,7 @@ with open(path_result + "conservation/alignments/" + origin_sp + "/contacted_seq
         frag_align = i[1].strip(':+')
         frag_align = frag_align.strip(':-')
 
-        score_all_ungapped = int(i[4]) / (int(i[8])+1)
+        score_all_ungapped = int(i[4]) / (int(i[8]) + 1)
 
         if score_all_ungapped > seuil:
             frag_conserv[origin_frag] = (frag_align, score_all_ungapped)
@@ -49,11 +48,12 @@ print("Score dupli : done ! ")
 
 # Overlap homologous fragment from origin sp to fragment in target sp
 overlap_target = {}
-with open(path_data + target_sp + "/overlap/" +origin_sp+"2"+target_sp+"_merged_overlap_"+target_sp+"_merged.txt") as f2:
+with open(
+        path_data + target_sp + "/overlap/" + origin_sp + "2" + target_sp + "_merged_overlap_" + target_sp + "_merged.txt") as f2:
     for i in f2.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
-        frag_align = str(i[1]+':' + str(i[2]) + ':' + str(i[3]))
+        frag_align = str(i[1] + ':' + str(i[2]) + ':' + str(i[3]))
         overlap_target[frag_align] = i[4].split(',')  # Add all overlapping fragment
 
 print("Overlap aligned with target sp frag : done !")
@@ -66,7 +66,7 @@ if data_target == "_simul":
 else:
     input = "/all_interactions/all_interactions_chr_merged.txt_cell_names"
 
-with open(path_data+target_sp+input) as f3:
+with open(path_data + target_sp + input) as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -89,7 +89,7 @@ with open(path_data+target_sp+input) as f3:
                 else:
                     target_interaction[bait] = [PIR]
 
-#print("target", len(target_interaction.keys()))
+# print("target", len(target_interaction.keys()))
 print("Interaction in target sp : done !")
 print("Running conservation of interactions... ")
 
@@ -107,7 +107,7 @@ PIR_length = {}
 PIR_list = []
 bait_list = []
 count = {}
-with open(path_data+origin_sp+input) as f3:
+with open(path_data + origin_sp + input) as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -167,15 +167,18 @@ with open(path_data+origin_sp+input) as f3:
         conserv_inter[bait + '-' + PIR] = (trans_interaction, not_in_range, bait_not_conserved, PIR_not_conserved,
                                            potential_bait, potential_PIR, not_baited, not_interact, interact)
 
-
-
-output = open(path_result + "/conservation/interaction_conservation/"+origin_sp+data+"_to_"+target_sp+data_target+"_"+str(seuil)+"_merged_all_infos.txt_target_correction", 'w')
-if os.stat(path_result + "/conservation/interaction_conservation/"+origin_sp+data+"_to_"+target_sp+data_target+"_"+str(seuil)+"_merged_all_infos.txt_target_correction").st_size == 0:
+output = open(
+    path_result + "/conservation/interaction_conservation/" + origin_sp + data + "_to_" + target_sp + data_target + "_" + str(
+        seuil) + "_merged_all_infos.txt_target_correction", 'w')
+if os.stat(
+        path_result + "/conservation/interaction_conservation/" + origin_sp + data + "_to_" + target_sp + data_target + "_" + str(
+                seuil) + "_merged_all_infos.txt_target_correction").st_size == 0:
     output.write("origin_interaction\ttrans_interaction\tnot_in_range\tbait_not_conserved\tPIR_not_conserved"
                  "\tpotential_bait\tpotential_PIR\tnot_baited\tnot_interact\tinteract\tpairs\n")
 
 for inter in conserv_inter.keys():
-    output.write(inter + '\t' + str('\t'.join(str(x) for x in conserv_inter[inter])) + '\t' + str(conserved_pairs[inter]) + '\n')
+    output.write(
+        inter + '\t' + str('\t'.join(str(x) for x in conserv_inter[inter])) + '\t' + str(conserved_pairs[inter]) + '\n')
 
 output.close()
 

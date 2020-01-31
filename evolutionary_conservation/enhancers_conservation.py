@@ -20,7 +20,7 @@ def conserv_enh(origin_sp, target_sp, enhancers, data):
     # Alignment score of each enhancer
     file = enhancers + "/AlignmentStatistics_Excluding_all_Exons_" + origin_sp + "2" + target_sp + "_" + enhancers + ".txt"
     align = {}
-    with open(path_result + "alignments/Alignments_statistics/" + origin_sp + "/" + file) as f2:
+    with open(path_result + "alignments/" + origin_sp + "/" + file) as f2:
         for i in f2.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -80,9 +80,9 @@ def conserv_enh(origin_sp, target_sp, enhancers, data):
                 dist_obs = float(i[7])
                 if 25000 <= dist_obs <= 10000000:
                     if merged_PIR not in inter.keys():
-                        inter[merged_PIR] = [bait]
+                        inter[merged_PIR] = [(bait, dist_obs)]
                     else:
-                        inter[merged_PIR].append(bait)
+                        inter[merged_PIR].append((bait, dist_obs))
 
     # Baits composition
     TSS_count = {}
