@@ -2,17 +2,24 @@
 # coding=utf-8
 
 import os
-import sys
 import re
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("species", help="interest species")
+parser.add_argument("reference_file", help="list of genomic coordinates")
+parser.add_argument("interest_file", help="list of interest genomic coordinates to be overlap")
+parser.add_argument("output_file", help="name of output file")
+parser.add_argument("--extend", type=int, help="allow for greater overlap (in base pairs) (default = 0)")
+parser.add_argument("--intraoverlap", action="store_true", help="check overlap in interest file")
+parser.add_argument("--countbp", action="store_true", help="count overlapping base pairs")
+parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
+args = parser.parse_args()
 
-specie = sys.argv[1]
+specie = args.species
 path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+specie+"/"
-
-reference_file = path_data + sys.argv[2]
-interest_file = path_data + sys.argv[3]
-output_file = path_data + sys.argv[4]
-intraoverlap = sys.argv[5]
-counting = sys.argv[6]
+reference_file = path_data + args.reference_file
+interest_file = path_data + args.interest_file
+output_file = path_data + args.output_file
 
 def sorted_dictionary(file):
     dic = {}
@@ -50,14 +57,14 @@ def sorted_dictionary(file):
 
 
 ref_dic = sorted_dictionary(reference_file)
-print("Reference dictionary ready")
+print("Reference dictionary ready") if args.verbose else None
 int_dic = sorted_dictionary(interest_file)
 
 
 # Testing overlap in interest dic
 def collapse_intraoverlap(dic):
     if list(dic.values())[0][0][0] != list(dic.values())[0][0][1]:
-        print("Length of", name_dic, "seq. > 1 pb ")
+        print("Length of", name_dic, "seq. > 1 pb ") if args.verbose else None
         new_dic = {}
         for k in dic.keys():
             current_start = dic[k][0][0]  # - 250
@@ -90,25 +97,26 @@ def collapse_intraoverlap(dic):
         nb_elem = sum(len(dic[x]) for x in dic.keys())
         new_nb_elem = sum(len(new_dic[x]) for x in new_dic.keys())
         if nb_elem != new_nb_elem:
-            print("There is overlap in", name_dic, "file !")
-            print("Before collapse:", nb_elem, "elements; After collapse:", new_nb_elem)
+            print("There is overlap in", name_dic, "file !") if args.verbose else None
+            print("Before collapse:", nb_elem, "elements; After collapse:", new_nb_elem) if args.verbose else None
         else:
-            print("There is no overlap in", name_dic, "file !")
+            print("There is no overlap in", name_dic, "file !") if args.verbose else None
 
         return new_dic
 
     else:
-        print("Length of", name_dic, "seq. = 1 pb")
+        print("Length of", name_dic, "seq. = 1 pb") if args.verbose else None
         return dic
 
 
-if intraoverlap == "T":
+if args.intraoverlap:
     name_dic = 'interest'
     int_dic = collapse_intraoverlap(int_dic)
 
-print("Interest dictionary ready")
-print("Running overlap... ")
+print("Interest dictionary ready") if args.verbose else None
+print("Running overlap... ") if args.verbose else None
 
+extend = args.extend if args.extend else 0
 # Overlap interest to reference
 dic_output = {}
 for chr in ref_dic.keys():
@@ -122,12 +130,12 @@ for chr in ref_dic.keys():
 
             # Initialization of first possible overlapping interest position
             i = first_i
-            while i < len(int_dic[chr]) and int_dic[chr][i][1] < start:  # -1000
+            while i < len(int_dic[chr]) and int_dic[chr][i][1] < (start - extend):
                 i += 1
             first_i = i
 
             # Adding all overlapping interest position to reference position
-            while i < len(int_dic[chr]) and int_dic[chr][i][0] <= end:  # +1000
+            while i < len(int_dic[chr]) and int_dic[chr][i][0] <= (end + extend):
                 if ref_pos in dic_output.keys():
                     if any(int_dic[chr][i][2] in overlap for overlap in dic_output[ref_pos]):
                         a = 1
@@ -144,7 +152,8 @@ for chr in ref_dic.keys():
         else:
             dic_output[ref_pos] = [('NA', 'NA', 'NA', 'NA')]
 
-if counting == "T":
+
+if args.countbp:
     print("Counting base pair...")
     count_bp = {}
     length_pos = {}
@@ -177,10 +186,10 @@ if counting == "T":
                 count_bp[ref_pos] = 0
 
 
-print("Writting output... ")
+print("Writting output... ") if args.verbose else None
 output = open(output_file, 'w')
 if os.stat(output_file).st_size == 0:
-    if counting == "T":
+    if args.countbp:
         output.write("ID\tchr\tstart\tend\toverlap_ID\tlength_frag\tnb_bp_overlap\t%overlap\n") #\tgene_ID
     else:
         output.write("ID\tchr\tstart\tend\toverlap_ID\n")
@@ -193,7 +202,7 @@ for ref_pos, int_pos in dic_output.items():
     for i in int_pos:
         count += 1
         if count == len(int_pos):
-            if counting == "T":
+            if args.countbp:
                 if str(i[0]) == 'NA':
                     output.write('NA' + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + "\t"
                                  + str((count_bp[ref_pos] / length_pos[ref_pos]) * 100) + "\n")
@@ -217,4 +226,4 @@ for ref_pos, int_pos in dic_output.items():
             output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1])+',')
 
 output.close()
-print("All done !")
+print("All done !") if args.verbose else None
