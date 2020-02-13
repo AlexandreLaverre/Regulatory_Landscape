@@ -7,17 +7,22 @@ import numpy as np
 
 # Conservation mouse interaction in human:
 sp = "human"
-data = ""  # or "_simul"
+data = "_simul_sample"  # or "_simul"
 path_data = "/home/laverre/Documents/Regulatory_Landscape/data/" + sp + "/"
 
 if data == "_simul":
     data_type = "simulated"
-    infile = path_data + "/Simulations/simulated_all_interactions_bait_all.txt"  # simulations_" + sp + "_10Mb_bin5kb_fragoverbin_chr.txt"
-    output_file = path_data + "/Simulations/simulated_all_interactions_bait_all_merged.txt"  # simulations_" + sp + "_10Mb_bin5kb_fragoverbin_chr_merged.txt"
+    infile = path_data + "/Simulations/simulations_" + sp + "_10Mb_bin5kb_fragoverbin_chr.txt"
+    output_file = path_data + "/Simulations/simulations_" + sp + "_10Mb_bin5kb_fragoverbin_chr_merged.txt_corrected2"
+elif data == "_simul_sample":
+    data_type = "sample"
+    infile = path_data + "/Simulations/samples_simulated_all_interactions_bait_all.txt"
+    output_file = path_data + "/Simulations/samples_simulated_all_interactions_bait_all_merged.txt_corrected2"
 else:
     data_type = "observed"
     infile = path_data + "/all_interactions/all_interactions_chr.txt"
-    output_file = path_data + "/all_interactions/all_interactions_chr_merged.txt_cell_names2"
+    output_file = path_data + "/all_interactions/all_interactions_chr_merged.txt_cell_names_corrected2"
+
 
 print("specie:", sp)
 print("data:", data_type)
@@ -45,53 +50,60 @@ def sorted_dictionary(file):
             i = i.strip("\n")
             i = i.split("\t")
             bait = (str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2]))
+            midbait = (int(i[1]) + int(i[2])) / 2
+            midfrag = (int(i[4]) + int(i[5])) / 2
+            dist = abs(midbait - midfrag)
 
-            # Nb cell type
-            if sp == "mouse":
-                # cell_value = i[6:len(first_line)]
+            if 25000 < dist < 10000000:
+                if data != "_simul":
+                    # Nb cell type
+                    if sp == "mouse":
+                        # cell_value = i[6:len(first_line)]
 
-                # Cell types
-                cell_value = [i[6], min(i[7:11]), min(i[11], i[12]), i[13], min(i[14], i[15]), i[16], min(i[17:20])]
-                cell_name = ["EpiSC", "ESC", "ESd", "FLC", "preB", "TSC", "preadipo"]
+                        # Cell types
+                        cell_value = [i[6], min(i[7:11]), min(i[11], i[12]), i[13], min(i[14], i[15]), i[16], min(i[17:20])]
+                        cell_name = ["EpiSC", "ESC", "ESd", "FLC", "preB", "TSC", "preadipo"]
 
-            elif sp == "human":
-                # cell_value = i[6:len(first_line)]
-                # Cell types
-                cell_value = [min(i[6], i[22], i[30]), i[7], min(i[8:11]), i[11], i[12], i[13], i[14], i[15], i[16],
-                              i[17], min(i[18], i[31]), i[19], i[20], i[21], min(i[23], i[24], i[25], i[29]),
-                              min(i[26], i[27], i[28])]
-                cell_name = ["Bcell", "CD34", "PEK", "pre_adipo", "cardio", "hESC", "MK", "EP", "Mon", "CD8", "Ery",
-                             "Neu", "Foet", "NB", "TCD4", "Mac"]
+                    elif sp == "human":
+                        # cell_value = i[6:len(first_line)]
+                        # Cell types
+                        cell_value = [min(i[6], i[22], i[30]), i[7], min(i[8:11]), i[11], i[12], i[13], i[14], i[15], i[16],
+                                      i[17], min(i[18], i[31]), i[19], i[20], i[21], min(i[23], i[24], i[25], i[29]),
+                                      min(i[26], i[27], i[28])]
+                        cell_name = ["Bcell", "CD34", "PEK", "pre_adipo", "cardio", "hESC", "MK", "EP", "Mon", "CD8", "Ery",
+                                     "Neu", "Foet", "NB", "TCD4", "Mac"]
 
-            nb_type = []
-            n = 0
-            for x in cell_value:
-                if x != "NA":
-                    nb_type.append(cell_name[n])
-                n += 1
+                    nb_type = []
+                    n = 0
+                    for x in cell_value:
+                        if x != "NA":
+                            nb_type.append(cell_name[n])
+                        n += 1
+                else:
+                    nb_type = ["NA"]
 
-            if data == "":
-                contact_strength = [float(x) for x in i[6:] if x != "NA"]
-                median_strength = np.median(contact_strength)
-            else:
-                median_strength = "NA"
-                # nb_type = ["NA"]
+                if data == "":
+                    contact_strength = [float(x) for x in i[6:] if x != "NA"]
+                    median_strength = np.median(contact_strength)
+                else:
+                    median_strength = "NA"
+                    # nb_type = ["NA"]
 
-            contacted = str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5])
-            if contacted in PIR_bait.keys():
-                bait_status = "baited"
-                baited += 1
-            else:
-                bait_status = "unbaited"
+                contacted = str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5])
+                if contacted in PIR_bait.keys():
+                    bait_status = "baited"
+                    baited += 1
+                else:
+                    bait_status = "unbaited"
 
-            PIR = (i[3], i[4], i[5], 'NA', nb_type, median_strength, bait_status)
+                PIR = (i[3], i[4], i[5], 'NA', nb_type, median_strength, bait_status)
 
-            if bait not in dic.keys():
-                dic[bait] = {str(i[3]): [PIR]}
-            elif str(i[3]) not in dic[bait].keys():
-                dic[bait][str(i[3])] = [PIR]
-            else:
-                dic[bait][str(i[3])].append(PIR)  # keys = bait[contacted_chr]
+                if bait not in dic.keys():
+                    dic[bait] = {str(i[3]): [PIR]}
+                elif str(i[3]) not in dic[bait].keys():
+                    dic[bait][str(i[3])] = [PIR]
+                else:
+                    dic[bait][str(i[3])].append(PIR)  # keys = bait[contacted_chr]
 
     print("Nb baited :", baited)
     # Sorting tuples for each key
@@ -153,9 +165,9 @@ for bait in dic.keys():
                     current_bait_status = new_bait_status
                     current_all_types = new_all_types
 
-                    if i == len(dic[bait][contacted_chr]) - 1:
-                        new_dic[bait].append((contacted_chr, current_start, current_end, current_ID, current_nb_type,
-                                              current_strength, current_bait_status, current_all_types))
+                if i == len(dic[bait][contacted_chr]) - 1:
+                    new_dic[bait].append((contacted_chr, current_start, current_end, current_ID, current_nb_type,
+                                          current_strength, current_bait_status, current_all_types))
 
 nb_contact = [len(dic[bait][contacted_chr]) for bait in dic.keys() for contacted_chr in dic[bait].keys()]
 new_nb_contact = [len(new_dic[bait]) for bait in new_dic.keys()]
