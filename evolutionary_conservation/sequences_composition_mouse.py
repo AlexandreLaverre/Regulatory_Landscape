@@ -20,17 +20,17 @@ def composition_seq(origin_sp, data):
 
         return elem_pb
 
-    all = "_merged_overlap_all_exons_bp.txt"
+    all = "_merged_overlap_all_exons.txt"
     all_exon = dic_pb(all)
-    all_250 = "_merged_overlap_all_exons250_bp.txt"
+    all_250 = "_merged_overlap_all_exons250.txt"
     all_exon250 = dic_pb(all_250)
-    coding = "_merged_overlap_coding_exons_bp.txt"
+    coding = "_merged_overlap_coding_exons.txt"
     coding_exon = dic_pb(coding)
-    nocoding = "_merged_overlap_nocoding_exons_bp.txt"
+    nocoding = "_merged_overlap_nocoding_exons.txt"
     nocoding_exon = dic_pb(nocoding)
-    repeat = "_merged_overlap_repeatmasker_bp.txt"
+    repeat = "_merged_overlap_repeatmasker.txt"
     repeat_pb = dic_pb(repeat)
-    phastcons = "_merged_overlap_phastcons_noexonic250_bp.txt"
+    phastcons = "_merged_overlap_phastconselements_noexonic250.txt"
     phastcons_pb = dic_pb(phastcons)
 
     # Composition in count number
@@ -60,13 +60,13 @@ def composition_seq(origin_sp, data):
 
     # Duplication score
     frag_dupli = {}
-    with open("../../result/BLAT_duplication/" + origin_sp + "_merged_fragments_duplication_stats.txt") as f1:
+    with open("../../result/BLAT_duplication/" + origin_sp + "_merged_obs_simul_bait_BLAT_summary_0.8.txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
             frag = i[0].split(':')
             frag = str(frag[0]) + ':' + str(frag[1]) + ':' + str(frag[2])
-            frag_dupli[frag] = int(i[3]) - 1
+            frag_dupli[frag] = int(i[4]) - 1
 
     print("Score dupli done ! ")
 
@@ -82,9 +82,9 @@ def composition_seq(origin_sp, data):
     CAGE_contact = {}
 
     if data == "_simul":
-        infile = "/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr"+merge+".txt"
+        infile = "/Simulations/simulations_"+origin_sp+"_10Mb_bin5kb_fragoverbin_chr"+merge+".txt_corrected2"
     else:
-        infile = "/all_interactions/all_interactions_chr"+merge+".txt_cell_names"
+        infile = "/all_interactions/all_interactions_chr"+merge+".txt_cell_names_corrected2"
 
     with open("../../data/"+origin_sp+infile) as f3:
 
@@ -112,9 +112,9 @@ def composition_seq(origin_sp, data):
                     # Nombre de bait du contact pour chaque cellule
                     if data == "":
                         if merged_PIR in PIR_cell.keys():
-                            PIR_cell[merged_PIR] = [sum(x) for x in zip(PIR_cell[merged_PIR], list(map(int, i[13:len(i)])))]
+                            PIR_cell[merged_PIR] = [sum(x) for x in zip(PIR_cell[merged_PIR], list(map(int, i[14:len(i)])))]
                         else:
-                            PIR_cell[merged_PIR] = list(map(int, i[13:len(i)]))
+                            PIR_cell[merged_PIR] = list(map(int, i[14:len(i)])) # if samples = 13, if cells = 14
                     else:
                         PIR_cell[merged_PIR] = ["NA"]
                         cell_name = ["NA"]
@@ -197,7 +197,7 @@ def composition_seq(origin_sp, data):
 
 
 origin_sp = "mouse"
-datas = ["", "_simul"]
+datas = ["_simul", ""]
 merge = "_merged"
 
 for data in datas:
