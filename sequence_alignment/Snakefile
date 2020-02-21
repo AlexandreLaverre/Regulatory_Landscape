@@ -24,7 +24,7 @@ workdir: "/beegfs/data/alaverre/Regulatory_landscape/test/"
 sp_origin = config["sp_origin"]
 list_sp = [config["sp_target"]]     #["chicken", "opossum", "rat", "mouse", "rabbit", "dog", "elephant", "cow", "macaque"]
 interest_file = config["data"]
-nb_part = 1
+nb_part = int(config["nb_part"])
 
 enhancers = ["CAGE", "ENCODE", "RoadMap", "GRO_seq"]
 if str(config["data"]) in enhancers:
@@ -93,11 +93,9 @@ rule extract_seq_origin:
     input:
         origin_fragments = "data/"+sp_origin+"2other/"+infile,
     output:
-        intermediate_file = "data/"+sp_origin+"2other/"+sp_origin+"2"+sp_origin+"/"+sp_origin+"_"+infile+".bed",
         done = path+"log_files/extract_align_"+sp_origin+"_"+interest_file+"_done.txt"
     shell:
         """
-        cp {input.origin_fragments} {output.intermediate_file}
         {python_path} script/extract_frag_seq_pbil.py {sp_origin} {sp_origin} {interest_file}
         touch {output.done}
         """
@@ -151,7 +149,7 @@ rule PECAN:
     log:
         err = result_path+sp_origin+"2{sp_target}"+"/pecan_alignments/"+interest_file+"_PECAN_error"
     params:
-        time = "24:00:00", mem = "15G", threads = "1" ,
+        time = "48:00:00", mem = "15G", threads = "1" ,
         sp = lambda wildcards: wildcards.sp_target
     shell:
         """
