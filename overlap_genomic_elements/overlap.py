@@ -9,7 +9,7 @@ parser.add_argument("species", help="interest species")
 parser.add_argument("reference_file", help="list of genomic coordinates")
 parser.add_argument("interest_file", help="list of interest genomic coordinates to be overlap")
 parser.add_argument("output_file", help="name of output file")
-parser.add_argument("--extend", type=int, help="allow for greater overlap (in base pairs) (default = 0)")
+parser.add_argument("--extend", nargs="?", default=0, const=0, type=int, help="allow for greater overlap (in base pairs) (default = 0)")
 parser.add_argument("--intraoverlap", action="store_true", help="check overlap in interest file")
 parser.add_argument("--countbp", action="store_true", help="count overlapping base pairs")
 parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
@@ -116,7 +116,6 @@ if args.intraoverlap:
 print("Interest dictionary ready") if args.verbose else None
 print("Running overlap... ") if args.verbose else None
 
-extend = args.extend if args.extend else 0
 # Overlap interest to reference
 dic_output = {}
 for chr in ref_dic.keys():
@@ -130,12 +129,12 @@ for chr in ref_dic.keys():
 
             # Initialization of first possible overlapping interest position
             i = first_i
-            while i < len(int_dic[chr]) and int_dic[chr][i][1] < (start - extend):
+            while i < len(int_dic[chr]) and int_dic[chr][i][1] < (start - args.extend):
                 i += 1
             first_i = i
 
             # Adding all overlapping interest position to reference position
-            while i < len(int_dic[chr]) and int_dic[chr][i][0] <= (end + extend):
+            while i < len(int_dic[chr]) and int_dic[chr][i][0] <= (end + args.extend):
                 if ref_pos in dic_output.keys():
                     if any(int_dic[chr][i][2] in overlap for overlap in dic_output[ref_pos]):
                         a = 1

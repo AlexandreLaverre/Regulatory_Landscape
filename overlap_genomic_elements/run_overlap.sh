@@ -10,12 +10,14 @@ bonus=$2
 
 if [ ${specie} = "human" ]; then
 enhancers_files=(potential_enhancers/RoadMap_enhancer_genomic_positions_hg38.bed potential_enhancers/GRO_seq_enhancer_genomic_positions_hg38.bed potential_enhancers/ENCODE_enhancer_genomic_positions_hg38.bed potential_enhancers/CAGE_enhancer_genomic_positions_hg38.bed)
+converted_enhancers=(potential_enhancers/mouse2human_ENCODE.bed potential_enhancers/mouse2human_CAGE.bed)
 converted_frag=mouse2human_merged_interacted_fragments_bait_corrected.bed
 converted_prefix=mouse2human_merged
 
 else
 enhancers_files=(potential_enhancers/ENCODE_enhancers_genomic_positions_mm10.bed potential_enhancers/CAGE/CAGE_enhancers_genomic_positions_mm10.bed)
 converted_frag=human2mouse_merged_interacted_fragments_bait_corrected.bed
+converted_enhancers=(potential_enhancers/human2mouse_ENCODE.bed potential_enhancers/human2mouse_CAGE.bed potential_enhancers/human2mouse_GRO_seq.bed potential_enhancers/human2mouse_RoadMap.bed)
 converted_prefix=human2mouse_merged
 fi
 
@@ -47,7 +49,20 @@ if test -f "${pathOverlap}/${prefix}_overlap_${suffix}.txt"; then
 echo "############ Overlap between ${prefix} vs ${suffix} already done ! ############"
 else
 echo "############ Running ${prefix} vs ${suffix} ############"
-${pathScripts}/overlap.py ${specie} ${reference_file} ${enh} overlap/${prefix}_overlap_${suffix}.txt --intraoverlap --countbp -v
+${pathScripts}/overlap.py ${specie} ${reference_file} ${enh} overlap/${prefix}_overlap_${suffix}.txt --countbp -v
+fi
+done
+
+# Overlap with converted enhancers
+for enh in "${converted_enhancers[@]}"
+do
+suffix=${enh%.bed*}
+suffix=${suffix##*/}
+if test -f "${pathOverlap}/${prefix}_overlap_${suffix}.txt"; then
+echo "############ Overlap between ${prefix} vs ${suffix} already done ! ############"
+else
+echo "############ Running ${prefix} vs ${suffix} ############"
+${pathScripts}/overlap.py ${specie} ${reference_file} ${enh} overlap/${prefix}_overlap_${suffix}.txt --countbp -v
 fi
 done
 
@@ -57,7 +72,7 @@ if test -f "${pathOverlap}/${converted_prefix}_overlap_${suffix}.txt"; then
 echo "############ Overlap between ${converted_prefix} vs ${suffix} already done ! ############"
 else
 echo "############ Running ${converted_prefix} vs ${suffix} ############"
-${pathScripts}/overlap.py ${specie} ${converted_frag} ${reference_file} overlap/${converted_prefix}_overlap_${suffix}.txt -v
+${pathScripts}/overlap.py ${specie} ${converted_frag} ${reference_file} overlap/${converted_prefix}_overlap_${suffix}.txt --countbp -v
 fi
 
 if [ ${bonus} = "T" ]; then
