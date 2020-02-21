@@ -3,7 +3,6 @@
 
 import os
 import sys
-import numpy as np
 from Bio import SeqIO
 import collections
 
@@ -12,7 +11,7 @@ treshold = sys.argv[2]  # ex : 0.8
 file = sys.argv[3]  # from ls : path + sp + "_restriction_fragments_mask/
 
 path = "/beegfs/data/alaverre/Regulatory_landscape/test/result/" + sp + "2other/duplication_rate/"
-output_file = path + file + "_blat_summary_treshold_" + treshold + ".txt2"
+output_file = path + file + "_stats_" + treshold + ".txt"
 seq_file = path + sp + "_restriction_fragments_mask/" + file
 BLAT_file = path + "output.psl/" + file + "_output.psl"
 
@@ -21,10 +20,11 @@ seq_dict = SeqIO.to_dict(SeqIO.parse(seq_file, "fasta"))
 content_dict = {}
 for frag in seq_dict.keys():
     sequence = seq_dict[frag]
+    length_seq = len(sequence)
     nb_N = sequence.seq.count("N")
     nb_GC = sequence.seq.count("G") + sequence.seq.count("C")
     frag = frag.strip(':+')
-    content_dict[frag] = (nb_N, nb_GC)
+    content_dict[frag] = (length_seq, nb_N, nb_GC)
 
 # Looking for available BLAT match
 dic_match = collections.defaultdict(dict)
@@ -36,9 +36,8 @@ with open(BLAT_file) as f1:
         frag = str(i[9]).strip(':+')
 
         length = int(i[10])
-        length_without_N = length - content_dict[frag][0]
-        dic_no_N[frag] = (
-            str(length), str(length_without_N))  # str(np.around((N_dict[frag]/length)*100, decimals=2))
+        length_without_N = length - content_dict[frag][1]
+        dic_no_N[frag] = (str(length), str(length_without_N))  # str(np.around((N_dict[frag]/length)*100, decimals=2))
         match_part = int(i[0])  # np.around((int(i[0])/length_without_N)*100, decimals=2)
 
         match_ID = (str(i[13]) + ':' + str(i[15]) + ':' + str(i[16]))
@@ -99,22 +98,24 @@ for frag in new_dic_match.keys():
 
 # Writting output
 output = open(output_file, 'w')
-if os.stat(output_file).st_size == 0:
-    output.write("frag_ID\tlength\tno_N\tnb_GC\tnb_match\tmatch\n")
+#if os.stat(output_file).st_size == 0:
+#    output.write("frag_ID\tlength\tnb_N\tGC\tnb_match\tmatch\n")
 
-for frag in new_dic_match.keys():
-    nb_match = len(new_dic_match[frag])
-    output.write(frag + "\t" + dic_no_N[frag][0] + "\t" + dic_no_N[frag][1] + "\t" + content_dict[frag][1]
+for frag in content_dict.keys():
+    nb_match = len(new_dic_match[frag]) if frag in new_dic_match.keys() else 0
+    output.write(frag + "\t" + str(content_dict[frag][0]) + "\t" + str(content_dict[frag][1]) + "\t" + str(content_dict[frag][2])
                  + "\t" + str(nb_match) + "\t")
 
-    count = 0
-    for i in new_dic_match[frag]:
-
-        count += 1
-        if count == len(new_dic_match[frag]):
-            output.write(str(i) + "\n")
-        else:
-            output.write(str(i) + ',')
+    if frag in new_dic_match.keys():
+        count = 0
+        for i in new_dic_match[frag]:
+            count += 1
+            if count == len(new_dic_match[frag]):
+                output.write(str(i) + "\n")
+            else:
+                output.write(str(i) + ',')
+    else:
+        output.write("NA" + "\n")
 
 output.close()
 print(file, " done !")
