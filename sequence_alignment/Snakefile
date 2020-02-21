@@ -15,14 +15,23 @@
 
 # Software requirements: LiftOver + PECAN + Snakemake
 
-# Execute command : snakemake -j 200 --rerun-incomplete --cluster "sbatch -p normal -N 1 -o /beegfs/data/alaverre/Regulatory_landscape/test/result/mouse2other/mouse2human/log_files/slurm.out -e /beegfs/data/alaverre/Regulatory_landscape/test/result/mouse2other/mouse2human/log_files/slurm.err -c {params.threads} --mem={params.mem} -t {params.time}"
+# Execute via run_Snakemake.sh or with following command :
+# snakemake -j 100 --config sp_origin=${sp_origin} sp_target=${sp_target} data=${data} --rerun-incomplete --cluster "sbatch -p normal -N 1 -o /beegfs/data/alaverre/Regulatory_landscape/test/result/${sp_origin}2other/${sp_origin}2${sp_target}/log_files/slurm.out_${data} -e /beegfs/data/alaverre/Regulatory_landscape/test/result/h${sp_origin}2${sp_target}/log_files/slurm.err_${data} -c {params.threads} --mem={params.mem} -t {params.time}"
+
 
 workdir: "/beegfs/data/alaverre/Regulatory_landscape/test/"
-sp_origin = "mouse"
-list_sp = ["human"]     #["chicken", "opossum", "rat", "mouse", "rabbit", "dog", "elephant", "cow", "macaque"]
-infile = "mouse_merged_samples_simulated_fragments.txt"
-interest_file = "samples_simulations"
-nb_part = 50
+
+sp_origin = config["sp_origin"]
+list_sp = [config["sp_target"]]     #["chicken", "opossum", "rat", "mouse", "rabbit", "dog", "elephant", "cow", "macaque"]
+interest_file = config["data"]
+nb_part = 1
+
+enhancers = ["CAGE", "ENCODE", "RoadMap", "GRO_seq"]
+if str(config["data"]) in enhancers:
+    infile = str(config["data"])+"_enhancer_genomic_positions_lifthg38.bed" if sp_origin == "human" else str(config["data"])+"_enhancer_genomic_positions_mm10.bed"
+else:
+    infile = str(config["sp_origin"])+"_"+str(config["data"])+".txt"
+
 
 python_path = "/beegfs/data/soft/anaconda3/bin/python"
 path = "/beegfs/data/alaverre/Regulatory_landscape/test/"
@@ -142,7 +151,7 @@ rule PECAN:
     log:
         err = result_path+sp_origin+"2{sp_target}"+"/pecan_alignments/"+interest_file+"_PECAN_error"
     params:
-        time = "24:00:00", mem = "10G", threads = "1" ,
+        time = "24:00:00", mem = "15G", threads = "1" ,
         sp = lambda wildcards: wildcards.sp_target
     shell:
         """
@@ -189,7 +198,7 @@ rule extract_stats:
         err = result_path+sp_origin+"2{sp_target}"+"/pecan_alignments/"+interest_file+"_extract_error_ID_part{ID_part}",
         out = result_path+sp_origin+"2{sp_target}"+"/pecan_alignments/"+interest_file+"_extract_output_ID_part{ID_part}"
     params:
-        time = "02:00:00", mem = "1G", threads = "1" ,
+        time = "2:00:00", mem = "1G", threads = "1" ,
         sp = lambda wildcards: wildcards.sp_target,
     shell:
          'perl script/extract.aln.stats.excluding.regions.pl --species1={sp_origin} --species2={params.sp} '
