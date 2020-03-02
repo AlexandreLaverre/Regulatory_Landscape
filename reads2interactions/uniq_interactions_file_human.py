@@ -7,35 +7,58 @@ import numpy as np
 from matplotlib import pyplot as plt
 import os
 
-path = "/home/laverre/Documents/Regulatory_Landscape/data/human/all_interactions/human_samples/"
-#path = "/beegfs/data/alaverre/Regulatory_landscape/result/simulations/human_samples/"
+
 origin = "observed"
 sp = "human_"
+path = "/home/laverre/Documents/Regulatory_Landscape/data/"
 
 if origin == "observed":
     data = ""
     extension = ".ibed"
+    path_data = path + "/human/all_interactions/human_samples/"
 
 else:
-    data = "simulations_10Mb_bin5kb_fragoverbin_"
+    data = "simulated_"
     extension = "_bait_other.txt"
+    path_data = path + "/human/Simulations/simulations_samples/"
+
+# Baited fragment
+baits = {}
+with open(path + "/human/Digest_HindIII_None.txt.baitmap") as f1:
+    for i in f1.readlines():
+        i = i.strip("\n")
+        i = i.split("\t")
+        frag = "chr" + str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2])
+        baits[frag] = "bait"
+
 
 ### Interaction's dictionary
 def dict_inter(sample):
     interaction = {}
-    with open(path+data+sp+sample+extension, 'r') as f1:
+    with open(path_data+data+sample+extension, 'r') as f1:
         for i in f1.readlines()[1:]:
+            i = i.strip("\n")
             i = i.split("\t")
-            inter = (i[0] + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5].strip("\n")) + "\t")
+
+            bait = "chr" + str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2])
+            midbait = (int(i[1]) + int(i[2])) / 2
+            contacted = "chr" + str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5])
+            midcontacted = (int(i[4]) + int(i[5])) / 2
+
+            dist = str(abs(midbait - midcontacted))
+            type = "baited" if contacted in baits.keys() else "unbaited"
+
+            contact = (bait + "\t" + contacted + "\t" + type + "\t" + dist + "\t")
 
             if origin == "observed":
                 score = float(i[7].strip("\n"))
             else:
                 score = 1
 
-            interaction[inter] = score
+            interaction[contact] = score
 
     return interaction
+
 
 dict1 = dict_inter("Bcell")
 dict2 = dict_inter("CD34")
@@ -64,8 +87,6 @@ dict24 = dict_inter("NCD4")
 dict25 = dict_inter("TB")
 dict26 = dict_inter("NCD8")
 
-
-
 ### Uniforming keys
 all = [dict1, dict2, dict3, dict4, dict5, dict6, dict7, dict8, dict9, dict10, dict11, dict12, dict13, dict14, dict15,
      dict16, dict17, dict18, dict19, dict20, dict21, dict22, dict23, dict24, dict25, dict26]
@@ -81,7 +102,6 @@ for dic in all:
         if key not in dic:
             dic[key] = 'NA'
 
-
 ### Fusion of interaction's dictionary
 dict_final = defaultdict(list)
 for k, v in chain(dict1.items(), dict2.items(), dict3.items(), dict4.items(), dict5.items(), dict6.items(),
@@ -93,17 +113,21 @@ for k, v in chain(dict1.items(), dict2.items(), dict3.items(), dict4.items(), di
 
 
 ### Output
-output = open(path+origin+"_all_interactions.txt", 'w')
-if os.stat(path+origin+"_all_interactions.txt").st_size == 0:
-    output.write("chr_bait\tstart_bait\tend_bait\tchr\tstart\tend\tBcell\tCD34\tPEK_early\tPEK_late\tPEK_undiff\tpre_adipo"
+output = open(path_data+origin+"_all_interactions.txt_test_all_infos", 'w')
+if os.stat(path_data+origin+"_all_interactions.txt_test_all_infos").st_size == 0:
+    output.write("chr_bait\tstart_bait\tend_bait\tchr\tstart\tend\ttype\tdistance\tBcell\tCD34\tPEK_early\tPEK_late\tPEK_undiff\tpre_adipo"
                  "\tcardio\thESC\thNEC\tMK\tEP\tMon\tTCD8\tEry\tNeu\tFoeT\tNB\tTCD4MF\tTCD4Non\tTCD4Act\tMac0\tMac1\t"
                  "Mac2\tNCD4\tTB\tNCD8\n")
 
-for k, v in dict_final.items():
-    output.write(k)
-    for i in v:
-        output.write(str(i) + "\t")
-    output.write("\n")
+for key, value in dict_final.items():
+    output.write(key)
+    x = 0
+    for i in value:
+        x += 1
+        if x != len(value):
+            output.write(str(i) + "\t")
+        else:
+            output.write(str(i) + "\n")
 
 output.close()
 

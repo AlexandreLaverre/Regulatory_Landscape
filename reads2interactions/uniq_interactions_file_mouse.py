@@ -7,32 +7,55 @@ import numpy as np
 from matplotlib import pyplot as plt
 import os
 
-path = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/all_interactions/"
-#path = "/beegfs/data/alaverre/Regulatory_landscape/result/simulations/mouse_samples/"
-origin = "observed"
+
+origin = "simulated_"
+sp = "mouse_"
+path = "/home/laverre/Documents/Regulatory_Landscape/data/"
 
 if origin == "observed":
     data = ""
     extension = ".ibed"
+    path_data = path + "/mouse/all_interactions/mouse_samples/"
+
 else:
-    data = "simulations_10Mb_bin5kb_fragoverbin_"
+    data = "simulated_"
     extension = "_bait_other.txt"
+    path_data = path + "/mouse/Simulations/simulations_samples/"
+
+# Baited fragment
+baits = {}
+with open(path + "/mouse/Digest_HindIII_None.txt.baitmap") as f1:
+    for i in f1.readlines():
+        i = i.strip("\n")
+        i = i.split("\t")
+        frag = "chr" + str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2])
+        baits[frag] = "bait"
 
 
 ### Interaction's dictionary
 def dict_inter(sample):
     interaction = {}
-    with open(path + data + sample + extension, 'r') as f1:
+    with open(path_data+data+sample+extension, 'r') as f1:
         for i in f1.readlines()[1:]:
+            i = i.strip("\n")
             i = i.split("\t")
-            inter = (i[0] + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5]) + "\t")
+
+            bait = "chr" + str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2])
+            midbait = (int(i[1]) + int(i[2])) / 2
+            contacted = "chr" + str(i[3]) + "\t" + str(i[4]) + "\t" + str(i[5])
+            midcontacted = (int(i[4]) + int(i[5])) / 2
+
+            dist = str(abs(midbait - midcontacted))
+            type = "baited" if contacted in baits.keys() else "unbaited"
+
+            contact = (bait + "\t" + contacted + "\t" + type + "\t" + dist + "\t")
 
             if origin == "observed":
                 score = float(i[7].strip("\n"))
             else:
                 score = 1
 
-            interaction[inter] = score
+            interaction[contact] = score
 
     return interaction
 
@@ -75,9 +98,9 @@ for k, v in chain(dict1.items(), dict2.items(), dict3.items(), dict4.items(), di
 
 
 ### Output
-output = open(path+origin+"_all_interactions.txt", 'w')
-if os.stat(path+origin+"_all_interactions.txt").st_size == 0:
-    output.write("chr_bait\tstart_bait\tend_bait\tchr\tstart\tend\tEpiSC\tESC\tESC_18\tESC_NKO\tESC_wild\tESd_starved\tESd_TPO"
+output = open(path_data+origin+"_all_interactions.txt", 'w')
+if os.stat(path_data+origin+"_all_interactions.txt").st_size == 0:
+    output.write("chr_bait\tstart_bait\tend_bait\tchr\tstart\tend\ttype\tdistance\tEpiSC\tESC\tESC_18\tESC_NKO\tESC_wild\tESd_starved\tESd_TPO"
                  "\tFLC\tpreB_aged\tpreB_young\tTSC\tpreadip_D0\tpreadip_D2\tpreadip_4H\n")
 
 for k, v in dict_final.items():
