@@ -32,7 +32,7 @@ def sorted_dictionary(file):
         for i in f.readlines()[start:]:
             i = i.strip("\n")
             i = i.split("\t")
-            chr = 'chr' + str(i[0].strip('chr'))
+            chr = 'chr' + str(i[0].strip('chr')) # Check if in "chr format"
             if file == reference_file:
                 ID = str(i[0])+':'+str(i[1])+':'+str(i[2])+':'+str(i[5]) # chr:start:end
                 #gene = "pb"

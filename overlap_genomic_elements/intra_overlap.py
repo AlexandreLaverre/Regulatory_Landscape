@@ -5,10 +5,11 @@ import os
 import sys
 import re
 
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/mouse/"
+sp = sys.argv[1]
+path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+sp+"/"
 
-interest_file = path_data + sys.argv[1]
-output_file = path_data + sys.argv[2]
+interest_file = path_data + sys.argv[2]
+output_file = path_data + sys.argv[3]
 
 def sorted_dictionary(file):
     dic = {}
@@ -41,6 +42,7 @@ def sorted_dictionary(file):
 
 # Testing overlap in interest dic
 def collapse_intraoverlap(dic):
+    total_pb = 0
     if list(dic.values())[0][0][0] != list(dic.values())[0][0][1]:
         print("Length of", name_dic, "seq. > 1 pb ")
         new_dic = {}
@@ -52,6 +54,7 @@ def collapse_intraoverlap(dic):
             new_dic[k] = []
             if len(dic[k]) == 1:
                 new_dic[k].append((current_start, current_end, current_ID))
+                total_pb += int(current_end) - int(current_start)
 
             for i in range(1, len(dic[k])):
                 new_start = dic[k][i][0]  # - 250
@@ -65,12 +68,15 @@ def collapse_intraoverlap(dic):
 
                 else:
                     new_dic[k].append((current_start, current_end, current_ID))
+                    total_pb += int(current_end)-int(current_start)
                     current_start = new_start
                     current_end = new_end
                     current_ID = new_ID
 
                 if i == len(dic[k])-1:
                     new_dic[k].append((current_start, current_end, current_ID))
+                    total_pb += int(current_end) - int(current_start)
+
 
         nb_elem = sum(len(dic[x]) for x in dic.keys())
         new_nb_elem = sum(len(new_dic[x]) for x in new_dic.keys())
@@ -78,6 +84,7 @@ def collapse_intraoverlap(dic):
             print("There is overlap in", name_dic, "file !")
             print("Before collapse:", nb_elem, "elements")
             print("After collapse:", new_nb_elem)
+            print("Total coverage:", total_pb)
         else:
             print("There is no overlap in", name_dic, "file !")
 
@@ -92,6 +99,7 @@ int_dic = sorted_dictionary(interest_file)
 name_dic = 'interest'
 int_dic = collapse_intraoverlap(int_dic)
 
+
 print("Writting output... ")
 
 output = open(output_file, 'w')
@@ -102,5 +110,6 @@ for chr in int_dic.keys():
         output.write(str(chr) + "\t" + str(frag[0]) + "\t" + str(frag[1]) + "\t" + ID + "\t" + "+" + "\t" + "+" + '\n')
 
 output.close()
+
 
 
