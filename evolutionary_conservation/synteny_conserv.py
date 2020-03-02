@@ -6,15 +6,15 @@ import os
 ref_sp = "mouse"
 
 path = "/home/laverre/Data/Regulatory_landscape/result"
-path_annot = path + "/Supplementary_dataset3_annotations/" + ref_sp + "/"
+path_annot = path + "/Supplementary_dataset3_annotations/"
 path_evol = path + "/Supplementary_dataset6_regulatory_landscape_evolution/" + ref_sp + "/"
 path_contact = path + "/Supplementary_dataset4_genes_enhancers_contacts/" + ref_sp + "/"
 
 
-############################################### Enhancers statistics ##################################################
+############################################### Enhancers informations #################################################
 def stats_enh(enh_name):
     stats = {}
-    with open(path_annot + enh_name + "_BLAT_summary_0.8.txt") as f1:
+    with open(path_annot + ref_sp + "/" + enh_name + "_BLAT_summary_0.8.txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -32,7 +32,8 @@ def stats_enh(enh_name):
     return stats
 
 
-def synt_conserv(target_sp, data):
+################################################# Genes informations ###################################################
+def ortho_genes(target_sp):
     ########################################### Orthologous gene one2one ###############################################
     ortho = {}
     origin_gene_coord = {}
@@ -47,6 +48,19 @@ def synt_conserv(target_sp, data):
 
                 ortho[str(i[0])] = str(i[5])
 
+    ################################################## Genes TSS ######################################################
+    gene_TSS = {}
+    with open(path_annot + "genes/" + target_sp + "_genes_Ensembl94.txt") as f3:
+        for i in f3.readlines()[1:]:
+            i = i.strip("\n")
+            i = i.split("\t")
+
+            gene_TSS[str(i[5])] = i[4]  # ID = (chr, start, end)
+
+    return ortho, origin_gene_coord, target_gene_coord, gene_TSS
+
+
+def synt_conserv(target_sp, data):
     ############################################ Enhancers alignments ###############################################
     def align_enh(enh_name):
         align = {}
@@ -77,7 +91,7 @@ def synt_conserv(target_sp, data):
         if os.stat(output_file).st_size == 0:
             output.write("origin_gene\torigin_gene_coord\torigin_enh\torigin_dist\t"
                          "target_gene\ttarget_gene_coord\ttarget_enh\ttarget_dist\t"
-                         "length_enh\trepeat_part\tGC_rate\tBLAT_match\n")
+                         "length_enh\trepeat_part\tGC_rate\tBLAT_match\talign_score\n")
 
         dic_aligned = align_enh(enh_name)
         dic_stats = stats_enh(enh_name)
@@ -96,7 +110,7 @@ def synt_conserv(target_sp, data):
 
                         target_gene = ortho[origin_gene]
                         target_gene_chr = target_gene_coord[target_gene][0]
-                        target_TSS = target_gene_coord[target_gene][1]
+                        target_TSS = gene_TSS[target_gene]
 
                         target_enh = dic_aligned[origin_enh][0]
                         chr_target_enh = target_enh.split(':')[0]
@@ -112,12 +126,13 @@ def synt_conserv(target_sp, data):
                         output.write(origin_gene + "\t" + ':'.join(origin_gene_coord[origin_gene]) + "\t" +
                                      origin_enh + "\t" + origin_dist + "\t" +
                                      target_gene + "\t" + ':'.join(target_gene_coord[target_gene]) + "\t" +
-                                     target_enh + "\t" + str(target_dist) + "\t" + '\t'.join(dic_stats[origin_enh]) + "\n")
+                                     target_enh + "\t" + str(target_dist) + "\t" + '\t'.join(dic_stats[origin_enh])
+                                     + '\t' + str(dic_aligned[origin_enh][1]) + "\n")
 
         output.close()
 
-    print("Running ENCODE...")
-    gene_enh_contact("ENCODE")
+    #print("Running ENCODE...")
+    #gene_enh_contact("ENCODE")
     print("Running CAGE...")
     gene_enh_contact("CAGE")
     if ref_sp == "human":
@@ -128,15 +143,12 @@ def synt_conserv(target_sp, data):
 
 
 datas = ["original", "simulated"]
-species = ["human", "cow", "opossum", "elephant", "rabbit", "rat", "macaque", "dog", "chicken"]
+species = ["cow", "opossum", "elephant", "rabbit", "rat", "macaque", "dog", "chicken"]
+species.append("mouse") if ref_sp == "human" else species.append("human")
 
 for dat in datas:
     for sp in species:
-        print("Running ", ref_sp, "to", sp, "in", dat, "contacts :")
+        ortho, origin_gene_coord, target_gene_coord, gene_TSS = ortho_genes(sp)
+        print("Running", ref_sp, "to", sp, "in", dat, "contacts :")
         synt_conserv(sp, dat)
-
-
-
-
-
 
