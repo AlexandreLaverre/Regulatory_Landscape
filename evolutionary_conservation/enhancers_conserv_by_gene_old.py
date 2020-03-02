@@ -23,6 +23,8 @@ def running_all(data_ref, data_target):
         stats = {}
         if data == "_simul":
             input = "/Simulations/simulations_" + sp + "_10Mb_bin5kb_fragoverbin_chr_merged.txt_corrected2"
+        elif data == "sample":
+            input = "/Simulations/samples_simulated_all_interactions_bait_all_merged.txt_corrected2"
         else:
             input = "/all_interactions/all_interactions_chr_merged.txt_cell_names_corrected2"
 

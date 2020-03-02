@@ -5,12 +5,12 @@ import os
 import numpy as np
 
 # Conservation mouse interaction in human:
-ref_sp = "mouse"
-target_sp = "human"
+ref_sp = "human"
+target_sp = "mouse"
 
 path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"
 path_result = "/home/laverre/Documents/Regulatory_Landscape/result/"
-seuil = 0.1
+seuil = 0.5
 
 
 def running_all(data_ref, data_target):
@@ -20,6 +20,8 @@ def running_all(data_ref, data_target):
         stats = {}
         if data == "_simul":
             input = "/Simulations/simulations_" + sp + "_10Mb_bin5kb_fragoverbin_chr_merged.txt_corrected2"
+        elif data == "_samples_simulations":
+            input = "/Simulations/samples_simulated_all_interactions_bait_all_merged.txt_corrected2"
         else:
             input = "/all_interactions/all_interactions_chr_merged.txt_cell_names_corrected2"
 
@@ -27,14 +29,18 @@ def running_all(data_ref, data_target):
             for i in f3.readlines()[1:]:
                 i = i.strip("\n")
                 i = i.split("\t")
-                bait = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
-                PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
+                if data == "_samples_simulations":
+                    bait = ('chr' + str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
+                    PIR = ('chr' + str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
+                else:
+                    bait = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
+                    PIR = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
 
-                if data == "":
+                if data == "_simul":
+                    nb_type = median_strength = "NA"
+                else:
                     nb_type = float(i[9])
                     median_strength = np.median(list(map(float, i[10].split(","))))
-                else:
-                    nb_type = median_strength = "NA"
 
                 if i[0] == i[3]:
                     dist = float(i[7])
@@ -57,7 +63,12 @@ def running_all(data_ref, data_target):
     # Genes to Bait
     def dict_gene2bait(sp, data):
         gene2bait = {}
-        with open(path_result + "conservation/bait_composition_" + sp + data + "_merged.txt") as f3:
+        if data == "_samples_simulations":
+            input = path_result + "conservation/bait_composition_" + sp + "_samples_simulations_merged.txt"
+        else:
+            input = path_result + "conservation/bait_composition_" + sp + "_corrected_merged_merged.txt"
+
+        with open(input) as f3:
             for i in f3.readlines()[1:]:
                 i = i.strip("\n")
                 i = i.split("\t")
@@ -90,10 +101,10 @@ def running_all(data_ref, data_target):
 
     # Align score for each fragment of ref sp in target sp
     frag_conserv = {}
-    if data_ref == "sample":
+    if data_ref == "_samples_simulations":
         file = path_result + "conservation/alignments/" + ref_sp + "/contacted_seq/AlignmentStatistics_Excluding_all_Exons_" + ref_sp + "2" + target_sp + "_samples_simulations.txt"
     else:
-        file = path_result + "conservation/alignments/" + ref_sp + "/contacted_seq/AlignmentStatistics_Excluding_all_Exons_" + ref_sp + "2" + target_sp + "_merged_obs_simul_bait.txt"
+        file = path_result + "conservation/alignments/" + ref_sp + "/contacted_seq/AlignmentStatistics_Excluding_all_Exons_" + ref_sp + "2" + target_sp + "_corrected_merged.txt"
 
     with open(file) as f1:
         for i in f1.readlines()[1:]:
@@ -113,7 +124,12 @@ def running_all(data_ref, data_target):
     # Enhancers in fragments
     def enhancers_count(file):
         enh_count = {}
-        with open("../../data/" + ref_sp + "/overlap/" + ref_sp + file) as f2:
+        if data_ref == "_samples_simulations":
+            input = path_data + ref_sp + "/overlap/" + ref_sp + data_ref + file
+        else:
+            input = path_data + ref_sp + "/overlap/" + ref_sp + "_corrected_merged" + file
+
+        with open(input) as f2:
             for i in f2.readlines()[1:]:
                 i = i.strip("\n")
                 i = i.split("\t")
@@ -122,16 +138,20 @@ def running_all(data_ref, data_target):
 
         return enh_count
 
-    CAGE_count = enhancers_count("_merged_overlap_CAGE_intraoverlap.txt")
+    CAGE_count = enhancers_count("_overlap_CAGE_intraoverlap.txt")
     if ref_sp == "human":
-        ENCODE_count = enhancers_count("_merged_overlap_ENCODE_intraoverlap.txt")
-        RoadMap_count = enhancers_count("_merged_overlap_RoadMap_intraoverlap.txt")
-        GRO_seq_count = enhancers_count("_merged_overlap_GRO_seq_intraoverlap.txt")
+        ENCODE_count = enhancers_count("_overlap_ENCODE_intraoverlap.txt")
+        RoadMap_count = enhancers_count("_overlap_RoadMap_intraoverlap.txt")
+        GRO_seq_count = enhancers_count("_overlap_GRO_seq_intraoverlap.txt")
 
     # Overlap homologous fragment from ref sp to fragment in target sp
     overlap_target = {}
-    with open(
-            path_data + target_sp + "/overlap/" + ref_sp + "2" + target_sp + "_merged_overlap_" + target_sp + "_merged.txt") as f2:
+    if data_ref == "_samples_simulations":
+        input = path_data + target_sp + "/overlap/" + ref_sp + "2" + target_sp + data_ref + "_overlap_" + target_sp + data_ref +".txt"
+    else:
+        input = path_data + target_sp + "/overlap/" + ref_sp + "2" + target_sp + "_corrected_merged_overlap_" + target_sp + "_corrected_merged.txt"
+
+    with open(input) as f2:
         for i in f2.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -144,22 +164,29 @@ def running_all(data_ref, data_target):
     # Duplication score
     def dict_dupli(sp, data):
         dic = {}
-        if data == "sample":
+        if data == "_samples_simulations":
             file = path_result + "BLAT_duplication/" + sp + "_samples_simulations_BLAT_summary_0.8.txt"
+        elif data == "lifted":
+            file = path_result + "BLAT_duplication/" + sp + "_lifted_BLAT_summary_0.8.txt"
         else:
-            file = path_result + "BLAT_duplication/" + sp + "_merged_obs_simul_bait_BLAT_summary_0.8.txt"
+            file = path_result + "BLAT_duplication/" + sp + "_corrected_merged_BLAT_summary_0.8.txt"
 
         with open(file) as f3:
             for i in f3.readlines()[1:]:
                 i = i.strip("\n")
                 i = i.split("\t")
                 frag = i[0]
-                dic[frag] = int(i[4]) - 1
+                dic[frag] = str(int(i[4]) - 1)
 
         return dic
 
     frag_dupli = dict_dupli(ref_sp, data_ref)
-    frag_dupli_ortho = dict_dupli(target_sp, data_ref)  # data target !!!!!
+    frag_dupli["NA"] = "NA"
+    frag_dupli_ortho = dict_dupli(target_sp, data_target)
+    #frag_dupli_ortho_lifted = dict_dupli(target_sp, "lifted")
+    #frag_dupli_ortho.update(frag_dupli_ortho_lifted)
+    #frag_dupli_ortho["NA"] = "NA"
+
     print("Score dupli : done ! ")
 
     print("Running conservation of interactions... ")
@@ -268,7 +295,7 @@ def running_all(data_ref, data_target):
                             #[nb_contact, seq_conserv, seq_conserv_50, nb_overlap, synt_conserv, contact_conserv,
                                                          #CAGE, ENCODE, CAGE_conserv, ENCODE_conserv, CAGE_contact, ENCODE_contact]
 
-    output_file = "/conservation/interaction_conservation/" + ref_sp + data_ref + "_merged_to_" + target_sp + data_target + "_by_gene.txt3"
+    output_file = "/conservation/interaction_conservation/" + ref_sp + data_ref + "_to_" + target_sp + data_target + "_by_gene_0.5.txt"
 
     output = open(path_result + output_file, 'w')
     if os.stat(path_result + output_file).st_size == 0:
@@ -282,11 +309,8 @@ def running_all(data_ref, data_target):
         bait_target = conserv_contact[inter][1]
         conserv_frag = conserv_contact[inter][2]
 
-        if contact_ref not in frag_dupli.keys():  # not find by BLAT
-            frag_dupli[contact_ref] = 0
-
         if conserv_frag not in frag_dupli_ortho.keys():  # not find by BLAT
-            frag_dupli_ortho[conserv_contact[inter][2]] = 0
+            frag_dupli_ortho[conserv_contact[inter][2]] = "NA"
 
         if contact_ref not in frag_conserv.keys():  # not find by liftOver
             frag_conserv[contact_ref] = ("NA", 0)
@@ -313,7 +337,7 @@ def running_all(data_ref, data_target):
 
     output.close()
 
-    output_file = "/conservation/" + ref_sp + data_ref + "_merged_to_" + target_sp + data_target + "_summary_by_gene.txt2"
+    output_file = "/conservation/" + ref_sp + data_ref + "_to_" + target_sp + data_target + "_summary_by_gene_0.5.txt"
     output_summary = open(path_result + output_file, 'w')
     if os.stat(path_result + output_file).st_size == 0:
         if ref_sp == "human":
@@ -336,8 +360,8 @@ def running_all(data_ref, data_target):
     output_summary.close()
 
 
-data1 = ["", "_simul"]  # or "" for observed data
-data2 = ["", "_simul"]
+data1 = ["_corrected_merged", "_simul", "_samples_simulations"]  # or "_corrected_merged", "_simul", "_samples_simulations"
+data2 = ["_corrected_merged", "_simul", "_samples_simulations"]
 
 for ref in data1:
     for target in data2:
