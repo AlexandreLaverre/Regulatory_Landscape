@@ -3,7 +3,7 @@
 
 import os
 
-ref_sp = "mouse"
+ref_sp = "human"
 target_sp = "human" if ref_sp == "mouse" else "mouse"
 
 path = "/home/laverre/Data/Regulatory_landscape/result"
@@ -25,6 +25,7 @@ with open(path_evol + "gene_orthology/" + ref_sp + "2" + target_sp + "_orthologu
             target_gene_coord[str(i[5])] = ["chr" + str(i[6]), i[7], i[8]]
 
             ortho[str(i[0])] = str(i[5])
+
 
 ###################################### Enhancers statistics & Alignments ##############################################
 def enh_info(enh_name):
@@ -71,42 +72,56 @@ def gene_enh_target(data, enh):
     stats = {}
     enh_name = "lifted_" + enh
     with open(path_contact + target_sp + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
-        for i in f1.readlines()[1:]:
+        first_line = f1.readline().strip("\n")
+        first_line = first_line.split("\t")
+        sample_name = first_line[7:]
+
+        for i in f1.readlines():
             i = i.strip("\n")
             i = i.split("\t")
 
             gene = i[1]
             enh = i[3]
-            stats[gene + '-' + enh] = [i[4], i[5], i[7]]  # dist, median score, samples
+            samples = [str(x) if x != 'nan' else str(0) for x in i[7:len(i)]]
+            nb_sample = str(len([x for x in i[7:len(i)] if x != 'nan']))
+            infos = [[i[4]], [i[5]], [nb_sample], samples]
+            stats[gene + '-' + enh] = [e for sublist in infos for e in sublist]  # dist, median score, samples
 
             if gene not in contact.keys():
                 contact[gene] = [enh]
             else:
                 contact[gene].append(enh)
 
-    return contact, stats
+    return contact, stats, sample_name
 
 
 ################################### Conservation of contacts between species #########################################
-def conserv_contact(data, enh):
-
-    output_file = path_evol + "contact_conservation/" + enh + "/" + ref_sp + "2" + target_sp + "_" + data + ".txt"
+def conserv_contact(data, enh_name):
+    output_file = path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "2" + target_sp + "_" + data + ".txt2"
     output = open(output_file, 'w')
-    if os.stat(output_file).st_size == 0:
-        output.write("origin_gene\torigin_enh\torigin_dist\torigin_med_score\torigin_samples\t"
-                     "length_enh\trepeat_part\tGC_rate\tBLAT_match\t"
-                     "target_gene\ttarget_enh\talign_score\ttarget_dist\ttarget_med_score\ttarget_samples\n")
 
-    conserv_enh, stats_enh = enh_info(enh)
-    target_contact, target_stats = gene_enh_target(data, enh)
+    conserv_enh, stats_enh = enh_info(enh_name)
 
-    with open(path_contact + ref_sp + "/gene_" + enh + "_enhancers_original_interactions.txt") as f1:
-        for i in f1.readlines()[1:]:
+    target_contact, target_stats, target_sample_name = gene_enh_target(data, enh_name)
+
+    with open(path_contact + ref_sp + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
+        first_line = f1.readline().strip("\n")
+        first_line = first_line.split("\t")
+        sample_name = first_line[7:]
+
+        if os.stat(output_file).st_size == 0:
+            output.write("origin_gene\torigin_enh\torigin_dist\torigin_med_score\tnb_sample\t" + "\t".join(sample_name) + "\t"
+                         "length_enh\trepeat_part\tGC_rate\tBLAT_match\talign_score\t"
+                         "target_gene\tlifted_enh\ttarget_dist\ttarget_med_score\ttarget_nb_sample\t" + "\t".join(target_sample_name)+"\n")
+
+        for i in f1.readlines():
             i = i.strip("\n")
             i = i.split("\t")
 
             gene = i[1]
             enh = i[3]
+            samples = [str(x) if x != 'nan' else str(0) for x in i[7:len(i)]]
+            nb_sample = str(len([x for x in i[7:len(i)] if x != 'nan']))
 
             # Do orthologous genes in PC-HiC data in both sides ?
             if gene in ortho.keys() and ortho[gene] in target_contact.keys():
@@ -118,19 +133,20 @@ def conserv_contact(data, enh):
 
                     # Do conserved enhancer in contact with orthologous gene in target sp ?
                     if lifted_enh in target_contact[ortho[gene]]:
-                        output.write(gene + "\t" + enh + "\t" + i[4] + "\t" + i[5] + "\t" + i[7] + "\t")
-                        output.write("\t".join(stats_enh[enh]) + "\t")
+                        output.write(gene + "\t" + enh + "\t" + i[4] + "\t" + i[5] + "\t" + nb_sample + '\t')
+                        output.write("\t".join(samples) + "\t")
+                        output.write("\t".join(stats_enh[enh]) + "\t" + align_score + "\t")
 
-                        output.write(ortho[gene] + "\t" + lifted_enh + "\t" + align_score + "\t" +
+                        output.write(ortho[gene] + "\t" + lifted_enh + "\t" +
                                      "\t".join(target_stats[ortho[gene]+'-'+lifted_enh]) + "\n")
 
     output.close()
 
 
-datas = ["original", "simulated"]
+datas = ["simulated"]
 enhancers = ["CAGE", "ENCODE"]
 if ref_sp == "human":
-    enhancers.extend(["GRO_seq", "RoadMap"])
+     enhancers.extend(["GRO_seq", "RoadMap"])
 
 
 for dat in datas:

@@ -3,7 +3,7 @@
 
 import os
 
-ref_sp = "mouse"
+ref_sp = "human"
 
 path = "/home/laverre/Data/Regulatory_landscape/result"
 path_annot = path + "/Supplementary_dataset3_annotations/"
@@ -43,8 +43,12 @@ def ortho_genes(target_sp):
             i = i.strip("\n")
             i = i.split("\t")
             if i[9] == "ortholog_one2one":
-                origin_gene_coord[str(i[0])] = ["chr" + str(i[1]), i[2], i[3]]  # ID = (chr, start, end)
-                target_gene_coord[str(i[5])] = ["chr" + str(i[6]), i[7], i[8]]
+                if str(i[1]) == "MT":
+                    origin_gene_coord[str(i[0])] = ["chrM", i[2], i[3]]  # ID = (chr, start, end)
+                    target_gene_coord[str(i[5])] = ["chrM", i[7], i[8]]
+                else:
+                    origin_gene_coord[str(i[0])] = ["chr" + str(i[1]), i[2], i[3]]  # ID = (chr, start, end)
+                    target_gene_coord[str(i[5])] = ["chr" + str(i[6]), i[7], i[8]]
 
                 ortho[str(i[0])] = str(i[5])
 
@@ -109,11 +113,11 @@ def synt_conserv(target_sp, data):
                     if origin_enh in dic_aligned.keys():
 
                         target_gene = ortho[origin_gene]
-                        target_gene_chr = target_gene_coord[target_gene][0]
+                        target_gene_chr = target_gene_coord[target_gene][0].strip("chr")
                         target_TSS = gene_TSS[target_gene]
 
                         target_enh = dic_aligned[origin_enh][0]
-                        chr_target_enh = target_enh.split(':')[0]
+                        chr_target_enh = target_enh.split(':')[0].strip("chr")
                         start_target_enh = target_enh.split(':')[1]
                         end_target_enh = target_enh.split(':')[2]
                         mid_target_enh = (int(start_target_enh)+int(end_target_enh)) / 2
@@ -131,8 +135,8 @@ def synt_conserv(target_sp, data):
 
         output.close()
 
-    #print("Running ENCODE...")
-    #gene_enh_contact("ENCODE")
+    print("Running ENCODE...")
+    gene_enh_contact("ENCODE")
     print("Running CAGE...")
     gene_enh_contact("CAGE")
     if ref_sp == "human":

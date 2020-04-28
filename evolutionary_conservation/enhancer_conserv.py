@@ -21,7 +21,11 @@ def enh_score(enh_name, target_sp):
 
             enh_origin = i[0].strip(":+")
             try:
-                align_score = int(i[6]) / int(i[9])  # FilteredUngappedLength / FilteredAlignmentLength
+                align_score = int(i[4]) / int(i[8])  # TotalUngappedLength / TotalAlignmentLength
+                #align_score = int(i[5]) / int(i[8])  # TotalIdenticalLength / TotalAlignmentLength
+                # align_score = int(i[6]) / int(i[9])  # FilteredUngappedLength / FilteredAlignmentLength
+                #align_score = int(i[7]) / int(i[9])  # FilteredIdenticalLength / FilteredAlignmentLength
+
             except ZeroDivisionError:
                 align_score = 0
 
@@ -65,7 +69,7 @@ def enh_conserv(enh_name):
 
         align_all_sp[enh].append(score)
 
-    output_file = path_evol + ref_sp + "/enhancers_conservation/" + enh_name + "/Alignments_stats_all_species.txt"
+    output_file = path_evol + ref_sp + "/enhancers_conservation/" + enh_name + "/Alignments_stats_all_species_total_ungapped.txt"
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         other = "human" if ref_sp == "mouse" else "mouse"
