@@ -6,10 +6,11 @@ import sys
 import re
 
 sp = sys.argv[1]
-path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+sp+"/"
-
+#path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+sp+"/"
+path_data = "/home/laverre/Data/Regulatory_landscape/test/data/exons/"
 interest_file = path_data + sys.argv[2]
 output_file = path_data + sys.argv[3]
+
 
 def sorted_dictionary(file):
     dic = {}
@@ -104,10 +105,11 @@ print("Writting output... ")
 
 output = open(output_file, 'w')
 
+output.write("chr\tstart\tend\tID\n")
 for chr in int_dic.keys():
     for frag in int_dic[chr]:
         ID = str(chr) + ":" + str(frag[0]) + ":" + str(frag[1])
-        output.write(str(chr) + "\t" + str(frag[0]) + "\t" + str(frag[1]) + "\t" + ID + "\t" + "+" + "\t" + "+" + '\n')
+        output.write(str(chr) + "\t" + str(frag[0]) + "\t" + str(frag[1]) + "\t" + ID + '\n')
 
 output.close()
 

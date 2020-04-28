@@ -62,7 +62,7 @@ if test -f "${pathOverlap}/${prefix}_overlap_${suffix}.txt"; then
 echo "############ Overlap between ${prefix} vs ${suffix} already done ! ############"
 else
 echo "############ Running ${prefix} vs ${suffix} ############"
-${pathScripts}/overlap.py ${specie} ${reference_file} ${file} overlap/${prefix}_overlap_${suffix}.txt --intraoverlap --countbp -v
+${pathScripts}/overlap.py ${specie} ${reference_file} ${file} overlap/${prefix}_overlap_${suffix}.txt --intraoverlap --count_overlap -v
 fi
 done
 
@@ -75,7 +75,7 @@ if test -f "${pathOverlap}/${prefix}_overlap_${suffix}.txt"; then
 echo "############ Overlap between ${prefix} vs ${suffix} already done ! ############"
 else
 echo "############ Running ${prefix} vs ${suffix} ############"
-${pathScripts}/overlap.py ${specie} ${reference_file} ${enh} overlap/${prefix}_overlap_${suffix}.txt --countbp -v
+${pathScripts}/overlap.py ${specie} ${reference_file} ${enh} overlap/${prefix}_overlap_${suffix}.txt --count_overlap -v
 fi
 done
 
@@ -88,7 +88,7 @@ if test -f "${pathOverlap}/${prefix}_overlap_${suffix}_intraoverlap.txt"; then
 echo "############ Overlap between ${prefix} vs ${suffix} already done ! ############"
 else
 echo "############ Running ${prefix} vs ${suffix} intraoverlap ! ############"
-${pathScripts}/overlap.py ${specie} ${reference_file} ${enh} overlap/${prefix}_overlap_${suffix}_intraoverlap.txt --intraoverlap --countbp -v
+${pathScripts}/overlap.py ${specie} ${reference_file} ${enh} overlap/${prefix}_overlap_${suffix}_intraoverlap.txt --intraoverlap --count_overlap -v
 fi
 done
 
@@ -102,7 +102,7 @@ if test -f "${pathOverlap}/${prefix}_overlap_${suffix}.txt"; then
 echo "############ Overlap between ${prefix} vs ${suffix} already done ! ############"
 else
 echo "############ Running ${prefix} vs ${suffix} ############"
-${pathScripts}/overlap.py ${specie} ${reference_file} ${enh} overlap/${prefix}_overlap_${suffix}.txt --countbp -v
+${pathScripts}/overlap.py ${specie} ${reference_file} ${enh} overlap/${prefix}_overlap_${suffix}.txt --count_overlap -v
 fi
 done
 
@@ -112,13 +112,13 @@ if test -f "${pathOverlap}/${converted_prefix}_overlap_${suffix}.txt"; then
 echo "############ Overlap between ${converted_prefix} vs ${suffix} already done ! ############"
 else
 echo "############ Running ${converted_prefix} vs ${suffix} ############"
-${pathScripts}/overlap.py ${specie} ${converted_frag} ${reference_file} overlap/${converted_prefix}_overlap_${suffix}.txt --countbp -v
+${pathScripts}/overlap.py ${specie} ${converted_frag} ${reference_file} overlap/${converted_prefix}_overlap_${suffix}.txt --count_overlap -v
 fi
 
 if [ ${bonus} = "T" ]; then
-${pathScripts}/overlap.py ${specie} ${reference_file} annotations/all_exons.bed overlap/${prefix}_overlap_all_exons250.txt --extend 250 --intraoverlap --countbp -v
-${pathScripts}/overlap.py ${specie} ${reference_file} annotations/TSS_genes.bed overlap/${prefix}_overlap_TSS_1Kb.txt --extend 1000 --intraoverlap --countbp -v
-${pathScripts}/overlap.py ${specie} ${reference_file} annotations/genes.bed overlap/${prefix}_overlap_genes_1Kb.txt --extend 1000 --intraoverlap --countbp -v
+${pathScripts}/overlap.py ${specie} ${reference_file} annotations/all_exons.bed overlap/${prefix}_overlap_all_exons250.txt --extend 250 --intraoverlap --count_window -v
+${pathScripts}/overlap.py ${specie} ${reference_file} annotations/TSS_genes.bed overlap/${prefix}_overlap_TSS_1Kb.txt --extend 1000 --intraoverlap --count_window -v
+${pathScripts}/overlap.py ${specie} ${reference_file} annotations/genes.bed overlap/${prefix}_overlap_genes_1Kb.txt --extend 1000 --intraoverlap --count_window -v
 fi
 
 

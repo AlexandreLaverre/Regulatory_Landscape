@@ -13,16 +13,16 @@ parser.add_argument("--extend", nargs="?", default=0, const=0, type=int, help="a
 parser.add_argument("--intraoverlap", action="store_true", help="check overlap in interest file")
 parser.add_argument("--count_overlap", action="store_true", help="count overlapping base pairs")
 parser.add_argument("--count_window", action="store_true", help="count interest base pairs in extended windows")
-parser.add_argument("--interest_ID", action="store_true", help="overlap interest output with ID format")
-parser.add_argument("--reference_ID", action="store_true", help="reference output with ID format")
 parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
 args = parser.parse_args()
 
 specie = args.species
 path_data = "/home/laverre/Documents/Regulatory_Landscape/data/"+specie+"/"
+path_result = "/home/laverre/Documents/Regulatory_Landscape/result/"+specie+"/"
+
 reference_file = path_data + args.reference_file
 interest_file = path_data + args.interest_file
-output_file = path_data + args.output_file
+output_file = path_result + args.output_file
 
 
 ### Create dictionary of infiles : {chr = [(start, end, ID),...]}
@@ -39,9 +39,9 @@ def sorted_dictionary(file):
             i = i.split("\t")
             chr = 'chr' + str(i[0].strip('chr'))    # Check if in "chr format"
             if file == reference_file:
-                ID = str(i[3]) if args.reference_ID else str(i[0])+':'+str(i[1])+':'+str(i[2])
+                ID = str(i[0])+':'+str(i[1])+':'+str(i[2])+':'+str(i[5])    # chr:start:end
             else:
-                ID = str(i[3]) if args.interest_ID else chr + ':' + str(i[1]) + ':' + str(i[2])
+                ID = chr + ':' + str(i[1]) + ':' + str(i[2])  # chr:start:end
 
             pos = (int(i[1]), int(i[2]), ID)
 
@@ -70,8 +70,8 @@ def collapse_intraoverlap(dic):
         print("Length of", name_dic, "seq. > 1 pb ") if args.verbose else None
         new_dic = {}
         for k in dic.keys():
-            current_start = dic[k][0][0]  # - 250
-            current_end = dic[k][0][1]  # + 250
+            current_start = dic[k][0][0]  # - 250 increase intra-overlap by -250 bp
+            current_end = dic[k][0][1]  # + 250 increase intra-overlap by +250 bp
             current_ID = dic[k][0][2]
 
             new_dic[k] = []
@@ -115,8 +115,8 @@ def collapse_intraoverlap(dic):
 if args.intraoverlap:
     name_dic = 'interest'
     int_dic = collapse_intraoverlap(int_dic)
-    print("Check intraoverlap in interest dictionary done !") if args.verbose else None
 
+print("Check intraoverlap in interest dictionary done !") if args.verbose else None
 print("Running overlap... ") if args.verbose else None
 
 # Overlap interest to reference
@@ -216,14 +216,23 @@ if os.stat(output_file).st_size == 0:
 
 for ref_pos, int_pos in dic_output.items():
     frag = ref_pos.split('\t')
+
+    # Write ID, chr, start, end
     output.write(frag[3] + '\t' + frag[0] + "\t" + frag[1] + "\t" + frag[2] + "\t")  # chr + start + end (ref 1)
+
     count = 0
-    gene = []
     for i in int_pos:
         count += 1
-        if count == len(int_pos):
+
+        # Write all overlap_ID
+        if count != len(int_pos):
+            if not args.count_window:
+                output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1])+',')
+
+        # Write other stats
+        else:
             if args.count_overlap:
-                if str(i[0]) == 'NA':
+                if str(i[0]) == 'NA':   # i.e : no overlap_ID
                     output.write('NA' + "\t" + str(length_pos[ref_pos]) + "\t" + str(count_bp[ref_pos]) + "\t"
                                  + str((count_bp[ref_pos] / length_pos[ref_pos]) * 100) + "\n")
                 else:
@@ -231,35 +240,17 @@ for ref_pos, int_pos in dic_output.items():
                                  + "\t" + str(count_bp[ref_pos]) + '\t' + str((count_bp[ref_pos] / length_pos[ref_pos]) * 100) + "\n")
 
             elif args.count_window:
-                if str(i[0]) == 'NA':
+                if str(i[0]) == 'NA':   # i.e : no overlap_ID
                     output.write(str(count_nb_window[ref_pos]) + "\n")
                 else:
                     output.write(str(count_nb_window[ref_pos]) + "\n")
 
             else:
-                if str(i[0]) == 'NA':
+                if str(i[0]) == 'NA':   # i.e : no overlap_ID
                     output.write('NA' + "\n")
                 else:
-                    if args.interest_ID:
-                        gene.append(str(i[2]))
-                        gene = set(gene)
-                        output.write(",".join(gene) + "\n")
+                    output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1]) + "\n")  # chr:start:end
 
-                    else:
-                        output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1]) + "\n")  # chr:start:end
-
-                #output.write(str(i[2]) + "\n") # only ID
-                #gene.append(str(i[3]))
-                #gene = set(gene)
-                #output.write(str(i[2]) + "\t" + str(','.join(str(x) for x in gene)) + "\n")  # ID + gene
-
-        else:
-            #output.write(str(i[2]) + ",")
-            if not args.count_window:
-                if args.interest_ID:
-                    gene.append(str(i[2]))
-                else:
-                    output.write(str(frag[0]) + ':' + str(i[0]) + ':' + str(i[1])+',')
 
 output.close()
 print("All done !") if args.verbose else None
