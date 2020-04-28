@@ -14,5 +14,5 @@ echo "#SBATCH -o ${path_result}running/std_output_BLAT${file}.txt" >> ${path_res
 echo "#SBATCH -e ${path_result}running/std_error_BLAT${file}.txt" >> ${path_result}running/BLAT_${file}
 echo "source /beegfs/home/alaverre/.bashrc" >> ${path_result}running/BLAT_${file}
 echo "blat -out=psl -minIdentity=95 ${path_data}${genome} ${path_result}${sp}_restriction_fragments_mask/${file} ${path_result}/output.psl/${file}_output.psl" >> ${path_result}running/BLAT_${file}
-sbatch -p normal --time=70:00:00 -c 1 --mem=4G ${path_result}running/BLAT_${file}
+sbatch -p normal --time=48:00:00 -c 1 --mem=4G ${path_result}running/BLAT_${file}
 done

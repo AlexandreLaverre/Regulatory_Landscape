@@ -26,14 +26,14 @@ list_sp = [config["sp_target"]]     #["chicken", "opossum", "rat", "mouse", "rab
 interest_file = config["data"]
 nb_part = int(config["nb_part"])
 
-enhancers = ["CAGE", "ENCODE", "RoadMap", "GRO_seq"]
+enhancers = ["CAGE", "ENCODE", "RoadMap", "GRO_seq", "ENCODE_mm10"]
 if str(config["data"]) in enhancers:
     infile = str(config["data"])+"_enhancer_genomic_positions_lifthg38.bed" if sp_origin == "human" else str(config["data"])+"_enhancer_genomic_positions_mm10.bed"
 else:
     infile = str(config["sp_origin"])+"_"+str(config["data"])+".txt"
 
 
-python_path = "/beegfs/data/soft/anaconda3/bin/python"
+python_path = "/beegfs/data/soft/bioconda/bin/python"
 path = "/beegfs/data/alaverre/Regulatory_landscape/test/"
 data_path = path+"data/"+sp_origin+"2other/"
 result_path = path+"result/"+sp_origin+"2other/"

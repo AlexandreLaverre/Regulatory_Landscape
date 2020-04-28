@@ -32,6 +32,8 @@ with open(path_data + sp + "2other/" + sp + "_" + file + ".txt", "r") as f1:
         if chr in ref_dict.keys():
             sequence = ref_dict[chr]
             cut_sequence = sequence[int(i[1]):int(i[2])]
+            if i[5].strip('\n') == "-":
+                cut_sequence = cut_sequence.reverse_complement()
 
         cut_sequence.id = str(i[3] + ":+")
         SeqIO.write(cut_sequence, output, "fasta")

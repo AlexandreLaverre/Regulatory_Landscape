@@ -46,7 +46,7 @@ if test -f "${path}/${ref_sp}2${target_sp}_${data}_ID.bed_all_files"
     mkdir ${path}/pecan_alignments/running_${data}/
 
     echo "Running alignment pipeline !"
-    part=$((${nb_missing} / 5000 ))
+    part=$((${nb_missing} / 10000 ))
     part_int=$((${part%.*} + 1 ))
     screen -Sdm Snakemake_${ref_sp}2${target_sp}_${data}_missing ${pathScript}/run_Snakemake.sh ${ref_sp} ${target_sp} ${data} ${part_int}
   else
@@ -89,7 +89,7 @@ else
     mkdir ${path}/pecan_alignments/running_${data}/
 
     echo "Running alignment pipeline !"
-    part=$((${nb_missing} / 5000 ))
+    part=$((${nb_missing} / 10000 ))
     part_int=$((${part%.*} + 1 ))
     screen -Sdm Snakemake_${ref_sp}2${target_sp}_${data}_missing ${pathScript}/run_Snakemake.sh ${ref_sp} ${target_sp} ${data} ${part_int}
   else
