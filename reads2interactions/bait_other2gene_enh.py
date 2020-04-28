@@ -4,7 +4,7 @@
 import os
 import numpy as np
 
-ref_sp = "mouse"
+ref_sp = "human"
 target_sp = "human" if ref_sp == "mouse" else "mouse"
 
 path = "/home/laverre/Data/Regulatory_landscape/result"
@@ -77,13 +77,15 @@ if ref_sp == "mouse":
 def gene_enh_contact(data, data_name, enh_data, enh_name):
     output_file = path_result + "gene_" + enh_name + "_enhancers_" + data_name + "_interactions.txt"
     output = open(output_file, 'w')
-    if os.stat(output_file).st_size == 0:
-        output.write("bait\tgene\tcontact\tenhancer\tdist\tmedian_score\tnb_sample\tsamples\n")
 
     with open(data) as f1:
         first_line = f1.readline().strip("\n")
         first_line = first_line.split("\t")
         sample_name = first_line[8:]
+
+        if os.stat(output_file).st_size == 0:
+            output.write("bait\tgene\tcontact\tenhancer\tdist\tmedian_score\tnb_sample\t"
+                         + str('\t'.join(sample_name)) + "\n")
 
         for i in f1.readlines():
             i = i.strip("\n")
@@ -91,15 +93,17 @@ def gene_enh_contact(data, data_name, enh_data, enh_name):
 
             bait = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
             contacted = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
-            contact_score = [float(x) for x in i[8:] if x != "NA"]
-            median_score = str(np.median(contact_score))
-            contact_sample = [sample_name[idx] for idx, x in enumerate(i[8:]) if x != "NA"]
-            nb_sample = str(len(contact_score))
+
+            contact_score = [float(x) if x != "NA" else np.nan for x in i[8:]]
+            median_score = str(np.nanmedian(contact_score))
+            nb_sample = str(np.count_nonzero(~np.isnan(contact_score)))
+
+            baited_info = i[6]
 
             if i[0] == i[3]:    # cis-interaction
                 dist = float(i[7])
-                if 25000 < dist < 10000000:
-                    if i[6] == "unbaited":      # bait-other interaction
+                if 25000 <= dist <= 10000000:
+                    if baited_info == "unbaited":      # bait-other interaction
 
                         if bait in bait2gene.keys():    # Is bait contain gene ?
                             for gene in bait2gene[bait]:
@@ -111,14 +115,15 @@ def gene_enh_contact(data, data_name, enh_data, enh_name):
                                         dist_gene_enh = abs(float(gene_TSS[gene])-mid_enh)
 
                                         output.write(bait + "\t" + gene + "\t" + contacted + "\t" + enh + "\t")
-                                        output.write(str(dist_gene_enh) + "\t" + median_score + "\t" + nb_sample + "\t")
-                                        output.write(str(','.join(contact_sample)) + "\n")
+                                        output.write(str(dist_gene_enh) + "\t" + median_score + "\t")
+                                        output.write(nb_sample + "\t" + '\t'.join(map(str, contact_score)) + "\n")
 
     output.close()
 
 
 data_obs = path + "/Supplementary_dataset1_original_interactions/" + ref_sp + "/all_interactions.txt"
 data_simul = path + "/Supplementary_dataset2_simulated_interactions/" + ref_sp + "/simulated_all_interactions.txt"
+
 datas = [data_obs, data_simul]
 
 print("Running script on ", ref_sp)
@@ -126,7 +131,7 @@ print("Running script on ", ref_sp)
 for dat in datas:
     name = "original" if dat == data_obs else "simulated"
 
-    #gene_enh_contact(dat, name, ENCODE, "ENCODE")
+    gene_enh_contact(dat, name, ENCODE, "ENCODE")
     print(name, "ENCODE done !")
     gene_enh_contact(dat, name, lifted_ENCODE, "lifted_ENCODE")
     print(name, "lifted ENCODE done !")
@@ -146,7 +151,3 @@ for dat in datas:
         print(name, "lifted RoadMap done !")
         gene_enh_contact(dat, name, lifted_GRO_seq, "lifted_GRO_seq")
         print(name, "lifted GRO_seq done !")
-
-
-
-
