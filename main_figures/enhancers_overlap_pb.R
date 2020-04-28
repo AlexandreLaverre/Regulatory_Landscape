@@ -14,8 +14,8 @@ obs$bait_chr <- factor(obs$bait_chr, levels=levels(obs$chr))
 obs$cis <- ifelse(obs$bait_chr == obs$chr, "TRUE", "FALSE")
 obs <- obs[which(obs$dist < 10000000 & obs$dist > 25000),]
 
-simul_merged <- read.table("Simulations/samples_simulated_all_interactions_bait_all_merged.txt", header=T)
-obs_merged <- read.table("all_interactions/all_interactions_chr_merged.txt_cell_names2", header=T)
+simul_merged <- read.table("Simulations/samples_simulated_all_interactions_bait_all_merged.txt_corrected", header=T)
+obs_merged <- read.table("all_interactions/all_interactions_chr_merged.txt_cell_names_corrected2", header=T)
 
 simul_merged$bait_chr <- factor(simul_merged$bait_chr, levels=levels(simul_merged$chr))
 simul_merged$cis <- ifelse(simul_merged$bait_chr == simul_merged$chr, "TRUE", "FALSE")
@@ -30,6 +30,7 @@ obs$length <- obs$end-obs$start
 obs_merged$length <- obs_merged$end - obs_merged$start
 simul$length <- simul$end-simul$start
 simul_merged$length <- simul_merged$end - simul_merged$start
+
 obs$nb_type <- as.factor(obs$nb_type)
 obs_merged$nb_type <- as.factor(obs_merged$nb_type)
 simul$nb_type <- as.factor(simul$nb_type)
@@ -52,13 +53,13 @@ nb_pair$simul_merged <- sapply(levels(obs$nb_type), function(x)
   /sum(simul_merged[which(simul_merged$cis == TRUE & simul_merged$baited_frag == "unbaited"),]$length))
 
 par(mfrow=c(1,2))
-barplot(t(as.matrix(nb_pair[,c(1,3)])), beside=T, main="Human before merge", xlab='Cell number', ylim=c(0,0.7),
-        ylab="Base pairs proportion", col=c("forestgreen", "orange"),lwd=2, cex.axis=1, cex.lab=1, cex.names=1)
+barplot(t(as.matrix(nb_pair[,c(1,3)])), beside=T, main="Human before merge", xlab='Cell type number', ylim=c(0,0.7),
+        ylab="Base pairs proportion", col=c("forestgreen", "firebrick1"),lwd=2, cex.axis=1, cex.lab=1, cex.names=1)
 
-legend("topright", legend=c("Observed", "Simulated"),fill=c("forestgreen", "orange"), bty='n')
+legend("topright", legend=c("Observed", "Simulated"),fill=c("forestgreen", "firebrick1"), bty='n')
 
 barplot(t(as.matrix(nb_pair[,c(2,4)])), beside=T, main="After merge", xlab='Cell number', ylim=c(0,0.7),
-        ylab="Base pairs proportion", col=c("forestgreen", "orange"),lwd=2, cex.axis=1, cex.lab=1, cex.names=1)
+        ylab="Base pairs proportion", col=c("forestgreen", "firebrick1"),lwd=2, cex.axis=1, cex.lab=1, cex.names=1)
 
 #################################################################################################################
 ### Overlap with enhancers ####
