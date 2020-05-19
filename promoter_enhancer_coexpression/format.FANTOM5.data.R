@@ -29,7 +29,7 @@ for(sp in c("Human", "Mouse")){
 
   results=data.frame("chr"=chr.enhancers, "start"=start.enhancers, "end"=end.enhancers, "id"=id.enhancers, stringsAsFactors=F)
 
-  write.table(results, file=paste(pathFOCS, sp, "/FANTOM5/enhancer_coordinates_",version,".bed"), row.names=F, col.names=F, sep="\t", quote=F)
+  write.table(results, file=paste(pathFOCS, sp, "/FANTOM5/enhancer_coordinates_",version,".bed", sep=""), row.names=F, col.names=F, sep="\t", quote=F)
 
   id.promoters=rownames(Mg_fpkm)
   chr.promoters=unlist(lapply(id.promoters, function(x) unlist(strsplit(x, split=":"))[1]))
@@ -41,7 +41,7 @@ for(sp in c("Human", "Mouse")){
 
   results=data.frame("chr"=chr.promoters, "start"=start.promoters, "end"=end.promoters, "id"=id.promoters, "strand"=strand.promoters, stringsAsFactors=F)
 
-  write.table(results, file=paste(pathFOCS, sp, "/FANTOM5/promoter_coordinates_",version,".bed"), row.names=F, col.names=F, sep="\t", quote=F)
+  write.table(results, file=paste(pathFOCS, sp, "/FANTOM5/promoter_coordinates_",version,".bed", sep=""), row.names=F, col.names=F, sep="\t", quote=F)
   
   ## cleanup
   rm("Me_fpkm")
