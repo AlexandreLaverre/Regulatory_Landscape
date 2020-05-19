@@ -20,3 +20,11 @@ else
 fi
 
 ###################################################################################
+
+if [ -e ${pathResults}/expression_correlations_simulated_data.txt ]; then
+    echo "already done"
+else
+    perl ${pathScripts}/compute.correlations.pl --pathContacts=${pathResults}/promoters_enhancers_in_contact_simulated_data.txt --pathPromoterExpression=${pathFOCS}/promoter_activity.txt --pathEnhancerExpression=${pathFOCS}/enhancer_activity.txt --pathOutput=${pathResults}/expression_correlations_simulated_data.txt
+fi
+
+###################################################################################
