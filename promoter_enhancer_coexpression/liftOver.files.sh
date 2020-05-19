@@ -11,13 +11,13 @@ export pathFOCS=${path}/data/FOCS
 
 #######################################################################
 
-if [ ${sp} = "Human" ]; then
+if [ ${sp} = "human" ]; then
     export oldversion=hg19
     export newversion=hg38
     export alignmentFile=${pathLiftOver}/hg19ToHg38.over.chain.gz
 fi
 
-if [ ${sp} = "Mouse" ]; then
+if [ ${sp} = "mouse" ]; then
     export oldversion=mm9
     export newversion=mm10
     export alignmentFile=${pathLiftOver}/mm9ToMm10.over.chain.gz
