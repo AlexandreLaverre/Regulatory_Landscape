@@ -18,7 +18,7 @@ export pathScripts=${pathAnouk}/scripts/promoter_enhancer_coexpression
 if [ -e ${pathResults} ]; then
     echo "output path already there"
 else
-    mkdir ${pathResults} 
+    mkdir -p ${pathResults} 
 fi
 
 ###################################################################################
