@@ -23,7 +23,7 @@ print(all(prom.bs$ent_id==rownames(Mg_rpkm)))
 
 ## the rownames on Me_rpkm are not informative! I will assume that they are in the same order as the rows in enh.bs
 
-rownames(Me_rpkm)=rownames(enh.bs)
+rownames(Me_rpkm)=enh.bs$name
 
 id.enhancers=rownames(Me_rpkm)
 chr.enhancers=unlist(lapply(id.enhancers, function(x) unlist(strsplit(x, split=":"))[1]))
