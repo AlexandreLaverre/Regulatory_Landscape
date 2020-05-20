@@ -61,19 +61,19 @@ write.table(results, file=paste(pathFOCS, sp, "/GRO-seq/promoter_coordinates_",v
 
 ## write expression data now
 
-if(dim(Me_fpkm)[2]!=dim(Mg_fpkm)[2]){
+if(dim(Me_rpkm)[2]!=dim(Mg_rpkm)[2]){
   stop("weird! different column names")
 }
 
-if(!all(colnames(Me_fpkm)%in%colnames(Mg_fpkm))){
+if(!all(colnames(Me_rpkm)%in%colnames(Mg_rpkm))){
   stop("weird! different column names")
 }
 
-Me_fpkm=Me_fpkm[,colnames(Mg_fpkm)]
+Me_rpkm=Me_rpkm[,colnames(Mg_rpkm)]
 
-write.table(Me_fpkm, file=paste(pathFOCS, sp, "/GRO-seq/enhancer_activity.txt", sep=""), row.names=T, col.names=T, sep="\t", quote=F)
+write.table(Me_rpkm, file=paste(pathFOCS, sp, "/GRO-seq/enhancer_activity.txt", sep=""), row.names=T, col.names=T, sep="\t", quote=F)
 
-write.table(Mg_fpkm, file=paste(pathFOCS, sp, "/GRO-seq/promoter_activity.txt", sep=""), row.names=T, col.names=T, sep="\t", quote=F)
+write.table(Mg_rpkm, file=paste(pathFOCS, sp, "/GRO-seq/promoter_activity.txt", sep=""), row.names=T, col.names=T, sep="\t", quote=F)
 
 ###########################################################################
 
