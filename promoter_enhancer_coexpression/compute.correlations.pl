@@ -148,8 +148,12 @@ sub computeCorrelation{
     my $sdx=computeSD($x);
     my $sdy=computeSD($y);
     
-    my $corr=$cov/($sdx*$sdy);
+    my $corr="NA";
 
+    if($sdx!=0 && $sdy!=0){
+	$corr=$cov/($sdx*$sdy);
+    }
+    
     return($corr);
 }
 
