@@ -2,12 +2,12 @@
 
 ################################################################################################################################################
 
-specie=$1
+specie=$1 # human or mouse
 path=/home/laverre/Documents/Regulatory_Landscape
 pathScripts=${path}/scripts/overlap_genomic_elements
 pathOverlap=${path}/data/${specie}/overlap
-data=$2
-bonus=$3
+data=$2 # merged samples or all
+bonus=$3 # T or F
 
 if [ ${specie} = "human" ]; then
 enhancers_files=(potential_enhancers/RoadMap_enhancer_genomic_positions_hg38.bed potential_enhancers/GRO_seq_enhancer_genomic_positions_hg38.bed potential_enhancers/ENCODE_enhancer_genomic_positions_hg38.bed potential_enhancers/CAGE_enhancer_genomic_positions_hg38.bed)
@@ -116,9 +116,9 @@ ${pathScripts}/overlap.py ${specie} ${converted_frag} ${reference_file} overlap/
 fi
 
 if [ ${bonus} = "T" ]; then
-${pathScripts}/overlap.py ${specie} ${reference_file} annotations/all_exons.bed overlap/${prefix}_overlap_all_exons250.txt --extend 250 --intraoverlap --count_window -v
-${pathScripts}/overlap.py ${specie} ${reference_file} annotations/TSS_genes.bed overlap/${prefix}_overlap_TSS_1Kb.txt --extend 1000 --intraoverlap --count_window -v
-${pathScripts}/overlap.py ${specie} ${reference_file} annotations/genes.bed overlap/${prefix}_overlap_genes_1Kb.txt --extend 1000 --intraoverlap --count_window -v
+${pathScripts}/overlap.py ${specie} ${reference_file} annotations/all_exons.bed overlap/${prefix}_overlap_all_exons250.txt --extend 250 --intraoverlap --count_overlap -v
+#${pathScripts}/overlap.py ${specie} ${reference_file} annotations/TSS_genes.bed overlap/${prefix}_overlap_TSS_1Kb.txt2 --extend 1000 --intraoverlap -v --interest_ID
+#${pathScripts}/overlap.py ${specie} ${reference_file} annotations/genes.bed overlap/${prefix}_overlap_genes_1Kb.txt2 --extend 1000 --intraoverlap -v --interest_ID
 fi
 
 

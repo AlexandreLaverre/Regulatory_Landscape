@@ -1,10 +1,10 @@
-setwd("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/")
+setwd("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/old/")
 
-load("Fig4_mouse_mean.Rdata")
+load("Fig4_human_median.Rdata")
 
 CEX = 1
 CEX_lines = 1
-png("Fig4_mouse_mean.png", width = 800, height = 800)
+#png("Fig4_human_mean.png", width = 800, height = 800)
 par(mfrow=c(4,1), mai = c(0.5, 0.7, 0.5, 0.2))
 
 layout(matrix(c(1,1,2,2,3,3,4,5), 4, 2, byrow = TRUE))
@@ -72,6 +72,9 @@ for (sp_target in rev(species)){
   }else if (sp_target == "chicken"){
     xmin=0
     xmax=0.04}
+  
+  xmin=min(conserv_dist_all_sp[[sp_target]][["simul"]][row,"int_start"])
+  xmax=max(conserv_dist_all_sp[[sp_target]][["obs_enh"]][1:50,"inter"])
   
   plot(conserv_dist_all_sp[[sp_target]][["obs"]][1:50,"inter"], type="l", col="red", cex=CEX_lines, main=paste(sp_origin, " to ", sp_target, sep=""),
                                      xlab="", ylab="Ungapped Non-exonic Score", xaxt = "n", ylim=c(xmin,xmax), cex.lab=CEX, cex.axis=CEX, cex.main=CEX)

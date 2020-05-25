@@ -19,7 +19,7 @@ def dic_pb(file):
             i = i.strip("\n")
             i = i.split("\t")
             frag = (str(i[1]) + ':' + str(i[2]) + ':' + str(i[3]))
-            elem_pb[frag] = 0 if i[4] == "NA" else int(i[6])
+            elem_pb[frag] = 0 if i[4] == "NA" else int(i[6])    # len(i[4].split(",")) #
 
     return elem_pb
 
@@ -72,7 +72,7 @@ gene_count_bait = dic_count(bait_gene1Kb)
 
 # Duplication score
 frag_dupli = {}
-input = "/all_fragments_BLAT_summary_0.8.txt"
+input = "/restriction_fragments_BLAT_summary_0.8.txt"
 
 with open(path_dupli + origin_sp + input) as f1:
     for i in f1.readlines()[1:]:
@@ -122,13 +122,21 @@ def HiC_stats(origin_sp, data):
 
                     # PIR side
                     if PIR not in PIR_infos.keys():
-                        PIR_infos[PIR] = [[bait], [str(dist)], contact, nb_bait_in_cell, i[6], [score]]
+                        PIR_infos[PIR] = [[bait], [str(dist)], contact, nb_bait_in_cell, i[6], [score],
+                                          [str(gene) for gene in gene_count_bait[bait]]]
+
+
                     else:
                         PIR_infos[PIR][0].append(bait)
                         PIR_infos[PIR][1].append(str(dist))
                         PIR_infos[PIR][2] = list(np.nansum((PIR_infos[PIR][2], contact), axis=0))
                         PIR_infos[PIR][3] = [sum(x) for x in zip(PIR_infos[PIR][3], nb_bait_in_cell)]
                         PIR_infos[PIR][5].append(str(score))
+
+                        for gene in gene_count_bait[bait]:
+                            if gene not in PIR_infos[PIR][6]:
+                                PIR_infos[PIR][6].append(str(gene))
+
 
                     # Bait side : names and distances of contacted fragments
                     if bait not in bait_infos.keys():
@@ -156,13 +164,15 @@ def HiC_stats(origin_sp, data):
                         GRO_seq_contact[bait] += GRO_seq_count[PIR]
 
     print("Writting output...")
-    output = open("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt_test", 'w')
-    if os.stat("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt_test").st_size == 0:
+    output = open("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt", 'w')
+    if os.stat("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt").st_size == 0:
         output.write("chr\tstart\tend\tlength\tCAGE_bp\tENCODE_bp\t")
         if origin_sp == "human":
             output.write("RoadMap_bp\tGRO_seq_bp\t")
-        output.write("bait_contacted\tmean_baits_contacts\tmedian_score\tmidist\tbaited\tnb_cell\tduplication\tall_exon_pb\t"
-                     "all_exon250\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb\tphastcons_noexonic250\tTSS_count\t")
+        output.write("bait_contacted\tgenes_contacted\tmean_baits_contacts\tmedian_score\tmidist\tbaited\tnb_cell\t"
+                     "duplication\tall_exon_pb\tall_exon250\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb\t"
+                     "phastcons_noexonic250\tTSS_count\t")
+
         output.write('\t'.join(cell_name) + "\n")
 
     for PIR in PIR_infos.keys():
@@ -175,7 +185,7 @@ def HiC_stats(origin_sp, data):
         if origin_sp == "human":
             output.write(str(RoadMap_count[PIR]) + '\t' + str(GRO_seq_count[PIR]) + '\t')
 
-        output.write(str(len(PIR_infos[PIR][0])) + '\t' + str(np.mean(bait_contact)) + '\t')
+        output.write(str(len(PIR_infos[PIR][0])) + '\t' + str(len(PIR_infos[PIR][6])) + '\t' + str(np.mean(bait_contact)) + '\t')
         output.write(str(np.median([float(x) for x in PIR_infos[PIR][5]])) + '\t')  # mid_score
         output.write(str(np.median([float(x) for x in PIR_infos[PIR][1]])) + '\t' + str(PIR_infos[PIR][4]) + '\t')
         output.write(str(nb_sample) + '\t' + str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t')
@@ -184,8 +194,8 @@ def HiC_stats(origin_sp, data):
         output.write(str('\t'.join(str(x) for x in PIR_infos[PIR][3])) + '\n')
 
     ## Bait side
-    output_bait = open("../../result/conservation/bait_composition_" + origin_sp + data + ".txt_test", 'w')
-    if os.stat("../../result/conservation/bait_composition_" + origin_sp + data + ".txt_test").st_size == 0:
+    output_bait = open("../../result/conservation/bait_composition_" + origin_sp + data + ".txt", 'w')
+    if os.stat("../../result/conservation/bait_composition_" + origin_sp + data + ".txt").st_size == 0:
         output_bait.write("chr\tstart\tend\tCAGE_contacted\tENCODE_contacted\t")
         if origin_sp == "human":
             output_bait.write("RoadMap_contacted\tGRO_seq_contacted\t")

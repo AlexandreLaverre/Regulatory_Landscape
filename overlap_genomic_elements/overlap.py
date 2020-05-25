@@ -211,6 +211,7 @@ if os.stat(output_file).st_size == 0:
         output.write("ID\tchr\tstart\tend\toverlap_ID\tlength_frag\tnb_bp_overlap\t%overlap\n") #\tgene_ID
     elif args.count_window:
         output.write("ID\tchr\tstart\tend\tnb_bp_window\n")  # \tgene_ID
+
     else:
         output.write("ID\tchr\tstart\tend\toverlap_ID\n")
 

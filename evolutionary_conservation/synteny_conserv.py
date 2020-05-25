@@ -68,7 +68,7 @@ def synt_conserv(target_sp, data):
     ############################################ Enhancers alignments ###############################################
     def align_enh(enh_name):
         align = {}
-        with open(path_evol + "enhancers_conservation/" + enh_name + "/AlignmentStatistics_Excluding_all_Exons_" +
+        with open(path_evol + "sequence_conservation/" + enh_name + "/AlignmentStatistics_Excluding_all_Exons_" +
                   ref_sp + "2" + target_sp + "_" + enh_name + ".txt") as f1:
             for i in f1.readlines()[1:]:
                 i = i.strip("\n")
@@ -90,7 +90,7 @@ def synt_conserv(target_sp, data):
     ############################################ Synteny conserv ###############################################
     def gene_enh_contact(enh_name):
         output_file = path_evol + "synteny_conservation/" + enh_name + "/" + ref_sp + "2" + target_sp \
-                      + "_" + enh_name + "_" + data + "_synteny.txt"
+                      + "_" + enh_name + "_" + data + "_synteny.txt2"
         output = open(output_file, 'w')
         if os.stat(output_file).st_size == 0:
             output.write("origin_gene\torigin_gene_coord\torigin_enh\torigin_dist\t"
@@ -147,7 +147,7 @@ def synt_conserv(target_sp, data):
 
 
 datas = ["original", "simulated"]
-species = ["cow", "opossum", "elephant", "rabbit", "rat", "macaque", "dog", "chicken"]
+species = ["macaque"] #"cow", "opossum", "elephant", "rabbit", "rat", "macaque", "dog", "chicken"
 species.append("mouse") if ref_sp == "human" else species.append("human")
 
 for dat in datas:

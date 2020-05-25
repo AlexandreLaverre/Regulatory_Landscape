@@ -6,7 +6,7 @@ import numpy as np
 
 ref_sp = "human"
 target_sp = "mouse" if ref_sp == "human" else "human"
-seuil = 0.5
+seuil = 0.6
 
 path = "/home/laverre/Data/Regulatory_landscape/result"
 path_evol = path + "/Supplementary_dataset6_regulatory_landscape_evolution/" + ref_sp + "/"
@@ -48,6 +48,7 @@ def cover(data, sample):
 
     coverage = {}
     gene_contact = {}
+    dist = {}
     with open(infile) as f1:
         colnames = f1.readline().strip("\n")
         colnames = colnames.split("\t")
@@ -82,14 +83,16 @@ def cover(data, sample):
                                     if gene not in gene_contact.keys():
                                         gene_contact[gene] = [contacted]
                                         coverage[gene] = [contacted_size]
+                                        dist[gene] = [float(i[7])]
                                     elif contacted not in gene_contact[gene]:
                                         gene_contact[gene].append(contacted)
                                         coverage[gene].append(contacted_size)
+                                        dist[gene].append(float(i[7]))
 
     for gene in coverage.keys():
         coverage[gene] = str(sum(size for size in coverage[gene]))
 
-    return coverage
+    return coverage, dist
 
 
 ############################################# Enhancers alignments ###################################################
@@ -105,7 +108,7 @@ def enh_score(enh_name):
             if int(i[4]) == 1:
                 duplication[enh] = i[4]
 
-    with open(path_evol + "enhancers_conservation/" + enh_name +
+    with open(path_evol + "sequence_conservation/" + enh_name +
               "/AlignmentStatistics_Excluding_all_Exons_" + ref_sp + "2" + target_sp + "_" + enh_name + ".txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
@@ -122,7 +125,7 @@ def enh_score(enh_name):
 
     overlap_target = {}
     if enh_name in ["CAGE", "ENCODE"]:
-        with open(path_evol + "enhancers_conservation/" + enh_name + "/" +
+        with open(path_evol + "sequence_conservation/" + enh_name + "/" +
                   enh_name + "_lifted_overlap_" + enh_name + "_target.txt") as f1:
             for i in f1.readlines()[1:]:
                 i = i.strip("\n")
@@ -134,7 +137,7 @@ def enh_score(enh_name):
 
     return duplication, align, overlap_target
 
-    # with open(path_evol + "/enhancers_conservation/PhastCons/PhastCons_vertebrates_" +
+    # with open(path_evol + "/sequence_conservation/PhastCons/PhastCons_vertebrates_" +
     #           enh_name + "_MaskedExons_Ensembl94.txt") as f1:
     #     for i in f1.readlines()[1:]:
     #         i = i.strip("\n")
@@ -231,7 +234,7 @@ def enh_contact(enh_name, data, sample, duplication, align_score, overlap_target
 
 ############################################# Nb contact ###################################################
 def summary(enh_name, data, sample):
-    coverage = cover(data, sample)
+    coverage, dist = cover(data, sample)
     duplication, align_score, overlap_target = enh_score(enh_name)
     enh_cont, contact_overlap = enh_contact(enh_name, data, sample, duplication, align_score, overlap_target)
     enh_total = {}
@@ -284,7 +287,7 @@ def summary(enh_name, data, sample):
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         output.write("gene\tnb_total\tnb_seq_conserv\tnb_synt10M_conserv\tnb_synt2M_conserv\t"
-                     "nb_contact_conserv\tmed_align_score\tcontacted_coverage\ttotal_enh_length")
+                     "nb_contact_conserv\tmed_align_score\tcontacted_coverage\ttotal_enh_length\tmedian_dist")
 
         if enh_name in ["CAGE", "ENCODE"]:
             output.write("\tnb_overlap_target\n")
@@ -300,9 +303,10 @@ def summary(enh_name, data, sample):
             nb_synt10M = str(len(enh_synt10M[gene])) if gene in enh_synt10M.keys() else str(0)
             nb_synt2M = str(len(enh_synt2M[gene])) if gene in enh_synt2M.keys() else str(0)
             nb_contact = str(len(enh_cont[gene])) if gene in enh_cont.keys() else str(0)
+            median_dist = str(np.median(dist[gene]))
 
             output.write(gene + '\t' + nb_total + '\t' + nb_conserv + '\t' + nb_synt10M + '\t' + nb_synt2M + '\t' +
-                         nb_contact + '\t' + med_align + '\t' + coverage[gene] + '\t' + enh_cover)
+                         nb_contact + '\t' + med_align + '\t' + coverage[gene] + '\t' + enh_cover + '\t' + median_dist)
 
             if enh_name in ["CAGE", "ENCODE"]:
                 nb_overlap_target = str(len(contact_overlap[gene])) if gene in contact_overlap.keys() else str(0)
@@ -316,7 +320,7 @@ def summary(enh_name, data, sample):
 
 datas = ["original", "simulated"]
 enh_data = ["CAGE", "ENCODE"]
-samples = ["all", "pre_adipo", "Bcell", "ESC"]
+samples = ["all"] #, "pre_adipo", "Bcell", "ESC"]
 if ref_sp == "human":
      enh_data.extend(["GRO_seq", "RoadMap"])
 

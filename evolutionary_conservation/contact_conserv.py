@@ -3,7 +3,7 @@
 
 import os
 
-ref_sp = "human"
+ref_sp = "mouse"
 target_sp = "human" if ref_sp == "mouse" else "mouse"
 
 path = "/home/laverre/Data/Regulatory_landscape/result"

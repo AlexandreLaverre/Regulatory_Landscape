@@ -2,8 +2,8 @@
 library(gsubfn)
 setwd("/home/laverre/Documents/Regulatory_Landscape/result/conservation/")
 
-ref_sp = "human"
-target_sp = "mouse" 
+ref_sp = "mouse"
+ 
 path <- "/home/laverre/Data/Regulatory_landscape/result/"
 path_evol <- paste(path, "/Supplementary_dataset6_regulatory_landscape_evolution/", ref_sp, "/", sep="")
 
@@ -23,14 +23,16 @@ compute.tau <- function(exp){
 #############################################################################
 expdiv=read.table("ExpressionDivergence_CardosoMoreira2019.txt", h=T, stringsAsFactors=F, sep="\t")
 rownames(expdiv)=expdiv$IDHuman
+rownames(expdiv)=expdiv$IDMouse
 
 enhancers <- c("CAGE", "ENCODE", "RoadMap", "GRO_seq")
 
-enh="ENCODE"
+enh="CAGE"
 treshold = "0.5"
+data="original"
 
 load_data <- function(enh, data){
-  regland = read.table(paste(path_evol, enh, "_", data, "_summary_conserv_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+  regland = read.table(paste(path_evol, "investigation/evolution_summary/", enh, "_", data, "_summary_conserv_all_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
   regland$data <- data
   common=intersect(rownames(expdiv), rownames(regland))
   
@@ -76,6 +78,8 @@ load_data <- function(enh, data){
   return(list(expdiv, regland, breaks_names))
 }
 
+
+##### Regulatory landscape complexity vs Expression 
 for (enh in enhancers){
   pdf(paste(path, "Main_figures/Figure6_human_", enh, "_expression.pdf", sep=""), width=8.5, height=9.5)
   par(mai = c(0.8, 0.8, 0.2, 0.1)) # bottom, left, top, right

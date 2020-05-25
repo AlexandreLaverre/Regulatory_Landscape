@@ -36,31 +36,12 @@ layout(matrix(c(1,2), nrow = 1, byrow = TRUE))
 cut_names = c("1", "2-5", "6-10", "11-15", "16-20", "21-27")
 
 par(lwd=2)
-barplot(t(as.matrix(nb_pair)), beside=T, main="B.", xlab='Sample frequency', names=cut_names, ylim=c(0,1), space=c(0.4,1),
-        ylab="Base pairs proportion", border=c("forestgreen", "firebrick1"), col="white", lwd=1.5, cex.names=0.8)
+# barplot(t(as.matrix(nb_pair)), beside=T, main="B.", xlab='Sample frequency', names=cut_names, ylim=c(0,1), space=c(0.4,1),
+#         ylab="Base pairs proportion", border=c("forestgreen", "firebrick1"), col="white", lwd=1.5, cex.names=0.8)
 
-par(lwd=1)
-legend("topright", legend=c("Original", "Simulated"),border=c("forestgreen", "firebrick1"),fill="white", bty='n', cex=0.8)
+barplot(t(as.matrix(proportion)), beside=T, main="B.", xlab='Sample frequency', names=cut_names, ylim=c(0,1), space=c(0.4,1),
+        ylab="Nb contact proportion", border=c("forestgreen", "firebrick1"), col="white", lwd=1.5, cex.names=0.8)
 
-plot(dist_sample$V1, type="l", col="forestgreen", xaxt = "n", ylim=c(0,6),
-     xlab="Distance to promoter region", ylab="Sample frequency (mean)",main="C.")
-lines(dist_sample$V2, type="l", col="firebrick1", lwd=1.5)
-
-for (row in 1:nrow(dist_sample)){
-  segments(x0=row,y0=conf_low[row,"V1"],x1=row,y1=conf_up[row,"V1"], col="forestgreen", lwd=0.5)}
-
-for (row in 1:nrow(dist_sample)){
-  segments(x0=row,y0=conf_low[row,"V2"],x1=row,y1=conf_up[row,"V2"], col="firebrick1", lwd=1)}
-
-class_leg <- c("25kb", "2.5Mb", "5Mb", "7.5Mb", "10Mb")
-legend("topright", legend=c("Original", "Simulated"), col=c("forestgreen", "firebrick1"), bty='n', lty=1, cex=0.8)
-axis(1, at=seq(1,201,50), labels=F)
-text(seq(1,201,50),par("usr")[3]-0.8, class_leg, xpd = TRUE, cex=0.8)
-dev.off()
-
-
-# barplot(t(as.matrix(proportion)), beside=T, main=sp, xlab='Cell type number', ylim=c(0,0.7),
-#         ylab="Nb contact proportion", col=c("forestgreen", "firebrick1"),lwd=2, cex.axis=1, cex.lab=1, cex.names=1)
 
 #################### Fig 1.C - Distribution of number of samples according to distance #####################
 # Mean
@@ -84,8 +65,10 @@ conf_up <- as.data.frame(sapply(data_list, function(x) sapply(levels(obs$dist_cl
 #   boxplot.stats(x[which(x$dist_class == y),]$nb_sample)[["conf"]][2])))
 
 par(lwd=1)
+legend("topright", legend=c("Original", "Simulated"),border=c("forestgreen", "firebrick1"),fill="white", bty='n', cex=0.8)
+
 plot(dist_sample$V1, type="l", col="forestgreen", xaxt = "n", ylim=c(0,6),
-     xlab="Distance to promoter region", ylab="Sample frequency (mean)",main="Human")
+     xlab="Distance to promoter region", ylab="Sample frequency (mean)",main="C.")
 lines(dist_sample$V2, type="l", col="firebrick1", lwd=1.5)
 
 for (row in 1:nrow(dist_sample)){
@@ -94,9 +77,5 @@ for (row in 1:nrow(dist_sample)){
 for (row in 1:nrow(dist_sample)){
   segments(x0=row,y0=conf_low[row,"V2"],x1=row,y1=conf_up[row,"V2"], col="firebrick1", lwd=1)}
 
-class_leg <- c("25kb", "2.5Mb", "5Mb", "7.5Mb", "10Mb")
-legend("topright", legend=c("Original", "Simulated"), col=c("forestgreen", "firebrick1"), bty='n', lty=1)
-axis(1, at=seq(1,201,50), labels=F)
-text(seq(1,201,50),par("usr")[3]-0.5, class_leg, xpd = TRUE)
 dev.off()
 
