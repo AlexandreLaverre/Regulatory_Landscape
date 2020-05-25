@@ -112,15 +112,15 @@ sub readContacts{
 	chomp $line;
 	my @s=split("\t", $line);
 	
-	my $baitchr=$s[$header{"bait_chr"}];
+	my $baitchr=$s[$header{"chr_bait"}];
 	my $otherchr=$s[$header{"chr"}];
 
 	if($baitchr eq $otherchr){ ## only cis
-	    my $baitedfrag=$s[$header{"baited_frag"}];
+	    my $type=$s[$header{"type"}];
 	
-	    if($baitedfrag eq "unbaited"){ ## only contacts between baits and unbaited fragments
-		my $baitstart=$s[$header{"bait_start"}]+0;
-		my $baitend=$s[$header{"bait_end"}]+0;
+	    if($type eq "unbaited"){ ## only contacts between baits and unbaited fragments
+		my $baitstart=$s[$header{"start_bait"}]+0;
+		my $baitend=$s[$header{"end_bait"}]+0;
 		my $otherstart=$s[$header{"start"}]+0;
 		my $otherend=$s[$header{"end"}]+0;
 
