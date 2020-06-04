@@ -20,12 +20,12 @@ colnames(genecoords)=c("id", "biotype", "description", "chr", "start", "end", "s
 ###########################################################################
 
 shhid="ENSG00000164690" ## Shh
-sshchr="7"
+shhchr="7"
 
 ###########################################################################
 
 baitcoords=read.table(paste(pathInteractions, tolower(sp), "/bait_coords_",assembly,".txt",sep=""), h=T, stringsAsFactors=F)
-sshbait=baitcoords[grep(shhid, baitcoords$gene_ID), ]
+shhbait=baitcoords[grep(shhid, baitcoords$gene_ID), ]
   
 ###########################################################################
 
@@ -37,18 +37,18 @@ interactions=interactions[which(interactions$chr_bait==interactions$chr),]
 interactions=interactions[which(interactions$type=="unbaited"),]
 interactions=interactions[which(interactions$distance>=minDistance & interactions$distance<=maxDistance),]
 
-sshinteractions=interactions[which(interactions$chr_bait==sshbait$chr & interactions$start_bait==sshbait$start & interactions$end_bait==sshbait$end),]
+shhinteractions=interactions[which(interactions$chr_bait==shhbait$chr & interactions$start_bait==shhbait$start & interactions$end_bait==shhbait$end),]
   
 ###########################################################################
 
 ## select limits for the plot
 
-sshxlim=range(c(sshinteractions$start, sshinteractions$end, sshbait$start, sshbait$end))
+shhxlim=range(c(shhinteractions$start, shhinteractions$end, shhbait$start, shhbait$end))
 
-sshgenecoords=genecoords[which(genecoords$chr==sshchr & ((genecoords$start>=sshxlim[1] & genecoords$start<=sshxlim[2]) | (genecoords$end>=sshxlim[1] & genecoords$end<=sshxlim[2]) |  (genecoords$start<=sshxlim[1] & genecoords$end>=sshxlim[2]))),]
+shhgenecoords=genecoords[which(genecoords$chr==shhchr & ((genecoords$start>=shhxlim[1] & genecoords$start<=shhxlim[2]) | (genecoords$end>=shhxlim[1] & genecoords$end<=shhxlim[2]) |  (genecoords$start<=shhxlim[1] & genecoords$end>=shhxlim[2]))),]
 
 ###########################################################################
 
-save(list=c("baitcoords", "sshid", "sshchr", "sshinteractions", "sshxlim", "sshgenecoords"), file="RData/data.Shh.figure.RData")
+save(list=c("baitcoords", "shhid", "shhchr", "shhinteractions", "shhxlim", "shhgenecoords"), file="RData/data.Shh.figure.RData")
 
 ###########################################################################
