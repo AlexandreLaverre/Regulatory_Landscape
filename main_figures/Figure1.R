@@ -7,6 +7,11 @@ if(! "path"%in%objects){
   
   path <- "/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
   pathFigures=paste(path, "Figures/", sep="")
+
+  ## function for genome browser plots
+
+  source("../genome_browser/plot.annotations.R")
+  source("../genome_browser/plot.interactions.R")
   
   sp = "human"
 
@@ -32,6 +37,8 @@ if(load){
   obs <- read.table(paste(path, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
   simul <- read.table(paste(path, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
 
+  load("RData/data.Shh.figure.RData")
+  
   load=FALSE ## we only do it once
 }
 
@@ -87,18 +94,44 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=3)
+pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7)
 
-## graphical parameters
-
-par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
-par(mar = c(2.5, 2.75, 2.1, 1)) # external margins
 
 ## layout
+
+m=matrix(rep(NA, 50*10), nrow=50)
+
+for(i in 1:2){
+  m[i,]=rep(1,10)
+}
+
+for(i in 3:25){
+  m[i,]=rep(2, 10)
+}
+
+for(i in 26:50){
+  m[i,]=c(rep(3, 5), rep(4, 5))
+}
 
 layout(matrix(c(1,2), nrow = 1, byrow = TRUE))
 
 #########################################################################################################################
+
+## annotations in the Shh region
+
+par(mar=c(0.5, 2.75, 0.1, 1))
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
+
+#########################################################################################################################
+
+## interactions in the Shh region
+par(mar=c(0.5, 2.75, 0.1, 1) ## left and right margin should be the same as above
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
+
+#########################################################################################################################
+
+par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
+par(mar = c(2.5, 2.75, 2.1, 1)) # external margins
 
 #################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
 
