@@ -49,7 +49,7 @@ if(load){
 if(prepare){
   samples=colnames(obs)[9:dim(obs)[2]] ## first 8 columns contain other info for interactions
   
-  print(paste("there are ", length(samples), "samples"))
+  print(paste("there are", length(samples), "samples"))
 
   obs$nb_samples <- apply(obs[,samples], 1, function(x) sum(!is.na(x)))
   obs$sample_class <- cut(obs$nb_samples, breaks=c(0, 1, 5, 10, 15, 20, length(samples)), include.lowest = T)
@@ -131,38 +131,40 @@ plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i",
 #########################################################################################################################
 
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
-par(mar = c(2.5, 2.75, 2.1, 1)) # external margins
+par(mar = c(3.5, 3.75, 2.1, 1)) # external margins
 
 #################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
 
-b=barplot(as.matrix(pc_nb_samples_matrix), beside=T, xlab='', names=rep("", dim(pc_nb_samples_matrix)[2]), ylim=c(0,100), space=c(0.4,1), ylab="", border=dataset.colors[c("Original", "Simulated")], col="white", lwd=1.5, cex.axis=0.85, mgp=c(3, 0.5, 0))
+b=barplot(as.matrix(pc_nb_samples_matrix), beside=T, xlab='', names=rep("", dim(pc_nb_samples_matrix)[2]), ylim=c(0,100), space=c(0.4,1), ylab="", border=dataset.colors[c("Original", "Simulated")], col="white", lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
 
-mtext(colnames(nb_samples_matrix), at=apply(b, 2, mean), side=1, line=0.25, cex=0.75)
+mtext(colnames(nb_samples_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
 
 ## axis labels
-mtext("number of samples", side=1, line=1.25, cex=0.85)
-mtext("% of interactions", side=2, line=1.75, cex=0.85)
+mtext("number of samples", side=1, line=2.25, cex=0.9)
+mtext("% of interactions", side=2, line=2.5, cex=0.9)
 
 ## legend
 
-legend("topright", legend=c("original", "simulated"), border=dataset.colors[c("Original", "Simulated")],fill="white", bty='n', cex=0.8, inset=c(0.05, -0.1), xpd=NA)
+legend("topright", legend=c("original", "simulated"), border=dataset.colors[c("Original", "Simulated")],fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 
 ## plot label
-mtext("B", side=3, line=1, at=-3.25, font=2, cex=1.1)
+mtext("B", side=3, line=1, at=-2.9, font=2, cex=1.1)
+
+#########################################################################################################################
 
 #################### Fig 1.C - Distribution of number of samples according to distance #####################
 
-plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_samples_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=c(0,6), xlab="", ylab="", cex.axis=0.85, mgp=c(3, 0.5, 0), xaxt="n")
+plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_samples_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=c(0,6), xlab="", ylab="", mgp=c(3, 0.75, 0), xaxt="n", cex.axis=1.1)
 lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_samples_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5)
 
 ## X axis
 xax=pretty(range(as.numeric(mean_dist)))
 labels=xax/1e6
-axis(side=1, at=xax, labels=labels, mgp=c(3, 0.5, 0), cex.axis=0.85)
+axis(side=1, at=xax, labels=labels, mgp=c(3, 0.65, 0), cex.axis=1.1)
 
 ## axis labels
-mtext("distance between interacting fragments (Mb)", side=1, line=1.25, cex=0.85)
-mtext("mean number of samples", side=2, line=1.75, cex=0.85)
+mtext("distance between interacting fragments (Mb)", side=1, line=2.25, cex=0.9)
+mtext("mean number of samples", side=2, line=2.5, cex=0.9)
 
 ## confidence intervals
 
@@ -171,7 +173,7 @@ for(dataset in rownames(mean_dist)){
 }
 
 ## plot label
-mtext("C", side=3, line=1, at=-3.65e5, font=2, cex=1.1)
+mtext("C", side=3, line=1, at=-3.9e5, font=2, cex=1.2)
 
 #########################################################################################################################
 
