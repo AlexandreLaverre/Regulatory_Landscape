@@ -125,7 +125,7 @@ plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i",
 #########################################################################################################################
 
 ## interactions in the Shh region
-par(mar=c(0.5, 2.75, 0.1, 1) ## left and right margin should be the same as above
+par(mar=c(0.5, 2.75, 0.1, 1)) ## left and right margin should be the same as above
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
 #########################################################################################################################
