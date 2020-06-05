@@ -22,6 +22,11 @@ if(! "path"%in%objects){
 
   col.Shh="forestgreen"
 
+  ## labels for enhancers
+
+  enh.syn=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap")
+  names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
+
   ## minimum and maximum distance for considered interactions
 
   minDistance=25e3
@@ -110,12 +115,16 @@ for(i in c(7)){
   m[i,]=rep(2, 10)
 }
 
-for(i in 8:28){
+for(i in c(8:11)){
   m[i,]=rep(3, 10)
 }
 
-for(i in 29:50){
-  m[i,]=c(rep(4, 5), rep(5, 5))
+for(i in 12:31){
+  m[i,]=rep(4, 10)
+}
+
+for(i in 32:50){
+  m[i,]=c(rep(5, 5), rep(6, 5))
 }
 
 layout(m)
@@ -124,7 +133,7 @@ layout(m)
 
 ## annotations in the Shh region
 
-par(mar=c(0.25, 4.5, 2.0, 4.5))
+par(mar=c(0.25, 5.5, 2.0, 7.5))
 ## plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
 ## quick fix for gene names, will be removed later
@@ -137,29 +146,52 @@ plot.annotations.genes(gene.coords=shhgenecoords, focus.gene=shhid, gene.biotype
 
 ## axis label
 
-mtext("genes", side=2, las=2, cex=0.75, line=1)
+mtext("genes", side=2, las=2, cex=0.75, line=0.75)
 
 ## plot label
 
-mtext("A", side=3, line=0.75, at=shhxlim[1]-diff(shhxlim)/12, font=2, cex=1.2)
+mtext("A", side=3, line=0.75, at=shhxlim[1]-diff(shhxlim)/8, font=2, cex=1.2)
 
 #########################################################################################################################
 
 ## baits in the Shh region
 
-par(mar=c(0.5, 4.5, 0.1, 4.5)) ## left and right margin should be the same as above
+par(mar=c(0.5, 5.5, 0.1, 7.5)) ## left and right margin should be the same as above
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
 segments(shhxlim[1], 0.5, shhxlim[2], 0.5, lwd=0.5, lty=3, col="gray40")
 
 rect(allshhbaits$start, 0.15, allshhbaits$end, 0.85, col="gray40", border="gray40")
 
-mtext("baits", side=2, las=2, cex=0.75, line=1)
+mtext("baits", side=2, las=2, cex=0.75, line=0.75)
+
+#########################################################################################################################
+
+## enhancers in the Shh region
+
+par(mar=c(0.5, 5.5, 0.1, 7.5)) ## left and right margin should be the same as above
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
+
+ypos=seq(from=0.1, to=0.9, length=length(shhenhancers))
+names(ypos)=names(shhenhancers)
+
+height=0.05
+
+for(ed in names(shhenhancers)){
+  this.enhancers=shhenhancers[[ed]]
+  segments(shhxlim[1], ypos[ed], shhxlim[2], ypos[ed], lwd=0.5, lty=3, col="gray40")
+  rect(this.enhancers$start, ypos[ed]-height, this.enhancers$end, ypos[ed]+height, col="gray40", border=NA)
+
+  mtext(enh.syn[ed], side=4, at=ypos[ed], line=0.25, las=2, cex=0.65)
+}
+
+mtext("predicted", side=2, las=2, cex=0.75, line=0.75, at=mean(ylim)+diff(ylim)/20)
+mtext("enhancers", side=2, las=2, cex=0.75, line=0.75)
 
 #########################################################################################################################
 
 ## interactions in the Shh region
-par(mar=c(2.5, 4.5, 0.1, 4.5)) ## left and right margin should be the same as above
+par(mar=c(1.5, 5.5, 0.1, 7.5)) ## left and right margin should be the same as above
 
 ylim=c(0, length(samples)+1)
 height=0.25
@@ -174,7 +206,7 @@ zrspos=mean(c(156813654, 156816773)) ## 2nd most frequent interaction
 
 rect(zrspos-1.5e4, ylim[1]+diff(ylim)/50, zrspos+3e4, ylim[2]-diff(ylim)/50, border="gray40", col="white", xpd=NA)
 
-mtext("ZRS", font=3, cex=0.7, side=1, at=zrspos+0.75e4, line=0)
+mtext("ZRS", font=3, cex=0.7, side=1, at=zrspos+0.75e4, line=-0.25)
 
 for(sample in samples){
   abline(h=ypos[sample], col="gray40",lwd=0.5, lty=3)
@@ -188,7 +220,7 @@ for(sample in samples){
 }
 
 mtext("SHH", side=2, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
-mtext("contacts", side=2, las=2, cex=0.75, line=0.75)
+mtext("interactions", side=2, las=2, cex=0.75, line=0.5)
 
 #########################################################################################################################
 
