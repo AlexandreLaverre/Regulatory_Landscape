@@ -43,12 +43,18 @@ shhinteractions=interactions[which(interactions$chr_bait==shhbait$chr & interact
 
 ## select limits for the plot
 
-shhxlim=range(c(shhinteractions$start, shhinteractions$end, shhbait$start, shhbait$end))
+margin=10000
+
+shhxlim=range(c(shhinteractions$start, shhinteractions$end, shhbait$start, shhbait$end))+c(-margin, margin)
 
 shhgenecoords=genecoords[which(genecoords$chr==shhchr & ((genecoords$start>=shhxlim[1] & genecoords$start<=shhxlim[2]) | (genecoords$end>=shhxlim[1] & genecoords$end<=shhxlim[2]) |  (genecoords$start<=shhxlim[1] & genecoords$end>=shhxlim[2]))),]
 
+## other baits in regions
+
+allshhbaits=baitcoords[which(baitcoords$chr==shhchr & baitcoords$start>=sshxlim[1] & baitcoords$end<=shhxlim[2]),]
+
 ###########################################################################
 
-save(list=c("baitcoords", "shhid", "shhchr", "shhinteractions", "shhxlim", "shhgenecoords"), file="RData/data.Shh.figure.RData")
+save(list=c("allshhbaits", "shhid", "shhchr", "shhinteractions", "shhxlim", "shhgenecoords"), file="RData/data.Shh.figure.RData")
 
 ###########################################################################
