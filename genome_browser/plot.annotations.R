@@ -68,7 +68,7 @@ plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all",
       }
       
       if(g==focus.gene){
-        text(this.name, x=(this.start+this.end)/2, y=ypos+height*0.75, adj=c(0.5, 0), cex=cex.name, font=3)
+        text(this.name, x=(this.start+this.end)/2, y=ypos+height*0.75, adj=c(0.5, 0), cex=cex.name, font=3, xpd=NA)
       }
     } else{
       if(this.strand=="-" | this.strand=="-1"){
@@ -78,7 +78,7 @@ plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all",
         }
 
          if(g==focus.gene){
-           text(this.name, x=(this.start+this.end)/2, y=ypos-height*0.75, adj=c(0.5, 1), cex=cex.name, font=3)
+           text(this.name, x=(this.start+this.end)/2, y=ypos-height*0.75, adj=c(0.5, 1), cex=cex.name, font=3, xpd=NA)
          }
         
       } else{
