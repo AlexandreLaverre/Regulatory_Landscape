@@ -63,10 +63,10 @@ plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all",
     
     if(g==focus.gene){
       if(name.position=="top"){
-        text(this.name, x=(this.start+this.end)/2, y=ypos+height, adj=c(0.5, 0), cex=cex.name, font=3, xpd=NA)
+        text(this.name, x=(this.start+this.end)/2, y=ypos+height*1.1, adj=c(0.5, 0), cex=cex.name, font=3, xpd=NA)
       }
       if(name.position=="bottom"){
-        text(this.name, x=(this.start+this.end)/2, y=ypos-height, adj=c(0.5, 1), cex=cex.name, font=3, xpd=NA)
+        text(this.name, x=(this.start+this.end)/2, y=ypos-height*1.1, adj=c(0.5, 1), cex=cex.name, font=3, xpd=NA)
       }
     }
 
