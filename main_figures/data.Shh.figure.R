@@ -51,7 +51,7 @@ shhgenecoords=genecoords[which(genecoords$chr==shhchr & ((genecoords$start>=shhx
 
 ## other baits in regions
 
-allshhbaits=baitcoords[which(baitcoords$chr==shhchr & baitcoords$start>=sshxlim[1] & baitcoords$end<=shhxlim[2]),]
+allshhbaits=baitcoords[which(baitcoords$chr==shhchr & baitcoords$start>=shhxlim[1] & baitcoords$end<=shhxlim[2]),]
 
 ###########################################################################
 
