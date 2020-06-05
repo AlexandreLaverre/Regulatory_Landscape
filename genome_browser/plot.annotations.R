@@ -1,6 +1,6 @@
 #####################################################################
 
-plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all", xlim, col.focus="navy", col.other="gray60", axis=T, axisunit=NA, cex.name=1){
+plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all", xlim, col.focus="navy", col.other="gray60", axis=T, axisunit=NA, axisside=1, cex.name=1){
 
   if(!focus.gene%in%gene.coords$id){
     stop(paste("cannot find", focus.gene, "in annotations"))
@@ -87,17 +87,17 @@ plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all",
 
   if(axis){
     if(is.na(axisunit)){
-       axis(side=1, mgp=c(3, 0.5, 0))
+       axis(side=axisside, mgp=c(3, 0.5, 0))
      } else{
        if(axisunit%in%c("kb", "Kb", "k", "K")){
          xax=pretty(xlim/1e3)
          xval=paste(xax, "kb", sep="")
-         axis(side=1, at=xax*1e3, labels=xval, mgp=c(3, 0.5, 0))
+         axis(side=axisside, at=xax*1e3, labels=xval, mgp=c(3, 0.5, 0))
        } else{
          if(axisunit%in%c("Mb", "mb", "m", "M")){
            xax=pretty(xlim/1e6)
            xval=paste(xax, "Mb", sep="")
-           axis(side=1, at=xax*1e6, labels=xval, mgp=c(3, 0.5, 0))
+           axis(side=axisside, at=xax*1e6, labels=xval, mgp=c(3, 0.5, 0))
          }
        }
      }
