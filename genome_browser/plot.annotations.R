@@ -1,6 +1,6 @@
 #####################################################################
 
-plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all", xlim, col.focus="navy", col.other="gray60", axis=T, axisunit=NA, axisside=1, cex.name=1, show.arrows=T, name.position="top"){
+plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all", xlim, col.focus="navy", col.other="gray60", axis=T, axisunit=NA, axisside=1, cex.name=1, show.arrows=T, name.position="top", highlighted.genes=NA){
 
   if(!focus.gene%in%gene.coords$id){
     stop(paste("cannot find", focus.gene, "in annotations"))
@@ -61,7 +61,7 @@ plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all",
  
     rect(this.start, ypos-height/2, this.end, ypos+height/2, col=this.col, border=this.col, xpd=NA)
     
-    if(g==focus.gene){
+    if(g==focus.gene | g%in%highlighted.genes){
       if(name.position=="top"){
         text(this.name, x=(this.start+this.end)/2, y=ypos+height*1.1, adj=c(0.5, 0), cex=cex.name, font=3, xpd=NA)
       }
