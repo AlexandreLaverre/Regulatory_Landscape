@@ -81,9 +81,10 @@ plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all",
           segments(this.end, ypos+height/2, this.end, ypos+height/2+arrowheight, col=this.col)
           arrows(this.end, ypos+height/2+arrowheight, this.end-arrowsize, ypos+height/2+arrowheight, length=arrowlength, xpd=NA, lwd=1.5, col=this.col)
         }
-      } else{
-        print(this.strand)
-        stop("unknown strand!")
+        else{
+          print(this.strand)
+          stop("unknown strand!")
+        }
       }
     }
   }
