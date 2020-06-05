@@ -23,8 +23,8 @@ plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all",
   print(paste(dim(this.genes)[1], "genes"))
   
   ylim=c(-3,3)
-  ypos.bystrand=c(1,-1)
-  names(ypos.bystrand)=c("+", "-")
+  ypos.bystrand=c(1,-1, 1, -1)
+  names(ypos.bystrand)=c("+", "-", "1", "-1")
   height=0.65
 
   arrowheight=0.65
@@ -37,7 +37,14 @@ plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all",
 
   for(g in this.genes$id){
     this.strand=as.character(this.genes$strand[which(this.genes$id==g)])
-    this.col=this.genes$color[which(this.genes$id==g)]
+
+    ## color for the rectangle
+    this.col=col.other
+
+    if(g==focus.gene){
+      this.col=col.focus
+    }
+    
     this.start=this.genes$start[which(this.genes$id==g)]
     this.end=this.genes$end[which(this.genes$id==g)]
     this.name=this.genes$name[which(this.genes$id==g)]
