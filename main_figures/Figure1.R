@@ -20,6 +20,8 @@ if(! "path"%in%objects){
   dataset.colors=c("forestgreen", "firebrick1")
   names(dataset.colors)=c("Original", "Simulated")
 
+  col.Shh="forestgreen"
+
   ## minimum and maximum distance for considered interactions
 
   minDistance=25e3
@@ -82,7 +84,7 @@ if(prepare){
 
   dist_conf_low <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
   dist_conf_high <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
-                
+
 
   prepare=FALSE
 }
@@ -96,21 +98,24 @@ if(prepare){
 
 pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7)
 
-
 ## layout
 
 m=matrix(rep(NA, 50*10), nrow=50)
 
-for(i in 1:2){
+for(i in 1:6){
   m[i,]=rep(1,10)
 }
 
-for(i in 3:25){
+for(i in c(7)){
   m[i,]=rep(2, 10)
 }
 
-for(i in 26:50){
-  m[i,]=c(rep(3, 5), rep(4, 5))
+for(i in 8:28){
+  m[i,]=rep(3, 10)
+}
+
+for(i in 29:50){
+  m[i,]=c(rep(4, 5), rep(5, 5))
 }
 
 layout(m)
@@ -119,16 +124,71 @@ layout(m)
 
 ## annotations in the Shh region
 
-par(mar=c(0.5, 2.75, 0.1, 1))
+par(mar=c(0.25, 4.5, 2.0, 4.5))
 ## plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
-plot.annotations.genes(gene.coords=shhgenecoords, focus.gene=sshid, gene.biotypes="all", xlim=sshxlim, col.focus="navy", col.other="gray60", axis=T, axisunit=NA, cex.name=1)
+## quick fix for gene names, will be removed later
+shhgenecoords$name=rep(NA, dim(shhgenecoords)[1])
+shhgenecoords$name[which(shhgenecoords$id==shhid)]="SHH"
+shhgenecoords$name[which(shhgenecoords$id=="ENSG00000105983")]="LMBR1"
+shhgenecoords$name[which(shhgenecoords$id=="ENSG00000182648")]="LINC01006" 
+
+plot.annotations.genes(gene.coords=shhgenecoords, focus.gene=shhid, gene.biotypes=c("protein_coding", "lincRNA"), xlim=shhxlim, col.focus=col.Shh, col.other="gray60", axis=T, axisunit="Mb", axisside=3, cex.name=0.9, name.position="top", show.arrows=T, highlighted.genes=c("ENSG00000105983", "ENSG00000182648"))
+
+## axis label
+
+mtext("genes", side=2, las=2, cex=0.75, line=1)
+
+## plot label
+
+mtext("A", side=3, line=0.75, at=shhxlim[1]-diff(shhxlim)/12, font=2, cex=1.2)
+
+#########################################################################################################################
+
+## baits in the Shh region
+
+par(mar=c(0.5, 4.5, 0.1, 4.5)) ## left and right margin should be the same as above
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
+
+segments(shhxlim[1], 0.5, shhxlim[2], 0.5, lwd=0.5, lty=3, col="gray40")
+
+rect(allshhbaits$start, 0.15, allshhbaits$end, 0.85, col="gray40", border="gray40")
+
+mtext("baits", side=2, las=2, cex=0.75, line=1)
 
 #########################################################################################################################
 
 ## interactions in the Shh region
-par(mar=c(0.5, 2.75, 0.1, 1)) ## left and right margin should be the same as above
-plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
+par(mar=c(2.5, 4.5, 0.1, 4.5)) ## left and right margin should be the same as above
+
+ylim=c(0, length(samples)+1)
+height=0.25
+ypos=1:length(samples)
+names(ypos)=samples
+
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=ylim, xaxs="i", yaxs="i")
+
+## Zrs enhancer
+
+zrspos=mean(c(156813654, 156816773)) ## 2nd most frequent interaction
+
+rect(zrspos-1.5e4, ylim[1]+diff(ylim)/50, zrspos+3e4, ylim[2]-diff(ylim)/50, border="gray40", col="white", xpd=NA)
+
+mtext("ZRS", font=3, cex=0.7, side=1, at=zrspos+0.75e4, line=0)
+
+for(sample in samples){
+  abline(h=ypos[sample], col="gray40",lwd=0.5, lty=3)
+  
+  this.int=shhinteractions[which(!is.na(shhinteractions[,sample])),]
+  if(dim(this.int)[1]>0){
+    rect(this.int$start, ypos[sample]-height, this.int$end, ypos[sample]+height, col=col.Shh, border=NA)
+  }
+
+  mtext(sample, side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
+}
+
+mtext("SHH", side=2, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
+mtext("contacts", side=2, las=2, cex=0.75, line=0.75)
 
 #########################################################################################################################
 
@@ -142,21 +202,21 @@ b=barplot(as.matrix(pc_nb_samples_matrix), beside=T, xlab='', names=rep("", dim(
 mtext(colnames(nb_samples_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
 
 ## axis labels
-mtext("number of samples", side=1, line=2.25, cex=0.9)
-mtext("% of interactions", side=2, line=2.5, cex=0.9)
+mtext("number of samples", side=1, line=2.25, cex=0.85)
+mtext("% of interactions", side=2, line=2.5, cex=0.85)
 
 ## legend
 
-legend("topright", legend=c("original", "simulated"), border=dataset.colors[c("Original", "Simulated")],fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
+legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 
 ## plot label
-mtext("B", side=3, line=1, at=-2.9, font=2, cex=1.1)
+mtext("B", side=3, line=1, at=-2.75, font=2, cex=1.2)
 
 #########################################################################################################################
 
 #################### Fig 1.C - Distribution of number of samples according to distance #####################
 
-plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_samples_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=c(0,6), xlab="", ylab="", mgp=c(3, 0.75, 0), xaxt="n", cex.axis=1.1)
+plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_samples_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=c(0,6), xlab="", ylab="", axes=F)
 lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_samples_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5)
 
 ## X axis
@@ -164,15 +224,21 @@ xax=pretty(range(as.numeric(mean_dist)))
 labels=xax/1e6
 axis(side=1, at=xax, labels=labels, mgp=c(3, 0.65, 0), cex.axis=1.1)
 
+axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
+
 ## axis labels
-mtext("distance between interacting fragments (Mb)", side=1, line=2.25, cex=0.9)
-mtext("mean number of samples", side=2, line=2.5, cex=0.9)
+mtext("distance between interacting fragments (Mb)", side=1, line=2.25, cex=0.85)
+mtext("mean number of samples", side=2, line=2.5, cex=0.85)
 
 ## confidence intervals
 
 for(dataset in rownames(mean_dist)){
   segments(as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_low[dataset,]),  as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_high[dataset,]), col=dataset.colors[dataset])
 }
+
+## legend
+
+legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 
 ## plot label
 mtext("C", side=3, line=1, at=-3.9e5, font=2, cex=1.2)
