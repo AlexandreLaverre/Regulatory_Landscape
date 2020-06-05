@@ -43,7 +43,7 @@ shhinteractions=interactions[which(interactions$chr_bait==shhbait$chr & interact
 
 ## select limits for the plot
 
-margin=10000
+margin=25000
 
 shhxlim=range(c(shhinteractions$start, shhinteractions$end, shhbait$start, shhbait$end))+c(-margin, margin)
 
