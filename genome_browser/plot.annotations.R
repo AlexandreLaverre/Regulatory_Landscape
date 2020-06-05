@@ -96,12 +96,12 @@ plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all",
      } else{
        if(axisunit%in%c("kb", "Kb", "k", "K")){
          xax=pretty(xlim/1e3)
-         xval=paste(xax, "kb", sep="")
+         xval=paste(xax, "kb", sep=" ")
          axis(side=axisside, at=xax*1e3, labels=xval, mgp=c(3, 0.5, 0))
        } else{
          if(axisunit%in%c("Mb", "mb", "m", "M")){
            xax=pretty(xlim/1e6)
-           xval=paste(xax, "Mb", sep="")
+           xval=paste(xax, "Mb", sep=" ")
            axis(side=axisside, at=xax*1e6, labels=xval, mgp=c(3, 0.5, 0))
          }
        }
