@@ -2,6 +2,7 @@
 
 pathAnnotations="../../data/ensembl_annotations/"
 pathInteractions="../../../RegulatoryLandscapesManuscript/SupplementaryDataset1/"
+pathEnhancers="../../../RegulatoryLandscapesManuscript/SupplementaryDataset4/"
 
 ###########################################################################
 
@@ -11,6 +12,8 @@ ensrelease=94
 assembly="hg38"
 minDistance=25e3
 maxDistance=2.5e6
+
+enhancer.datasets=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 
 ###########################################################################
 
@@ -55,6 +58,17 @@ allshhbaits=baitcoords[which(baitcoords$chr==paste("chr",shhchr,sep="") & baitco
 
 ###########################################################################
 
-save(list=c("allshhbaits", "shhid", "shhchr", "shhinteractions", "shhxlim", "shhgenecoords"), file="RData/data.Shh.figure.RData")
+## enhancer data
+
+shhenhancers=list()
+
+for(ed in enhancer.datasets){
+  all.enhancers=read.table(paste(pathEnhancers, tolower(sp), "/", ed, "/enhancer_coordinates.bed", sep=""), h=T, stringsAsFactors=F)
+  shhenhancers[[ed]]=all.enhancers[which(all.enhancers$chr==paste("chr", shhchr, sep="") & all.enhancers$start>=shhxlim[1] & all.enhancers$end<=shhxlim[2]),]
+}
+
+###########################################################################
+
+save(list=c("allshhbaits", "shhid", "shhchr", "shhinteractions", "shhxlim", "shhgenecoords", "shhenhancers"), file="RData/data.Shh.figure.RData")
 
 ###########################################################################
