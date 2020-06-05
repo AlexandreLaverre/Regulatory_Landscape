@@ -1,6 +1,6 @@
 #####################################################################
 
-plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", xlim, col.focus="navy", col.other="gray60", axis=T, axisunit=NA, cex.name=1){
+plot.annotations.genes <- function(gene.coords, focus.gene, gene.biotypes="all", xlim, col.focus="navy", col.other="gray60", axis=T, axisunit=NA, cex.name=1){
 
   if(!focus.gene%in%gene.coords$id){
     stop(paste("cannot find", focus.gene, "in annotations"))
@@ -54,14 +54,14 @@ plot.annotations.genes<-function(gene.coords, focus.gene, gene.biotypes="all", x
  
     rect(this.start, ypos-height/2, this.end, ypos+height/2, col=this.col, border=this.col, xpd=NA)
 
-    if(this.strand=="+"){
+    if(this.strand=="+" | this.strand=="1"){
       segments(this.start, ypos+height/2, this.start, ypos+height/2+arrowheight, col=this.col)
       arrows(this.start, ypos+height/2+arrowheight, this.start+arrowsize, ypos+height/2+arrowheight, length=arrowlength, xpd=NA, lwd=1.5, col=this.col)
       if(g==focus.gene){
         text(this.name, x=(this.start+this.end)/2, y=ypos+height*0.75, adj=c(0.5, 0), cex=cex.name, font=3)
       }
     } else{
-      if(this.strand=="-"){
+      if(this.strand=="-" | this.strand=="-1"){
         segments(this.end, ypos+height/2, this.end, ypos+height/2+arrowheight, col=this.col)
         arrows(this.end, ypos+height/2+arrowheight, this.end-arrowsize, ypos+height/2+arrowheight, length=arrowlength, xpd=NA, lwd=1.5, col=this.col)
 
