@@ -115,15 +115,15 @@ for(i in c(7)){
   m[i,]=rep(2, 10)
 }
 
-for(i in c(8:11)){
+for(i in c(8:29)){
   m[i,]=rep(3, 10)
 }
 
-for(i in 12:31){
+for(i in 30:32){
   m[i,]=rep(4, 10)
 }
 
-for(i in 32:50){
+for(i in 33:50){
   m[i,]=c(rep(5, 5), rep(6, 5))
 }
 
@@ -148,6 +148,10 @@ plot.annotations.genes(gene.coords=shhgenecoords, focus.gene=shhid, gene.biotype
 
 mtext("genes", side=2, las=2, cex=0.75, line=0.75)
 
+## shhchr
+
+mtext("chr7", at=shhxlim[2]+diff(shhxlim)/20, line=0.5, side=3, cex=0.75)
+
 ## plot label
 
 mtext("A", side=3, line=0.75, at=shhxlim[1]-diff(shhxlim)/8, font=2, cex=1.2)
@@ -164,6 +168,33 @@ segments(shhxlim[1], 0.5, shhxlim[2], 0.5, lwd=0.5, lty=3, col="gray40")
 rect(allshhbaits$start, 0.15, allshhbaits$end, 0.85, col="gray40", border="gray40")
 
 mtext("baits", side=2, las=2, cex=0.75, line=0.75)
+
+#########################################################################################################################
+
+## interactions in the Shh region
+par(mar=c(0.5, 5.5, 0.1, 7.5)) ## left and right margin should be the same as above
+
+ylim=c(0, length(samples)+1)
+height=0.25
+ypos=1:length(samples)
+names(ypos)=samples
+
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=ylim, xaxs="i", yaxs="i")
+
+
+for(sample in samples){
+  abline(h=ypos[sample], col="gray40",lwd=0.5, lty=3)
+  
+  this.int=shhinteractions[which(!is.na(shhinteractions[,sample])),]
+  if(dim(this.int)[1]>0){
+    rect(this.int$start, ypos[sample]-height, this.int$end, ypos[sample]+height, col=col.Shh, border=NA)
+  }
+
+  mtext(sample, side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
+}
+
+mtext("SHH", side=2, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
+mtext("interactions", side=2, las=2, cex=0.75, line=0.5)
 
 #########################################################################################################################
 
@@ -185,47 +216,23 @@ for(ed in names(shhenhancers)){
   mtext(enh.syn[ed], side=4, at=ypos[ed], line=0.25, las=2, cex=0.65)
 }
 
-mtext("predicted", side=2, las=2, cex=0.75, line=0.75, at=mean(ylim)+diff(ylim)/20)
+mtext("predicted", side=2, las=2, cex=0.75, line=0.75, at=0.85)
 mtext("enhancers", side=2, las=2, cex=0.75, line=0.75)
-
-#########################################################################################################################
-
-## interactions in the Shh region
-par(mar=c(1.5, 5.5, 0.1, 7.5)) ## left and right margin should be the same as above
-
-ylim=c(0, length(samples)+1)
-height=0.25
-ypos=1:length(samples)
-names(ypos)=samples
-
-plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=ylim, xaxs="i", yaxs="i")
 
 ## Zrs enhancer
 
-zrspos=mean(c(156813654, 156816773)) ## 2nd most frequent interaction
+## ZRS coordinates from Vista database: chr7:156,791,088-156,791,875 (after liftOver transformation to hg38)
 
-rect(zrspos-1.5e4, ylim[1]+diff(ylim)/50, zrspos+3e4, ylim[2]-diff(ylim)/50, border="gray40", col="white", xpd=NA)
+zrspos=(156791088+156791875)/2
 
-mtext("ZRS", font=3, cex=0.7, side=1, at=zrspos+0.75e4, line=-0.25)
+segments(zrspos, 0,  zrspos, 1,col="gray40")
 
-for(sample in samples){
-  abline(h=ypos[sample], col="gray40",lwd=0.5, lty=3)
-  
-  this.int=shhinteractions[which(!is.na(shhinteractions[,sample])),]
-  if(dim(this.int)[1]>0){
-    rect(this.int$start, ypos[sample]-height, this.int$end, ypos[sample]+height, col=col.Shh, border=NA)
-  }
-
-  mtext(sample, side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
-}
-
-mtext("SHH", side=2, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
-mtext("interactions", side=2, las=2, cex=0.75, line=0.5)
+mtext("ZRS", font=3, cex=0.7, side=3, at=zrspos, line=0.15)
 
 #########################################################################################################################
 
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
-par(mar = c(3.5, 3.75, 2.1, 1)) # external margins
+par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 
 #################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
 
@@ -273,7 +280,7 @@ for(dataset in rownames(mean_dist)){
 legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 
 ## plot label
-mtext("C", side=3, line=1, at=-3.9e5, font=2, cex=1.2)
+mtext("C", side=3, line=1, at=-3.95e5, font=2, cex=1.2)
 
 #########################################################################################################################
 
