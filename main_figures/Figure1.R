@@ -216,8 +216,8 @@ for(ed in names(shhenhancers)){
   mtext(enh.syn[ed], side=4, at=ypos[ed], line=0.25, las=2, cex=0.65)
 }
 
-mtext("predicted", side=2, las=2, cex=0.75, line=0.75, at=0.85)
-mtext("enhancers", side=2, las=2, cex=0.75, line=0.75)
+mtext("predicted", side=2, las=2, cex=0.75, line=0.75, at=0.75)
+mtext("enhancers", side=2, las=2, cex=0.75, line=0.75, at=0.4)
 
 ## Zrs enhancer
 
