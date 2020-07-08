@@ -1,17 +1,22 @@
 #########################################################################################################################
+library(ade4)
+library(dendextend)
 
 objects=ls()
 
 if(! "path"%in%objects){
   ## basic parameters
   
-  path <- "/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
+  # path <- "/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
+  path <- "/home/laverre/Data/Regulatory_landscape/result/" # local :
   pathFigures=paste(path, "Figures/", sep="")
 
   ## function for genome browser plots
 
-  source("../genome_browser/plot.annotations.R")
-  source("../genome_browser/plot.interactions.R")
+  #source("../genome_browser/plot.annotations.R")
+  #source("../genome_browser/plot.interactions.R")
+  source(paste(path, "genome_browser/plot.annotations.R", sep="")) # local : 
+  source(paste(path, "genome_browser/plot.interactions.R", sep="")) # local :
   
   sp = "human"
 
@@ -41,10 +46,13 @@ if(! "path"%in%objects){
 ## load all data for the figure
 
 if(load){
-  obs <- read.table(paste(path, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
-  simul <- read.table(paste(path, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
+  #obs <- read.table(paste(path, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
+  obs <- read.table(paste(path, "Supplementary_dataset1_original_interactions/", sp, "/all_interactions.txt", sep=""), header=T) # local : 
+  #simul <- read.table(paste(path, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
+  simul <- read.table(paste(path, "Supplementary_dataset2_simulated_interactions/", sp, "/simulated_all_interactions.txt", sep=""), header=T) # local : 
 
-  load("RData/data.Shh.figure.RData")
+  #load("RData/data.Shh.figure.RData")
+  load(paste(path, "data.Shh.figure.RData", sep="")) # local :
   
   load=FALSE ## we only do it once
 }
@@ -89,8 +97,21 @@ if(prepare){
 
   dist_conf_low <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
   dist_conf_high <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
-
-
+  
+  # AFC
+  AFC_obs <- obs[which(obs$type == "unbaited" & obs$distance >= minDistance & obs$distance <= maxDistance),]
+  
+  data_AFC <- AFC_obs[,-c(1:8)]
+  data_AFC <- data_AFC[,-c(27:29)]
+  data_AFC [!is.na(data_AFC)] <- 1
+  data_AFC [is.na(data_AFC)] <- 0
+  data_AFC <- data.frame(t(data_AFC)) # row = samples
+  
+  AFC <- dudi.coa(data_AFC, scannf=F, nf=3)
+  # Dendrogram
+  d=dist.dudi(AFC) 
+  cah=hclust(d,"ward")
+  
   prepare=FALSE
 }
 
@@ -101,7 +122,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7)
+pdf(paste(pathFigures, "Figure1_bis.pdf", sep=""), width=6.85, height=7)
 
 ## layout
 
@@ -116,15 +137,16 @@ for(i in c(7)){
 }
 
 for(i in c(8:29)){
-  m[i,]=rep(3, 10)
+  m[i,]=c(rep(3, 9), rep(4,1))
 }
 
+
 for(i in 30:32){
-  m[i,]=rep(4, 10)
+  m[i,]=rep(5, 10)
 }
 
 for(i in 33:50){
-  m[i,]=c(rep(5, 5), rep(6, 5))
+  m[i,]=c(rep(6, 5), rep(7, 5))
 }
 
 layout(m)
@@ -172,15 +194,14 @@ mtext("baits", side=2, las=2, cex=0.75, line=0.75)
 #########################################################################################################################
 
 ## interactions in the Shh region
-par(mar=c(0.5, 5.5, 0.1, 7.5)) ## left and right margin should be the same as above
+par(mar=c(0.5, 5.5, 0.1, 4.5)) 
 
 ylim=c(0, length(samples)+1)
 height=0.25
 ypos=1:length(samples)
-names(ypos)=samples
+names(ypos)=samples[cah$order] # re-order according to AFC
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=ylim, xaxs="i", yaxs="i")
-
 
 for(sample in samples){
   abline(h=ypos[sample], col="gray40",lwd=0.5, lty=3)
@@ -195,6 +216,10 @@ for(sample in samples){
 
 mtext("SHH", side=2, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
 mtext("interactions", side=2, las=2, cex=0.75, line=0.5)
+
+## Dendrogram of AFC in original samples
+par(mar=c(0, 0.1, 0, 0.3)) 
+plot_horiz.dendrogram(cah, main="", axes=F, side=T)
 
 #########################################################################################################################
 
@@ -236,7 +261,7 @@ par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 
 #################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
 
-b=barplot(as.matrix(pc_nb_samples_matrix), beside=T, xlab='', names=rep("", dim(pc_nb_samples_matrix)[2]), ylim=c(0,100), space=c(0.4,1), ylab="", border=dataset.colors[c("Original", "Simulated")], col="white", lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
+b=barplot(as.matrix(pc_nb_samples_matrix), beside=T, xlab='', names=rep("", dim(pc_nb_samples_matrix)[2]), ylim=c(0,80), space=c(0.4,1), ylab="", border=dataset.colors[c("Original", "Simulated")], col="white", lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
 
 mtext(colnames(nb_samples_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
 
