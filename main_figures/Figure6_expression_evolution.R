@@ -2,7 +2,7 @@
 library(gsubfn)
 setwd("/home/laverre/Documents/Regulatory_Landscape/result/conservation/")
 
-ref_sp = "mouse"
+ref_sp = "human"
  
 path <- "/home/laverre/Data/Regulatory_landscape/result/"
 path_evol <- paste(path, "/Supplementary_dataset6_regulatory_landscape_evolution/", ref_sp, "/", sep="")
@@ -22,8 +22,7 @@ compute.tau <- function(exp){
 
 #############################################################################
 expdiv=read.table("ExpressionDivergence_CardosoMoreira2019.txt", h=T, stringsAsFactors=F, sep="\t")
-rownames(expdiv)=expdiv$IDHuman
-rownames(expdiv)=expdiv$IDMouse
+if(ref_sp == "human"){rownames(expdiv)=expdiv$IDHuman}else{rownames(expdiv)=expdiv$IDMouse}
 
 enhancers <- c("CAGE", "ENCODE", "RoadMap", "GRO_seq")
 
@@ -32,7 +31,7 @@ treshold = "0.5"
 data="original"
 
 load_data <- function(enh, data){
-  regland = read.table(paste(path_evol, "investigation/evolution_summary/", enh, "_", data, "_summary_conserv_all_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+  regland = read.table(paste(path_evol, "investigation/evolution_summary/", enh, "/", enh, "_", data, "_summary_conserv_all_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
   regland$data <- data
   common=intersect(rownames(expdiv), rownames(regland))
   
@@ -81,7 +80,7 @@ load_data <- function(enh, data){
 
 ##### Regulatory landscape complexity vs Expression 
 for (enh in enhancers){
-  pdf(paste(path, "Main_figures/Figure6_human_", enh, "_expression.pdf", sep=""), width=8.5, height=9.5)
+  #pdf(paste(path, "Main_figures/Figure6_human_", enh, "_expression.pdf", sep=""), width=8.5, height=9.5)
   par(mai = c(0.8, 0.8, 0.2, 0.1)) # bottom, left, top, right
   layout(matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE))
   
@@ -113,7 +112,7 @@ for (enh in enhancers){
   box()
   mtext("Residual expression divergence", side=2, line=2.75)
   mtext("Number of contacted enhancers", side=1, line=2.75)
-  dev.off()
+  #dev.off()
 
 }
 
@@ -160,6 +159,7 @@ for (enh in enhancers){
   
   boxplot(expdiv$ResidualExpressionDivergence[selected]~regland_simul$class_cons_int[selected], add = TRUE, xaxt = "n", yaxt='n',
           border="firebrick3", outline=F, notch=T, boxwex=0.25, at = 1:length(breaks) + 0.2, outcex=0.2)
+  
   axis(side=2)
   axis(side=1, at=1:length(breaks), labels=breaks)
   box()

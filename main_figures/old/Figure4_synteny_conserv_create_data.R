@@ -13,7 +13,8 @@ max_dist = 2000000
 ################################################# Conserv synteny ~ all species   #################################################
 library(naniar)
 
-conserv_synteny <- list()
+enhancers = c("ENCODE")
+conserv_synteny_2_0.4 <- list()
 for (enh in enhancers){
   data <- c()
   p_test <- c()
@@ -52,7 +53,7 @@ for (enh in enhancers){
   }
   
   conserv <- data.frame(data=data, conf_low=conf_low, conf_up=conf_up, p_test=p_test)
-  conserv_synteny[[enh]] <- conserv
+  conserv_synteny_2_0.4[[enh]] <- conserv
 
 }  
 
@@ -67,8 +68,8 @@ for (enh in enhancers){
     synt_simul <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/human2", sp, "_", enh, "_simulated_synteny.txt", sep=""), header=T)
     
     # Filters
-    synt_obs <- synt_obs[which(synt_obs$BLAT_match < 2  & synt_obs$align_score > 0.4 & synt_obs$origin_dist < max_dist),]
-    synt_simul <- synt_simul[which(synt_simul$BLAT_match < 2  & synt_simul$align_score > 0.4 & synt_simul$origin_dist < max_dist),]
+    synt_obs <- synt_obs[which(synt_obs$BLAT_match == 1  & synt_obs$align_score > 0.1 & synt_obs$origin_dist < max_dist),]
+    synt_simul <- synt_simul[which(synt_simul$BLAT_match == 1  & synt_simul$align_score > 0.1 & synt_obs$origin_dist < max_dist),]
     synt_obs <- synt_obs %>% replace_with_na(replace = list(target_dist = "trans"))
     synt_simul <- synt_simul %>% replace_with_na(replace = list(target_dist = "trans"))
     
@@ -113,7 +114,7 @@ for (enh in enhancers){
 
 save(conserv_synteny, 
      conserv_synteny_dist_CAGE, conserv_synteny_dist_ENCODE, conserv_synteny_dist_RoadMap, conserv_synteny_dist_GRO_seq,
-     file = paste(path, "/Main_figures/Fig4_synteny_human_2M_both_corrected.Rdata", sep=""))
+     file = paste(path, "/Main_figures/Fig4_synteny_human_2M_both.Rdata", sep=""))
 
 
 ########################## Intersection human - opposum & human - mouse ########################## 

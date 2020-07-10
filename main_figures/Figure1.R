@@ -3,23 +3,27 @@ library(ade4)
 library(dendextend)
 
 objects=ls()
+local=TRUE
+sp = "mouse"
 
 if(! "path"%in%objects){
   ## basic parameters
   
-  # path <- "/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
-  path <- "/home/laverre/Data/Regulatory_landscape/result/" # local :
+  path <- "/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
+  if (local){path <- "/home/laverre/Manuscript/"
+  path_data <- "/home/laverre/Data/Regulatory_landscape/result/"} 
+  
   pathFigures=paste(path, "Figures/", sep="")
 
   ## function for genome browser plots
 
-  #source("../genome_browser/plot.annotations.R")
-  #source("../genome_browser/plot.interactions.R")
-  source(paste(path, "genome_browser/plot.annotations.R", sep="")) # local : 
-  source(paste(path, "genome_browser/plot.interactions.R", sep="")) # local :
+  if (local){
+    source(paste(path_data, "genome_browser/plot.annotations.R", sep=""))
+    source(paste(path_data, "genome_browser/plot.interactions.R", sep=""))
+  }else{
+    source("../genome_browser/plot.annotations.R")
+    source("../genome_browser/plot.interactions.R")}
   
-  sp = "human"
-
   ## colors for the datasets
 
   dataset.colors=c("forestgreen", "firebrick1")
@@ -46,14 +50,15 @@ if(! "path"%in%objects){
 ## load all data for the figure
 
 if(load){
-  #obs <- read.table(paste(path, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
-  obs <- read.table(paste(path, "Supplementary_dataset1_original_interactions/", sp, "/all_interactions.txt", sep=""), header=T) # local : 
-  #simul <- read.table(paste(path, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
-  simul <- read.table(paste(path, "Supplementary_dataset2_simulated_interactions/", sp, "/simulated_all_interactions.txt", sep=""), header=T) # local : 
-
-  #load("RData/data.Shh.figure.RData")
-  load(paste(path, "data.Shh.figure.RData", sep="")) # local :
+  obs <- read.table(paste(path, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
+  simul <- read.table(paste(path, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
   
+  if (local){load(paste(path_data, "data.Shh.figure.RData", sep=""))
+    
+  }else{
+    load("RData/data.Shh.figure.RData")
+  }
+
   load=FALSE ## we only do it once
 }
 
@@ -65,13 +70,20 @@ if(prepare){
   samples=colnames(obs)[9:dim(obs)[2]] ## first 8 columns contain other info for interactions
   
   print(paste("there are", length(samples), "samples"))
-
+  if(sp == "human"){
+    breaks_class=c(0, 1, 5, 10, 15, 20, length(samples))
+    nb_samples_names=c("1", "2-5", "6-10", "11-15", "16-20", paste("21-", length(samples), sep=""))
+  }else{
+    breaks_class=c(0, 1, 3, 7, 10, length(samples))
+    nb_samples_names=c("1", "2-3", "4-6", "7-10", paste("11-", length(samples), sep=""))
+  }
+  
   obs$nb_samples <- apply(obs[,samples], 1, function(x) sum(!is.na(x)))
-  obs$sample_class <- cut(obs$nb_samples, breaks=c(0, 1, 5, 10, 15, 20, length(samples)), include.lowest = T)
+  obs$sample_class <- cut(obs$nb_samples, breaks=breaks_class, include.lowest = T)
   obs$dist_class <- cut(obs$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
   
   simul$nb_samples <- apply(simul[,samples], 1, function(x) sum(!is.na(x)))
-  simul$sample_class <- cut(simul$nb_samples, breaks=c(0, 1,  5, 10, 15, 20, length(samples)), include.lowest = T)
+  simul$sample_class <- cut(simul$nb_samples, breaks=breaks_class, include.lowest = T)
   simul$dist_class <- cut(simul$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
   filtered_data <- list("Original"=obs, "Simulated"=simul)
@@ -85,7 +97,7 @@ if(prepare){
   ## compute number of interactions in each nb samples class
   
   nb_samples_matrix <- sapply(filtered_data, function(x) as.numeric(table(x$sample_class)))
-  rownames(nb_samples_matrix)=c("1", "2-5", "6-10", "11-15", "16-20", paste("21-", length(samples), sep=""))
+  rownames(nb_samples_matrix) = nb_samples_names
 
   nb_samples_matrix=t(nb_samples_matrix)
   pc_nb_samples_matrix=100*nb_samples_matrix/apply(nb_samples_matrix,1, sum)
@@ -95,22 +107,30 @@ if(prepare){
   mean_nb_samples_dist <- t(sapply(filtered_data, function(x)   tapply(x$nb_samples, as.factor(x$dist_class), mean, na.rm=T)))
   mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
 
-  dist_conf_low <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
-  dist_conf_high <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
+  if (sp == 'human'){
+    dist_conf_low <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
+    dist_conf_high <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
   
-  # AFC
-  AFC_obs <- obs[which(obs$type == "unbaited" & obs$distance >= minDistance & obs$distance <= maxDistance),]
-  
-  data_AFC <- AFC_obs[,-c(1:8)]
-  data_AFC <- data_AFC[,-c(27:29)]
-  data_AFC [!is.na(data_AFC)] <- 1
-  data_AFC [is.na(data_AFC)] <- 0
-  data_AFC <- data.frame(t(data_AFC)) # row = samples
-  
-  AFC <- dudi.coa(data_AFC, scannf=F, nf=3)
-  # Dendrogram
-  d=dist.dudi(AFC) 
-  cah=hclust(d,"ward")
+    # AFC
+    AFC_obs <- obs[which(obs$type == "unbaited" & obs$distance >= minDistance & obs$distance <= maxDistance),]
+    
+    data_AFC <- AFC_obs[,-c(1:8)] ## first 8 columns contain other info for interactions
+    data_AFC <- data_AFC[1:(length(data_AFC)-3)] # last 3 columns contain other information
+    data_AFC [!is.na(data_AFC)] <- 1
+    data_AFC [is.na(data_AFC)] <- 0
+    data_AFC <- data.frame(t(data_AFC)) # row = samples
+    
+    AFC <- dudi.coa(data_AFC, scannf=F, nf=3)
+    # Dendrogram
+    d=dist.dudi(AFC) 
+    cah=hclust(d,"ward")
+    
+    }else{
+      
+    dist_conf_low <- t(sapply(filtered_data["Original"], function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
+    dist_conf_high <- t(sapply(filtered_data["Original"], function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
+    
+    }
   
   prepare=FALSE
 }
@@ -122,31 +142,32 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "Figure1_bis.pdf", sep=""), width=6.85, height=7)
+if(sp=="human"){pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7)}
+
 
 ## layout
 
 m=matrix(rep(NA, 50*10), nrow=50)
 
 for(i in 1:6){
-  m[i,]=rep(1,10)
+  m[i,]=c(rep(1,9), rep(2,1))
 }
 
 for(i in c(7)){
-  m[i,]=rep(2, 10)
+  m[i,]=c(rep(3, 9), rep(4,1))
 }
 
 for(i in c(8:29)){
-  m[i,]=c(rep(3, 9), rep(4,1))
+  m[i,]=c(rep(5, 9), rep(6,1))
 }
 
 
 for(i in 30:32){
-  m[i,]=rep(5, 10)
+  m[i,]=c(rep(7, 9), rep(8,1))
 }
 
 for(i in 33:50){
-  m[i,]=c(rep(6, 5), rep(7, 5))
+  m[i,]=c(rep(9, 5), rep(10, 5))
 }
 
 layout(m)
@@ -155,7 +176,7 @@ layout(m)
 
 ## annotations in the Shh region
 
-par(mar=c(0.25, 5.5, 2.0, 7.5))
+par(mar=c(0.25, 5.5, 2.0, 4.5))
 ## plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
 ## quick fix for gene names, will be removed later
@@ -178,11 +199,13 @@ mtext("chr7", at=shhxlim[2]+diff(shhxlim)/20, line=0.5, side=3, cex=0.75)
 
 mtext("A", side=3, line=0.75, at=shhxlim[1]-diff(shhxlim)/8, font=2, cex=1.2)
 
+par(mar=c(0, 0.1, 0, 0.3)) 
+plot.new()
 #########################################################################################################################
 
 ## baits in the Shh region
 
-par(mar=c(0.5, 5.5, 0.1, 7.5)) ## left and right margin should be the same as above
+par(mar=c(0.5, 5.5, 0.1, 4.5)) ## left and right margin should be the same as above
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
 segments(shhxlim[1], 0.5, shhxlim[2], 0.5, lwd=0.5, lty=3, col="gray40")
@@ -190,11 +213,13 @@ segments(shhxlim[1], 0.5, shhxlim[2], 0.5, lwd=0.5, lty=3, col="gray40")
 rect(allshhbaits$start, 0.15, allshhbaits$end, 0.85, col="gray40", border="gray40")
 
 mtext("baits", side=2, las=2, cex=0.75, line=0.75)
+par(mar=c(0, 0.1, 0, 0.3)) 
+plot.new()
 
 #########################################################################################################################
 
 ## interactions in the Shh region
-par(mar=c(0.5, 5.5, 0.1, 4.5)) 
+par(mar=c(0.5, 5.5, 0.1, 4.5)) ## left and right margin should be the same as above
 
 ylim=c(0, length(samples)+1)
 height=0.25
@@ -225,7 +250,7 @@ plot_horiz.dendrogram(cah, main="", axes=F, side=T)
 
 ## enhancers in the Shh region
 
-par(mar=c(0.5, 5.5, 0.1, 7.5)) ## left and right margin should be the same as above
+par(mar=c(0.5, 5.5, 0.1, 4.5)) ## left and right margin should be the same as above
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
 ypos=seq(from=0.1, to=0.9, length=length(shhenhancers))
@@ -253,8 +278,15 @@ zrspos=(156791088+156791875)/2
 segments(zrspos, 0,  zrspos, 1,col="gray40")
 
 mtext("ZRS", font=3, cex=0.7, side=3, at=zrspos, line=0.15)
+par(mar=c(0, 0.1, 0, 0.3)) 
+plot.new()
 
 #########################################################################################################################
+
+if(sp=="mouse"){
+  pdf(paste(pathFigures, "Supp_Figure8.pdf", sep=""), width=6.85, height=3)
+  par(mfrow=c(1,2))
+}
 
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
 par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
@@ -269,18 +301,22 @@ mtext(colnames(nb_samples_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0
 mtext("number of samples", side=1, line=2.25, cex=0.85)
 mtext("% of interactions", side=2, line=2.5, cex=0.85)
 
-## legend
+## legend & plot label
+if(sp=="human"){
+  legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")], fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
+  mtext("B", side=3, line=1, at=-2.75, font=2, cex=1.2)
+  }else{
+  legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")], fill="white", bty='n', cex=0.8, inset=c(0.05, -0.1), xpd=NA)
+  mtext("A", side=3, line=1, at=-2.75, font=2, cex=1.2)
+}
 
-legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-
-## plot label
-mtext("B", side=3, line=1, at=-2.75, font=2, cex=1.2)
 
 #########################################################################################################################
 
 #################### Fig 1.C - Distribution of number of samples according to distance #####################
 
-plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_samples_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=c(0,6), xlab="", ylab="", axes=F)
+if (sp == "human"){YLIM=c(0,6)}else{YLIM=c(0,3)}
+plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_samples_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=YLIM, xlab="", ylab="", axes=F)
 lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_samples_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5)
 
 ## X axis
@@ -300,12 +336,15 @@ for(dataset in rownames(mean_dist)){
   segments(as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_low[dataset,]),  as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_high[dataset,]), col=dataset.colors[dataset])
 }
 
-## legend
+## legend & plot label
+if(sp=="human"){
+  legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
+  mtext("C", side=3, line=1, at=-3.95e5, font=2, cex=1.2)
+}else{
+  legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=0.8, inset=c(0.05, -0.1), xpd=NA)
+  mtext("B", side=3, line=1, at=-2.75, font=2, cex=1.2)
+}
 
-legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-
-## plot label
-mtext("C", side=3, line=1, at=-3.95e5, font=2, cex=1.2)
 
 #########################################################################################################################
 

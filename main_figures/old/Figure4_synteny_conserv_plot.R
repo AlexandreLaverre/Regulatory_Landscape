@@ -1,9 +1,9 @@
 ############################################################ PLOT FIGURE 5 ###############################################
 path <- "/home/laverre/Data/Regulatory_landscape/result/Main_figures/"
-load(paste(path, "Fig4_synteny_human_2M_both_corrected.Rdata", sep=""))
+load(paste(path, "Fig4_synteny_human_2M_both.Rdata", sep=""))
 
 species <- c("macaque", "dog", "cow", "elephant", "rabbit", "rat", "mouse", "opossum", "chicken")
-pdf(paste(path, "Figure4_synteny_human_2M_both_new2.pdf", sep=""), width=8.5, height=8)
+pdf(paste(path, "Figure4_synteny_human_2M_both_new.pdf", sep=""), width=8.5, height=8)
 par(mai = c(0.8, 0.8, 0.3, 0.2)) # bottom, left, top, right
 layout(matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE))
 
