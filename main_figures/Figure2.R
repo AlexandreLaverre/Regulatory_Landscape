@@ -1,6 +1,6 @@
 ############################################################ PLOT FIGURE 2 ###############################################
 path <- "/home/laverre/Manuscript/Figures/"
-ref_sp = "human"
+ref_sp = "mouse"
 
 load(paste(path, "Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
 load(paste(path, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
@@ -8,7 +8,7 @@ load(paste(path, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
 
 enhancers <- c("CAGE", "ENCODE")
 enhancers_names <- c("FANTOM5", "ENCODE")
-pdf_name = "Sup_Figure10.pdf"
+pdf_name = "Sup_Figure11.pdf"
 
 if (ref_sp == "human"){
   enhancers <- c(enhancers, "RoadMap", "GRO_seq")
@@ -16,7 +16,7 @@ if (ref_sp == "human"){
   pdf_name = "Figure2.pdf"
   }
 
-
+color <- c("red", "navy", "forestgreen", "orange")
 pdf(paste(path, pdf_name, sep=""), width=8.5, height=5)
 par(mai = c(0.5, 0.7, 0.3, 0.2)) # bottom, left, top, right
 layout(matrix(c(1, 1, 2, 2, 3, 4, 5, 5), nrow = 2, byrow = TRUE))
@@ -71,7 +71,6 @@ mtext("B", side=3, line=1, at=-4.5, font=2, cex=1.2)
 mtext("Linear distance to promoters regions (Mb)", side=1, line=2.25, cex=0.7)
 
 ############################################   C - Enhancer proportion according to nb of sample ############################################ 
-color <- c("red", "navy", "forestgreen", "orange")
 if(ref_sp=="human"){YMAX=0.2; x_leg_class=5}else{YMAX=0.15; x_leg_class=2}
 
 plot(prop_nb_sample[["obs"]]$CAGE, col="white", ylim=c(0,YMAX), las=2,
@@ -166,3 +165,4 @@ mtext("E", side=3, line=1, at=-4.5, font=2, cex=1.2)
 # mtext("Enhancer Datasets: ", line=-4, at=0.25, cex=1)
 
 dev.off()
+

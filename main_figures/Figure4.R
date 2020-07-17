@@ -1,10 +1,15 @@
-############################################################ PLOT FIGURE 5 ###############################################
-path <- "/home/laverre/Data/Regulatory_landscape/result/Main_figures/"
-load(paste(path, "Fig4_synteny_human_2M_both_corrected.Rdata", sep=""))
+############################################################ PLOT FIGURE 4 ###############################################
+path <- "/home/laverre/Data/Regulatory_landscape/result/Figures/"
 
-species <- c("macaque", "dog", "cow", "elephant", "rabbit", "rat", "mouse", "opossum", "chicken")
-pdf(paste(path, "Figure4_synteny_human_2M_both_new2.pdf", sep=""), width=8.5, height=8)
-par(mai = c(0.8, 0.8, 0.3, 0.2)) # bottom, left, top, right
+ref_sp = "human"
+target_sp = "mouse"
+
+load(paste(path, "Fig4_", ref_sp, ".Rdata", sep=""))
+
+species <- c("macaque", "dog", "cow", "elephant", "rabbit", "rat", target_sp, "opossum", "chicken")
+
+pdf(paste(path, "Figure4_", ref_sp, ".pdf", sep=""), width=8.5, height=8)
+par(mai = c(0.7, 0.8, 0.4, 0.2)) # bottom, left, top, right
 layout(matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE))
 
 enhancers <- c("ENCODE")
@@ -14,7 +19,7 @@ for (enh in enhancers){
   
   bar <- barplot(conserv_synteny[[enh]]$data, beside = TRUE, ylim = c(0.6,1.03), xpd=FALSE, las=2,
                  border = c("darkgreen", "firebrick3", "white"),col="white",
-                 main="Fig.4.A", ylab='Proportion of gene-enhancer maintained in synteny')
+                 main="", ylab='Proportion of gene-enhancer maintained in synteny')
   
   box(bty="l")
   bar_position = seq(1.3,33,3.6)
@@ -37,7 +42,10 @@ for (enh in enhancers){
   }
 }
 
+mtext("A", side=3, line=1, at=-1.5, font=2, cex=1.2)
+
 ###################################  B - Synteny conservation and distance from promoters - all species ################################# 
+if (ref_sp == "human"){YMAX=0.2}else{YMAX=0.35}
 
 for (enh in enhancers){
   conserv = get(paste("conserv_synteny_dist", enh, sep="_"))
@@ -47,8 +55,8 @@ for (enh in enhancers){
   par(lwd = 1.2) 
   for (sp in species){
     if (sp == "macaque"){ # First sp
-      plot(conserv[[sp]]$obs-conserv[[sp]]$simul, type="l", col=col[color_n], xaxt = "n", las=2, ylim=c(-0.15,0.2), 
-           xlab="Distance from TSS (pb)", ylab="Original-Simulated \n gene-enh maintained in synteny", main="Fig.4.B", lwd=0.8)
+      plot(conserv[[sp]]$obs-conserv[[sp]]$simul, type="l", col=col[color_n], xaxt = "n", las=2, ylim=c(-0.15,YMAX), 
+           xlab="Distance from TSS (Mb)", ylab="Original-Simulated \n gene-enh maintained in synteny", main="", lwd=0.8)
       
     }else{lines(conserv[[sp]]$obs-conserv[[sp]]$simul, type="l", col=col[color_n], lwd=0.8)} # Add lines of other enhancers datasets
     
@@ -60,9 +68,10 @@ for (enh in enhancers){
     color_n = color_n + 1 
   }
   
+  
   par(lwd = 1) 
   ######### Add axis and legends at the end #########
-  class_leg <- c("0", "500Kb", "1Mb", "1.5Mb", "2Mb") #, "2.5Mb")
+  class_leg <- c("0", "0.5", "1", "1.5", "2") #, "2.5Mb")
   abline(h=0, lty=2, col='black')
   axis(1, at=seq(1,51,10), labels=F)
   text(seq(1,51,10),par("usr")[3]-0.03, class_leg, xpd = TRUE)
@@ -70,10 +79,13 @@ for (enh in enhancers){
   
 }
 
+mtext("B", side=3, line=1, at=-1.5, font=2, cex=1.2)
 
 ####################################  C - Synteny conservation and distance from promoters - all enhancers datasets ############################### 
-species = c("mouse", "dog")
-enhancers <- c("CAGE", "ENCODE", "RoadMap", "GRO_seq")
+species = c(target_sp, "dog")
+
+enhancers <- c("CAGE", "ENCODE")
+if(ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}
 
 for (sp in species){
   col <- c("red", "navy", "forestgreen", "orange")
@@ -84,7 +96,7 @@ for (sp in species){
     
     if (enhancer == "CAGE"){ # First sp
       plot(conserv[[sp]]$obs-conserv[[sp]]$simul, type="l", col=col[color_n], xaxt = "n", las=2, lwd=0.8,
-           xlab="Distance from TSS (pb)", ylab="Original-Simulated \n gene-enh maintained in synteny", main=paste("Fig.4.C", sp, sep=" - "))
+           xlab="Distance from TSS (Mb)", ylab="Original-Simulated \n gene-enh maintained in synteny", main="")
       
       # Add lines of other enhancers datasets
     }else{lines(conserv[[sp]]$obs-conserv[[sp]]$simul, type="l", col=col[color_n] , lwd=0.8)} 
@@ -103,6 +115,8 @@ for (sp in species){
   axis(1, at=seq(1,length(conserv[[sp]]$obs)+1,10), labels=F)
   text(seq(1,length(conserv[[sp]]$obs)+1,10),par("usr")[3]-0.02, class_leg, xpd = TRUE)
   legend("topleft", col=col, legend = enhancers, bty='n', lty=1, cex=0.8)
+  
+  if (sp==target_sp){mtext("C", side=3, line=1, at=-1.5, font=2, cex=1.2)}else{mtext("D", side=3, line=1, at=-1.5, font=2, cex=1.2)}
   
   
 }

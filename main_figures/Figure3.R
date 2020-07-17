@@ -165,7 +165,7 @@ mtext("F", side=3, line=1, at=-1.5, font=2, cex=1.2)
  ######################## G - Conserv enhancers vs distance to promoters ######################## 
 par(mai = c(0.8, 0.6, 0.2, 1)) #bottom, left, top and right 
 
-xmin=0.45
+xmin=0.5
  xmax=0.7
  
  enhancers = c("CAGE", "ENCODE")
@@ -204,9 +204,3 @@ xmin=0.45
 
 dev.off()
 
-for(class in levels(obs_stats$dist_class)){
-  enh_away <- obs_stats[which(obs_stats$dist_class == class),]$enh
-  test <- align$enh
-  common <- intersect(test, enh_away)
-  print(length(common))
-  }

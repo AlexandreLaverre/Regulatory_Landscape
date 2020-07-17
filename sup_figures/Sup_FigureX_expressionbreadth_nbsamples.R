@@ -44,7 +44,7 @@ baits.single.gene$TauRPKM=expstats[baits.single.gene$gene_ID, "TauRPKM"]
 
 #####################################################################
 
-pdf("tmp_figures/SuppFigure7_EpressionSpecificity_NbSamplesContacts.pdf", width=6, height=5)
+pdf("/beegfs/data/necsulea/RegulatoryLandscapesManuscript/Figures/SuppFigure7_EpressionSpecificity_NbSamplesContacts.pdf", width=6, height=5)
 
 par(mar=c(4.5, 4.5, 1.1, 1.1))
 boxplot(baits.single.gene$TauRPKM ~ baits.single.gene$fac.nbsamples, notch=T, pch=20, cex.axis=1.1)

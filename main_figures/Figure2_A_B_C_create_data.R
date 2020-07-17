@@ -4,7 +4,7 @@ path <- "/home/laverre/Manuscript/"
 CEX=1
 LWD=1
 
-ref_sp = "human"
+ref_sp = "mouse"
 
 enhancers <- c("CAGE", "ENCODE")
 if (ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}

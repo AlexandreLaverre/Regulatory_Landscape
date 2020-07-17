@@ -1,8 +1,12 @@
 options(stringsAsFactors = FALSE)
-ref_sp = "human"
 
-enhancers <- c("CAGE", "ENCODE", "RoadMap", "GRO_seq")
-species <- c("macaque", "dog", "cow", "elephant", "rabbit", "rat", "mouse", "opossum", "chicken")
+ref_sp = "mouse"
+target_sp = "human"
+
+enhancers <- c("CAGE", "ENCODE")
+if(ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}
+
+species <- c("macaque", "dog", "cow", "elephant", "rabbit", "rat", target_sp, "opossum", "chicken")
 
 path <- "/home/laverre/Data/Regulatory_landscape/result"
 path_evol <- paste(path, "Supplementary_dataset6_regulatory_landscape_evolution", ref_sp, sep="/")
@@ -21,8 +25,8 @@ for (enh in enhancers){
   conf_up <- c()
   message("Running conserv synteny with ", enh)
   for (sp in species){
-    synt_obs <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/human2", sp, "_", enh, "_original_synteny.txt", sep=""), header=T)
-    synt_simul <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/human2", sp, "_", enh, "_simulated_synteny.txt", sep=""), header=T)
+    synt_obs <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_", enh, "_original_synteny.txt", sep=""), header=T)
+    synt_simul <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_", enh, "_simulated_synteny.txt", sep=""), header=T)
     
     # Filters
     synt_obs <- synt_obs[which(synt_obs$BLAT_match < 2 & synt_obs$align_score > 0.4 & synt_obs$origin_dist < max_dist),]
@@ -63,8 +67,8 @@ for (enh in enhancers){
   message("#### Synteny according to dist for ", enh, " enhancers ####")
   for (sp in species){
     
-    synt_obs <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/human2", sp, "_", enh, "_original_synteny.txt", sep=""), header=T)
-    synt_simul <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/human2", sp, "_", enh, "_simulated_synteny.txt", sep=""), header=T)
+    synt_obs <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_", enh, "_original_synteny.txt", sep=""), header=T)
+    synt_simul <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_", enh, "_simulated_synteny.txt", sep=""), header=T)
     
     # Filters
     synt_obs <- synt_obs[which(synt_obs$BLAT_match < 2  & synt_obs$align_score > 0.4 & synt_obs$origin_dist < max_dist),]
@@ -83,12 +87,12 @@ for (enh in enhancers){
       /nrow(synt_obs[which(synt_obs$class_dist == x ),])))
     
     conserv$conf_low_obs <- sapply(levels(synt_obs$class_dist), function(x)
-      prop.test(x = nrow(synt_obs[which(!is.na(synt_obs$target_dist) & as.numeric(synt_obs$target_dist) < max_dist & synt_obs$class_dist == x ),]),
-                n=nrow(synt_obs[which(synt_obs$class_dist == x ),]), p=0.5)$conf.int[1])
+      tryCatch(prop.test(x = nrow(synt_obs[which(!is.na(synt_obs$target_dist) & as.numeric(synt_obs$target_dist) < max_dist & synt_obs$class_dist == x ),]),
+                n=nrow(synt_obs[which(synt_obs$class_dist == x ),]), p=0.5)$conf.int[1], error=function(e) NA))
     
     conserv$conf_up_obs <-sapply(levels(synt_obs$class_dist), function(x)
-      prop.test(x = nrow(synt_obs[which(!is.na(synt_obs$target_dist) & as.numeric(synt_obs$target_dist) < max_dist & synt_obs$class_dist == x ),]),
-                n=nrow(synt_obs[which(synt_obs$class_dist == x ),]), p=0.5)$conf.int[2])
+      tryCatch(prop.test(x = nrow(synt_obs[which(!is.na(synt_obs$target_dist) & as.numeric(synt_obs$target_dist) < max_dist & synt_obs$class_dist == x ),]),
+                n=nrow(synt_obs[which(synt_obs$class_dist == x ),]), p=0.5)$conf.int[2], error=function(e) NA))
     
     conserv$simul <- sapply(levels(synt_simul$class_dist), function(x)
       nrow(synt_simul[which(!is.na(synt_simul$target_dist) & as.numeric(synt_simul$target_dist) < max_dist & synt_simul$class_dist == x ),])
@@ -96,12 +100,12 @@ for (enh in enhancers){
     
 
     conserv$conf_low_simul <- sapply(levels(synt_simul$class_dist), function(x)
-      prop.test(x = nrow(synt_simul[which(!is.na(synt_simul$target_dist) & as.numeric(synt_simul$target_dist) < max_dist & synt_simul$class_dist == x ),]),
-                n=nrow(synt_simul[which(synt_simul$class_dist == x ),]), p=0.5)$conf.int[1])
+      tryCatch(prop.test(x = nrow(synt_simul[which(!is.na(synt_simul$target_dist) & as.numeric(synt_simul$target_dist) < max_dist & synt_simul$class_dist == x ),]),
+                n=nrow(synt_simul[which(synt_simul$class_dist == x ),]), p=0.5)$conf.int[1], error=function(e) NA))
     
     conserv$conf_up_simul <- sapply(levels(synt_simul$class_dist), function(x)
-      prop.test(x = nrow(synt_simul[which(!is.na(synt_simul$target_dist) & as.numeric(synt_simul$target_dist) < max_dist & synt_simul$class_dist == x ),]),
-                n=nrow(synt_simul[which(synt_simul$class_dist == x ),]), p=0.5)$conf.int[2])
+      tryCatch(prop.test(x = nrow(synt_simul[which(!is.na(synt_simul$target_dist) & as.numeric(synt_simul$target_dist) < max_dist & synt_simul$class_dist == x ),]),
+                n=nrow(synt_simul[which(synt_simul$class_dist == x ),]), p=0.5)$conf.int[2], error=function(e) NA))
       
     conserv_dist_list[[sp]] <- conserv
     message(sp, " done !")
@@ -111,9 +115,12 @@ for (enh in enhancers){
 
 }  
 
-save(conserv_synteny, 
-     conserv_synteny_dist_CAGE, conserv_synteny_dist_ENCODE, conserv_synteny_dist_RoadMap, conserv_synteny_dist_GRO_seq,
-     file = paste(path, "/Main_figures/Fig4_synteny_human_2M_both_corrected.Rdata", sep=""))
+if (ref_sp == "mouse"){
+  save(conserv_synteny, conserv_synteny_dist_CAGE, conserv_synteny_dist_ENCODE, file = paste(path, "/Figures/Fig4_", ref_sp, ".Rdata", sep=""))
+}else{
+  save(conserv_synteny, conserv_synteny_dist_CAGE, conserv_synteny_dist_ENCODE, conserv_synteny_dist_RoadMap, conserv_synteny_dist_GRO_seq,
+       file = paste(path, "/Figures/Fig4_", ref_sp, ".Rdata", sep=""))
+}
 
 
 ########################## Intersection human - opposum & human - mouse ########################## 
