@@ -7,20 +7,20 @@ source("parameters.R") ## pathFinalDataFinalDatas are defined based on the user 
 ref_sp = "human" # to change human or mouse
 
 minDistance=25e3
-maxDistance=2.5e6
+maxDistance=2.025e6
 
-enhancers = c("CAGE", "ENCODE")
+enhancers = c("FANTOM5", "ENCODE")
 target_sp = "human"
 closest_sp="rat"
 
 if(ref_sp == "human"){
-  enhancers <- c(enhancers, "RoadMap", "GRO_seq")
+  enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")
   target_sp = "mouse"
   closest_sp="macaque"
   }
 
-path_evol <- paste(pathFinalData, "SupplementaryDataset7", ref_sp, sep="/")
-path_annot <- paste(pathFinalData, "SupplementaryDataset4", ref_sp, sep="/")
+path_evol <- paste(pathFinalData, "SupplementaryDataset7/", ref_sp, "/", sep="")
+path_annot <- paste(pathFinalData, "SupplementaryDataset4/", ref_sp, "/", sep="")
 
 
 ################################################################################################################################################
@@ -44,9 +44,10 @@ simul <- simul[which(simul$BLAT_match < 2),]
 align <- read.table(paste(path_evol,"sequence_conservation/restriction_fragments/Alignments_stats_all_species_nonexonic_ungapped.txt", sep="/"), header=T)
 species <- c("macaque", target_sp, "rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken")
 
-align_obs <- align[which(align$enh %in% obs$ID), c("enh", species)]
-align_simul <- align[which(align$enh %in% simul$ID), c("enh", species) ]
-align_obs_enh <- align[which(align$enh %in% obs[which(obs$ENCODE_bp > 0),]$ID), c("enh", species)] # fragment that contain at least 1 ENCODE enhancer
+if (ref_sp=="human"){ID="ID.human"}else{ID="ID.mouse"}
+align_obs <- align[which(align[,1] %in% obs$ID), c(ID, species)]
+align_simul <- align[which(align[,1] %in% simul$ID), c(ID, species) ]
+align_obs_enh <- align[which(align[,1] %in% obs[which(obs$ENCODE_bp > 0),]$ID), c(ID, species)] # fragment that contain at least 1 ENCODE enhancer
 
 
 ################################################################################################################################################
@@ -54,9 +55,12 @@ align_obs_enh <- align[which(align$enh %in% obs[which(obs$ENCODE_bp > 0),]$ID), 
 
 list_conserv_enh <- list()
 for (enh in enhancers){
-  align <- read.table(paste(path_evol,"sequence_conservation", enh, "Alignments_stats_all_species_nonexonic_ungapped.txt", sep="/"), header=T)
+  align <- read.table(paste(path_evol,"sequence_conservation/enhancers/", enh, "Alignments_stats_all_species_nonexonic_ungapped.txt", sep="/"), header=T)
   obs_stats <- read.table(paste(path_annot, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
   simul_stats <- read.table(paste(path_annot, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
+  
+  obs_stats$enh <-  do.call(paste,c(obs_stats[c("chr","start","end")],sep=":"))
+  simul_stats$enh <-  do.call(paste,c(simul_stats[c("chr","start","end")],sep=":"))
   
   ##### Filters
   species <- c("macaque", target_sp, "rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken")
@@ -66,8 +70,8 @@ for (enh in enhancers){
   simul_stats$dist_class <-cut(simul_stats$med_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
   
   # Select unduplicated and with repeat_part < 20%
-  obs_stats <- obs_stats[which(obs_stats$BLAT_match < 2 & (obs_stats$repeat_pb/obs_stats$length) < 0.2),]
-  simul_stats <- simul_stats[which(simul_stats$BLAT_match < 2 & (simul_stats$repeat_pb/simul_stats$length) < 0.2),]
+  obs_stats <- obs_stats[which(obs_stats$BLAT_match < 2),] # & (obs_stats$repeat_pb/obs_stats$length) < 0.2
+  simul_stats <- simul_stats[which(simul_stats$BLAT_match < 2),] # & (simul_stats$repeat_pb/simul_stats$length) < 0.2
   
   #### Fig 3-C - Distribution of alignment score of ENCODE enh according to all species
   if (enh == "ENCODE"){
@@ -84,7 +88,7 @@ for (enh in enhancers){
   align_enhancers_dist[[paste0(enh, "_start")]]  <- sapply(levels(obs_stats$dist_class), function(x) 
     t.test(align[which(align$enh %in% obs_stats[which(obs_stats$dist_class == x),]$enh),][[target_sp]])[["conf.int"]][1])
   
-  align_enhancers_dist[[paste0(enh, "_end")]]  <-sapply(levels(obs_stats$dist_class), function(x) 
+  align_enhancers_dist[[paste0(enh, "_end")]]  <- sapply(levels(obs_stats$dist_class), function(x) 
     t.test(align[which(align$enh %in% obs_stats[which(obs_stats$dist_class == x),]$enh),][[target_sp]])[["conf.int"]][2])
   
   list_conserv_enh <- c(list_conserv_enh, align_enhancers_dist)
@@ -96,8 +100,8 @@ for (enh in enhancers){
 obs <- obs[order(obs$ID), ]
 simul <- simul[order(simul$ID), ]
 
-obs$align_target <- align_obs[order(align_obs$enh), target_sp]
-simul$align_target <- align_simul[order(align_simul$enh), target_sp]
+obs$align_target <- align_obs[order(align_obs[,1]), target_sp]
+simul$align_target <- align_simul[order(align_simul[,1]), target_sp]
 
 obs_dist <- data.frame(inter = sapply(levels(obs$dist_class), function(x) mean(obs[which(obs$dist_class == x),]$align_target)))
 obs_dist$int_start <- sapply(levels(obs$dist_class), function(x) t.test(obs[which(obs$dist_class == x),]$align_target)[["conf.int"]][1])
@@ -114,8 +118,8 @@ simul_dist$int_end <- sapply(levels(simul$dist_class), function(x) t.test(simul[
 ################################################################################################################################################
 ################################## Fig3-E - Conservation of contacted sequences between closest species ########################################
 
-obs$align_target <- align_obs[order(align_obs$enh), closest_sp]
-simul$align_target <- align_simul[order(align_simul$enh), closest_sp]
+obs$align_target <- align_obs[order(align_obs[,1]), closest_sp]
+simul$align_target <- align_simul[order(align_simul[,1]), closest_sp]
 
 obs_dist_mac <- data.frame(inter = sapply(levels(obs$dist_class), function(x) mean(obs[which(obs$dist_class == x),]$align_target)))
 obs_dist_mac$int_start <- sapply(levels(obs$dist_class), function(x) t.test(obs[which(obs$dist_class == x),]$align_target)[["conf.int"]][1])

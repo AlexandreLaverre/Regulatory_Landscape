@@ -1,18 +1,24 @@
-############################################################ PLOT FIGURE 5 ###############################################
-path <-  "/home/laverre/Manuscript/Figures/"
+#########################################################################################################################
+source("parameters.R") ## pathFiguress are defined based on the user name
+
+library(ape)
+library(vioplot)
 
 ref_sp = "human"
-load(paste(path, "Fig5_", ref_sp, ".Rdata", sep=""))
+target_sp = "mouse"
 
+enhancers <- c("FANTOM5", "ENCODE")
+if (ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq"); enh_names <- c(enhancers, "RoadMap\nEpigenomics", "GRO-seq")}
+
+load(paste(pathFigures, "Fig5_", ref_sp, ".Rdata", sep=""))
+
+col <- c("red", "navy", "forestgreen", "orange")
+#########################################################################################################################
 if(ref_sp == "human"){pdf_name="Figure5.pdf"}else{pdf_name="Sup_Figure14.pdf"}
 
 pdf(paste(path, pdf_name, sep=""), width=8.5, height=8)
 par(mai = c(0.8, 0.8, 0.5, 0.1)) # bottom, left, top, right
 layout(matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE))
-
-enhancers <- c("CAGE", "ENCODE")
-enh_names <- c("FANTOM5", "ENCODE")
-if (ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq"); enh_names <- c(enh_names, "RoadMap\nEpigenomics", "GRO-seq")}
 
 ############################################   A - Global contact conservation ############################################ 
 if (ref_sp == "human"){YMAX=40}else{YMAX=30}
@@ -30,8 +36,6 @@ mtext("A", side=3, line=1, at=0.1, font=2, cex=1.2)
 
 ############################################  B - Contact conservation by distance from TSS ############################################ 
 if (ref_sp == "human"){YLIM=c(-3,8)}else{YLIM=c(-5, 20)}
-
-col <- c("red", "navy", "forestgreen", "orange")
 color_n = 1 # To change color between each enhancers dataset
 class_leg <- c("0",  "0.5",  "1", "1.5", "2", "2.5", "3")
 

@@ -1,22 +1,26 @@
-############################################################ PLOT FIGURE 4 ###############################################
-path <- "/home/laverre/Data/Regulatory_landscape/result/Figures/"
+#########################################################################################################################
+source("parameters.R") ## pathFiguress are defined based on the user name
+
+library(ape)
+library(vioplot)
 
 ref_sp = "human"
 target_sp = "mouse"
 
-load(paste(path, "Figure4/Fig4_", ref_sp, ".Rdata", sep=""))
+load(paste(pathFigures, "Fig4_", ref_sp, ".Rdata", sep=""))
 
 species <- c("macaque", "dog", "cow", "elephant", "rabbit", "rat", target_sp, "opossum", "chicken")
+enhancers <- c("ENCODE")
 
-pdf(paste(path, "Figure4_", ref_sp, ".pdf", sep=""), width=8.5, height=8)
+#########################################################################################################################
+if(ref_sp == "human"){pdf_name="Figure4.pdf"}else{pdf_name="Sup_Figure12.pdf"}
+
+pdf(paste(pathFigures, "Figure4_", ref_sp, ".pdf", sep=""), width=8.5, height=8)
 par(mai = c(0.7, 0.8, 0.4, 0.2)) # bottom, left, top, right
 layout(matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE))
 
-enhancers <- c("ENCODE")
-
 ############################################   A - Global synteny conservation ############################################ 
 for (enh in enhancers){
-  
   bar <- barplot(conserv_synteny[[enh]]$data, beside = TRUE, ylim = c(0.6,1.03), xpd=FALSE, las=2,
                  border = c("darkgreen", "firebrick3", "white"),col="white",
                  main="", ylab='Proportion of gene-enhancer maintained in synteny')

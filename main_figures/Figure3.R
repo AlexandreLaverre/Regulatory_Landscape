@@ -7,8 +7,13 @@ library(vioplot)
 ref_sp = "human"
 target_sp = "mouse"
 
-if(ref_sp == "human"){pdf_name="Figure3.pdf"}else{pdf_name="Sup_Figure11.pdf"}
+load(paste(pathFigures, "Fig3_", ref_sp, "_test.Rdata", sep=""))
 
+enhancers = c("FANTOM5", "ENCODE")
+if(ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
+if(ref_sp == "human"){pdf_name="Figure3_test.pdf"}else{pdf_name="Sup_Figure11.pdf"}
+
+col <- c("red", "navy", "forestgreen", "orange")
 #########################################################################################################################
 
 pdf(paste(pathFigures, pdf_name, sep=""), width=7, height=10)
@@ -41,8 +46,6 @@ legend(y=0.5, x=0, fill=c("firebrick1","dodgerblue", "forestgreen"),
        text.width=c(0.4), ncol=2, bty='n', cex=1.3)
 
 ######################## B - Restriction fragments sequence conservation ######################## 
-load(paste(pathFigures, "Fig3_", ref_sp, ".Rdata", sep=""))
-
 vioplot(c(0,align_simul[,species]), at=c(0,4,8,12,16,20,24,28,32,36), border="firebrick1", col=rgb(t(col2rgb('firebrick1')/255), alpha = 0.6),
         plotCentre="line", axes=F, yaxt='n', horizontal = T, las=1, cex.main = 1.2, main="")
 
@@ -82,8 +85,8 @@ par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
 par(xpd=FALSE)
 class_leg <- c("0", "0.5", "1", "1.5", "2")
 
-xmin=0.25
-xmax=0.45
+xmin=0.2
+xmax=0.4
 CEX=1.2
 CEX_lines=1
 
@@ -153,16 +156,12 @@ mtext("F", side=3, line=1, at=-1.5, font=2, cex=1.2)
 
  ######################## G - Conserv enhancers vs distance to promoters ######################## 
 par(mai = c(0.8, 0.6, 0.2, 1)) #bottom, left, top and right 
-if(ref_sp=="human"){ymin=0.4; ymax=0.7}else{ymin=0.5; ymax=0.7}
+if(ref_sp=="human"){ymin=0.25; ymax=0.55}else{ymin=0.5; ymax=0.7}
 
- enhancers = c("CAGE", "ENCODE")
- if (ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}
+color_n = 1 # To change color between each enhancers dataset
  
- col <- c("red", "navy", "forestgreen", "orange")
- color_n = 1 # To change color between each enhancers dataset
- 
- #par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=F)
- for (enh in enhancers){
+#par(mar=c(5.1, 4.1, 4.1, 8.1), xpd=F)
+for (enh in enhancers){
    if (enh == "CAGE"){
      plot(list_conserv_enh[[enh]], type="l", col=col[color_n], main="",
           xlab="", ylab="Alignment score", xaxt = "n", ylim=c(ymin,ymax), las=2)
@@ -178,16 +177,16 @@ if(ref_sp=="human"){ymin=0.4; ymax=0.7}else{ymin=0.5; ymax=0.7}
  }
  
  
- axis(1, at=seq(1,length(list_conserv_enh[[enh]])+1, 10), labels=F)
- text(seq(1,length(list_conserv_enh[[enh]])+1,10), par("usr")[3]-0.04, class_leg, xpd = TRUE, cex=CEX)
- mtext("Distance to promoters (Mb)", side=1, line=2.5, cex=0.8)
- mtext("G", side=3, line=1, at=-1.5, font=2, cex=1.2)
+axis(1, at=seq(1,length(list_conserv_enh[[enh]])+1, 10), labels=F)
+text(seq(1,length(list_conserv_enh[[enh]])+1,10), par("usr")[3]-0.04, class_leg, xpd = TRUE, cex=CEX)
+mtext("Distance to promoters (Mb)", side=1, line=2.5, cex=0.8)
+mtext("G", side=3, line=1, at=-1.5, font=2, cex=1.2)
  
- par(xpd=TRUE)
- enhancers_name = c("FANTOM5", "ENCODE")
- if (ref_sp == "human"){enhancers_name <- c(enhancers_name, "RoadMap\nEpigenomics", "GRO-seq")}
+par(xpd=TRUE)
+enhancers_name = c("FANTOM5", "ENCODE")
+if (ref_sp == "human"){enhancers_name <- c(enhancers_name, "RoadMap\nEpigenomics", "GRO-seq")}
  
- legend("right", inset=c(-0.55,0), col=col, legend = enhancers_name, bty='n', lty=1)
+legend("right", inset=c(-0.55,0), col=col, legend = enhancers, bty='n', lty=1)
 
 dev.off()
 
