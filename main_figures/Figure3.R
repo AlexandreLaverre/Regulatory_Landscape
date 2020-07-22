@@ -2,12 +2,12 @@ library(ape)
 library(vioplot)
 setwd("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/")
 
-ref_sp = "mouse"
-target_sp = "human"
+ref_sp = "human"
+target_sp = "mouse"
 
 path <- "/home/laverre/Data/Regulatory_landscape/result/Figures/"
 
-if(ref_sp == "human"){pdf_name="Figure3_bis.pdf"}else{pdf_name="Sup_Figure11.pdf"}
+if(ref_sp == "human"){pdf_name="Figure3.pdf"}else{pdf_name="Sup_Figure11.pdf"}
 
 pdf(paste(path, pdf_name, sep=""), width=7, height=10)
 par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right 
@@ -39,17 +39,23 @@ legend(y=0.5, x=0, fill=c("firebrick1","dodgerblue", "forestgreen"),
        text.width=c(0.4), ncol=2, bty='n', cex=1.3)
 
 ######################## B - Restriction fragments sequence conservation ######################## 
-load(paste(path, "Fig3_seq_conserv_", ref_sp, ".Rdata", sep=""))
+load(paste(path, "Fig3_", ref_sp, ".Rdata", sep=""))
 
 vioplot(c(0,align_simul[,species]), at=c(0,4,8,12,16,20,24,28,32,36), border="firebrick1", col=rgb(t(col2rgb('firebrick1')/255), alpha = 0.6),
         plotCentre="line", axes=F, yaxt='n', horizontal = T, las=1, cex.main = 1.2, main="")
 
 vioplot(c(0,align_obs[,species]), at=c(1,5,9,13,17,21,25,29,33,37), add=T, axes=F, horizontal = T, 
-        border="forestgreen", col=rgb(t(col2rgb('forestgreen')/255), alpha = 0.6), plotCentre="line")
+        border="forestgreen", col=rgb(t(col2rgb('forestgreen')/255), alpha = 0.6), plotCentre="line") 
 vioplot(c(0,align_obs_enh[,species]), at=c(2,6,10,14,18,22,26,30,34,38), add=T, axes=F, horizontal = T,
-        border="dodgerblue", col=rgb(t(col2rgb('dodgerblue')/255), alpha = 0.6), plotCentre="line")
+        border="dodgerblue", col=rgb(t(col2rgb('dodgerblue')/255), alpha = 0.6), plotCentre="line") 
 
-axis(1, pos=0.7, at=seq(0,1,0.2), labels=c("0.0", "0.2", "0.4", "0.6", "0.8", "1.0"))
+points(x=apply(align_simul[,species], 2, mean), y=c(4,8,12,16,20,24,28,32,36), col = "white", pch=20, cex=0.8)
+
+points(x = apply(align_obs[,species], 2, mean), y = c(5,9,13,17,21,25,29,33,37), col = "white", pch=20, cex=0.8)
+
+points(x = apply(align_obs_enh[,species], 2, mean), y = c(6,10,14,18,22,26,30,34,38), col = "white", pch=20, cex=0.8)
+
+axis(1, pos=0.7, at=seq(0,1,0.2), labels=c("0.0", "0.2", "0.4", "0.6", "0.8", "1.0"), cex.lab=1.2)
 mtext("Alignment score", side=1, xpd = TRUE, cex=0.8)
 mtext("B", side=3, line=1, at=0.1, font=2, cex=1.2)
 
@@ -61,7 +67,11 @@ vioplot(c(0, align_enhancers_simul[,species]), at=c(0,3,6,9,12,15,18,21,24,27), 
 vioplot(c(0, align_enhancers_obs[,species]),at=c(1,4,7,10,13,16,19,22,25,28), col=rgb(t(col2rgb('forestgreen')/255), alpha = 0.6), border="forestgreen",
         add=T, axes=F, horizontal = T, plotCentre="line")
 
-axis(1, pos=0.7, at=seq(0,1,0.2), labels=c("0.0", "0.2", "0.4", "0.6", "0.8", "1.0"))
+points(x=apply(align_enhancers_simul[,species], 2, mean), y=c(3,6,9,12,15,18,21,24,27), col = "white", pch=20, cex=0.8)
+
+points(x = apply(align_enhancers_obs[,species], 2, mean), y = c(4,7,10,13,16,19,22,25,28), col = "white", pch=20, cex=0.8)
+
+axis(1, pos=0.7, at=seq(0,1,0.2), labels=c("0.0", "0.2", "0.4", "0.6", "0.8", "1.0"), cex.lab=1.2)
 mtext("Alignment score", side=1, xpd = TRUE, cex=0.8)
 mtext("C", side=3, line=1, at=0.1, font=2, cex=1.2)
 
@@ -118,10 +128,10 @@ mtext("E", side=3, line=1, at=-1.5, font=2, cex=1.2)
 
 
 ######################## F - Repeat proportion vs distance to promoters ######################## 
-if(ref_sp=="human"){ymin=32; ymax=55}else{ymin=25; ymax=50}
+if(ref_sp=="human"){ymin=20; ymax=50}else{ymin=25; ymax=50}
 
 plot(obs_repet_dist[,"inter"], type="l", col="forestgreen", cex=CEX_lines, main="",
-     xlab="", ylab="Repeat proportion (%)", xaxt = "n", ylim=c(ymin,ymax), cex.lab=CEX, cex.axis=CEX, las=2)
+     xlab="", ylab="No-exonic repeat proportion (%)", xaxt = "n", ylim=c(ymin,ymax), cex.lab=CEX, cex.axis=CEX, las=2)
 
 for (row in 1:nrow(obs_repet_dist)){
   segments(x0=row,y0=obs_repet_dist[row,"int_start"],x1=row,y1=obs_repet_dist[row,"int_end"], col='forestgreen', lwd=0.3)}
@@ -139,35 +149,10 @@ text(seq(1,nrow(obs_repet_dist)+1,10),par("usr")[3]-3, class_leg, xpd = TRUE, ce
 mtext("Distance to promoters (Mb)", side=1, line=2.5, cex=0.8)
 mtext("F", side=3, line=1, at=-1.5, font=2, cex=1.2)
 
-# ######################## G - Exonic proportion vs distance to promoters ######################## 
-# xmin=0
-# xmax=10
-# 
-# plot(obs_exon_dist[,"inter"], type="l", col="forestgreen", cex=CEX_lines, main="",
-#      xlab="", ylab="Exonic proportion (%)", xaxt = "n", ylim=c(xmin,xmax), cex.lab=CEX, cex.axis=CEX, las=2)
-# 
-# for (row in 1:nrow(obs_exon_dist)){
-#   segments(x0=row,y0=obs_exon_dist[row,"int_start"],x1=row,y1=obs_exon_dist[row,"int_end"], col='forestgreen', lwd=0.3)}
-# 
-# lines(simul_exon_dist[,"inter"], type="l", col="firebrick1", cex=CEX_lines)
-# for (row in 1:nrow(simul_exon_dist)){
-#    segments(x0=row,y0=simul_exon_dist[row,"int_start"],x1=row,y1=simul_exon_dist[row,"int_end"], col='firebrick1', lwd=0.3)}
-# 
-#  lines(obs_enh_exon_dist[,"inter"], type="l", col="dodgerblue", cex=CEX_lines)
-#  for (row in 1:nrow(obs_enh_exon_dist)){
-#    segments(x0=row,y0=obs_enh_exon_dist[row,"int_start"],x1=row,y1=obs_enh_exon_dist[row,"int_end"], col='dodgerblue', lwd=0.3)}
-# 
-#  axis(1, at=seq(1,nrow(obs_exon_dist)+1,10), labels=F)
-#  text(seq(1,nrow(obs_exon_dist)+1,10),par("usr")[3]-1.5, class_leg, xpd = TRUE, cex=CEX)
-#  mtext("Distance to promoters (Mb)", side=1, line=2.5, cex=0.8)
-#  mtext("G", side=3, line=1, at=-1.5, font=2, cex=1.2)
-
  ######################## G - Conserv enhancers vs distance to promoters ######################## 
 par(mai = c(0.8, 0.6, 0.2, 1)) #bottom, left, top and right 
+if(ref_sp=="human"){ymin=0.4; ymax=0.7}else{ymin=0.5; ymax=0.7}
 
-xmin=0.5
- xmax=0.7
- 
  enhancers = c("CAGE", "ENCODE")
  if (ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}
  
@@ -178,7 +163,7 @@ xmin=0.5
  for (enh in enhancers){
    if (enh == "CAGE"){
      plot(list_conserv_enh[[enh]], type="l", col=col[color_n], main="",
-          xlab="", ylab="Alignment score", xaxt = "n", ylim=c(xmin,xmax), las=2)
+          xlab="", ylab="Alignment score", xaxt = "n", ylim=c(ymin,ymax), las=2)
      
    }else{lines(list_conserv_enh[[enh]], type="l", col=col[color_n])}
    

@@ -1,7 +1,7 @@
 ############################################################ PLOT FIGURE 5 ###############################################
 path <-  "/home/laverre/Manuscript/Figures/"
 
-ref_sp = "mouse"
+ref_sp = "human"
 load(paste(path, "Fig5_", ref_sp, ".Rdata", sep=""))
 
 if(ref_sp == "human"){pdf_name="Figure5.pdf"}else{pdf_name="Sup_Figure14.pdf"}
@@ -29,7 +29,7 @@ legend("topright", legend = c("Original", "Simulated"), border=c("darkgreen", "f
 mtext("A", side=3, line=1, at=0.1, font=2, cex=1.2)
 
 ############################################  B - Contact conservation by distance from TSS ############################################ 
-if (ref_sp == "human"){YLIM=c(0,17)}else{YLIM=c(-5, 20)}
+if (ref_sp == "human"){YLIM=c(0,60)}else{YLIM=c(-5, 20)}
 
 col <- c("red", "navy", "forestgreen", "orange")
 color_n = 1 # To change color between each enhancers dataset

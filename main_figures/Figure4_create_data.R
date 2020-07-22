@@ -1,7 +1,7 @@
 options(stringsAsFactors = FALSE)
 
-ref_sp = "mouse"
-target_sp = "human"
+ref_sp = "human"
+target_sp = "mouse"
 
 enhancers <- c("CAGE", "ENCODE")
 if(ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}
@@ -183,3 +183,8 @@ for (sp in c("opossum", "mouse")){
 
 }
 
+
+synt_obs_ok <- synt_obs[which(!is.na(synt_obs$target_dist) & as.numeric(synt_obs$target_dist) < max_dist & synt_obs$origin_dist < 100000 & synt_obs$origin_dist < 2000000),]
+synt_obs_possible <- synt_obs[which(synt_obs$origin_dist < 100000 & synt_obs$origin_dist < 2000000),]
+
+nrow(synt_obs_ok)/nrow(synt_obs_possible)

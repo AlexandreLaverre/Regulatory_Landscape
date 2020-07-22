@@ -27,7 +27,7 @@ if(ref_sp == "human"){rownames(expdiv)=expdiv$IDHuman}else{rownames(expdiv)=expd
 enhancers <- c("CAGE", "ENCODE", "RoadMap", "GRO_seq")
 
 enh="CAGE"
-treshold = "0.5"
+treshold = "0.8"
 data="original"
 
 load_data <- function(enh, data){
@@ -54,10 +54,9 @@ load_data <- function(enh, data){
   expdiv$TauMouse=apply(expdiv[,samples.mouse],1, function(x) compute.tau(as.numeric(x)))
   
   regland=regland[common,]
-  regland$ratio_cons_seq=regland$nb_seq_conserv/regland$nb_total
-  regland$ratio_cons_int=regland$nb_contact_conserv/regland$nb_seq_conserv
+  regland$ratio_cons_seq = ifelse(regland$nb_total > 0, regland$nb_seq_conserv/regland$nb_total, 0)
+  regland$ratio_cons_int = ifelse(regland$nb_seq_conserv > 0, regland$nb_contact_conserv/regland$nb_seq_conserv, 0)
 
-  
   if (enh %in% c("ENCODE", "RoadMap")){breaks=c(1,5,10,25,50,75, max(regland$nb_total))
   breaks_names = c("1-5","6-10","11-25", "26-50", "51-75",">75")}
   
@@ -118,54 +117,78 @@ for (enh in enhancers){
 
 ##### Regulatory landscape evolution 
 for (enh in enhancers){
-  pdf(paste(path, "Main_figures/Figure6b_human_", enh, "_expression.pdf", sep=""), width=9, height=4)
-  par(mai = c(0.8, 0.8, 0.2, 0.1)) # bottom, left, top, right
+  #pdf(paste(path, "Main_figures/Figure6b_human_", enh, "_expression.pdf", sep=""), width=9, height=4)
+  #par(mai = c(0.8, 0.8, 0.2, 0.1)) # bottom, left, top, right
   par(mfrow=c(1,2))
   datas <- load_data(enh, "original")
   expdiv <- datas[[1]]
   regland <- datas[[2]]
   breaks_names <- datas[[3]]
   regland_simul <- load_data(enh, "simulated")[[2]]
+  selected=which(regland$nb_total>=2 & regland$nb_total<=100)
 
+  # # Expression Divergence vs Number of conserved enhancers
+  # breaks = c("0","1-25","26-40", "51-75", ">75")
+
+  # 
+  # boxplot(expdiv$ResidualExpressionDivergence[selected]~regland$class_cons_seq[selected],
+  #         boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
+  #         outline=F, notch=T, axes=F, xlab="", ylab="")
+  # 
+  # boxplot(expdiv$ResidualExpressionDivergence[selected]~regland$class_cons_seq[selected], add = TRUE, xaxt = "n", yaxt='n',
+  #         border="darkgreen", outline=F, notch=T, boxwex=0.25, at = 1:length(breaks) - 0.2, outcex=0.2)
+  # 
+  # boxplot(expdiv$ResidualExpressionDivergence[selected]~regland_simul$class_cons_seq[selected], add = TRUE, xaxt = "n", yaxt='n',
+  #         border="firebrick3", outline=F, notch=T, boxwex=0.25, at = 1:length(breaks) + 0.2, outcex=0.2)
+  # 
+  # axis(side=2)
+  # axis(side=1, at=1:length(breaks), labels=breaks)
+  # box()
+  # mtext("Residual expression divergence", side=2, line=2.75)
+  # mtext("Ratio of conserved enhancers (%)", side=1, line=2.75)
+  # 
+  # # Expression Divergence vs Number of conserved contacted enhancers
+  # breaks = c("0","1-25","26-40", "51-75", ">75")
+  # boxplot(expdiv$ResidualExpressionDivergence[selected]~regland$class_cons_int[selected],
+  #         boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
+  #         outline=F, notch=T, axes=F, xlab="", ylab="")
+  # 
+  # boxplot(expdiv$ResidualExpressionDivergence[selected]~regland$class_cons_int[selected], add = TRUE, xaxt = "n", yaxt='n',
+  #         border="darkgreen", outline=F, notch=T, boxwex=0.25, at = 1:length(breaks) - 0.2, outcex=0.2)
+  # 
+  # boxplot(expdiv$ResidualExpressionDivergence[selected]~regland_simul$class_cons_int[selected], add = TRUE, xaxt = "n", yaxt='n',
+  #         border="firebrick3", outline=F, notch=T, boxwex=0.25, at = 1:length(breaks) + 0.2, outcex=0.2)
+  # 
+  # axis(side=2)
+  # axis(side=1, at=1:length(breaks), labels=breaks)
+  # box()
+  # mtext("Residual expression divergence", side=2, line=2.75)
+  # mtext("Ratio of enhancers conserved in contact (%)", side=1, line=2.75)
+  # #dev.off()
+  # 
+  ## Correlation between expression divergence and sequence conservation ratio
+  R=cor(expdiv$ResidualExpressionDivergence[selected], regland$ratio_cons_seq[selected], method="pearson")
+  rho=cor(expdiv$ResidualExpressionDivergence[selected], regland$ratio_cons_seq[selected], method="spearman")
   
-  # Expression Divergence vs Number of conserved enhancers
-  breaks = c("0","1-25","26-40", "51-75", ">75")
-  selected=which(regland$nb_total>=10 & regland$nb_total<=100)
+  smoothScatter(expdiv$ResidualExpressionDivergence[selected], regland$ratio_cons_seq[selected], main=paste(enh, "sequence conservation"),
+                xlab="ResidualExpressionDivergence", ylab="ratio_cons_seq")
   
-  boxplot(expdiv$ResidualExpressionDivergence[selected]~regland$class_cons_seq[selected],
-          boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
-          outline=F, notch=T, axes=F, xlab="", ylab="")
+  mtext(paste("Pearson's R = ", round(R, digits=2), ", Spearman's rho = ",round(rho, digits=2),sep=""), side=3, line=0.5)
+  x=expdiv$ResidualExpressionDivergence[selected]
+  y=regland$ratio_cons_seq[selected]
+  abline(lm(y~x), col="red")
   
-  boxplot(expdiv$ResidualExpressionDivergence[selected]~regland$class_cons_seq[selected], add = TRUE, xaxt = "n", yaxt='n',
-          border="darkgreen", outline=F, notch=T, boxwex=0.25, at = 1:length(breaks) - 0.2, outcex=0.2)
+  ## Correlation between expression divergence and contacts conservation ratio
+  R=cor(expdiv$ResidualExpressionDivergence[selected], regland$ratio_cons_int[selected], method="pearson")
+  rho=cor(expdiv$ResidualExpressionDivergence[selected], regland$ratio_cons_int[selected], method="spearman")
   
-  boxplot(expdiv$ResidualExpressionDivergence[selected]~regland_simul$class_cons_seq[selected], add = TRUE, xaxt = "n", yaxt='n',
-          border="firebrick3", outline=F, notch=T, boxwex=0.25, at = 1:length(breaks) + 0.2, outcex=0.2)
+  smoothScatter(expdiv$ResidualExpressionDivergence[selected], regland$ratio_cons_int[selected], main=paste(enh, "contact conservation"),
+                xlab="ResidualExpressionDivergence", ylab="ratio_cons_int")
   
-  axis(side=2)
-  axis(side=1, at=1:length(breaks), labels=breaks)
-  box()
-  mtext("Residual expression divergence", side=2, line=2.75)
-  mtext("Ratio of conserved enhancers (%)", side=1, line=2.75)
-  
-  # Expression Divergence vs Number of conserved contacted enhancers
-  breaks = c("0","1-25","26-40", "51-75", ">75")
-  boxplot(expdiv$ResidualExpressionDivergence[selected]~regland$class_cons_int[selected],
-          boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
-          outline=F, notch=T, axes=F, xlab="", ylab="")
-  
-  boxplot(expdiv$ResidualExpressionDivergence[selected]~regland$class_cons_int[selected], add = TRUE, xaxt = "n", yaxt='n',
-          border="darkgreen", outline=F, notch=T, boxwex=0.25, at = 1:length(breaks) - 0.2, outcex=0.2)
-  
-  boxplot(expdiv$ResidualExpressionDivergence[selected]~regland_simul$class_cons_int[selected], add = TRUE, xaxt = "n", yaxt='n',
-          border="firebrick3", outline=F, notch=T, boxwex=0.25, at = 1:length(breaks) + 0.2, outcex=0.2)
-  
-  axis(side=2)
-  axis(side=1, at=1:length(breaks), labels=breaks)
-  box()
-  mtext("Residual expression divergence", side=2, line=2.75)
-  mtext("Ratio of enhancers conserved in contact (%)", side=1, line=2.75)
-  dev.off()
+  mtext(paste("Pearson's R = ", round(R, digits=2), ", Spearman's rho = ",round(rho, digits=2),sep=""), side=3, line=0.5)
+  x=expdiv$ResidualExpressionDivergence[selected]
+  y=regland$ratio_cons_int[selected]
+  abline(lm(y~x), col="red")
 }
 
 

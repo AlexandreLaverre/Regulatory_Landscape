@@ -1,6 +1,6 @@
 
-ref_sp = "mouse"
-target_sp = "human"
+ref_sp = "human"
+target_sp = "mouse"
 
 enhancers <- c("CAGE", "ENCODE")
 if(ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}
@@ -71,6 +71,10 @@ for (enh in enhancers){
   all_simul <- read.table(paste(path_contact, "/", enh, "/gene_", enh, "_enhancers_simulated_interactions.txt", sep=""), header=T, sep="\t")
   contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
   contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  
+  dev_gene <- read.table(paste(path_annot,"/test", sep=""), header=T, sep="\t")
+  all_obs <- all_obs[which(all_obs$gene %in% dev_gene$Gene.ID),]
+  all_simul <- all_simul[which(all_simul$gene %in% dev_gene$Gene.ID),]
   
   # Distance classes
   max_dist = 3000000

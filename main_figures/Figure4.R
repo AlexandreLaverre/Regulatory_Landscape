@@ -4,7 +4,7 @@ path <- "/home/laverre/Data/Regulatory_landscape/result/Figures/"
 ref_sp = "human"
 target_sp = "mouse"
 
-load(paste(path, "Fig4_", ref_sp, ".Rdata", sep=""))
+load(paste(path, "Figure4/Fig4_", ref_sp, ".Rdata", sep=""))
 
 species <- c("macaque", "dog", "cow", "elephant", "rabbit", "rat", target_sp, "opossum", "chicken")
 

@@ -1,6 +1,6 @@
 ############################################################ PLOT FIGURE 2 ###############################################
 path <- "/home/laverre/Manuscript/Figures/"
-ref_sp = "mouse"
+ref_sp = "human"
 
 load(paste(path, "Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
 load(paste(path, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
@@ -22,8 +22,8 @@ par(mai = c(0.5, 0.7, 0.3, 0.2)) # bottom, left, top, right
 layout(matrix(c(1, 1, 2, 2, 3, 4, 5, 5), nrow = 2, byrow = TRUE))
 
 ############################################   A - Global enhancer proportion ############################################ 
-barcenter <- barplot(enh_prop$data, border=rep(c("darkgreen", "firebrick3", "white"),4), col="white", lwd=1.5, cex.names=0.8,
-                     ylim=c(0,0.15), ylab="Enhancer length proportion (mean)", axisnames = F, main="", las=2)
+barcenter <- barplot(enh_prop$data*100, border=rep(c("darkgreen", "firebrick3", "white"),4), col="white", lwd=1.5, cex.names=0.8,
+                     ylim=c(0,15), ylab="Enhancer proportion (%)", axisnames = F, main="", las=2)
 
 
 text(c(1.4,4.7,8.5,12.1), par("usr")[3]-0.005, labels = enhancers_names, pos = 1, xpd = TRUE, cex=1)
