@@ -1,65 +1,57 @@
 #########################################################################################################################
-library(ade4)
-library(dendextend)
+## if it's the first time we run this figure, we load and prepare data
 
 objects=ls()
-local=TRUE
-sp = "mouse"
 
-if(! "path"%in%objects){
-  ## basic parameters
-  
-  path <- "/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
-  if (local){path <- "/home/laverre/Manuscript/"
-  path_data <- "/home/laverre/Data/Regulatory_landscape/result/"} 
-  
-  pathFigures=paste(path, "Figures/", sep="")
-
-  ## function for genome browser plots
-
-  if (local){
-    source(paste(path_data, "genome_browser/plot.annotations.R", sep=""))
-    source(paste(path_data, "genome_browser/plot.interactions.R", sep=""))
-  }else{
-    source("../genome_browser/plot.annotations.R")
-    source("../genome_browser/plot.interactions.R")}
-  
-  ## colors for the datasets
-
-  dataset.colors=c("forestgreen", "firebrick1")
-  names(dataset.colors)=c("Original", "Simulated")
-
-  col.Shh="forestgreen"
-
-  ## labels for enhancers
-
-  enh.syn=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap")
-  names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
-
-  ## minimum and maximum distance for considered interactions
-
-  minDistance=25e3
-  maxDistance=2.5e6
-  
+if(!"pathScripts"%in%objects){
   load=T
   prepare=T
 }
 
 #########################################################################################################################
 
+library(ade4)
+library(dendextend)
+
+source("parameters.R") ## paths are defined based on the user name
+
+## functions for genome browser plots
+source(paste(pathScripts, "/genome_browser/plot.annotations.R", sep=""))
+source(paste(pathScripts, "/genome_browser/plot.interactions.R", sep=""))
+  
+#########################################################################################################################
+ 
+## colors for the datasets
+
+dataset.colors=c("forestgreen", "firebrick1")
+names(dataset.colors)=c("Original", "Simulated")
+
+col.Shh="forestgreen"
+
+## labels for enhancers
+
+enh.syn=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap")
+names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
+
+## minimum and maximum distance for considered interactions
+
+minDistance=25e3
+maxDistance=2.5e6
+
+sp="human" 
+
+#########################################################################################################################
+
 ## load all data for the figure
 
 if(load){
+  
   obs <- read.table(paste(path, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
   simul <- read.table(paste(path, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
-  
-  if (local){load(paste(path_data, "data.Shh.figure.RData", sep=""))
-    
-  }else{
-    load("RData/data.Shh.figure.RData")
-  }
+   
+  load("RData/data.Shh.figure.RData")
 
-  load=FALSE ## we only do it once
+  load=FALSE ## we only do this once
 }
 
 #########################################################################################################################
@@ -106,32 +98,24 @@ if(prepare){
   
   mean_nb_samples_dist <- t(sapply(filtered_data, function(x)   tapply(x$nb_samples, as.factor(x$dist_class), mean, na.rm=T)))
   mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
+  
+  dist_conf_low <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
+  dist_conf_high <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-  if (sp == 'human'){
-    dist_conf_low <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
-    dist_conf_high <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
+  # AFC
+  data_AFC <- filtered_data[["Original"]] 
+  data_AFC <- data_AFC[, samples] 
+  data_AFC [!is.na(data_AFC)] <- 1
+  data_AFC [is.na(data_AFC)] <- 0
+  data_AFC <- data.frame(t(data_AFC)) # row = samples
   
-    # AFC
-    AFC_obs <- obs[which(obs$type == "unbaited" & obs$distance >= minDistance & obs$distance <= maxDistance),]
-    
-    data_AFC <- AFC_obs[,-c(1:8)] ## first 8 columns contain other info for interactions
-    data_AFC <- data_AFC[1:(length(data_AFC)-3)] # last 3 columns contain other information
-    data_AFC [!is.na(data_AFC)] <- 1
-    data_AFC [is.na(data_AFC)] <- 0
-    data_AFC <- data.frame(t(data_AFC)) # row = samples
-    
-    AFC <- dudi.coa(data_AFC, scannf=F, nf=3)
-    # Dendrogram
-    d=dist.dudi(AFC) 
-    cah=hclust(d,"ward")
-    
-    }else{
-      
-    dist_conf_low <- t(sapply(filtered_data["Original"], function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
-    dist_conf_high <- t(sapply(filtered_data["Original"], function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
-    
-    }
+  AFC <- dudi.coa(data_AFC, scannf=F, nf=3)
+
+  # Dendrogram
+  d=dist.dudi(AFC) 
+  cah=hclust(d,"ward")
   
+  ## we finish preparing the data
   prepare=FALSE
 }
 
@@ -142,8 +126,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-if(sp=="human"){pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7)}
-
+pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7)
 
 ## layout
 
@@ -201,6 +184,7 @@ mtext("A", side=3, line=0.75, at=shhxlim[1]-diff(shhxlim)/8, font=2, cex=1.2)
 
 par(mar=c(0, 0.1, 0, 0.3)) 
 plot.new()
+
 #########################################################################################################################
 
 ## baits in the Shh region

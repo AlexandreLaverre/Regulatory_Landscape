@@ -16,5 +16,7 @@ if(user=="necsulea"){
 dirs=unlist(strsplit(getwd(), split="\\/"))
 pathScripts=paste(dirs[1:(length(dirs)-1)], collapse="/")
 
+pathFigures=paste(pathFinalData, "Figures/", sep="")
+
 #######################################################################################
 
