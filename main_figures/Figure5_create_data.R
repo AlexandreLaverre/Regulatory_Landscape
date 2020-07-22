@@ -11,6 +11,8 @@ path_evol <- paste(path, "Supplementary_dataset6_regulatory_landscape_evolution"
 path_contact <- paste(path, "Supplementary_dataset4_genes_enhancers_contacts", ref_sp, sep="/")
 path_annot <- paste(path, "Supplementary_dataset3_annotations", ref_sp, "/", sep="/")
 
+`%notin%` <- Negate(`%in%`)
+
 ################################################# Conserved contact global   #################################################
 data_global <- c()
 conf_low_global <- c()
@@ -23,6 +25,13 @@ for (enh in enhancers){
   all_simul <- read.table(paste(path_contact, "/", enh, "/gene_", enh, "_enhancers_simulated_interactions.txt", sep=""), header=T, sep="\t")
   contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
   contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  
+  # Select only contacts with developemental genes
+  dev_gene <- read.table(paste(path_annot,"/test", sep=""), header=T, sep="\t")
+  all_obs <- all_obs[which(all_obs$gene %in% dev_gene$Gene.ID),]
+  all_simul <- all_simul[which(all_simul$gene %in% dev_gene$Gene.ID),]
+  contact_obs <- contact_obs[which(contact_obs$origin_gene %in% dev_gene$Gene.ID),]
+  contact_simul <- contact_simul[which(contact_simul$origin_gene %in% dev_gene$Gene.ID),]
   
   # Select only contacts with no duplicated enhancers
   stats_enh <- read.table(paste(path_annot, enh, "/", enh, "_BLAT_summary_0.8.txt", sep=""), header=T, sep="\t")
@@ -75,6 +84,8 @@ for (enh in enhancers){
   dev_gene <- read.table(paste(path_annot,"/test", sep=""), header=T, sep="\t")
   all_obs <- all_obs[which(all_obs$gene %in% dev_gene$Gene.ID),]
   all_simul <- all_simul[which(all_simul$gene %in% dev_gene$Gene.ID),]
+  contact_obs <- contact_obs[which(contact_obs$origin_gene %in% dev_gene$Gene.ID),]
+  contact_simul <- contact_simul[which(contact_simul$origin_gene %in% dev_gene$Gene.ID),]
   
   # Distance classes
   max_dist = 3000000
@@ -130,6 +141,9 @@ for (enh in enhancers){
   all_obs <- read.table(paste(path_contact, "/", enh, "/gene_", enh, "_enhancers_original_interactions.txt", sep=""), header=T, sep="\t")
   all_simul <- read.table(paste(path_contact, "/", enh, "/gene_", enh, "_enhancers_simulated_interactions.txt", sep=""), header=T, sep="\t")
   
+  dev_gene <- read.table(paste(path_annot,"/test", sep=""), header=T, sep="\t")
+  all_obs <- all_obs[which(all_obs$gene %in% dev_gene$Gene.ID),]
+  all_simul <- all_simul[which(all_simul$gene %in% dev_gene$Gene.ID),]
   # Sample classes
   if(ref_sp=="human"){
     sample_class = c(1, 2, 5, 10, 20)
@@ -216,6 +230,10 @@ for (enh in enhancers){
   all_simul <- read.table(paste(path_contact, "/", enh, "/gene_", enh, "_enhancers_simulated_interactions.txt", sep=""), header=T, sep="\t")
   contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
   contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  
+  dev_gene <- read.table(paste(path_annot,"/test", sep=""), header=T, sep="\t")
+  all_obs <- all_obs[which(all_obs$gene %in% dev_gene$Gene.ID),]
+  all_simul <- all_simul[which(all_simul$gene %in% dev_gene$Gene.ID),]
   
   # Select only contacts with no duplicated enhancers
   stats_enh <- read.table(paste(path_annot, enh, "/", enh, "_BLAT_summary_0.8.txt", sep=""), header=T, sep="\t")
@@ -311,14 +329,14 @@ if (ref_sp == "mouse"){
        conserv_dist_CAGE, conserv_dist_ENCODE, 
        conserv_sample_CAGE, conserv_sample_ENCODE,
        conserv_similar_sample_CAGE, conserv_similar_sample_ENCODE,
-       file = paste(path_manuscript, "Figures/Fig5_", ref_sp, ".Rdata", sep=""))
+       file = paste(path_manuscript, "Figures/Fig5_dvpt_", ref_sp, ".Rdata", sep=""))
   
 }else{
   save(conserv_global,
        conserv_dist_CAGE, conserv_dist_ENCODE, conserv_dist_RoadMap, conserv_dist_GRO_seq,
        conserv_sample_CAGE, conserv_sample_ENCODE, conserv_sample_RoadMap, conserv_sample_GRO_seq,
        conserv_similar_sample_CAGE, conserv_similar_sample_ENCODE, conserv_similar_sample_RoadMap, conserv_similar_sample_GRO_seq,
-       file = paste(path_manuscript, "Figures/Fig5_", ref_sp, ".Rdata", sep=""))
+       file = paste(path_manuscript, "Figures/Fig5_dvpt_", ref_sp, ".Rdata", sep=""))
 }
 
 

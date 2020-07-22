@@ -1,10 +1,10 @@
-############################################################ PLOT FIGURE 2 ###############################################
-path <- "/home/laverre/Manuscript/Figures/"
+#########################################################################################################################
+source("parameters.R") ## paths are defined based on the user name
+
 ref_sp = "human"
 
-load(paste(path, "Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
-load(paste(path, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
-
+load(paste(pathFigures, "Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
+load(paste(pathFigures, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
 
 enhancers <- c("CAGE", "ENCODE")
 enhancers_names <- c("FANTOM5", "ENCODE")
@@ -16,12 +16,15 @@ if (ref_sp == "human"){
   pdf_name = "Figure2.pdf"
   }
 
-color <- c("red", "navy", "forestgreen", "orange")
-pdf(paste(path, pdf_name, sep=""), width=8.5, height=5)
+color <- c("red", "navy", "forestgreen", "orange") ## colors for the datasets
+
+#########################################################################################################################
+
+pdf(paste(pathFigures, pdf_name, sep=""), width=8.5, height=5)
 par(mai = c(0.5, 0.7, 0.3, 0.2)) # bottom, left, top, right
 layout(matrix(c(1, 1, 2, 2, 3, 4, 5, 5), nrow = 2, byrow = TRUE))
 
-############################################   A - Global enhancer proportion ############################################ 
+############################################  Fig2-A - Global enhancer proportion ############################################ 
 barcenter <- barplot(enh_prop$data*100, border=rep(c("darkgreen", "firebrick3", "white"),4), col="white", lwd=1.5, cex.names=0.8,
                      ylim=c(0,15), ylab="Enhancer proportion (%)", axisnames = F, main="", las=2)
 
@@ -40,7 +43,7 @@ for (x in seq(1,length(barcenter)-1, by=3)){
 
 mtext("A", side=3, line=1, at=-1.5, font=2, cex=1.2)
 
-############################################   B - Enhancer proportion according to distance ############################################ 
+############################################  Fig2-B - Enhancer proportion according to distance ############################################ 
 if(ref_sp=="human"){YMAX=0.2}else{YMAX=0.15}
 
 plot(prop_dist[["obs"]]$CAGE[0:50], type="l", col="white", ylab="Enhancer length proportion (mean)", main="", las=2,
@@ -70,7 +73,7 @@ legend("topright", legend=enhancers_names, col=color, bty='n', lty=1, cex=1, nco
 mtext("B", side=3, line=1, at=-4.5, font=2, cex=1.2)
 mtext("Linear distance to promoters regions (Mb)", side=1, line=2.25, cex=0.7)
 
-############################################   C - Enhancer proportion according to nb of sample ############################################ 
+############################################  Fig2-C - Enhancer proportion according to nb of sample ############################################ 
 if(ref_sp=="human"){YMAX=0.2; x_leg_class=5}else{YMAX=0.15; x_leg_class=2}
 
 plot(prop_nb_sample[["obs"]]$CAGE, col="white", ylim=c(0,YMAX), las=2,
@@ -102,7 +105,7 @@ mtext("C", side=3, line=1, at=-4.5, font=2, cex=1.2)
 mtext("Number of sample", side=1, line=2.25, cex=0.7)
 
 
-############################################ D - Gene expression vs nb enhancers ############################################ 
+############################################ Fig2-D - Gene expression vs nb enhancers ############################################ 
 plot(gene_expression_enhancers$ENCODE, type="l", col="white", ylab="Average expression level (log2 RPKM)", main="", las=2,
      xlab="", xaxt = "n", ylim=c(2.7,3.5))
 
@@ -125,7 +128,7 @@ text(seq(1,10,1), par("usr")[3]-0.05, labels = class_leg, pos = 1, xpd = TRUE)
 mtext("D", side=3, line=1, at=-1, font=2, cex=1.2)
 mtext("Quantile of Number of contacted enhancers", side=1, line=2.25, cex=0.7)
 
-############################################ E - Correlation Gene expression and enhancers activity ############################################ 
+############################################ Fig2-E - Correlation Gene expression and enhancers activity ############################################ 
 if(ref_sp=="human"){YMAX=0.2}else{YMAX=0.15}
 
 plot(correl_activity[["obs"]]$CAGE, type="l", col="white", ylab="Spearman's correlation coefficient (mean)", main="", las=2,

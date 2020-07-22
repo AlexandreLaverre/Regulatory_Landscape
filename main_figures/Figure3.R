@@ -1,15 +1,17 @@
+#########################################################################################################################
+source("parameters.R") ## pathFiguress are defined based on the user name
+
 library(ape)
 library(vioplot)
-setwd("/home/laverre/Documents/Regulatory_Landscape/scripts/main_figures/")
 
 ref_sp = "human"
 target_sp = "mouse"
 
-path <- "/home/laverre/Data/Regulatory_landscape/result/Figures/"
-
 if(ref_sp == "human"){pdf_name="Figure3.pdf"}else{pdf_name="Sup_Figure11.pdf"}
 
-pdf(paste(path, pdf_name, sep=""), width=7, height=10)
+#########################################################################################################################
+
+pdf(paste(pathFigures, pdf_name, sep=""), width=7, height=10)
 par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right 
 a <- matrix(c(1,1,2,2,3,3),ncol=6, nrow = 2, byrow=T)
 b <- matrix(c(4,4,4,5,5,5), nrow=1, byrow=F)
@@ -18,10 +20,10 @@ d <- rbind(a,b,c)
 layout(d)
 
 ######################## A - Phylogenetic tree ######################## 
-tree <- read.tree("/home/laverre/Documents/Regulatory_Landscape/data/ensembl_tree")
+tree <- read.tree(paste(pathFigures, "Ensembl_species_tree", sep=""))
 tree <- keep.tip(tree, c("Mus_musculus", "Homo_sapiens", "Rattus_norvegicus", "Macaca_mulatta", "Oryctolagus_cuniculus", "Canis_lupus_familiaris", "Bos_taurus", "Loxodonta_africana", "Monodelphis_domestica", "Gallus_gallus"))
 species <- c("macaque", "mouse", "rat", "rabbit", "cow", "dog", "elephant", "opossum", "chicken")
-species_names <- c("human", "macaque", "mouse", "rat", "rabbit", "cow", "dog", "elephant", "opossum", "chicken")
+species_names <- c("human", species)
 
 if(ref_sp == "mouse"){
   tree <- rotate(tree, c(1,5))
@@ -39,7 +41,7 @@ legend(y=0.5, x=0, fill=c("firebrick1","dodgerblue", "forestgreen"),
        text.width=c(0.4), ncol=2, bty='n', cex=1.3)
 
 ######################## B - Restriction fragments sequence conservation ######################## 
-load(paste(path, "Fig3_", ref_sp, ".Rdata", sep=""))
+load(paste(pathFigures, "Fig3_", ref_sp, ".Rdata", sep=""))
 
 vioplot(c(0,align_simul[,species]), at=c(0,4,8,12,16,20,24,28,32,36), border="firebrick1", col=rgb(t(col2rgb('firebrick1')/255), alpha = 0.6),
         plotCentre="line", axes=F, yaxt='n', horizontal = T, las=1, cex.main = 1.2, main="")

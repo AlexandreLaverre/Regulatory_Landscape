@@ -15,11 +15,11 @@ enh_names <- c("FANTOM5", "ENCODE")
 if (ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq"); enh_names <- c(enh_names, "RoadMap\nEpigenomics", "GRO-seq")}
 
 ############################################   A - Global contact conservation ############################################ 
-if (ref_sp == "human"){YMAX=26}else{YMAX=30}
+if (ref_sp == "human"){YMAX=40}else{YMAX=30}
 
 par(lwd = 1.5) 
 bar <- barplot(conserv_global$data, border=rep(c("darkgreen", "firebrick3", "black"),4), beside=T, space = c(0, 0.1, 0),
-               ylim=c(0,YMAX), col="white", main="", ylab="Conserved contact (%)", las=2)
+               ylim=c(0,YMAX), col="white", main="  Conserved contact all genes", ylab="Conserved contact (%)", las=2)
 
 arrows(x0=bar,y0=conserv_global$conf_up,y1=conserv_global$conf_low,angle=90,code=3,length=0.05)
 text(conserv_global$n_total, x=bar, y=conserv_global$conf_up+2, cex=0.7)
@@ -29,7 +29,7 @@ legend("topright", legend = c("Original", "Simulated"), border=c("darkgreen", "f
 mtext("A", side=3, line=1, at=0.1, font=2, cex=1.2)
 
 ############################################  B - Contact conservation by distance from TSS ############################################ 
-if (ref_sp == "human"){YLIM=c(0,60)}else{YLIM=c(-5, 20)}
+if (ref_sp == "human"){YLIM=c(-3,8)}else{YLIM=c(-5, 20)}
 
 col <- c("red", "navy", "forestgreen", "orange")
 color_n = 1 # To change color between each enhancers dataset
@@ -39,19 +39,21 @@ par(lwd = 0.7)
 for (enh in enhancers){
   conserv = get(paste("conserv_dist", enh, sep="_"))
   if (enh == "CAGE"){ # First enhancers dataset
-    plot(conserv$result-conserv$simul, type="l", col=col[color_n], xaxt = "n", ylim=YLIM,
-         xlab="Distance from TSS (Mb)", ylab="Original - Simulated \n conserved contact (%)", main="", las=2)
-  }else{lines(conserv$result-conserv$simul, type="l", col=col[color_n])} # Add lines of other enhancers datasets
+    plot(log((conserv$result-conserv$simul)/conserv$simul), type="l", col=col[color_n], xaxt = "n", ylim=YLIM,
+         xlab="Distance from TSS (Mb)", ylab="log(delta contact conserv)", main="All gene", las=2)
+  }else{lines(log((conserv$result-conserv$simul)/conserv$simul), type="l", col=col[color_n])} # Add lines of other enhancers datasets
   
   for (row in 1:nrow(conserv)){
-    segments(x0=row,y0=conserv[row,]$obs_conflow-conserv[row,]$simul_conflow,x1=row,y1=conserv[row,]$obs_confup-conserv[row,]$simul_confup, col=col[color_n], lwd=0.3)}
+    segments(x0=row,y0=log((conserv[row,]$obs_conflow-conserv[row,]$simul_conflow)/conserv[row,]$simul_conflow),
+             x1=row,y1=log((conserv[row,]$obs_confup-conserv[row,]$simul_confup)/conserv[row,]$simul_confup),
+             col=col[color_n], lwd=0.3)}
   
   color_n = color_n + 1
   
 }
 
 axis(1, at=seq(1,61,10), labels=F)
-text(seq(1,61,10),par("usr")[3]-1, class_leg, xpd = TRUE)
+mtext(class_leg, at=seq(1,61,10), side=1, line=1)
 legend("topleft", col=col, legend = enh_names, bty='n', lty=1, cex=0.8)
 mtext("B", side=3, line=1, at=0.1, font=2, cex=1.2)
 

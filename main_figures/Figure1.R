@@ -46,10 +46,10 @@ sp="human"
 
 if(load){
   
-  obs <- read.table(paste(path, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
-  simul <- read.table(paste(path, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
+  obs <- read.table(paste(pathFinalData, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
+  simul <- read.table(paste(pathFinalData, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
    
-  load("RData/data.Shh.figure.RData")
+  load(paste(pathFigures, "data.Shh.figure.RData", sep=""))
 
   load=FALSE ## we only do this once
 }

@@ -3,8 +3,8 @@
 
 user=as.character(Sys.getenv()["USER"])
 
-if(user=="alaverre"){
-
+if(user=="laverre"){
+  pathFinalData="/home/laverre/Manuscript/"
 }
 
 if(user=="necsulea"){
