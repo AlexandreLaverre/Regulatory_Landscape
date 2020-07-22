@@ -1,31 +1,41 @@
 #########################################################################################################################
+## if it's the first time we run this figure, we load and prepare data
+
+objects=ls()
+
+if(!"pathScripts"%in%objects){
+  load=T
+  prepare=T
+}
+
+#########################################################################################################################
+
 source("parameters.R") ## paths are defined based on the user name
-
-ref_sp = "human"
-
-load(paste(pathFigures, "Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
-load(paste(pathFigures, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
-
-enhancers <- c("CAGE", "ENCODE")
-enhancers_names <- c("FANTOM5", "ENCODE")
-pdf_name = "Sup_Figure11.pdf"
-
-if (ref_sp == "human"){
-  enhancers <- c(enhancers, "RoadMap", "GRO_seq")
-  enhancers_names <- c(enhancers_names, "Roadmap\nEpigenomics", "GRO-seq")
-  pdf_name = "Figure2.pdf"
-  }
 
 color <- c("red", "navy", "forestgreen", "orange") ## colors for the datasets
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, pdf_name, sep=""), width=8.5, height=5)
+if(load){
+  ref_sp = "human"
+  
+  load(paste(pathFigures, "Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
+  load(paste(pathFigures, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
+  
+  enhancers = enhancer.datasets[[ref_sp]]
+}
+
+#########################################################################################################################
+
+pdf(paste(pathFigures, "Figure2.pdf", sep=""), width=8.5, height=5)
+
 par(mai = c(0.5, 0.7, 0.3, 0.2)) # bottom, left, top, right
 layout(matrix(c(1, 1, 2, 2, 3, 4, 5, 5), nrow = 2, byrow = TRUE))
 
 ############################################  Fig2-A - Global enhancer proportion ############################################ 
-barcenter <- barplot(enh_prop$data*100, border=rep(c("darkgreen", "firebrick3", "white"),4), col="white", lwd=1.5, cex.names=0.8,
+
+barcenter <- barplot(enh_prop$data*100, border=rep(c("darkgreen", "firebrick3", "white"),4),
+                     col="white", lwd=1.5, cex.names=0.8,
                      ylim=c(0,15), ylab="Enhancer proportion (%)", axisnames = F, main="", las=2)
 
 

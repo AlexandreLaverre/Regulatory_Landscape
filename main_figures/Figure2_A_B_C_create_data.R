@@ -2,7 +2,7 @@
 library(data.table)
 options(stringsAsFactors = FALSE)
 
-source("parameters.R") ## pathFinalDatas are defined based on the user name
+source("parameters.R") ## pathFinalData defined based on the user name
 
 ref_sp = "mouse"
 minDistance=25e3
