@@ -20,3 +20,13 @@ pathFigures=paste(pathFinalData, "Figures/", sep="")
 
 #######################################################################################
 
+enhancer.datasets=list()
+enhancer.datasets[["human"]]=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
+enhancer.datasets[["human"]]=c("ENCODE", "FANTOM5")
+
+#######################################################################################
+
+minDistance=25e3
+maxDistance=2.5e6
+
+#######################################################################################
