@@ -4,19 +4,23 @@ source("parameters.R") ## pathFiguress are defined based on the user name
 library(ape)
 library(vioplot)
 
-ref_sp = "human"
+# Choose species within : human ; mouse
+ref_sp = "human" 
+# Choose genes within : all ; dvpt ; other
+selected_genes = "dvpt"
+
 target_sp = "mouse"
 
 enhancers <- c("FANTOM5", "ENCODE")
-if (ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq"); enh_names <- c(enhancers, "RoadMap\nEpigenomics", "GRO-seq")}
+if (ref_sp == "human"){enh_names <- c(enhancers, "RoadMap\nEpigenomics", "GRO-seq"); enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
 
-load(paste(pathFigures, "Fig5_", ref_sp, ".Rdata", sep=""))
+load(paste(pathFigures, "Fig5_", ref_sp, "_", selected_genes, "_genes.Rdata", sep=""))
 
 col <- c("red", "navy", "forestgreen", "orange")
 #########################################################################################################################
-if(ref_sp == "human"){pdf_name="Figure5.pdf"}else{pdf_name="Sup_Figure14.pdf"}
+if(ref_sp == "human"){pdf_name="Figure5_dvpt.pdf"}else{pdf_name="Sup_Figure14.pdf"}
 
-pdf(paste(path, pdf_name, sep=""), width=8.5, height=8)
+pdf(paste(pathFigures, pdf_name, sep=""), width=8.5, height=8)
 par(mai = c(0.8, 0.8, 0.5, 0.1)) # bottom, left, top, right
 layout(matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE))
 

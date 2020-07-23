@@ -39,7 +39,6 @@ simul <- simul[which(simul$baited == "unbaited"),]
 obs <- obs[which(obs$BLAT_match < 2),]
 simul <- simul[which(simul$BLAT_match < 2),]
 
-
 #### Alignment score vs all species 
 align <- read.table(paste(path_evol,"sequence_conservation/restriction_fragments/Alignments_stats_all_species_nonexonic_ungapped.txt", sep="/"), header=T)
 species <- c("macaque", target_sp, "rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken")
@@ -52,7 +51,6 @@ align_obs_enh <- align[which(align[,1] %in% obs[which(obs$ENCODE_bp > 0),]$ID), 
 
 ################################################################################################################################################
 ################################################# Fig3-C & G - Enhancers Alignment  ############################################################ 
-
 list_conserv_enh <- list()
 for (enh in enhancers){
   align <- read.table(paste(path_evol,"sequence_conservation/enhancers/", enh, "Alignments_stats_all_species_nonexonic_ungapped.txt", sep="/"), header=T)

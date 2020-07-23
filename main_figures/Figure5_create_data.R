@@ -9,7 +9,7 @@ ref_sp = "human"
 
 # Choose genes within : all ; dvpt ; other
 selected_genes = "dvpt"
-
+if (selected_genes == "dvpt"){`%get%` <- `%in%`}else{`%get%` <- Negate(`%in%`)}
 
 minDistance=25e3
 maxDistance=2.025e6
@@ -25,8 +25,6 @@ if(ref_sp == "human"){
 path_evol <- paste(pathFinalData, "SupplementaryDataset7/", ref_sp, "/", sep="")
 path_contact <- paste(pathFinalData, "SupplementaryDataset4/", ref_sp, "/", sep="")
 
-
-if (selected_genes == "dvpt"){`%get%` <- `%in%`}else{`%get%` <- Negate(`%in%`)}
 
 ##############################################################################################################################
 ################################################# Conserved contact global   #################################################
@@ -66,7 +64,7 @@ for (enh in enhancers){
   contact_simul <- contact_simul[which(contact_simul$origin_enh %in% simul_stats$enh),]
   
   # Overlap with target enhancer
-  if (enh %in% c("CAGE", "ENCODE")){
+  if (enh %in% c("FANTOM5", "ENCODE")){
     overlap_enh <- read.table(paste(path_contact, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
     enh_tot = nrow(overlap_enh)
     overlap_enh <- overlap_enh[which(overlap_enh[,5] != "NA"),]
@@ -205,7 +203,7 @@ for (enh in enhancers){
   contact_simul$class_dist <- cut(contact_simul$nb_sample, breaks=c(sample_class, max(contact_simul$nb_sample)), include.lowest = T)
   
   # Overlap with target enhancer
-  if (enh %in% c("CAGE", "ENCODE")){
+  if (enh %in% c("FANTOM5", "ENCODE")){
     overlap_enh <- read.table(paste(path_contact, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
     enh_tot = nrow(overlap_enh)
     overlap_enh <- overlap_enh[which(overlap_enh[,5] != "NA"),]
@@ -294,7 +292,7 @@ for (enh in enhancers){
   contact_simul <- contact_simul[which(contact_simul$origin_enh %in% simul_stats$enh),]
   
   # Overlap with target enhancer
-  if (enh %in% c("CAGE", "ENCODE")){
+  if (enh %in% c("FANTOM5", "ENCODE")){
     overlap_enh <- read.table(paste(path_contact, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
     enh_tot = nrow(overlap_enh)
     overlap_enh <- overlap_enh[which(overlap_enh[,5] != "NA"),]
@@ -376,16 +374,16 @@ for (enh in enhancers){
 
 if (ref_sp == "mouse"){
   save(conserv_global,
-       conserv_dist_CAGE, conserv_dist_ENCODE, 
-       conserv_sample_CAGE, conserv_sample_ENCODE,
-       conserv_similar_sample_CAGE, conserv_similar_sample_ENCODE,
+       conserv_dist_FANTOM5, conserv_dist_ENCODE, 
+       conserv_sample_FANTOM5, conserv_sample_ENCODE,
+       conserv_similar_sample_FANTOM5, conserv_similar_sample_ENCODE,
        file = paste(pathFigures, "/Fig5_", ref_sp, "_", selected_genes, "_genes.Rdata", sep=""))
   
 }else{
   save(conserv_global,
-       conserv_dist_CAGE, conserv_dist_ENCODE, conserv_dist_RoadMap, conserv_dist_GRO_seq,
-       conserv_sample_CAGE, conserv_sample_ENCODE, conserv_sample_RoadMap, conserv_sample_GRO_seq,
-       conserv_similar_sample_CAGE, conserv_similar_sample_ENCODE, conserv_similar_sample_RoadMap, conserv_similar_sample_GRO_seq,
+       conserv_dist_FANTOM5, conserv_dist_ENCODE, conserv_dist_RoadmapEpigenomics, conserv_dist_FOCS_GRO_seq,
+       conserv_sample_FANTOM5, conserv_sample_ENCODE, conserv_sample_RoadmapEpigenomics, conserv_sample_FOCS_GRO_seq,
+       conserv_similar_sample_FANTOM5, conserv_similar_sample_ENCODE, conserv_similar_sample_RoadmapEpigenomics, conserv_similar_sample_FOCS_GRO_seq,
        file = paste(pathFigures, "/Fig5_", ref_sp, "_", selected_genes, "_genes.Rdata", sep=""))
 }
 
