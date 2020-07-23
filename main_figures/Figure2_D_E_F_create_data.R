@@ -87,5 +87,5 @@ correl_activity <- list(obs=obs_correl_activity_dist, simul=simul_correl_activit
 
 ################################################# Save RData ################################################# 
 
-save(gene_expression_enhancers, correl_activity, file = paste(pathFigures, "Fig2_", ref_sp, "_D_E_test.Rdata", sep=""))
+save(gene_expression_enhancers, correl_activity, file = paste(pathFigures, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
 
