@@ -4,12 +4,12 @@ options(stringsAsFactors = FALSE)
 
 source("parameters.R") ## pathFinalDataFinalDatas are defined based on the user name
 
-ref_sp = "mouse"
+ref_sp = "human"
 minDistance=25e3
 maxDistance=2.5e6
 
-enhancers <- c("CAGE", "ENCODE")
-if (ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}
+enhancers <- c("FANTOM5", "ENCODE")
+if (ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
 
 
 ################################## Fig2-D - Correlation Gene expression & Nb enhancers ################################## 
@@ -25,14 +25,14 @@ gene_expression_enhancers <- data.frame(matrix(vector(), 10, 1))
 
 for (enh in enhancers){
   print(enh)
-  regland = read.table(paste(pathFinalData, "/SupplementaryDataset7/", ref_sp, "/evolution_summary_by_gene/", enh, "/", enh, "_original_summary_conserv_all_0.5.txt",sep=""), h=T, sep="\t", row.names = 1)
+  regland = read.table(paste(pathFinalData, "/SupplementaryDataset7/", ref_sp, "/evolution_summary_by_gene/", enh, "/original_evolution_summary_all_sample.txt",sep=""), h=T, sep="\t", row.names = 1)
   regland <- regland[which(regland$nb_total < 250),]
   common=intersect(rownames(expdiv), rownames(regland))
   expdiv=expdiv[common,]
   regland=regland[common,]
   
   # Made decile of nb enhancers
-  if(enh=="CAGE"){regland$fraction_group <- cut2(regland$nb_total, g=nb_class_CAGE)
+  if(enh=="FANTOM5"){regland$fraction_group <- cut2(regland$nb_total, g=nb_class_CAGE)
   }else{regland$fraction_group <- cut2(regland$nb_total, g=10)}
   
   box <- boxplot(log2(expdiv$Human_MeanRPKM+1)~regland$fraction_group, plot=F)
@@ -57,7 +57,7 @@ for (enh in enhancers){
   obs$dist_class <-cut(obs$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
   simul$dist_class <- cut(simul$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
   
-  if(enh == "CAGE"){
+  if(enh == "FANTOM5"){
     obs_correl_activity_dist <- data.frame(matrix(vector(), length(levels(obs$dist_class)), 1))
     simul_correl_activity_dist <- data.frame(matrix(vector(), length(levels(simul$dist_class)), 1))
   }
@@ -87,5 +87,5 @@ correl_activity <- list(obs=obs_correl_activity_dist, simul=simul_correl_activit
 
 ################################################# Save RData ################################################# 
 
-save(gene_expression_enhancers, correl_activity, file = paste(pathFigures, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
+save(gene_expression_enhancers, correl_activity, file = paste(pathFigures, "Fig2_", ref_sp, "_D_E_test.Rdata", sep=""))
 
