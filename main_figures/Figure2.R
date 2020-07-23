@@ -34,7 +34,7 @@ layout(matrix(c(1, 1, 2, 2, 3, 4, 5, 5), nrow = 2, byrow = TRUE))
 
 ############################################  Fig2-A - Global enhancer proportion ############################################ 
 
-barcenter <- barplot(enh_prop$data*100, border=rep(c("darkgreen", "firebrick3", "white"),4),
+barcenter <- barplot(enh_prop$data, border=rep(c("darkgreen", "firebrick3", "white"),4),
                      col="white", lwd=1.5, cex.names=0.8,
                      ylim=c(0,15), ylab="Enhancer proportion (%)", axisnames = F, main="", las=2)
 
@@ -47,8 +47,8 @@ segments(barcenter, enh_prop$conf_up, barcenter, enh_prop$conf_low, lwd = 3)
 arrows(barcenter, enh_prop$conf_up, barcenter, enh_prop$conf_low, lwd = 1.5, angle = 90, code = 3, length = 0.05)
 
 for (x in seq(1,length(barcenter)-1, by=3)){
-  segments(barcenter[x], enh_prop$data[x]+0.01, barcenter[x+1], enh_prop$data[x]+0.01) 
-  text("***", x=(barcenter[x]+barcenter[x+1])/2, y=enh_prop$data[x]+0.015)
+  segments(barcenter[x], enh_prop$data[x]+1, barcenter[x+1], enh_prop$data[x]+1) 
+  text("***", x=(barcenter[x]+barcenter[x+1])/2, y=enh_prop$data[x]+1.5)
 }
 
 mtext("A", side=3, line=1, at=-1.5, font=2, cex=1.2)
