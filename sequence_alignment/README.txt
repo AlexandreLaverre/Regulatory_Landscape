@@ -1,5 +1,7 @@
 ###################################################################### Pipeline Sequences Conservation ########################################
 
+--> All this pipeline is automatized by Snakemake (cf Snakefile)
+
 ##### Lift interest genome coordinates
 # 1 - Download map.chain file from http://hgdownload.cse.ucsc.edu/goldenpath/${origin_genome}/liftOver/
 # 2 - Run LiftOver 
@@ -41,17 +43,3 @@ run_pecan.sh ${origin_sp} {target_sp} ${interest_coordinates}
 ##### Extract alignment statistics excluding exons positions
 ./extract_aln_stats_excluding.regions.sh ${origin_sp} {target_sp} ${interest_coordinates} ${aligner} ${exons_type}
 
-
-
-###################################################################### Sequence duplication ###################################################################### 
-
-##### Extract sequences of interest coordinates 
-# 1 - Download hard masked fasta from Ensembl
-# 2 - Extract sequences of interest genome coordinates
-./extract_rm_seq_dupli.py ${specie}
-
-# Run BLAT
-./run_blat.sh ${specie} 	# Identity treshold used = 95% 
-
-# Extract BLAT stats with specified treshold of matched length (here we used 80%)
-./extract_duplication_stats.py ${specie} ${treshold} ${interest_coordinates}_masked_${chr}.fa 

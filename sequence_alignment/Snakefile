@@ -10,7 +10,7 @@
 # Scripts requirements:
 # extract_frag_seq.py -> obtain DNA sequence from genomic coordinates
 # overlap.py -> obtain the overlapping coordinates between 2 files (i.e: sequences and exons)
-# pecan.py -> align pairs of homologous sequences
+# new_pecan.py -> align pairs of homologous sequences
 # extract.aln.stats.excluding.regions.pl -> obtain final alignment statistics
 
 # Software requirements: LiftOver + PECAN + Snakemake
@@ -154,7 +154,7 @@ rule PECAN:
     shell:
         """
         sed -i '1i ID.{sp_origin}\tID.{params.sp}' {input.list_ID}
-        {python_path} script/new_run_pecan.py {input.list_ID} {sp_origin} {params.sp} {interest_file} 2>> {log.err}
+        {python_path} script/run_pecan.py {input.list_ID} {sp_origin} {params.sp} {interest_file} 2>> {log.err}
         touch {output.done}
         """
 
