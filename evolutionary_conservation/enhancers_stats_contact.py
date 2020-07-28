@@ -16,7 +16,7 @@ def gene_enh_contact(enh_name, data):
     with open(path_contact + "gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
         first_line = f1.readline().strip("\n")
         first_line = first_line.split("\t")
-        sample_name = first_line[7:]
+        sample_name = first_line[6:]
 
         for i in f1.readlines():
             i = i.strip("\n")
@@ -27,7 +27,7 @@ def gene_enh_contact(enh_name, data):
             enh = i[3]
             dist = float(i[4])
             score = float(i[5])
-            sample = [float(x) for x in i[7:len(i)]]
+            sample = [float(x) for x in i[6:len(i)]]
             info = [[bait], [gene]]
 
             if enh not in enh_infos.keys():

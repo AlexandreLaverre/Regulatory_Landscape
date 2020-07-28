@@ -54,7 +54,7 @@ def enh_conserv(enh_name, score):
 
     # Get all sequence keys
     all_enh = {}
-    with open(path_annot + ref_sp + "/" + enh_name + "_BLAT_summary_0.8.txt") as f1:
+    with open(path_annot + ref_sp + "/" + enh_name + "/" + enh_name + "_BLAT_summary_0.8.txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -73,7 +73,7 @@ def enh_conserv(enh_name, score):
 
         align_all_sp[enh].append(align_score)
 
-    output_file = path_evol + ref_sp + "/sequence_conservation/" + enh_name + "/Alignments_stats_all_species_" + score + ".txt"
+    output_file = path_evol + ref_sp + "/sequence_conservation/" + enh_name + "/Alignments_stats_all_species_" + score + ".txt3"
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         other = "human" if ref_sp == "mouse" else "mouse"
@@ -85,8 +85,8 @@ def enh_conserv(enh_name, score):
     output.close()
 
 
-references_sp = ["mouse", "human"]
-enh_datas = ["restriction_fragments"]
+references_sp = ["mouse"] #, "human"]
+enh_datas = ["ENCODE"] # "restriction_fragments", "CAGE",
 scores = ["total_ungapped", "total_identical", "filtered_ungapped", "filtered_identical"]
 
 for ref_sp in references_sp:

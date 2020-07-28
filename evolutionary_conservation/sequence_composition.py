@@ -26,16 +26,13 @@ def dic_pb(file):
 
 all = "_overlap_all_exons.txt"
 all_exon = dic_pb(all)
-all_250 = "_overlap_all_exons250.txt"
+all_250 = "_overlap_repeat_no_exon.txt"
 all_exon250 = dic_pb(all_250)
 coding = "_overlap_coding_exons.txt"
 coding_exon = dic_pb(coding)
 nocoding = "_overlap_nocoding_exons.txt"
 nocoding_exon = dic_pb(nocoding)
-repeat = "_overlap_repeatmasker.txt"
-repeat_pb = dic_pb(repeat)
-phastcons = "_overlap_phastconselements_noexonic250.txt"
-phastcons_pb = dic_pb(phastcons)
+
 CAGE = "_overlap_CAGE.txt"
 CAGE_count = dic_pb(CAGE)
 ENCODE = "_overlap_ENCODE.txt"
@@ -72,7 +69,9 @@ gene_count_bait = dic_count(bait_gene1Kb)
 
 # Duplication score
 frag_dupli = {}
-input = "/restriction_fragments_BLAT_summary_0.8.txt"
+repeat_pb = {}
+GC_pb = {}
+input = "/restriction_fragments/restriction_fragments_BLAT_summary_0.8.txt"
 
 with open(path_dupli + origin_sp + input) as f1:
     for i in f1.readlines()[1:]:
@@ -80,10 +79,11 @@ with open(path_dupli + origin_sp + input) as f1:
         i = i.split("\t")
         frag = i[0].split(':')
         frag = str(frag[0]) + ':' + str(frag[1]) + ':' + str(frag[2])
-        frag_dupli[frag] = int(i[4]) - 1
+        frag_dupli[frag] = int(i[4])
+        repeat_pb[frag] = int(i[2])
+        GC_pb[frag] = int(i[3])
 
 print("Overlap & Score dupli done ! ")
-
 
 def HiC_stats(origin_sp, data):
     print(origin_sp, data)
@@ -164,14 +164,14 @@ def HiC_stats(origin_sp, data):
                         GRO_seq_contact[bait] += GRO_seq_count[PIR]
 
     print("Writting output...")
-    output = open("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt", 'w')
-    if os.stat("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt").st_size == 0:
+    output = open("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt_new2", 'w')
+    if os.stat("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt_new2").st_size == 0:
         output.write("chr\tstart\tend\tlength\tCAGE_bp\tENCODE_bp\t")
         if origin_sp == "human":
             output.write("RoadMap_bp\tGRO_seq_bp\t")
-        output.write("bait_contacted\tgenes_contacted\tmean_baits_contacts\tmedian_score\tmidist\tbaited\tnb_cell\t"
-                     "duplication\tall_exon_pb\tall_exon250\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb\t"
-                     "phastcons_noexonic250\tTSS_count\t")
+        output.write("bait_contacted\tgenes_contacted\tmean_baits_contacts\tmedian_score\tmedian_dist\tbaited\tnb_sample\t"
+                     "BLAT_match\tall_exon_bp\trepet_noexon_bp\tcoding_exon_pb\tnocoding_exon_pb\trepeat_bp\t"
+                     "GC_bp\tTSS_count\t")
 
         output.write('\t'.join(cell_name) + "\n")
 
@@ -186,11 +186,11 @@ def HiC_stats(origin_sp, data):
             output.write(str(RoadMap_count[PIR]) + '\t' + str(GRO_seq_count[PIR]) + '\t')
 
         output.write(str(len(PIR_infos[PIR][0])) + '\t' + str(len(PIR_infos[PIR][6])) + '\t' + str(np.mean(bait_contact)) + '\t')
-        output.write(str(np.median([float(x) for x in PIR_infos[PIR][5]])) + '\t')  # mid_score
+        output.write(str(np.median([float(x) for x in PIR_infos[PIR][5]])) + '\t')  # median_score
         output.write(str(np.median([float(x) for x in PIR_infos[PIR][1]])) + '\t' + str(PIR_infos[PIR][4]) + '\t')
         output.write(str(nb_sample) + '\t' + str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t')
         output.write(str(all_exon250[PIR]) + '\t' + str(coding_exon[PIR]) + '\t' + str(nocoding_exon[PIR]) + '\t')
-        output.write(str(repeat_pb[PIR]) + '\t' + str(phastcons_pb[PIR]) + '\t' + str(TSS_count[PIR]) + '\t')
+        output.write(str(repeat_pb[PIR]) + '\t' + str(GC_pb[PIR]) + '\t' + str(TSS_count[PIR]) + '\t')
         output.write(str('\t'.join(str(x) for x in PIR_infos[PIR][3])) + '\n')
 
     ## Bait side
@@ -200,7 +200,7 @@ def HiC_stats(origin_sp, data):
         if origin_sp == "human":
             output_bait.write("RoadMap_contacted\tGRO_seq_contacted\t")
         output_bait.write("PIR_contacted\tunbaited_PIR_contacted\tPIR_complexity\tmidist\tduplication\tall_exon_pb"
-                          "\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb\tphastcons_noexonic250\tTSS_count1Kb"
+                          "\tcoding_exon_pb\tnocoding_exon_pb\trepeat_pb\tGC_pb\tTSS_count1Kb"
                           "\tgenes_count1Kb\tgenes\n")
 
     for Bait in bait_infos.keys():
@@ -215,7 +215,7 @@ def HiC_stats(origin_sp, data):
                           str(np.mean(PIR_contact)) + '\t' + str(np.median([float(x) for x in bait_infos[Bait][1]]))
                           + '\t' + str(frag_dupli[Bait]) + '\t' + str(all_exon[Bait]) + '\t' + str(all_exon250[Bait])
                           + '\t' + str(coding_exon[Bait]) + '\t' + str(nocoding_exon[Bait])+ '\t' + str(repeat_pb[Bait])
-                          + '\t' + str(phastcons_pb[Bait]) + '\t' + str(TSS_count_bait[Bait])
+                          + '\t' + str(GC_pb[Bait]) + '\t' + str(TSS_count_bait[Bait])
                           + '\t' + str(len(gene_count_bait[Bait])) + '\t' + str(",".join(gene_count_bait[Bait])) + '\n')
 
     output.close()

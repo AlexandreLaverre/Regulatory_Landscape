@@ -30,7 +30,7 @@ with open(path_evol + "gene_orthology/" + ref_sp + "2" + target_sp + "_orthologu
 ###################################### Enhancers statistics & Alignments ##############################################
 def enh_info(enh_name):
     stats = {}
-    with open(path_annot + enh_name + "_BLAT_summary_0.8.txt") as f1:
+    with open(path_annot + enh_name + "/" + enh_name + "_BLAT_summary_0.8.txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -46,7 +46,7 @@ def enh_info(enh_name):
             stats[enh] = [str(i[1]), str(repeat_part), str(GC_rate), str(i[4])]
 
     align = {}
-    with open(path_evol + "enhancers_conservation/" + enh_name + "/AlignmentStatistics_Excluding_all_Exons_" +
+    with open(path_evol + "sequence_conservation/" + enh_name + "/AlignmentStatistics_Excluding_all_Exons_" +
               ref_sp + "2" + target_sp + "_" + enh_name + ".txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
@@ -71,7 +71,7 @@ def gene_enh_target(data, enh):
     contact = {}
     stats = {}
     enh_name = "lifted_" + enh
-    with open(path_contact + target_sp + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
+    with open(path_contact + target_sp + "/" + enh + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
         first_line = f1.readline().strip("\n")
         first_line = first_line.split("\t")
         sample_name = first_line[7:]
@@ -97,14 +97,14 @@ def gene_enh_target(data, enh):
 
 ################################### Conservation of contacts between species #########################################
 def conserv_contact(data, enh_name):
-    output_file = path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "2" + target_sp + "_" + data + ".txt2"
+    output_file = path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "2" + target_sp + "_" + data + ".txt"
     output = open(output_file, 'w')
 
     conserv_enh, stats_enh = enh_info(enh_name)
 
     target_contact, target_stats, target_sample_name = gene_enh_target(data, enh_name)
 
-    with open(path_contact + ref_sp + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
+    with open(path_contact + ref_sp + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
         first_line = f1.readline().strip("\n")
         first_line = first_line.split("\t")
         sample_name = first_line[7:]
@@ -143,8 +143,8 @@ def conserv_contact(data, enh_name):
     output.close()
 
 
-datas = ["simulated"]
-enhancers = ["CAGE", "ENCODE"]
+datas = ["original", "simulated"]
+enhancers = ["ENCODE"]
 if ref_sp == "human":
      enhancers.extend(["GRO_seq", "RoadMap"])
 

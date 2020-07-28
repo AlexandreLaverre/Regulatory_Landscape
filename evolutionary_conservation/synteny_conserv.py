@@ -3,7 +3,7 @@
 
 import os
 
-ref_sp = "human"
+ref_sp = "mouse"
 
 path = "/home/laverre/Data/Regulatory_landscape/result"
 path_annot = path + "/Supplementary_dataset3_annotations/"
@@ -14,7 +14,7 @@ path_contact = path + "/Supplementary_dataset4_genes_enhancers_contacts/" + ref_
 ############################################### Enhancers informations #################################################
 def stats_enh(enh_name):
     stats = {}
-    with open(path_annot + ref_sp + "/" + enh_name + "_BLAT_summary_0.8.txt") as f1:
+    with open(path_annot + ref_sp + "/" + enh_name + "/" + enh_name + "_BLAT_summary_0.8.txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -100,7 +100,7 @@ def synt_conserv(target_sp, data):
         dic_aligned = align_enh(enh_name)
         dic_stats = stats_enh(enh_name)
 
-        with open(path_contact + "gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
+        with open(path_contact + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
             for i in f1.readlines()[1:]:
                 i = i.strip("\n")
                 i = i.split("\t")
@@ -147,7 +147,7 @@ def synt_conserv(target_sp, data):
 
 
 datas = ["original", "simulated"]
-species = ["macaque"] #"cow", "opossum", "elephant", "rabbit", "rat", "macaque", "dog", "chicken"
+species = ["macaque", "cow", "opossum", "elephant", "rabbit", "rat", "macaque", "dog", "chicken"]
 species.append("mouse") if ref_sp == "human" else species.append("human")
 
 for dat in datas:

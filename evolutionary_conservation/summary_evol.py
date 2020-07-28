@@ -4,7 +4,7 @@
 import os
 import numpy as np
 
-ref_sp = "human"
+ref_sp = "mouse"
 target_sp = "mouse" if ref_sp == "human" else "human"
 seuil = 0.6
 
@@ -24,7 +24,7 @@ with open(path_evol + "gene_orthology/" + ref_sp + "2" + target_sp + "_orthologu
 
 #################################################### Bait to Genes ####################################################
 bait2gene = {}
-with open(path_annot + "bait_overlap_TSS_1kb.txt") as f1:
+with open(path_annot + "/restriction_fragments/bait_overlap_TSS_1kb.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -48,7 +48,6 @@ def cover(data, sample):
 
     coverage = {}
     gene_contact = {}
-    dist = {}
     with open(infile) as f1:
         colnames = f1.readline().strip("\n")
         colnames = colnames.split("\t")
@@ -83,23 +82,21 @@ def cover(data, sample):
                                     if gene not in gene_contact.keys():
                                         gene_contact[gene] = [contacted]
                                         coverage[gene] = [contacted_size]
-                                        dist[gene] = [float(i[7])]
                                     elif contacted not in gene_contact[gene]:
                                         gene_contact[gene].append(contacted)
                                         coverage[gene].append(contacted_size)
-                                        dist[gene].append(float(i[7]))
 
     for gene in coverage.keys():
         coverage[gene] = str(sum(size for size in coverage[gene]))
 
-    return coverage, dist
+    return coverage
 
 
 ############################################# Enhancers alignments ###################################################
 def enh_score(enh_name):
     duplication = {}
     align = {}
-    with open(path_annot + enh_name + "_BLAT_summary_0.8.txt") as f1:
+    with open(path_annot + "/" + enh_name + "/" + enh_name + "_BLAT_summary_0.8.txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -234,14 +231,15 @@ def enh_contact(enh_name, data, sample, duplication, align_score, overlap_target
 
 ############################################# Nb contact ###################################################
 def summary(enh_name, data, sample):
-    coverage, dist = cover(data, sample)
+    coverage = cover(data, sample)
     duplication, align_score, overlap_target = enh_score(enh_name)
     enh_cont, contact_overlap = enh_contact(enh_name, data, sample, duplication, align_score, overlap_target)
     enh_total = {}
+    dist = {}
     enh_total_length = {}
     enh_conserv = {}
     enh_conserv_list = {}
-    with open(path_contact + "gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
+    with open(path_contact + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
         colnames = f1.readline().strip("\n")
         colnames = colnames.split("\t")
 
@@ -251,6 +249,10 @@ def summary(enh_name, data, sample):
             gene = i[1]
             enh = i[3]
             enh_length = int(enh.split(":")[2]) - int(enh.split(":")[1])
+            if gene not in dist.keys():
+                dist[gene] = [float(i[4])]
+            else:
+                dist[gene].append(float(i[4]))
 
             if sample == "pre_adipo":
                 ref = [colnames.index("pre_adipo")] if ref_sp == "human" \
@@ -283,7 +285,7 @@ def summary(enh_name, data, sample):
 
     enh_synt10M, enh_synt2M = enh_synteny(enh_name, data, enh_conserv_list)
 
-    output_file = path_evol + enh_name + "_" + data + "_summary_conserv_" + sample + "_" + str(seuil) + ".txt"
+    output_file = path_evol + enh_name + "_" + data + "_summary_conserv_" + sample + "_" + str(seuil) + ".txt2"
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         output.write("gene\tnb_total\tnb_seq_conserv\tnb_synt10M_conserv\tnb_synt2M_conserv\t"
@@ -295,7 +297,8 @@ def summary(enh_name, data, sample):
             output.write("\n")
 
     for gene in coverage.keys():
-        if gene in ortho.keys():
+        if gene in ortho.keys() and gene in enh_total.keys() and len(enh_total[gene]) > 1:
+
             nb_total = str(len(enh_total[gene])) if gene in enh_total.keys() else str(0)
             enh_cover = str(sum(length for length in enh_total_length[gene])) if gene in enh_total_length.keys() else str(0)
             nb_conserv = str(len(enh_conserv[gene])) if gene in enh_conserv.keys() else str(0)
@@ -303,7 +306,7 @@ def summary(enh_name, data, sample):
             nb_synt10M = str(len(enh_synt10M[gene])) if gene in enh_synt10M.keys() else str(0)
             nb_synt2M = str(len(enh_synt2M[gene])) if gene in enh_synt2M.keys() else str(0)
             nb_contact = str(len(enh_cont[gene])) if gene in enh_cont.keys() else str(0)
-            median_dist = str(np.median(dist[gene]))
+            median_dist = str(np.median(dist[gene])) if gene in dist.keys() else str(0)
 
             output.write(gene + '\t' + nb_total + '\t' + nb_conserv + '\t' + nb_synt10M + '\t' + nb_synt2M + '\t' +
                          nb_contact + '\t' + med_align + '\t' + coverage[gene] + '\t' + enh_cover + '\t' + median_dist)
@@ -319,8 +322,8 @@ def summary(enh_name, data, sample):
 
 
 datas = ["original", "simulated"]
-enh_data = ["CAGE", "ENCODE"]
-samples = ["all"] #, "pre_adipo", "Bcell", "ESC"]
+enh_data = ["ENCODE"]  #"restriction_fragments", "CAGE", "ENCODE"] #, ]
+samples = ["all", "pre_adipo", "Bcell", "ESC"]
 if ref_sp == "human":
      enh_data.extend(["GRO_seq", "RoadMap"])
 

@@ -30,7 +30,7 @@ def HiC_stats(origin_sp, enh):
     frag_dupli = {}
     repeat_pb = {}
     GC_pb = {}
-    input = "/" + enh + "_BLAT_summary_0.8.txt"
+    input = "/" + enh + "/" + enh + "_BLAT_summary_0.8.txt"
 
     with open(path_annot + origin_sp + input) as f1:
         for i in f1.readlines()[1:]:
@@ -54,14 +54,14 @@ def HiC_stats(origin_sp, enh):
         contact_unbaited = {}
 
         if data == "_simulated":
-            infile = "Supplementary_dataset4_genes_enhancers_contacts/" + origin_sp + "/gene_" + enh + "_enhancers_simulated_interactions.txt"
+            infile = "Supplementary_dataset4_genes_enhancers_contacts/" + origin_sp + "/" + enh + "/gene_" + enh + "_enhancers_simulated_interactions.txt"
         else:
-            infile = "Supplementary_dataset4_genes_enhancers_contacts/" + origin_sp + "/gene_" + enh + "_enhancers_original_interactions.txt"
+            infile = "Supplementary_dataset4_genes_enhancers_contacts/" + origin_sp + "/" + enh + "/gene_" + enh + "_enhancers_original_interactions.txt"
 
         with open(path_HIC + infile) as f3:
             first_line = f3.readline().strip("\n")
             first_line = first_line.split("\t")
-            cell_name = first_line[8:]
+            cell_name = first_line[7:]
 
             for i in f3.readlines():
                 i = i.strip("\n")
@@ -106,11 +106,11 @@ def HiC_stats(origin_sp, enh):
 
         ############################################## OUTPUT ##############################################
         print("Writting output...")
-        output = open(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt", 'w')
-        if os.stat(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt").st_size == 0:
+        output = open(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_new", 'w')
+        if os.stat(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_new").st_size == 0:
             output.write("chr\tstart\tend\tlength\t")
-            output.write("bait_contacted\tgenes_contacted\tmean_baits_contacts\tmedian_score\tmidist\tnb_sample\t"
-                         "duplication\tall_exon_pb\trepeat_pb\tGC_pb\tTSS_count\t")
+            output.write("bait_contacted\tgenes_contacted\tmean_baits_contacts\tmedian_score\tmedian_dist\tnb_sample\t"
+                         "BLAT_match\tall_exon_bp\trepeat_bp\tGC_bp\t")
 
             output.write('\t'.join(cell_name) + "\n")
 
@@ -130,8 +130,10 @@ def HiC_stats(origin_sp, enh):
         output.close()
 
 
-origin_sp = "human"
-enhancers = ["CAGE", "ENCODE", "RoadMap", "GRO_seq"]
+origin_sp = "mouse"
+enhancers = ["CAGE", "ENCODE"]
+if origin_sp == "human":
+    enhancers.extend(["RoadMap", "GRO_seq"])
 
 for enh in enhancers:
     print("Running", enh)
