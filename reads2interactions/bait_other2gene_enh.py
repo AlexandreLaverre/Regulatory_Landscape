@@ -24,7 +24,7 @@ with open(path_annot + "genes/" + ref_sp + "_genes_Ensembl94.txt") as f3:
 
 #################################################### Bait to Genes ####################################################
 bait2gene = {}
-with open(path_annot + ref_sp + "/bait_overlap_TSS_1kb.txt") as f1:
+with open(path_annot + ref_sp + "/restriction_fragments/bait_overlap_TSS_1kb.txt") as f1:
     for i in f1.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -59,23 +59,23 @@ def fragment2enhancer(enh_data):
     return frag2enh
 
 
-ENCODE = fragment2enhancer("frag_overlap_ENCODE.txt")
-lifted_ENCODE = fragment2enhancer("frag_overlap_lifted_"+target_sp+"_ENCODE.txt")
-CAGE = fragment2enhancer("frag_overlap_CAGE.txt")
-lifted_CAGE = fragment2enhancer("frag_overlap_lifted_"+target_sp+"_CAGE.txt")
+ENCODE = fragment2enhancer("ENCODE/restriction_fragments_overlap_ENCODE.txt")
+lifted_ENCODE = fragment2enhancer("ENCODE/restriction_fragments_overlap_lifted_"+target_sp+"_ENCODE.txt")
+#CAGE = fragment2enhancer("restriction_fragments_overlap_CAGE.txt")
+#lifted_CAGE = fragment2enhancer("restriction_fragments_overlap_lifted_"+target_sp+"_CAGE.txt")
 
-if ref_sp == "human":
-    RoadMap = fragment2enhancer("frag_overlap_RoadMap.txt")
-    GRO_seq = fragment2enhancer("frag_overlap_GRO_seq.txt")
+if ref_sp == "other":
+    RoadMap = fragment2enhancer("restriction_fragments_overlap_RoadMap.txt")
+    GRO_seq = fragment2enhancer("restriction_fragments_overlap_GRO_seq.txt")
 
 if ref_sp == "mouse":
-    lifted_RoadMap = fragment2enhancer("frag_overlap_lifted_"+target_sp+"_RoadMap.txt")
-    lifted_GRO_seq = fragment2enhancer("frag_overlap_lifted_"+target_sp+"_GRO_seq.txt")
+    lifted_RoadMap = fragment2enhancer("restriction_fragments_overlap_lifted_"+target_sp+"_RoadMap.txt")
+    lifted_GRO_seq = fragment2enhancer("restriction_fragments_overlap_lifted_"+target_sp+"_GRO_seq.txt")
 
 
 ####################################### PC-HIC Contacts to Regulatory Landscape #######################################
 def gene_enh_contact(data, data_name, enh_data, enh_name):
-    output_file = path_result + "gene_" + enh_name + "_enhancers_" + data_name + "_interactions.txt"
+    output_file = path_result + "gene_" + enh_name + "_enhancers_" + data_name + "_interactions.txt2"
     output = open(output_file, 'w')
 
     with open(data) as f1:
@@ -126,7 +126,7 @@ data_simul = path + "/Supplementary_dataset2_simulated_interactions/" + ref_sp +
 
 datas = [data_obs, data_simul]
 
-print("Running script on ", ref_sp)
+print("Running script on", ref_sp)
 
 for dat in datas:
     name = "original" if dat == data_obs else "simulated"
@@ -135,12 +135,12 @@ for dat in datas:
     print(name, "ENCODE done !")
     gene_enh_contact(dat, name, lifted_ENCODE, "lifted_ENCODE")
     print(name, "lifted ENCODE done !")
-    gene_enh_contact(dat, name, CAGE, "CAGE")
-    print(name, "CAGE done !")
-    gene_enh_contact(dat, name, lifted_CAGE, "lifted_CAGE")
-    print(name, "lifted CAGE done !")
+    #gene_enh_contact(dat, name, CAGE, "CAGE")
+    #print(name, "CAGE done !")
+    #gene_enh_contact(dat, name, lifted_CAGE, "lifted_CAGE")
+    #print(name, "lifted CAGE done !")
 
-    if ref_sp == "human":
+    if ref_sp == "other":
         gene_enh_contact(dat, name, RoadMap, "RoadMap")
         print(name, "RoadMap done !")
         gene_enh_contact(dat, name, GRO_seq, "GRO_seq")
