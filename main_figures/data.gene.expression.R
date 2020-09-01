@@ -29,6 +29,17 @@ for(sp in c("human", "mouse")){
 
 ###########################################################################
 
-save(list=c("exp.common.celltypes"), file=paste(pathFigures, "RData/data.gene.expression.RData", sep=""))
+expstats.cm2019=list()
+
+for(sp in c("human", "mouse")){
+  this.exp=read.table(paste(pathExpression, sp, "/ExpressionStatistics_CardosoMoreira2019.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
+  rownames(this.exp)=this.exp$GeneID
+
+  expstats.cm2019[[sp]]=this.exp
+}
+
+###########################################################################
+
+save(list=c("exp.common.celltypes", "expstats.cm2019"), file=paste(pathFigures, "RData/data.gene.expression.RData", sep=""))
 
 ###########################################################################
