@@ -22,7 +22,7 @@ pathFigures=paste(pathFinalData, "Figures/", sep="")
 
 enhancer.datasets=list()
 enhancer.datasets[["human"]]=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
-enhancer.datasets[["human"]]=c("ENCODE", "FANTOM5")
+enhancer.datasets[["mouse"]]=c("ENCODE", "FANTOM5")
 
 #######################################################################################
 
