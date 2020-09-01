@@ -16,6 +16,6 @@ colnames(ortho)=c("human", "mouse")
 
 ###########################################################################
 
-save(list=c("ortho"), file=paste(pathFigures, "RData/data.ortho.genes.RData"))
+save(list=c("ortho"), file=paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
 
 ###########################################################################
