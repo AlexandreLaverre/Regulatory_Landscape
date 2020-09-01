@@ -25,11 +25,10 @@ for(sp in c("human", "mouse")){
   avg.exp=t(apply(this.exp, 1, function(x) tapply(x, celltype, mean)))
   
   exp.common.celltypes[[sp]]=list("allsamples"=this.exp, "avg"=avg.exp)
-
 }
 
 ###########################################################################
 
-save(list=c("exp.common.celltypes"), file=paste(pathFigures, "RData/data.gene.expression.RData", sep="")
+save(list=c("exp.common.celltypes"), file=paste(pathFigures, "RData/data.gene.expression.RData", sep=""))
 
 ###########################################################################
