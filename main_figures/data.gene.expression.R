@@ -13,7 +13,7 @@ for(sp in c("human", "mouse")){
   rownames(this.exp)=this.exp$GeneID
    
   this.exp=this.exp[,which(colnames(this.exp)!="GeneID")]
-   this.exp=as.matrix(this.exp)
+  this.exp=as.matrix(this.exp)
 
   
   celltype=rep(NA, dim(this.exp)[2])
