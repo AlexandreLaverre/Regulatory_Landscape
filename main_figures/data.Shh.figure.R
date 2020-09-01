@@ -1,5 +1,9 @@
 ###########################################################################
 
+source("parameters.R")
+
+###########################################################################
+
 pathAnnotations="../../data/ensembl_annotations/"
 pathInteractions="../../../RegulatoryLandscapesManuscript/SupplementaryDataset1/"
 pathEnhancers="../../../RegulatoryLandscapesManuscript/SupplementaryDataset4/"
@@ -69,6 +73,6 @@ for(ed in enhancer.datasets){
 
 ###########################################################################
 
-save(list=c("allshhbaits", "shhid", "shhchr", "shhinteractions", "shhxlim", "shhgenecoords", "shhenhancers"), file="RData/data.Shh.figure.RData")
+save(list=c("allshhbaits", "shhid", "shhchr", "shhinteractions", "shhxlim", "shhgenecoords", "shhenhancers"), file=paste(pathFigures, "RData/data.Shh.figure.RData", sep=""))
 
 ###########################################################################
