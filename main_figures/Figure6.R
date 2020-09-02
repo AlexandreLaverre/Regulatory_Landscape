@@ -11,6 +11,7 @@ if(load){
   load(paste(pathFigures, "RData/data.gene.expression.RData", sep=""))
   load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
   load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
+  load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
   
   load=FALSE
 }
