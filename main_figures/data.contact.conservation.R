@@ -14,7 +14,7 @@ for(ref in c("human", "mouse")){
 
   contact.conservation[[paste(ref, "2", tg, sep="")]]=list()
   
-  for(enh in enhancers.datasets[[ref]]){
+  for(enh in enhancer.datasets[[ref]]){
 
     obs=read.table(paste(pathEvolution, sp, "/contact_conservation/", enh, "/", ref, "2", tg,"_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
     sim=read.table(paste(pathEvolution, sp, "/contact_conservation/", enh, "/", ref, "2", tg,"_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
