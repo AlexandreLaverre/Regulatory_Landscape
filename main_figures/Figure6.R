@@ -51,7 +51,7 @@ if(prepare){
   ## expression specificity
   
   tau=exp.stats$TauLogRPKM
-  tau.class=cut(tau, breaks=seq(from=0, to=1, by=0.25), include.lowest=T)
+  tau.class=cut(tau, breaks=seq(from=0, to=1, by=0.2), include.lowest=T)
   names(tau.class)=exp.stats$GeneID
 
   prepare=FALSE
@@ -66,35 +66,60 @@ if(prepare){
 
 ##################################################################
 
-pdf(file=paste(pathFigures, "Figure6.pdf", sep=""), width=4.49, height=4)
+pdf(file=paste(pathFigures, "Figure6.pdf", sep=""), width=6.85, height=4)
+
+m=matrix(rep(NA, 2*10), nrow=2)
+m[1,]=c(rep(1, 5), rep(2,5))
+m[2,]=c(rep(3, 10))
+
+layout(m)
 
 ##################################################################
 
 ## classes of expression specificity
 
-xpos=c(1,2,3,4)
+xpos=c(1,2,3,4,5)
 names(xpos)=levels(tau.class)
 
-smallx=c(-0.3, -0.1, 0.1, 0.3)
-names(smallx)=enh.datasets[[sp]]
+smallx=c(-0.15, -0.075, 0.075, 0.15)
+names(smallx)=enhancer.datasets[[sp]]
 
 ylim=c(0, 50)
-xlim=c(0, 5)
+xlim=c(0.5, 5.5)
 
-plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim)
+par(mar=c(4.5, 3.5, 2.1, 1.1))
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
-for(enh in enh.datasets[[sp]]){
-  nb.contacts=nb.contacted.enhancers[[sp]][["real"]]
-    
+for(enh in enhancer.datasets[[sp]]){
+  nb.contacts=nb.contacted.enhancers[[enh]][["real"]]
+  
   for(class in levels(tau.class)){
     this.genes=names(tau.class)[which(tau.class==class)]
     this.genes=intersect(this.genes, names(nb.contacts))
     
     x=xpos[class]+smallx[enh]
-        
-    boxplot(nb.contacts[this.genes], at=x, notch=T, outline=F, add=T, axes=F)
+    
+    b=boxplot(nb.contacts[this.genes], plot=FALSE)
+    med=median(nb.contacts[this.genes])
+    ci=as.numeric(b$conf)
+
+    points(x, med, pch=20, col=col.enhancers[enh])
+    segments(x, ci[1], x, ci[2], col=col.enhancers[enh])
   }
 }
+
+axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", 5), cex.axis=0.8)
+mtext(c("0-0.2","0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1"), at=xpos, side=1, line=0.75, cex=0.8)
+
+mtext("expression specificity index", side=1, line=2.25, cex=0.9)
+
+axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.8)
+mtext("number of contacted enhancers", side=2, line=2.5, cex=0.9)
+
+legend("topright", legend=label.enhancers[enhancer.datasets[[sp]]], lty=1, col=col.enhancers[enhancer.datasets[[sp]]], bty="n", cex=0.75, inset=c(0.02, -0.1), seg.len=1,  xpd=NA) 
+
+##################################################################
+
 
 ##################################################################
 
