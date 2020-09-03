@@ -3,7 +3,7 @@ library(gsubfn)
 setwd("/home/laverre/Documents/Regulatory_Landscape/result/conservation/")
 path <- "/home/laverre/Data/Regulatory_landscape/result/"
 
-enh="CAGE"        # CAGE or ENCODE
+enh="ENCODE"        # CAGE or ENCODE
 treshold = "0.5"  # alignment score
 data="simulated"   # original or simulated
 sample="all"      # all ; pre_adipo ; Bcell or ESC
@@ -36,7 +36,7 @@ expdiv$TauMouse=apply(expdiv[,samples.mouse],1, function(x) compute.tau(as.numer
 ref_sp = "mouse"
 path_evol <- paste(path, "/Supplementary_dataset6_regulatory_landscape_evolution/", ref_sp, "/", sep="")
 
-regland = read.table(paste(path_evol, "investigation/evolution_summary/", enh, "_", data, "_summary_conserv_", sample, "_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+regland = read.table(paste(path_evol, "investigation/evolution_summary/", enh, "/", enh, "_", data, "_summary_conserv_", sample, "_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
 rownames(expdiv)=expdiv$IDMouse
 common=intersect(rownames(expdiv), rownames(regland))
 
@@ -48,7 +48,7 @@ expdiv <- expdiv[which(expdiv$mouse_zscore < 10),]
 ### Human score
 ref_sp = "human"
 path_evol <- paste(path, "/Supplementary_dataset6_regulatory_landscape_evolution/", ref_sp, "/", sep="")
-regland = read.table(paste(path_evol, "investigation/evolution_summary/", enh, "_", data, "_summary_conserv_", sample, "_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+regland = read.table(paste(path_evol, "investigation/evolution_summary/", enh, "/", enh, "_", data, "_summary_conserv_", sample, "_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
 rownames(expdiv)=expdiv$IDHuman
 common=intersect(rownames(expdiv), rownames(regland))
 
@@ -86,15 +86,15 @@ y=log2(expdiv$MeanRPKM+1)
 abline(lm(y~x), col="red")
 
 ## Correlation between Specificity and complexity
-R=cor(expdiv$delta_complex,expdiv$mouse_zscore, method="pearson")
-rho=cor(expdiv$delta_complex,expdiv$mouse_zscore, method="spearman")
+R=cor(expdiv$delta_complex,expdiv$TauMouse, method="pearson")
+rho=cor(expdiv$delta_complex,expdiv$TauMouse, method="spearman")
 
-smoothScatter(expdiv$delta_complex, expdiv$mouse_zscore, main=paste(enh, "in", sample, "samples"),
-              xlab="Delta complexity", ylab="mouse_zscore")
+smoothScatter(expdiv$delta_complex, expdiv$TauMouse, main=paste(enh, "in", sample, "samples"),
+              xlab="Delta complexity", ylab="TauMouse")
 
 mtext(paste("Pearson's R = ", round(R, digits=2), ", Spearman's rho = ",round(rho, digits=2),sep=""), side=3, line=0.5)
 x=expdiv$delta_complex
-y=expdiv$mouse_zscore
+y=expdiv$TauMouse
 abline(lm(y~x), col="red")
 
 

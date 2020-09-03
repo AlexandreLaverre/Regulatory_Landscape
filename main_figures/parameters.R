@@ -22,7 +22,13 @@ pathFigures=paste(pathFinalData, "Figures/", sep="")
 
 enhancer.datasets=list()
 enhancer.datasets[["human"]]=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
-enhancer.datasets[["human"]]=c("ENCODE", "FANTOM5")
+enhancer.datasets[["mouse"]]=c("ENCODE", "FANTOM5")
+
+label.enhancers=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap Epigenomics")
+names(label.enhancers)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
+
+col.enhancers=c("red", "navy", "forestgreen", "orange") ## colors for the datasets
+names(col.enhancers)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 
 #######################################################################################
 

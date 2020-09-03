@@ -71,13 +71,13 @@ def HiC_stats(origin_sp, enh):
                 PIR = str(i[3])
 
                 dist = str(i[4])
-                contact = [float(x) if x != "nan" else np.nan for x in i[7:]]
-                nb_bait_in_cell = [1 if x != "nan" else 0 for x in i[7:]]  #  Nb bait for each cell
-                score = str(np.median([float(x) for x in i[7:] if x != "nan"]))
+                contact_score = [float(x) if x != "nan" else np.nan for x in i[7:]]
+                contacted_gene_in_cell = [1 if x != "nan" else 0 for x in i[7:]]  #Nb gene for each cell
+                median_score = str(np.median([float(x) for x in i[7:] if x != "nan"]))
 
                 # PIR side
                 if PIR not in PIR_infos.keys():
-                    PIR_infos[PIR] = [[bait], [dist], contact, nb_bait_in_cell, [score], [gene]]
+                    PIR_infos[PIR] = [[bait], [dist], contact_score, contacted_gene_in_cell, [median_score], [gene]]
 
                 else:
                     if bait not in PIR_infos[PIR][0]:
@@ -86,9 +86,9 @@ def HiC_stats(origin_sp, enh):
                         PIR_infos[PIR][5].append(gene)
 
                     PIR_infos[PIR][1].append(str(dist))
-                    PIR_infos[PIR][2] = list(np.nansum((PIR_infos[PIR][2], contact), axis=0))
-                    PIR_infos[PIR][3] = [sum(x) for x in zip(PIR_infos[PIR][3], nb_bait_in_cell)]
-                    PIR_infos[PIR][4].append(str(score))
+                    PIR_infos[PIR][2] = list(np.nansum((PIR_infos[PIR][2], contact_score), axis=0)) # useless
+                    PIR_infos[PIR][3] = [sum(x) for x in zip(PIR_infos[PIR][3], contacted_gene_in_cell)]
+                    PIR_infos[PIR][4].append(str(median_score))
 
                 # Bait side : names and distances of contacted fragments
                 if gene not in gene_infos.keys():
@@ -106,31 +106,31 @@ def HiC_stats(origin_sp, enh):
 
         ############################################## OUTPUT ##############################################
         print("Writting output...")
-        output = open(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_new", 'w')
-        if os.stat(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_new").st_size == 0:
+        output = open(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_new2", 'w')
+        if os.stat(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_new2").st_size == 0:
             output.write("chr\tstart\tend\tlength\t")
-            output.write("bait_contacted\tgenes_contacted\tmean_baits_contacts\tmedian_score\tmedian_dist\tnb_sample\t"
+            output.write("bait_contacted\tgenes_contacted\tmean_genes_contacts\tmedian_score\tmedian_dist\tnb_sample\t"
                          "BLAT_match\tall_exon_bp\trepeat_bp\tGC_bp\t")
 
             output.write('\t'.join(cell_name) + "\n")
 
         for PIR in PIR_infos.keys():
-            nb_sample = str(len([x for x in PIR_infos[PIR][2] if float(x) > 0]))
-            bait_contact = [len(gene_infos[gene][0]) for gene in PIR_infos[PIR][5]]  # nb contact of contacted gene
+            nb_sample = str(len([x for x in PIR_infos[PIR][3] if float(x) > 0]))
+            gene_contact = [len(gene_infos[gene][0]) for gene in PIR_infos[PIR][5]]  # nb contact of contacted gene
             length = str(int(PIR.split(':')[2]) - int(PIR.split(':')[1]))
 
             output.write(PIR.split(':')[0] + '\t' + PIR.split(':')[1] + '\t' + PIR.split(':')[2] + '\t' + length + '\t')
-            output.write(str(len(PIR_infos[PIR][0])) + '\t' + str(len(PIR_infos[PIR][5])) + '\t' + str(np.mean(bait_contact)) + '\t')
+            output.write(str(len(PIR_infos[PIR][0])) + '\t' + str(len(PIR_infos[PIR][5])) + '\t' + str(np.mean(gene_contact)) + '\t')
             output.write(str(np.median([float(x) for x in PIR_infos[PIR][4]])) + '\t')  # mid_score
             output.write(str(np.median([float(x) for x in PIR_infos[PIR][1]])) + '\t')
             output.write(str(nb_sample) + '\t' + str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t')
             output.write(str(repeat_pb[PIR]) + '\t' + str(GC_pb[PIR]) + '\t')
-            output.write(str('\t'.join(str(x) for x in PIR_infos[PIR][3])) + '\n')
+            output.write(str('\t'.join(str(x) for x in PIR_infos[PIR][3])) + '\n') # nb contacted gene per cell
 
         output.close()
 
 
-origin_sp = "mouse"
+origin_sp = "human"
 enhancers = ["CAGE", "ENCODE"]
 if origin_sp == "human":
     enhancers.extend(["RoadMap", "GRO_seq"])

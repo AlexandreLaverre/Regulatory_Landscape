@@ -6,7 +6,7 @@ source("parameters.R") ## pathFinalDataFinalDatas are defined based on the user 
 
 ref_sp = "human"
 minDistance=25e3
-maxDistance=2.5e6
+maxDistance=2e6
 
 enhancers <- c("FANTOM5", "ENCODE")
 if (ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}

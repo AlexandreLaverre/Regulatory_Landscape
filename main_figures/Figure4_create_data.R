@@ -2,15 +2,16 @@
 library(naniar)
 options(stringsAsFactors = FALSE)
 
+ref_sp = "human" # to change human or mouse
+target_sp = "mouse"
+
 source("parameters.R") 
 path_evol <- paste(pathFinalData, "SupplementaryDataset7/", ref_sp, "/", sep="")
 path_annot <- paste(pathFinalData, "SupplementaryDataset4/", ref_sp, "/", sep="")
 
-ref_sp = "human" # to change human or mouse
-target_sp = "mouse"
 
 minDistance=25e3
-maxDistance=2.025e6
+maxDistance=2e6
 
 enhancers = c("FANTOM5", "ENCODE")
 if(ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}

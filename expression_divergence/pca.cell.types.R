@@ -46,7 +46,7 @@ pca=dudi.pca(log2(exp.ortho+1), center=T, scale=T, scannf=F, nf=5)
 
 explained=round(100*pca$eig/sum(pca$eig))
 
-pdf(file="figures/PCA_CellTypes_HumanMouse.pdf", width=7, height=7)
+pdf(paste(path, "scripts/main_figures/old/PCA_CellTypes_HumanMouse.pdf", sep=""), width=7, height=7)
 
 par(mar=c(4.1, 4.1, 2.1, 1.1))
 plot(pca$co[,1], pca$co[,2],  col="black", bg=col.celltype[celltype], pch=pch.sp[species], xlab=paste("coordinates on PC1 (", explained[1], "% explained variance)", sep=""),  ylab=paste("coordinates on PC2 (", explained[2], "% explained variance)", sep=""), cex=1.25)

@@ -98,8 +98,8 @@ for frag in new_dic_match.keys():
 
 # Writting output
 output = open(output_file, 'w')
-#if os.stat(output_file).st_size == 0:
-#    output.write("frag_ID\tlength\tnb_N\tGC\tnb_match\tmatch\n")
+if os.stat(output_file).st_size == 0:
+    output.write("frag_ID\tlength\tnb_N\tGC\tnb_match\tmatch\n")
 
 for frag in content_dict.keys():
     nb_match = len(new_dic_match[frag]) if frag in new_dic_match.keys() else 0
