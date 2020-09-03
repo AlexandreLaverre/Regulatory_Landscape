@@ -117,7 +117,7 @@ def enh_score(enh_name):
             except ZeroDivisionError:
                 align_score = 0
 
-            if align_score > seuil and enh in duplication.keys():
+            if enh in duplication.keys(): #align_score > seuil and
                 align[enh] = align_score
 
     overlap_target = {}
@@ -268,14 +268,17 @@ def summary(enh_name, data, sample):
 
             if any(i[x] != "nan" for x in ref):
                 if enh in duplication.keys():
+                    if enh not in align_score.keys():
+                        align_score[enh] = 0
+
                     if gene not in enh_total.keys():
-                        enh_total[gene] = [enh]
+                        enh_total[gene] = [float(align_score[enh])]
                         enh_total_length[gene] = [enh_length]
                     elif enh not in enh_total[gene]:
-                        enh_total[gene].append(enh)
+                        enh_total[gene].append(float(align_score[enh]))
                         enh_total_length[gene].append(enh_length)
 
-                    if enh in align_score.keys():
+                    if enh in align_score.keys() and align_score[enh] > seuil:
                         if gene not in enh_conserv.keys():
                             enh_conserv[gene] = [float(align_score[enh])]
                             enh_conserv_list[gene] = [enh]
@@ -285,7 +288,7 @@ def summary(enh_name, data, sample):
 
     enh_synt10M, enh_synt2M = enh_synteny(enh_name, data, enh_conserv_list)
 
-    output_file = path_evol + enh_name + "_" + data + "_summary_conserv_" + sample + "_" + str(seuil) + ".txt2"
+    output_file = path_evol + enh_name + "_" + data + "_evolution_summary_" + sample + ".txt"
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         output.write("gene\tnb_total\tnb_seq_conserv\tnb_synt10M_conserv\tnb_synt2M_conserv\t"
@@ -302,7 +305,7 @@ def summary(enh_name, data, sample):
             nb_total = str(len(enh_total[gene])) if gene in enh_total.keys() else str(0)
             enh_cover = str(sum(length for length in enh_total_length[gene])) if gene in enh_total_length.keys() else str(0)
             nb_conserv = str(len(enh_conserv[gene])) if gene in enh_conserv.keys() else str(0)
-            med_align = str(np.median(enh_conserv[gene])) if gene in enh_conserv.keys() else str(0)
+            med_align = str(np.median(enh_total[gene])) if gene in enh_total.keys() else str(0)
             nb_synt10M = str(len(enh_synt10M[gene])) if gene in enh_synt10M.keys() else str(0)
             nb_synt2M = str(len(enh_synt2M[gene])) if gene in enh_synt2M.keys() else str(0)
             nb_contact = str(len(enh_cont[gene])) if gene in enh_cont.keys() else str(0)
@@ -322,7 +325,7 @@ def summary(enh_name, data, sample):
 
 
 datas = ["original", "simulated"]
-enh_data = ["ENCODE"]  #"restriction_fragments", "CAGE", "ENCODE"] #, ]
+enh_data = ["ENCODE", "CAGE"]
 samples = ["all", "pre_adipo", "Bcell", "ESC"]
 if ref_sp == "human":
      enh_data.extend(["GRO_seq", "RoadMap"])
