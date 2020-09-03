@@ -36,7 +36,7 @@ names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 ## minimum and maximum distance for considered interactions
 
 minDistance=25e3
-maxDistance=2.5e6
+maxDistance=2e6
 
 sp="human" 
 

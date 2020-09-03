@@ -8,14 +8,13 @@ source("parameters.R") ## pathFinalDataFinalDatas are defined based on the user 
 ref_sp = "human" 
 
 # Choose genes within : all ; dvpt ; other
-selected_genes = "dvpt"
+selected_genes = "all"
 if (selected_genes == "dvpt"){`%get%` <- `%in%`}else{`%get%` <- Negate(`%in%`)}
 
 minDistance=25e3
-maxDistance=2.025e6
+maxDistance=2e6
 
 enhancers = c("FANTOM5", "ENCODE")
-target_sp = "human"
 
 if(ref_sp == "human"){
   enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")

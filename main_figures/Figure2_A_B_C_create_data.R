@@ -6,7 +6,7 @@ source("parameters.R") ## pathFinalData defined based on the user name
 
 ref_sp = "mouse"
 minDistance=25e3
-maxDistance=2.5e6
+maxDistance=2e6
 
 enhancers <- c("CAGE", "ENCODE")
 if (ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}

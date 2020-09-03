@@ -7,7 +7,7 @@ source("parameters.R") ## pathFinalDataFinalDatas are defined based on the user 
 ref_sp = "human" # to change human or mouse
 
 minDistance=25e3
-maxDistance=2.025e6
+maxDistance=2e6
 
 enhancers = c("FANTOM5", "ENCODE")
 target_sp = "human"
@@ -90,6 +90,21 @@ for (enh in enhancers){
     t.test(align[which(align$enh %in% obs_stats[which(obs_stats$dist_class == x),]$enh),][[target_sp]])[["conf.int"]][2])
   
   list_conserv_enh <- c(list_conserv_enh, align_enhancers_dist)
+  
+  score = align_enhancers_obs[[target_sp]]
+  mean_nb_enh = obs_stats[align_enhancers_obs$enh,]$mean_baits_contacts
+  
+  ## Correlation 
+  R=cor(log2(ortho_regland[[paste0(ref_sp, "_", cell)]]+1), ortho_regland$sp_complex, method="pearson")
+  rho=cor(log2(ortho_regland[[paste0(ref_sp, "_", cell)]]+1), ortho_regland$sp_complex, method="spearman")
+  
+  smoothScatter(log2(ortho_regland[[paste0(ref_sp, "_", cell)]]+1), ortho_regland$sp_complex, main=paste(enh, "in", cell),
+                xlab=paste(ref_sp, "gene expression log2(TPM)", sep=" "), ylab="Number of contacted enhancer", cex.lab=1.2)
+  
+  mtext(paste("Pearson's R = ", round(R, digits=2), ", Spearman's rho = ", round(rho, digits=2),sep=""), side=3, line=0.5, cex=0.8)
+  x=log2(ortho_regland[[paste0(ref_sp, "_", cell)]]+1)
+  y=ortho_regland$sp_complex
+  abline(lm(y~x), col="red")
 }
 
 ################################################################################################################################################

@@ -18,7 +18,7 @@ path_evol <- paste(pathFinalData, "SupplementaryDataset7/", sep="")
 ################################################################################################################################
 ################################################################################################################################
 # Datas
-ortho <- read.table(paste(pathFinalData, "SupplementaryDataset3/human2mouse_ortholog_one2one_genes_Ensembl94", sep="/"), h=T, sep="\t")
+ortho <- read.table(paste(pathFinalData, "SupplementaryDataset3/human2mouse_ortholog_one2one_genes_Ensembl94.txt", sep="/"), h=T, sep="\t")
 rownames(ortho) <- ortho$GenestableID
 ortho$dNdS <- ortho$dN/ortho$dS
 ortho <- ortho[which(!is.na(ortho$dNdS) & ortho$dNdS < 50),]
@@ -30,7 +30,7 @@ expdiv <- expdiv[complete.cases(expdiv), ] # to remove if we find a solution to 
 exp_human = read.table(paste(path_exp, "human/TPMValues_CommonCellTypes.txt", sep=""), h=T, stringsAsFactors=F, row.names = 1, sep="\t")
 exp_mouse = read.table(paste(path_exp, "mouse/TPMValues_CommonCellTypes.txt", sep=""), h=T, stringsAsFactors=F, row.names = 1, sep="\t")
 
-pdf(paste(pathFigures, ref_sp, "_expression_level_vs_expression_divergence.pdf", sep=""), width=8.5, height=9.5)
+##pdf(paste(pathFigures, ref_sp, "_expression_level_vs_expression_divergence.#pdf", sep=""), width=8.5, height=9.5)
 par(mfrow=c(2,2))
 for (cell in cells){
   samples = grep(cell, colnames(exp_human), value=T)
@@ -59,7 +59,7 @@ for (cell in cells){
   expdiv[[paste0(cell, "_ResidualExpressionDivergence")]] = lm1$residuals
 }
 
-dev.off()
+##dev.off()
 
 if(ref_sp == "human"){rownames(expdiv)=expdiv$IDHuman}else{rownames(expdiv)=expdiv$IDMouse}
 
@@ -100,11 +100,11 @@ load_data <- function(enh, cell){
 
 ################################################################################################################################
 ############################################# Gene Level Expression vs Number of enhancers ###################################
-pdf(paste(pathFigures, ref_sp, "_nb_enhancer_vs_expression_level.pdf", sep=""), width=8.5, height=9.5)
+##pdf(paste(pathFigures, ref_sp, "_nb_enhancer_vs_expression_level.#pdf", sep=""), width=8.5, height=9.5)
 par(mfrow=c(2,2))
 for (cell in cells){
   for (enh in enhancers){
-    #pdf(paste(path, "Main_figures/Figure6_human_", enh, "_expression.pdf", sep=""), width=8.5, height=9.5
+    ##pdf(paste(path, "Main_figures/Figure6_human_", enh, "_expression.#pdf", sep=""), width=8.5, height=9.5
     datas <- load_data(enh, cell)
     regland <- datas[[1]]
     breaks_names <- datas[[2]]
@@ -132,11 +132,11 @@ for (cell in cells){
     
   }
 }
-dev.off()
+##dev.off()
 
 ################################################################################################################################
 ############################################# Expression divergence vs Number of enhancers  ###################################
-pdf(paste(pathFigures, ref_sp, "_nb_enhancer_vs_expression_divergence_boxplot.pdf", sep=""), width=8.5, height=9.5)
+#pdf(paste(pathFigures, ref_sp, "_nb_enhancer_vs_expression_divergence_boxplot.#pdf", sep=""), width=8.5, height=9.5)
 par(mfrow=c(2,2))
 for (cell in cells){
   for (enh in enhancers){
@@ -167,12 +167,12 @@ for (cell in cells){
     abline(lm(y~x), col="red")
   }
 }
-dev.off()
+#dev.off()
 
 ################################################################################################################################
 ############################################# Expression divergence vs Number of enhancers  ###################################
 for (enh in enhancers){
-  pdf(paste(pathFigures, ref_sp, "_", enh, "_regulatory_divergence_vs_expression_divergence.pdf", sep=""), width=8.5, height=9.5)
+  ##pdf(paste(pathFigures, ref_sp, "_", enh, "_regulatory_divergence_vs_expression_divergence.#pdf", sep=""), width=8.5, height=9.5)
   par(mfrow=c(2,2))
   for (cell in cells){
     regland <- load_data(enh, cell)[[1]]
@@ -230,7 +230,7 @@ for (enh in enhancers){
     y=regland$ratio_cons_int
     abline(lm(y~x), col="red")
   }
-  dev.off()
+  #dev.off()
   }
 
 ################################################################################################################################
@@ -261,7 +261,7 @@ for (enh in enhancers){
   
 }
 
-pdf(paste(pathFigures, ref_sp, "_genes_vs_contacted_enhancers_in_cell_types.pdf", sep=""), width=12, height=6)
+#pdf(paste(pathFigures, ref_sp, "_genes_vs_contacted_enhancers_in_cell_types.#pdf", sep=""), width=12, height=6)
 par(mfrow=c(1,3))
 boxplot(c(gene[1], gene[2], gene[3]), names=c("Bcell", "ESC", "adipo"), main="More expressed genes (3rd Qu.)",
         ylab="Human to Mouse Alignment Score", notch=T, outline=F)
@@ -272,4 +272,4 @@ boxplot(c(enh_evol[1], enh_evol[2], enh_evol[3]), names=c("Bcell", "ESC", "adipo
 boxplot(c(enh_evol[1], enh_evol[2], enh_evol[3]), names=c("Bcell", "ESC", "adipo"), main="ENCODE contacted",
         ylab="Human to Mouse Alignment Score", notch=T)
 
-dev.off()
+#dev.off()

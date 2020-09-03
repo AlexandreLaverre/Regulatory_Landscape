@@ -38,8 +38,8 @@ barcenter <- barplot(enh_prop$data, border=rep(c("darkgreen", "firebrick3", "whi
                      col="white", lwd=1.5, cex.names=0.8,
                      ylim=c(0,15), ylab="Enhancer proportion (%)", axisnames = F, main="", las=2)
 
-
-text(c(1.4,4.7,8.5,12.1), par("usr")[3]-0.005, labels = enhancers_names, pos = 1, xpd = TRUE, cex=1)
+axis(side=1, at=c(1.4,4.7,8.5,12.1), labels=enhancers_names, mgp=c(3, 0.65, 0), cex.axis=1.1)
+#text(c(1.4,4.7,8.5,12.1), par("usr")[3]-0.005, labels = enhancers_names, pos = 1, xpd = TRUE, cex=1)
 legend("topleft", legend = c("Original", "Simulated"), border=c("darkgreen", "firebrick3"), fill="white", bty='n', cex=1.2)
 par(lwd=1)
 
@@ -76,9 +76,8 @@ for (enh in enhancers){
   
 }
 
-class_leg <- c("0.025", "0.5", "1", "1.5", "2", "2.5")
-axis(1, at=seq(1,81,10), labels=F)
-text(seq(1,81,10), par("usr")[3]-0.01, labels = class_leg, pos = 1, xpd = TRUE)
+class_leg <- c("0", "0.5", "1", "1.5", "2")
+axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
 legend("topright", legend=enhancers_names, col=color, bty='n', lty=1, cex=1, ncol=2)
 mtext("B", side=3, line=1, at=-4.5, font=2, cex=1.2)
 mtext("Linear distance to promoters regions (Mb)", side=1, line=2.25, cex=0.7)
@@ -107,8 +106,10 @@ for (enh in enhancers){
 if (ref_sp == "mouse"){class_leg <- c("1", "3", "5", "7", "9", "11", "13"); max_nb_cell=13
 }else{class_leg <- c("1", "5", "10", "15", "20", "25"); max_nb_cell=25}
 
-axis(1, at=seq(1,max_nb_cell+1, x_leg_class), labels=F)
-text(seq(1,max_nb_cell+1, x_leg_class), par("usr")[3]-0.01, labels = class_leg, pos = 1, xpd = TRUE)
+axis(side=1, at=seq(1,max_nb_cell+1, x_leg_class), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
+
+# axis(1, at=seq(1,max_nb_cell+1, x_leg_class), labels=F)
+# text(seq(1,max_nb_cell+1, x_leg_class), par("usr")[3]-0.01, labels = class_leg, pos = 1, xpd = TRUE)
 #legend("topleft", legend=enhancers, col=color, bty='n', lty=1, cex=0.8)
 
 mtext("C", side=3, line=1, at=-4.5, font=2, cex=1.2)
@@ -131,9 +132,8 @@ for (enh in enhancers){
   
 }
 
-class_leg <- seq(1,10,1)
-axis(1, at=seq(1,10,1), labels=F)
-text(seq(1,10,1), par("usr")[3]-0.05, labels = class_leg, pos = 1, xpd = TRUE)
+
+axis(side=1, at=seq(1,10,1), labels=seq(1,10,1), mgp=c(3, 0.65, 0), cex.axis=1.1)
 #legend("bottomright", legend=enhancers, col=color, bty='n', lty=1, cex=0.8)
 mtext("D", side=3, line=1, at=-1, font=2, cex=1.2)
 mtext("Quantile of Number of contacted enhancers", side=1, line=2.25, cex=0.7)
@@ -161,9 +161,8 @@ for (enh in enhancers){
   
 }
 
-class_leg <- c("0.025", "0.5", "1", "1.5", "2", "2.5")
-axis(1, at=seq(1,81,10), labels=F)
-text(seq(1,81,10), par("usr")[3]-0.01, labels = class_leg, pos = 1, xpd = TRUE)
+class_leg <- c("0", "0.5", "1", "1.5", "2")
+axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
 legend("topright", legend="Simulated", col="black", bty='n', lty=2, cex=1.2)
 mtext("Linear distance to promoters regions (Mb)", side=1, line=2.25, cex=0.7)
 
