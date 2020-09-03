@@ -96,13 +96,13 @@ def gene_enh_target(data, enh):
 
 
 ################################### Conservation of contacts between species #########################################
-def conserv_contact(data, enh_name):
-    output_file = path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "2" + target_sp + "_" + data + ".txt"
+def conserv_contact(data, data_target, enh_name):
+    output_file = path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "_" + data + "2" + target_sp + "_" + data_target + ".txt"
     output = open(output_file, 'w')
 
     conserv_enh, stats_enh = enh_info(enh_name)
 
-    target_contact, target_stats, target_sample_name = gene_enh_target(data, enh_name)
+    target_contact, target_stats, target_sample_name = gene_enh_target(data_target, enh_name)
 
     with open(path_contact + ref_sp + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
         first_line = f1.readline().strip("\n")
@@ -144,16 +144,18 @@ def conserv_contact(data, enh_name):
 
 
 datas = ["original", "simulated"]
-enhancers = ["ENCODE"]
+datas_target = ["original", "simulated"]
+enhancers = ["CAGE", "ENCODE"]
 if ref_sp == "human":
      enhancers.extend(["GRO_seq", "RoadMap"])
 
 
 for dat in datas:
-    print("Running", ref_sp, "to", target_sp, "in", dat, "contacts :")
-    for enhancer in enhancers:
-        conserv_contact(dat, enhancer)
-        print(enhancer, "done !")
+    for dat_target in datas_target:
+        print("Running", ref_sp, "to", target_sp, "in", dat, "contacts :")
+        for enhancer in enhancers:
+            conserv_contact(dat, dat_target, enhancer)
+            print(enhancer, "done !")
 
 
 
