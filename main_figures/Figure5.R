@@ -14,7 +14,7 @@ target_sp = "mouse"
 enhancers <- c("FANTOM5", "ENCODE")
 if (ref_sp == "human"){enh_names <- c(enhancers, "RoadMap\nEpigenomics", "GRO-seq"); enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
 
-load(paste(pathFigures, "Fig5_", ref_sp, "_", selected_genes, "_genes.Rdata", sep=""))
+load(paste(pathFigures, "RData/Fig5_", ref_sp, "_", selected_genes, "_genes.Rdata", sep=""))
 
 col <- c("red", "navy", "forestgreen", "orange")
 #########################################################################################################################

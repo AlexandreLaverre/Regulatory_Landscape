@@ -7,7 +7,7 @@ library(vioplot)
 ref_sp = "human"
 target_sp = "mouse"
 
-load(paste(pathFigures, "Fig4_", ref_sp, ".Rdata", sep=""))
+load(paste(pathFigures, "RData/Fig4_", ref_sp, ".Rdata", sep=""))
 
 species <- c("macaque", "dog", "cow", "elephant", "rabbit", "rat", target_sp, "opossum", "chicken")
 

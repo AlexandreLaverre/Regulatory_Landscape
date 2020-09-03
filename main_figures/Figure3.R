@@ -7,7 +7,7 @@ library(vioplot)
 ref_sp = "human"
 target_sp = "mouse"
 
-load(paste(pathFigures, "Fig3_", ref_sp, "_test.Rdata", sep=""))
+load(paste(pathFigures, "RData/Fig3_", ref_sp, ".Rdata", sep=""))
 
 enhancers = c("FANTOM5", "ENCODE")
 if(ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}

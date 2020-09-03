@@ -19,8 +19,8 @@ color <- c("red", "navy", "forestgreen", "orange") ## colors for the datasets
 if(load){
   ref_sp = "human"
   
-  load(paste(pathFigures, "Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
-  load(paste(pathFigures, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
+  load(paste(pathFigures, "RData/Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
+  load(paste(pathFigures, "RData/Fig2_", ref_sp, "_D_E.Rdata", sep=""))
   
   enhancers = enhancer.datasets[[ref_sp]]
 }
