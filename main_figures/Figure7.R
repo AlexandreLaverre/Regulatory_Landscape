@@ -13,7 +13,7 @@ ref_sp = "human"
 if (ref_sp == "human"){target_sp = "mouse"}else{target_sp = "human"}
 
 cells <- c("Bcell", "ESC", "adipo")
-enhancers = c("FANTOM5", "ENCODE")
+enh = "FANTOM5"
 dataset.colors=c("firebrick1", "forestgreen", "navy")
 names(dataset.colors) = cells
 
@@ -109,7 +109,7 @@ for (cell in cells){
 }
 
 ### Plot PART 1 ###
-pdf(paste(pathFigures, "Figure7.pdf", sep=""), width=7, height=5)
+pdf(paste(pathFigures, "Figure7_bis.pdf", sep=""), width=7, height=5)
 par(mai = c(0.5, 0.1, 0.5, 0.1)) # bottom, left, top, right
 
 a <- matrix(c(1,2,3,4,5,6), nrow = 1, byrow=F)
@@ -128,9 +128,9 @@ mtext("A", side=3, line=1, at=0.7, font=2, cex=1)
 
 # B - Correlattion of complexity zscore 
 dotchart(correl_complexity[rev(cells),"Pearson"], col=dataset.colors[rev(cells)], labels='', pch=16, pt.cex=0.5, 
-         xlim=c(min(correl_complexity), max(correl_complexity)))
+         xlim=c(min(correl_complexity)-0.02, max(correl_complexity)+0.02))
 mtext("Complexity \n correlation (rho)", side=1, line=3.5, cex=0.7)
-mtext("B", side=3, line=1, at=3.5, font=2, cex=1)
+mtext("B", side=3, line=1, font=2, cex=1)
 
 # C - dN / dS
 dotchart(gene_dnds[rev(cells),"Mean"], col=dataset.colors[rev(cells)], labels='', pch=16, pt.cex=0.5, 
@@ -139,7 +139,7 @@ segments(x0=gene_dnds[rev(cells),"Conf_low"], x1=gene_dnds[rev(cells),"Conf_high
 segments(x0=gene_dnds[rev(cells),"Conf_low"], x1=gene_dnds[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 segments(x0=gene_dnds[rev(cells),"Conf_high"], x1=gene_dnds[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 
-mtext("dN/dS", side=1, line=2.5, cex=0.7)
+mtext("Top expressed gene \n dN/dS", side=1, line=3.5, cex=0.7)
 mtext("C", side=3, line=1, font=2, cex=1)
 
 # D - Enhancer Alignment
@@ -149,7 +149,7 @@ segments(x0=enh_evol[rev(cells),"Conf_low"], x1=enh_evol[rev(cells),"Conf_high"]
 segments(x0=enh_evol[rev(cells),"Conf_low"], x1=enh_evol[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 segments(x0=enh_evol[rev(cells),"Conf_high"], x1=enh_evol[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 
-mtext("Enhancer Alignment Score", side=1, line=2.5, cex=0.7)
+mtext("Enhancer \n Alignment Score", side=1, line=3.5, cex=0.7)
 mtext("D", side=3, line=1, font=2, cex=1)
 
 # E - Conserved contacts
@@ -159,7 +159,7 @@ segments(x0=contact_conserv[rev(cells),"Conf_low"], x1=contact_conserv[rev(cells
 segments(x0=contact_conserv[rev(cells),"Conf_low"], x1=contact_conserv[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 segments(x0=contact_conserv[rev(cells),"Conf_high"], x1=contact_conserv[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 
-mtext("Conserved contact", side=1, line=2.5, cex=0.7)
+mtext("Proportion of \n conserved contact", side=1, line=3.5, cex=0.7)
 mtext("E", side=3, line=1, font=2, cex=1)
 
 
