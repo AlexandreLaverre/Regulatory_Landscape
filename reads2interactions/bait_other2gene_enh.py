@@ -4,14 +4,13 @@
 import os
 import numpy as np
 
-ref_sp = "human"
+ref_sp = "mouse"
 target_sp = "human" if ref_sp == "mouse" else "mouse"
 
 path = "/home/laverre/Data/Regulatory_landscape/result"
 path_annot = path + "/Supplementary_dataset3_annotations/"
 path_result = path + "/Supplementary_dataset4_genes_enhancers_contacts/" + ref_sp + "/"
 path_gene = path + "/Supplementary_dataset6_regulatory_landscape_evolution/" + ref_sp + "/"
-
 
 #################################################### Genes TSS ########################################################
 gene_TSS = {}
@@ -61,31 +60,25 @@ def fragment2enhancer(enh_data):
 
 ENCODE = fragment2enhancer("ENCODE/restriction_fragments_overlap_ENCODE.txt")
 lifted_ENCODE = fragment2enhancer("ENCODE/restriction_fragments_overlap_lifted_"+target_sp+"_ENCODE.txt")
-#CAGE = fragment2enhancer("restriction_fragments_overlap_CAGE.txt")
-#lifted_CAGE = fragment2enhancer("restriction_fragments_overlap_lifted_"+target_sp+"_CAGE.txt")
+CAGE = fragment2enhancer("CAGE/restriction_fragments_overlap_CAGE.txt")
+lifted_CAGE = fragment2enhancer("CAGE/restriction_fragments_overlap_lifted_"+target_sp+"_CAGE.txt")
 
-if ref_sp == "other":
-    RoadMap = fragment2enhancer("restriction_fragments_overlap_RoadMap.txt")
-    GRO_seq = fragment2enhancer("restriction_fragments_overlap_GRO_seq.txt")
+if ref_sp == "human":
+    RoadMap = fragment2enhancer("RoadMap/restriction_fragments_overlap_RoadMap.txt")
+    GRO_seq = fragment2enhancer("GRO_seq/restriction_fragments_overlap_GRO_seq.txt")
 
 if ref_sp == "mouse":
-    lifted_RoadMap = fragment2enhancer("restriction_fragments_overlap_lifted_"+target_sp+"_RoadMap.txt")
-    lifted_GRO_seq = fragment2enhancer("restriction_fragments_overlap_lifted_"+target_sp+"_GRO_seq.txt")
+    lifted_RoadMap = fragment2enhancer("RoadMap/restriction_fragments_overlap_lifted_"+target_sp+"_RoadMap.txt")
+    lifted_GRO_seq = fragment2enhancer("GRO_seq/restriction_fragments_overlap_lifted_"+target_sp+"_GRO_seq.txt")
 
 
 ####################################### PC-HIC Contacts to Regulatory Landscape #######################################
 def gene_enh_contact(data, data_name, enh_data, enh_name):
-    output_file = path_result + "gene_" + enh_name + "_enhancers_" + data_name + "_interactions.txt2"
-    output = open(output_file, 'w')
-
+    dic_regul = {}
     with open(data) as f1:
         first_line = f1.readline().strip("\n")
         first_line = first_line.split("\t")
         sample_name = first_line[8:]
-
-        if os.stat(output_file).st_size == 0:
-            output.write("bait\tgene\tcontact\tenhancer\tdist\tmedian_score\tnb_sample\t"
-                         + str('\t'.join(sample_name)) + "\n")
 
         for i in f1.readlines():
             i = i.strip("\n")
@@ -93,14 +86,11 @@ def gene_enh_contact(data, data_name, enh_data, enh_name):
 
             bait = (str(i[0]) + ":" + str(i[1]) + ":" + str(i[2]))
             contacted = (str(i[3]) + ":" + str(i[4]) + ":" + str(i[5]))
-
             contact_score = [float(x) if x != "NA" else np.nan for x in i[8:]]
-            median_score = str(np.nanmedian(contact_score))
-            nb_sample = str(np.count_nonzero(~np.isnan(contact_score)))
-
             baited_info = i[6]
 
-            if i[0] == i[3]:    # cis-interaction
+            # Convert bait - other to gene-enhancer
+            if i[0] == i[3]:    # get only cis-interaction
                 dist = float(i[7])
                 if 25000 <= dist <= 10000000:
                     if baited_info == "unbaited":      # bait-other interaction
@@ -110,15 +100,40 @@ def gene_enh_contact(data, data_name, enh_data, enh_name):
                                 if contacted in enh_data.keys():    # Is contacted fragment contain enhancer ?
                                     for enh in enh_data[contacted]:
 
+                                        # Measure distance between TSS and mid-enhancer
                                         enh_coord = enh.split(":")
                                         mid_enh = (int(enh_coord[2]) + int(enh_coord[1])) / 2
                                         dist_gene_enh = abs(float(gene_TSS[gene])-mid_enh)
 
-                                        output.write(bait + "\t" + gene + "\t" + contacted + "\t" + enh + "\t")
-                                        output.write(str(dist_gene_enh) + "\t" + median_score + "\t")
-                                        output.write(nb_sample + "\t" + '\t'.join(map(str, contact_score)) + "\n")
+                                        # Multiple pairs of baits-other leads to same gene-enhancer pairs
+                                        if gene+'\t'+enh in dic_regul.keys():
+                                            dic_regul[gene + '\t' + enh][0].append(bait)
+                                            dic_regul[gene + '\t' + enh][1].append(contacted)
+                                            dic_regul[gene + '\t' + enh][3] = np.nanmedian([dic_regul[gene+'\t'+enh][3], contact_score], axis=0).tolist()
 
-    output.close()
+                                        else:
+                                            dic_regul[gene+'\t'+enh] = [[bait], [contacted], dist_gene_enh, contact_score]
+
+        ####### PRINT OUTPUT ########
+        output_file = path_result + "gene_" + enh_name + "_enhancers_" + data_name + "_interactions.txt_unique"
+        output = open(output_file, 'w')
+        if os.stat(output_file).st_size == 0:
+            output.write("gene\tenhancer\tbaits\tcontacts\tdist\tmedian_score\tnb_sample\t"
+                         + str('\t'.join(sample_name)) + "\n")
+
+        for contact, stats in dic_regul.items():
+            output.write(contact + '\t')
+            output.write(','.join(set(stats[0])) + '\t')  # unique baits
+            output.write(','.join(set(stats[1])) + '\t')  # unique contacted regions
+            output.write(str(stats[2]) + '\t')  # distance TSS - enhancer
+
+            median_score = str(np.nanmedian(stats[3]))
+            nb_sample = str(np.count_nonzero(~np.isnan(stats[3])))
+
+            output.write(median_score + '\t' + nb_sample + '\t')
+            output.write('\t'.join(map(str, contact_score)) + "\n")  # contact score for each sample
+
+        output.close()
 
 
 data_obs = path + "/Supplementary_dataset1_original_interactions/" + ref_sp + "/all_interactions.txt"
@@ -135,12 +150,12 @@ for dat in datas:
     print(name, "ENCODE done !")
     gene_enh_contact(dat, name, lifted_ENCODE, "lifted_ENCODE")
     print(name, "lifted ENCODE done !")
-    #gene_enh_contact(dat, name, CAGE, "CAGE")
-    #print(name, "CAGE done !")
-    #gene_enh_contact(dat, name, lifted_CAGE, "lifted_CAGE")
-    #print(name, "lifted CAGE done !")
+    gene_enh_contact(dat, name, CAGE, "CAGE")
+    print(name, "CAGE done !")
+    gene_enh_contact(dat, name, lifted_CAGE, "lifted_CAGE")
+    print(name, "lifted CAGE done !")
 
-    if ref_sp == "other":
+    if ref_sp == "human":
         gene_enh_contact(dat, name, RoadMap, "RoadMap")
         print(name, "RoadMap done !")
         gene_enh_contact(dat, name, GRO_seq, "GRO_seq")
