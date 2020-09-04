@@ -4,7 +4,7 @@
 import os
 import numpy as np
 
-ref_sp = "mouse"
+ref_sp = "human"
 target_sp = "mouse" if ref_sp == "human" else "human"
 seuil = 0.6
 
@@ -67,7 +67,7 @@ def cover(data, sample):
                 ref = [colnames.index("hESC")] if ref_sp == "human" \
                     else [colnames.index("ESC"), colnames.index("ESC_18"), colnames.index("ESC_NKO"),  colnames.index("ESC_wild")]
             elif sample == "Bcell":
-                ref = [colnames.index("Bcell"), colnames.index("TB")] if ref_sp == "human" \
+                ref = [colnames.index("Bcell"), colnames.index("TB"), colnames.index("NB")] if ref_sp == "human" \
                     else [colnames.index("preB_aged"), colnames.index("preB_young")]
             else:
                 ref = [1]
@@ -203,7 +203,7 @@ def enh_contact(enh_name, data, sample, duplication, align_score, overlap_target
                 ref = [colnames.index("hESC")]
                 target = [colnames.index("ESC"), colnames.index("ESC_18"), colnames.index("ESC_NKO"),  colnames.index("ESC_wild")]
             elif sample == "Bcell":
-                ref = [colnames.index("Bcell"), colnames.index("TB")]
+                ref = [colnames.index("Bcell"), colnames.index("TB"), colnames.index("NB")]
                 target = [colnames.index("preB_aged"), colnames.index("preB_young")]
             else:
                 ref = [1]
@@ -211,7 +211,7 @@ def enh_contact(enh_name, data, sample, duplication, align_score, overlap_target
 
             if any(i[x] != '0' for x in ref) and any(i[x] != '0' for x in target):
                 if enh in duplication.keys():
-                    if enh in align_score.keys():
+                    if enh in align_score.keys() and align_score[enh] > seuil:
                         # Contact dict
                         if gene not in contact.keys():
                             contact[gene] = [enh]
@@ -261,7 +261,7 @@ def summary(enh_name, data, sample):
                 ref = [colnames.index("hESC")] if ref_sp == "human" \
                     else [colnames.index("ESC"), colnames.index("ESC_18"), colnames.index("ESC_NKO"),  colnames.index("ESC_wild")]
             elif sample == "Bcell":
-                ref = [colnames.index("Bcell"), colnames.index("TB")] if ref_sp == "human" \
+                ref = [colnames.index("Bcell"), colnames.index("TB"), colnames.index("NB")] if ref_sp == "human" \
                     else [colnames.index("preB_aged"), colnames.index("preB_young")]
             else:
                 ref = [1]
@@ -326,7 +326,7 @@ def summary(enh_name, data, sample):
 
 datas = ["original", "simulated"]
 enh_data = ["ENCODE", "CAGE"]
-samples = ["all", "pre_adipo", "Bcell", "ESC"]
+samples = ["Bcell", "pre_adipo", "ESC"]
 if ref_sp == "human":
      enh_data.extend(["GRO_seq", "RoadMap"])
 
