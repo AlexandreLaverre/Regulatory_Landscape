@@ -13,7 +13,7 @@ ref_sp = "human"
 if (ref_sp == "human"){target_sp = "mouse"}else{target_sp = "human"}
 
 cells <- c("Bcell", "ESC", "adipo")
-enh = "FANTOM5"
+enh = "ENCODE"
 dataset.colors=c("firebrick1", "forestgreen", "navy")
 names(dataset.colors) = cells
 
@@ -62,13 +62,13 @@ enhancers_contact = read.table(paste(pathFinalData, "SupplementaryDataset4", ref
 enhancers_contact$enh <-  do.call(paste,c(enhancers_contact[c("chr","start","end")],sep=":"))
 
 for (cell in cells){
-  if (cell == "Bcell"){cell_name="Bcell"}
-  if (cell == "adipo"){cell_name="pre_adipo"}
-  if (cell == "ESC"){cell_name="hESC"}
+  if (cell == "Bcell"){if (ref_sp == "human"){cell_name=c("Bcell", "TB", "NB")}else{cell_name=c("preB_aged", "preB_young")}}
+  if (cell == "adipo"){if (ref_sp == "human"){cell_name=c("pre_adipo")}else{cell_name=c("preadip_4H", "preadip_D0", "preadip_D2")}}
+  if (cell == "ESC"){if (ref_sp == "human"){cell_name=c("hESC")}else{cell_name=c("ESC", "ESC_18", "ESC_NKO")}}
   
   # Enhancers contacted by gene in cell types
-  enhancers_contact_in_cell <- enhancers_contact[which(enhancers_contact[[paste0(cell_name)]] > 0),]
-  enh_alignment <- enhancers_alignment[which(enhancers_alignment$enh %in% enhancers_contact_in_cell$enh),]$mouse
+  enhancers_contact_in_cell <- enhancers_contact[which(apply(as.matrix(enhancers_contact[,cell_name]), 1, function(X) any(X > 0))),]
+  enh_alignment <- enhancers_alignment[which(enhancers_alignment$enh %in% enhancers_contact_in_cell$enh),target_sp]
   enh_evol[cell,] <- c(mean(enh_alignment), t.test(enh_alignment)[["conf.int"]][1], t.test(enh_alignment)[["conf.int"]][2])
   
   # dN/dS of more expressed genes 
@@ -93,7 +93,9 @@ for (cell in cells){
   # Get complexity zscore of orthologous gene in same cell
   regland_target = read.table(paste(path_evol, target_sp, "/evolution_summary_by_gene/", enh, "/original_evolution_summary_", cell, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
   
-  regland_target=regland_target[expdiv_cell$IDMouse,]
+  if (target_sp == "mouse"){ID = "IDMouse"}else{ID = "IDHuman"}
+  
+  regland_target=regland_target[expdiv_cell[[ID]],]
   regland_target[is.na(regland_target)] <- 0
   regland$zscore_target <- (regland_target$nb_total-mean(regland_target$nb_total)) / sd(regland_target$nb_total)
   
@@ -101,15 +103,15 @@ for (cell in cells){
   correl_complexity[cell,] = c(cor(regland$zscore, regland$zscore_target, method="pearson"),
                                cor(regland$zscore, regland$zscore_target, method="spearman"))
   
-  
   ######  Ratio conserved contact ###### 
+  regland <- regland[which(regland$nb_total > 5),]
   contact <- regland$nb_contact_conserv/regland$nb_total
   contact_conserv[cell,] <- c(mean(contact), t.test(contact)[["conf.int"]][1], t.test(contact)[["conf.int"]][2])
   
 }
 
 ### Plot PART 1 ###
-pdf(paste(pathFigures, "Figure7_bis.pdf", sep=""), width=7, height=5)
+pdf(paste(pathFigures, "Figure7_human.pdf", sep=""), width=7, height=5)
 par(mai = c(0.5, 0.1, 0.5, 0.1)) # bottom, left, top, right
 
 a <- matrix(c(1,2,3,4,5,6), nrow = 1, byrow=F)
@@ -126,7 +128,7 @@ dotchart(correl_expression[rev(cells),"Pearson"], col=dataset.colors[rev(cells)]
 mtext("Expression level \n correlation (rho)", side=1, line=3.5, cex=0.7)
 mtext("A", side=3, line=1, at=0.7, font=2, cex=1)
 
-# B - Correlattion of complexity zscore 
+# B - Correlation of complexity zscore 
 dotchart(correl_complexity[rev(cells),"Pearson"], col=dataset.colors[rev(cells)], labels='', pch=16, pt.cex=0.5, 
          xlim=c(min(correl_complexity)-0.02, max(correl_complexity)+0.02))
 mtext("Complexity \n correlation (rho)", side=1, line=3.5, cex=0.7)
@@ -172,6 +174,7 @@ data_cell <- list()
 
 for (cell in cells){
   regland = read.table(paste(path_evol, ref_sp, "/evolution_summary_by_gene/", enh, "/original_evolution_summary_", cell, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+  regland <- regland[which(regland$nb_total > 5),]
   common=intersect(rownames(expdiv), rownames(regland))
   expdiv_cell=expdiv[common,]
   regland=regland[common,]

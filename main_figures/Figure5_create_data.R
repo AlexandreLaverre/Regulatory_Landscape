@@ -316,8 +316,8 @@ for (enh in enhancers){
     all_simul_ESC <- all_simul[which(!is.na(all_simul$hESC)),]
 
     # Bcell
-    all_obs_Bcell <- all_obs[which(!is.na(all_obs$Bcell) | !is.na(all_obs$TB)),]
-    all_simul_Bcell <- all_simul[which(!is.na(all_simul$Bcell) | !is.na(all_simul$TB)),]
+    all_obs_Bcell <- all_obs[which(!is.na(all_obs$Bcell) | !is.na(all_obs$TB) | !is.na(all_obs$NB)),]
+    all_simul_Bcell <- all_simul[which(!is.na(all_simul$Bcell) | !is.na(all_simul$TB) | !is.na(all_simul$NB)),]
 
   }else{
     # Pre-adipocytes
