@@ -4,7 +4,7 @@
 import os
 import numpy as np
 
-ref_sp = "human"
+ref_sp = "mouse"
 target_sp = "mouse" if ref_sp == "human" else "human"
 seuil = 0.6
 
@@ -157,7 +157,7 @@ def enh_synteny(enh_name, data, enh_conserved):
     synteny_10M = {}
     synteny_2M = {}
     with open(path_evol + "synteny_conservation/" + enh_name + "/" + ref_sp + "2" + target_sp + "_"
-              + enh_name + "_" + data + "_synteny.txt") as f1:
+              + enh_name + "_" + data + "_synteny.txt_unique") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -184,8 +184,8 @@ def enh_synteny(enh_name, data, enh_conserved):
 def enh_contact(enh_name, data, sample, duplication, align_score, overlap_target):
     contact = {}
     contact_overlap = {}
-    with open(path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "2" + target_sp +
-              "_" + data + ".txt") as f1:
+    with open(path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "_" + data + "2" + target_sp +
+              "_" + data + ".txt_unique") as f1:
 
         colnames = f1.readline().strip("\n")
         colnames = colnames.split("\t")
@@ -239,15 +239,15 @@ def summary(enh_name, data, sample):
     enh_total_length = {}
     enh_conserv = {}
     enh_conserv_list = {}
-    with open(path_contact + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
+    with open(path_contact + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt_unique") as f1:
         colnames = f1.readline().strip("\n")
         colnames = colnames.split("\t")
 
         for i in f1.readlines():
             i = i.strip("\n")
             i = i.split("\t")
-            gene = i[1]
-            enh = i[3]
+            gene = i[0]
+            enh = i[1]
             enh_length = int(enh.split(":")[2]) - int(enh.split(":")[1])
             if gene not in dist.keys():
                 dist[gene] = [float(i[4])]
@@ -288,7 +288,7 @@ def summary(enh_name, data, sample):
 
     enh_synt10M, enh_synt2M = enh_synteny(enh_name, data, enh_conserv_list)
 
-    output_file = path_evol + enh_name + "_" + data + "_evolution_summary_" + sample + ".txt"
+    output_file = path_evol + enh_name + "_" + data + "_evolution_summary_" + sample + ".txt_unique"
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         output.write("gene\tnb_total\tnb_seq_conserv\tnb_synt10M_conserv\tnb_synt2M_conserv\t"

@@ -3,7 +3,7 @@
 
 import os
 
-ref_sp = "mouse"
+ref_sp = "human"
 
 path = "/home/laverre/Data/Regulatory_landscape/result"
 path_annot = path + "/Supplementary_dataset3_annotations/"
@@ -90,7 +90,7 @@ def synt_conserv(target_sp, data):
     ############################################ Synteny conserv ###############################################
     def gene_enh_contact(enh_name):
         output_file = path_evol + "synteny_conservation/" + enh_name + "/" + ref_sp + "2" + target_sp \
-                      + "_" + enh_name + "_" + data + "_synteny.txt2"
+                      + "_" + enh_name + "_" + data + "_synteny.txt_unique"
         output = open(output_file, 'w')
         if os.stat(output_file).st_size == 0:
             output.write("origin_gene\torigin_gene_coord\torigin_enh\torigin_dist\t"
@@ -100,13 +100,13 @@ def synt_conserv(target_sp, data):
         dic_aligned = align_enh(enh_name)
         dic_stats = stats_enh(enh_name)
 
-        with open(path_contact + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
+        with open(path_contact + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt_unique") as f1:
             for i in f1.readlines()[1:]:
                 i = i.strip("\n")
                 i = i.split("\t")
 
-                origin_gene = i[1]
-                origin_enh = i[3]
+                origin_gene = i[0]
+                origin_enh = i[1]
                 origin_dist = i[4]
 
                 if origin_gene in ortho.keys():

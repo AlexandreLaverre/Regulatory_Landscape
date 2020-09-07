@@ -71,7 +71,7 @@ def gene_enh_target(data, enh):
     contact = {}
     stats = {}
     enh_name = "lifted_" + enh
-    with open(path_contact + target_sp + "/" + enh + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
+    with open(path_contact + target_sp + "/" + enh + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt_unique") as f1:
         first_line = f1.readline().strip("\n")
         first_line = first_line.split("\t")
         sample_name = first_line[7:]
@@ -80,8 +80,8 @@ def gene_enh_target(data, enh):
             i = i.strip("\n")
             i = i.split("\t")
 
-            gene = i[1]
-            enh = i[3]
+            gene = i[0]
+            enh = i[1]
             samples = [str(x) if x != 'nan' else str(0) for x in i[7:len(i)]]
             nb_sample = str(len([x for x in i[7:len(i)] if x != 'nan']))
             infos = [[i[4]], [i[5]], [nb_sample], samples]
@@ -97,14 +97,14 @@ def gene_enh_target(data, enh):
 
 ################################### Conservation of contacts between species #########################################
 def conserv_contact(data, data_target, enh_name):
-    output_file = path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "_" + data + "2" + target_sp + "_" + data_target + ".txt"
+    output_file = path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "_" + data + "2" + target_sp + "_" + data_target + ".txt_unique"
     output = open(output_file, 'w')
 
     conserv_enh, stats_enh = enh_info(enh_name)
 
     target_contact, target_stats, target_sample_name = gene_enh_target(data_target, enh_name)
 
-    with open(path_contact + ref_sp + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt") as f1:
+    with open(path_contact + ref_sp + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt_unique") as f1:
         first_line = f1.readline().strip("\n")
         first_line = first_line.split("\t")
         sample_name = first_line[7:]
@@ -118,8 +118,8 @@ def conserv_contact(data, data_target, enh_name):
             i = i.strip("\n")
             i = i.split("\t")
 
-            gene = i[1]
-            enh = i[3]
+            gene = i[0]
+            enh = i[1]
             samples = [str(x) if x != 'nan' else str(0) for x in i[7:len(i)]]
             nb_sample = str(len([x for x in i[7:len(i)] if x != 'nan']))
 
@@ -152,7 +152,7 @@ if ref_sp == "human":
 
 for dat in datas:
     for dat_target in datas_target:
-        print("Running", ref_sp, "to", target_sp, "in", dat, "contacts :")
+        print("Running", ref_sp, "in", dat, "to", target_sp, "in", dat_target, "contacts :")
         for enhancer in enhancers:
             conserv_contact(dat, dat_target, enhancer)
             print(enhancer, "done !")

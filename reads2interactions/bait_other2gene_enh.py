@@ -68,8 +68,8 @@ if ref_sp == "human":
     GRO_seq = fragment2enhancer("GRO_seq/restriction_fragments_overlap_GRO_seq.txt")
 
 if ref_sp == "mouse":
-    lifted_RoadMap = fragment2enhancer("RoadMap/restriction_fragments_overlap_lifted_"+target_sp+"_RoadMap.txt")
-    lifted_GRO_seq = fragment2enhancer("GRO_seq/restriction_fragments_overlap_lifted_"+target_sp+"_GRO_seq.txt")
+    lifted_RoadMap = fragment2enhancer("restriction_fragments_overlap_lifted_"+target_sp+"_RoadMap.txt")
+    lifted_GRO_seq = fragment2enhancer("restriction_fragments_overlap_lifted_"+target_sp+"_GRO_seq.txt")
 
 
 ####################################### PC-HIC Contacts to Regulatory Landscape #######################################
@@ -110,7 +110,6 @@ def gene_enh_contact(data, data_name, enh_data, enh_name):
                                             dic_regul[gene + '\t' + enh][0].append(bait)
                                             dic_regul[gene + '\t' + enh][1].append(contacted)
                                             dic_regul[gene + '\t' + enh][3] = np.nanmedian([dic_regul[gene+'\t'+enh][3], contact_score], axis=0).tolist()
-
                                         else:
                                             dic_regul[gene+'\t'+enh] = [[bait], [contacted], dist_gene_enh, contact_score]
 
@@ -131,7 +130,7 @@ def gene_enh_contact(data, data_name, enh_data, enh_name):
             nb_sample = str(np.count_nonzero(~np.isnan(stats[3])))
 
             output.write(median_score + '\t' + nb_sample + '\t')
-            output.write('\t'.join(map(str, contact_score)) + "\n")  # contact score for each sample
+            output.write('\t'.join(map(str, stats[3])) + "\n")  # contact score for each sample
 
         output.close()
 
