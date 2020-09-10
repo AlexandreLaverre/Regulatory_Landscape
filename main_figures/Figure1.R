@@ -45,11 +45,8 @@ sp="human"
 ## load all data for the figure
 
 if(load){
-  
-  obs <- read.table(paste(pathFinalData, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
-  simul <- read.table(paste(pathFinalData, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
-   
-  load(paste(pathFigures, "data.Shh.figure.RData", sep=""))
+  load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
+  load(paste(pathFigures, "RData/data.Shh.figure.RData", sep=""))
 
   load=FALSE ## we only do this once
 }
@@ -59,6 +56,10 @@ if(load){
 ## prepare data for figure
 
 if(prepare){
+  ## observed and simulated contacts - already bait-other, in the right distance range
+  obs=observed.contacts[[sp]]
+  sim=simulated.contacts[[sp]]
+  
   samples=colnames(obs)[9:dim(obs)[2]] ## first 8 columns contain other info for interactions
   
   print(paste("there are", length(samples), "samples"))
@@ -78,14 +79,8 @@ if(prepare){
   simul$sample_class <- cut(simul$nb_samples, breaks=breaks_class, include.lowest = T)
   simul$dist_class <- cut(simul$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
-  filtered_data <- list("Original"=obs, "Simulated"=simul)
-  
-  ## select only unbaited interactions, in cis
-  filtered_data <- lapply(filtered_data, function(x) x[which(x$type == "unbaited" & as.character(x$chr_bait) == as.character(x$chr)),])
-  
-  ## select only interactions found within the selected distance range
-  filtered_data <- lapply(filtered_data, function(x) x[which(x$distance <= maxDistance & x$distance >= minDistance),])
-  
+  filtered_data <- list("Original"=obs, "Simulated"=simul) ## data is already unbaited, in cis, in the right distance range
+ 
   ## compute number of interactions in each nb samples class
   
   nb_samples_matrix <- sapply(filtered_data, function(x) as.numeric(table(x$sample_class)))
@@ -225,6 +220,8 @@ for(sample in samples){
 
 mtext("SHH", side=2, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
 mtext("interactions", side=2, las=2, cex=0.75, line=0.5)
+
+#########################################################################################################################
 
 ## Dendrogram of AFC in original samples
 par(mar=c(0, 0.1, 0, 0.3)) 
