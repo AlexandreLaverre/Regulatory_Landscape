@@ -267,11 +267,6 @@ plot.new()
 
 #########################################################################################################################
 
-if(sp=="mouse"){
-  pdf(paste(pathFigures, "Supp_Figure8.pdf", sep=""), width=6.85, height=3)
-  par(mfrow=c(1,2))
-}
-
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
 par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 
