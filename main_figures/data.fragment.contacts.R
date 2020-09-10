@@ -8,8 +8,8 @@ observed.contacts=list()
 simulated.contacts=list()
 
 for(sp in c("human", "mouse")){
-  obs <- read.table(paste(pathFinalData, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T)
-  simul <- read.table(paste(pathFinalData, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T)
+  obs <- read.table(paste(pathFinalData, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T, stringsAsFactors=F, sep="\t")
+  simul <- read.table(paste(pathFinalData, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T, stringsAsFactors=F, sep="\t")
   
   ## select interactions in cis
   obs=obs[which(obs$chr_bait==obs$chr),]
