@@ -16,6 +16,12 @@ if(user=="necsulea"){
   pathFinalData="/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
 }
 
+
+if(user=="ubuntu"){
+  pathFinalData="/mnt/RegulatoryLandscapesManuscript/"
+}
+
+
 ## current directory - we run scripts from the scripts/main_figures folder
 
 dirs=unlist(strsplit(getwd(), split="\\/"))
