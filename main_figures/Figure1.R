@@ -6,45 +6,25 @@ objects=ls()
 if(!"pathScripts"%in%objects){
   load=T
   prepare=T
+  source("parameters.R") ## paths are defined based on the user name
 }
 
 #########################################################################################################################
 
-library(ade4)
-library(dendextend)
-
-source("parameters.R") ## paths are defined based on the user name
-
-## functions for genome browser plots
-source(paste(pathScripts, "/genome_browser/plot.annotations.R", sep=""))
-source(paste(pathScripts, "/genome_browser/plot.interactions.R", sep=""))
-  
-#########################################################################################################################
- 
-## colors for the datasets
-
-dataset.colors=c("forestgreen", "firebrick1")
-names(dataset.colors)=c("Original", "Simulated")
-
-col.Shh="forestgreen"
-
-## labels for enhancers
-
-enh.syn=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap")
-names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
-
-## minimum and maximum distance for considered interactions
-
-minDistance=25e3
-maxDistance=2e6
-
-sp="human" 
-
-#########################################################################################################################
-
-## load all data for the figure
+## load all necessary data, scripts and libraries for the figure
 
 if(load){
+  
+  library(ade4)
+  library(dendextend)
+    
+  sp="human"
+  
+  ## functions for genome browser plots
+
+  source(paste(pathScripts, "/genome_browser/plot.annotations.R", sep=""))
+  source(paste(pathScripts, "/genome_browser/plot.interactions.R", sep=""))
+  
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.Shh.figure.RData", sep=""))
 
