@@ -80,6 +80,6 @@ for(sp in c("human", "mouse")){
 
 #################################################################################
 
-save(sample.clustering, file=paste(pathFigures, "RData/data.sample.clustering.RData"))
+save(sample.clustering, file=paste(pathFigures, "RData/data.sample.clustering.RData", sep=""))
 
 #################################################################################
