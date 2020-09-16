@@ -31,8 +31,6 @@ for(sp in c("human", "mouse")){
   sim$id_bait=paste(sim$chr_bait, sim$start_bait, sim$end_bait, sep=":")
   sim$id_frag=paste(sim$chr, sim$start, sim$end, sep=":")
   
-  
-
   observed.contacts[[sp]]=obs
   simulated.contacts[[sp]]=sim
 }
