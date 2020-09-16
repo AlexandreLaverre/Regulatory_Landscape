@@ -124,7 +124,7 @@ for(i in 1:nbfigures){
     ## number of interactions per fragment
 
     nb.contacts.per.frag.obs=as.numeric(table(this.obs$id_frag))
-    nb.contacts.per.frag.sim=as.numeric(table(this.sim$id_frag)
+    nb.contacts.per.frag.sim=as.numeric(table(this.sim$id_frag))
 
     d.obs=density(nb.contacts.per.frag.obs, bw=0.1)
     d.sim=density(nb.contacts.per.frag.sim, bw=0.1)
