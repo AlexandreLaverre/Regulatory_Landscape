@@ -23,6 +23,16 @@ for(sp in c("human", "mouse")){
   obs=obs[which(obs$distance>=minDistance & obs$distance<=maxDistance),]
   sim=sim[which(sim$distance>=minDistance & sim$distance<=maxDistance),]
 
+  ## bait and fragment id
+
+  obs$id_bait=paste(obs$chr_bait, obs$start_bait, obs$end_bait, sep=":")
+  obs$id_frag=paste(obs$chr, obs$start, obs$end, sep=":")
+  
+  sim$id_bait=paste(sim$chr_bait, sim$start_bait, sim$end_bait, sep=":")
+  sim$id_frag=paste(sim$chr, sim$start, sim$end, sep=":")
+  
+  
+
   observed.contacts[[sp]]=obs
   simulated.contacts[[sp]]=sim
 }
