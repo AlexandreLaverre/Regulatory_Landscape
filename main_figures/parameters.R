@@ -47,7 +47,7 @@ names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 col.enhancers=c("red", "navy", "forestgreen", "orange") ## colors for the datasets
 names(col.enhancers)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 
-dataset.colors=c("forestgreen", "firebrick1")
+dataset.colors=c("navy", "gray50") ##c("forestgreen", "firebrick1")
 names(dataset.colors)=c("Original", "Simulated")
 
 col.Shh="forestgreen"
