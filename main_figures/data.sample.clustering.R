@@ -73,9 +73,12 @@ for(sp in c("human", "mouse")){
   hclust.alldist=hclust(as.dist(1-diff.alldist))
   hclust.longrange=hclust(as.dist(1-diff.longrange))
 
+  sample.order.alldist=order.dendrogram(as.dendrogram(hclust.alldist))
+  sample.order.longrange=order.dendrogram(as.dendrogram(hclust.longrange))
+
   ## store results
 
-  sample.clustering[[sp]]=list("mat.alldist.obs"=mat.alldist.obs, "mat.alldist.sim"=mat.alldist.sim, "mat.longrange.obs"=mat.longrange.obs, "mat.longrange.sim"=mat.longrange.sim, "hclust.alldist"=hclust.alldist, "hclust.longrange"=hclust.longrange)
+  sample.clustering[[sp]]=list("mat.alldist.obs"=mat.alldist.obs, "mat.alldist.sim"=mat.alldist.sim, "mat.longrange.obs"=mat.longrange.obs, "mat.longrange.sim"=mat.longrange.sim, "hclust.alldist"=hclust.alldist, "hclust.longrange"=hclust.longrange, "sample.order.alldist"=sample.order.alldist, "sample.order.longrange"=sample.order.longrange)
 }
 
 #################################################################################
