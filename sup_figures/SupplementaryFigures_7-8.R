@@ -94,7 +94,7 @@ for(sp in c("human", "mouse")){
 
   for(c in unique(this.cells)){
     all.ypos=ypos[which(this.cells==c)]
-    segments(1+ywidth/2, min(all.ypos)-ywidth/3, 1+ywidth/2, max(all.ypos)+ywidth/3, xpd=NA)
+    segments(1+ywidth*0.75, min(all.ypos)-ywidth/3, 1+ywidth*0.75, max(all.ypos)+ywidth/3, xpd=NA)
     
     mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.55, at=mean(all.ypos), col=col.celltypes[c])
   }
@@ -116,7 +116,7 @@ for(sp in c("human", "mouse")){
   mtext(paste("PC1 (", explained[1],"% explained variance)",sep=""), side=1, line=1.75, cex=0.6)
   mtext(paste("PC2 (", explained[2],"% explained variance)",sep=""), side=2, line=1.75, cex=0.6)
 
-  mtext("B", side=3, at=xlim[1]-diff(xlim)/10, font=2, line=0.5, cex=0.85)
+  mtext("B", side=3, at=xlim[1]-diff(xlim)/5.5, font=2, line=0.5, cex=0.85)
 
   ## legend for the heatmap
 
