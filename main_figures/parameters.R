@@ -58,17 +58,10 @@ col.Shh="forestgreen"
 
 #######################################################################################
 
-all.colors=colors()
-all.colors=grep("gr(a|e)y", all.colors,invert=T, value=T)
-all.colors=grep("white", all.colors,invert=T, value=T)
-
-#######################################################################################
-
-col.celltypes=sample(all.colors, size=21)
+col.celltypes=c("gray40", "navy", "blue", "steelblue", "deepskyblue1", "slateblue", "purple", "red", "brown", "indianred", "orange", "darkgoldenrod", "darkorange", "forestgreen", "aquamarine3", "black", "blue", "steelblue", "purple", "darkred", "darkorange")
 names(col.celltypes)=c("B lymphocytes", "cardiomyocytes", "embryonic stem cells", "endothelial precursors", "erythroblasts", "fetal thymus", "hematopoietic progenitors", "keratinocytes", "lymphoblastoid cell line", "macrophages", "megakaryocytes","monocytes", "neuroepithelial cells", "neutrophils", "pre-adipocytes", "T lymphocytes", "embryonic stem cells, Nanog KO",  "epiblast stem cells", "ES-derived  hematopoietic progenitors", "fetal liver", "trophoblast stem cells")
 
-syn.celltypes=c("B lymphocytes", "cardiomyocytes", "embryonic stem cells", "endothelial precursors", "erythroblasts", "fetal thymus", "hematopoietic progenitors", "keratinocytes", "lymphoblastoid cell line", "macrophages", "megakaryocytes","monocytes", "neuroepithelial cells", "neutrophils", "pre-adipocytes", "T lymphocytes", "embryonic stem cells, Nanog KO",  "epiblast stem cells", "ES-derived, hematopoietic progenitors", "fetal liver", "trophoblast stem cells")
-
+syn.celltypes=c("B lymphocytes", "cardiomyocytes", "embryonic stem cells", "endothelial precursors", "erythroblasts", "fetal thymus", "hematopoietic progenitors", "keratinocytes", "lymphoblastoid cell line", "macrophages", "megakaryocytes","monocytes", "neuroepithelial cells", "neutrophils", "pre-adipocytes", "T lymphocytes", "embryonic stem cells, Nanog KO",  "epiblast stem cells", "ES-derived hematopoietic progenitors", "fetal liver", "trophoblast stem cells")
 
 #######################################################################################
 
