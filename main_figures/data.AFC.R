@@ -15,7 +15,7 @@ library(ade4)
 
 data.AFC=list()
 
-for(sp in c("human")){
+for(sp in c("human", "mouse")){
   info=sampleinfo[[sp]]
   samples=info$Sample.ID
 
