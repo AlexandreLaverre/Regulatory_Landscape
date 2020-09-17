@@ -26,6 +26,7 @@ if(load){
   source(paste(pathScripts, "/genome_browser/plot.interactions.R", sep=""))
   
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
+  load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
   load(paste(pathFigures, "RData/data.Shh.figure.RData", sep=""))
 
   load=FALSE ## we only do this once
@@ -39,8 +40,10 @@ if(prepare){
   ## observed and simulated contacts - already bait-other, in the right distance range
   obs=observed.contacts[[sp]]
   sim=simulated.contacts[[sp]]
+
+  info=sampleinfo[[sp]]
   
-  samples=colnames(obs)[9:dim(obs)[2]] ## first 8 columns contain other info for interactions
+  samples=info$Sample.ID ## first 8 columns contain other info for interactions
   
   print(paste("there are", length(samples), "samples"))
   if(sp == "human"){
@@ -77,18 +80,9 @@ if(prepare){
   dist_conf_low <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
   dist_conf_high <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-  # AFC
-  data_AFC <- filtered_data[["Original"]] 
-  data_AFC <- data_AFC[, samples] 
-  data_AFC [!is.na(data_AFC)] <- 1
-  data_AFC [is.na(data_AFC)] <- 0
-  data_AFC <- data.frame(t(data_AFC)) # row = samples
-  
-  AFC <- dudi.coa(data_AFC, scannf=F, nf=3)
+  # AFC dendrogrm
 
-  # Dendrogram
-  d=dist.dudi(AFC) 
-  cah=hclust(d,"ward")
+  hcl.AFC=data.AFC[[sp]][["hclust.AFC"]]
   
   ## we finish preparing the data
   prepare=FALSE
@@ -183,7 +177,7 @@ par(mar=c(0.5, 5.5, 0.1, 4.5)) ## left and right margin should be the same as ab
 ylim=c(0, length(samples)+1)
 height=0.25
 ypos=1:length(samples)
-names(ypos)=samples[cah$order] # re-order according to AFC
+names(ypos)=samples[hcl.AFC$order] # re-order according to AFC
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=ylim, xaxs="i", yaxs="i")
 
@@ -205,7 +199,7 @@ mtext("interactions", side=2, las=2, cex=0.75, line=0.5)
 
 ## Dendrogram of AFC in original samples
 par(mar=c(0, 0.1, 0, 0.3)) 
-plot_horiz.dendrogram(cah, main="", axes=F, side=T)
+plot_horiz.dendrogram(hcl.AFC, main="", axes=F, side=T)
 
 #########################################################################################################################
 
