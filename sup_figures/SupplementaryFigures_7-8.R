@@ -94,9 +94,9 @@ for(sp in c("human", "mouse")){
 
   for(c in unique(this.cells)){
     all.ypos=ypos[which(this.cells==c)]
-    segments(1.04, min(all.ypos)-ywidth/3, 1.04, max(all.ypos)+ywidth/3, xpd=NA)
+    segments(1+ywidth/2, min(all.ypos)-ywidth/3, 1+ywidth/2, max(all.ypos)+ywidth/3, xpd=NA)
     
-    mtext(c, side=4, line=0.75, las=2, cex=0.55, at=mean(all.ypos), col=col.celltypes[c])
+    mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.55, at=mean(all.ypos), col=col.celltypes[c])
   }
 
   ## AFC plot
@@ -108,13 +108,15 @@ for(sp in c("human", "mouse")){
   plot(afc$li[,1], afc$li[,2], pch=20, col=col.celltypes[this.cells[rownames(afc$li)]], xlab="", ylab="", axes=F, cex=1.25)
   box()
 
+  xlim=range(afc$li[,1])
+
   axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.8)
   axis(side=2, mgp=c(3, 0.5, 0), cex.axis=0.8)
 
   mtext(paste("PC1 (", explained[1],"% explained variance)",sep=""), side=1, line=1.75, cex=0.6)
   mtext(paste("PC2 (", explained[2],"% explained variance)",sep=""), side=2, line=1.75, cex=0.6)
 
-  mtext("B", side=3, at=-1.35, font=2, line=0.5, cex=0.85)
+  mtext("B", side=3, at=xlim[1]-diff(xlim)/10, font=2, line=0.5, cex=0.85)
 
   ## legend for the heatmap
 
