@@ -1,5 +1,9 @@
 #######################################################################################
 
+set.seed(19) ## we randomly sample colors, we need this to be reproducible
+
+#######################################################################################
+
 options("stringsAsFactors"=FALSE)
 
 #######################################################################################
@@ -51,6 +55,20 @@ dataset.colors=c("navy", "gray50") ##c("forestgreen", "firebrick1")
 names(dataset.colors)=c("Original", "Simulated")
 
 col.Shh="forestgreen"
+
+#######################################################################################
+
+all.colors=colors()
+all.colors=grep("gr(a|e)y", all.colors,invert=T, value=T)
+all.colors=grep("white", all.colors,invert=T, value=T)
+
+#######################################################################################
+
+col.celltypes=sample(all.colors, size=21)
+names(col.celltypes)=c("B lymphocytes", "cardiomyocytes", "embryonic stem cells", "endothelial precursors", "erythroblasts", "fetal thymus", "hematopoietic progenitors", "keratinocytes", "lymphoblastoid cell line", "macrophages", "megakaryocytes","monocytes", "neuroepithelial cells", "neutrophils", "pre-adipocytes", "T lymphocytes", "embryonic stem cells, Nanog KO",  "epiblast stem cells", "ES-derived  hematopoietic progenitors", "fetal liver", "trophoblast stem cells")
+
+syn.celltypes=c("B lymphocytes", "cardiomyocytes", "embryonic stem cells", "endothelial precursors", "erythroblasts", "fetal thymus", "hematopoietic progenitors", "keratinocytes", "lymphoblastoid cell line", "macrophages", "megakaryocytes","monocytes", "neuroepithelial cells", "neutrophils", "pre-adipocytes", "T lymphocytes", "embryonic stem cells, Nanog KO",  "epiblast stem cells", "ES-derived, hematopoietic progenitors", "fetal liver", "trophoblast stem cells")
+
 
 #######################################################################################
 
