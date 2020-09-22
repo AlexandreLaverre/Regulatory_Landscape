@@ -1,4 +1,4 @@
-#########################################################################################################################
+###########################################################################################
 ## if it's the first time we run this figure, we load and prepare data
 
 objects=ls()
@@ -9,7 +9,7 @@ if(!"pathScripts"%in%objects){
   source("parameters.R") ## paths are defined based on the user name
 }
 
-#########################################################################################################################
+###########################################################################################
 
 ## load all necessary data, scripts and libraries for the figure
 
@@ -32,7 +32,7 @@ if(load){
   load=FALSE ## we only do this once
 }
 
-#########################################################################################################################
+############################################################################################
 
 ## prepare data for figure
 
@@ -43,7 +43,8 @@ if(prepare){
 
   info=sampleinfo[[sp]]
   
-  samples=info$Sample.ID ## first 8 columns contain other info for interactions
+  samples=info$Sample.ID 
+  celltypes=info$Broad.cell.type.or.tissue
   
   print(paste("there are", length(samples), "samples"))
   if(sp == "human"){
@@ -57,12 +58,16 @@ if(prepare){
   obs$nb_samples <- apply(obs[,samples], 1, function(x) sum(!is.na(x)))
   obs$sample_class <- cut(obs$nb_samples, breaks=breaks_class, include.lowest = T)
   obs$dist_class <- cut(obs$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
-  
-  simul$nb_samples <- apply(simul[,samples], 1, function(x) sum(!is.na(x)))
-  simul$sample_class <- cut(simul$nb_samples, breaks=breaks_class, include.lowest = T)
-  simul$dist_class <- cut(simul$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
-  filtered_data <- list("Original"=obs, "Simulated"=simul) ## data is already unbaited, in cis, in the right distance range
+  obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
+  
+  sim$nb_samples <- apply(sim[,samples], 1, function(x) sum(!is.na(x)))
+  sim$sample_class <- cut(sim$nb_samples, breaks=breaks_class, include.lowest = T)
+  sim$dist_class <- cut(sim$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
+
+  sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
+
+  filtered_data <- list("Original"=obs, "Simulated"=sim) ## data is already unbaited, in cis, in the right distance range
  
   ## compute number of interactions in each nb samples class
   
@@ -88,7 +93,7 @@ if(prepare){
   prepare=FALSE
 }
 
-#########################################################################################################################
+#############################################################################################
 
 ## 1 column width 85 mm = 3.34 in
 ## 1.5 column width 114 mm = 4.49 in 
@@ -124,7 +129,7 @@ for(i in 33:50){
 
 layout(m)
 
-#########################################################################################################################
+############################################################################################
 
 ## annotations in the Shh region
 
@@ -154,7 +159,7 @@ mtext("A", side=3, line=0.75, at=shhxlim[1]-diff(shhxlim)/8, font=2, cex=1.2)
 par(mar=c(0, 0.1, 0, 0.3)) 
 plot.new()
 
-#########################################################################################################################
+#############################################################################################
 
 ## baits in the Shh region
 
@@ -169,7 +174,7 @@ mtext("baits", side=2, las=2, cex=0.75, line=0.75)
 par(mar=c(0, 0.1, 0, 0.3)) 
 plot.new()
 
-#########################################################################################################################
+##############################################################################################
 
 ## interactions in the Shh region
 par(mar=c(0.5, 5.5, 0.1, 4.5)) ## left and right margin should be the same as above
@@ -195,13 +200,13 @@ for(sample in samples){
 mtext("SHH", side=2, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
 mtext("interactions", side=2, las=2, cex=0.75, line=0.5)
 
-#########################################################################################################################
+##############################################################################################
 
 ## Dendrogram of AFC in original samples
 par(mar=c(0, 0.1, 0, 0.3)) 
 plot_horiz.dendrogram(hcl.AFC, main="", axes=F, side=T)
 
-#########################################################################################################################
+##############################################################################################
 
 ## enhancers in the Shh region
 
@@ -236,7 +241,7 @@ mtext("ZRS", font=3, cex=0.7, side=3, at=zrspos, line=0.15)
 par(mar=c(0, 0.1, 0, 0.3)) 
 plot.new()
 
-#########################################################################################################################
+###############################################################################################
 
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
 par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
@@ -261,7 +266,7 @@ if(sp=="human"){
 }
 
 
-#########################################################################################################################
+################################################################################################
 
 #################### Fig 1.C - Distribution of number of samples according to distance #####################
 
@@ -296,8 +301,8 @@ if(sp=="human"){
 }
 
 
-#########################################################################################################################
+###########################################################################################
 
 dev.off()
 
-#########################################################################################################################
+###########################################################################################
