@@ -28,6 +28,7 @@ if(load){
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
   load(paste(pathFigures, "RData/data.Shh.figure.RData", sep=""))
+  load(paste(pathFigures, "RData/data.sample.clustering.RData", sep=""))
 
   load=FALSE ## we only do this once
 }
@@ -85,9 +86,10 @@ if(prepare){
   dist_conf_low <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
   dist_conf_high <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-  # AFC dendrogrm
+  # dendrogram based on the % of shared interactions between samples, observed-simulated 
 
-  hcl.AFC=data.AFC[[sp]][["hclust.AFC"]]
+  hcl=sample.clustering[[sp]][["hclust.alldist"]]
+  sample.order=sample.clustering[[sp]][["sample.order.alldist"]]
   
   ## we finish preparing the data
   prepare=FALSE
@@ -182,7 +184,7 @@ par(mar=c(0.5, 5.5, 0.1, 4.5)) ## left and right margin should be the same as ab
 ylim=c(0, length(samples)+1)
 height=0.25
 ypos=1:length(samples)
-names(ypos)=samples[hcl.AFC$order] # re-order according to AFC
+names(ypos)=sample.order # re-order according to AFC
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=ylim, xaxs="i", yaxs="i")
 
@@ -270,7 +272,8 @@ if(sp=="human"){
 
 #################### Fig 1.C - Distribution of number of samples according to distance #####################
 
-if (sp == "human"){YLIM=c(0,6)}else{YLIM=c(0,3)}
+YLIM=c(0, max(c(as.numeric(mean_nb_samples_dist["Original",]), as.numeric(mean_nb_samples_dist["Simulated",]))))
+
 plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_samples_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=YLIM, xlab="", ylab="", axes=F)
 lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_samples_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5)
 

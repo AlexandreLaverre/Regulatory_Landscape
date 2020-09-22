@@ -73,8 +73,8 @@ for(sp in c("human", "mouse")){
   hclust.alldist=hclust(as.dist(1-diff.alldist))
   hclust.longrange=hclust(as.dist(1-diff.longrange))
 
-  sample.order.alldist=order.dendrogram(as.dendrogram(hclust.alldist))
-  sample.order.longrange=order.dendrogram(as.dendrogram(hclust.longrange))
+  sample.order.alldist=rownames(diff.alldist)[order.dendrogram(as.dendrogram(hclust.alldist))]
+  sample.order.longrange=rownames(diff.longrange)[order.dendrogram(as.dendrogram(hclust.longrange))]
 
   ## store results
 
