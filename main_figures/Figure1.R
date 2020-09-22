@@ -16,8 +16,7 @@ if(!"pathScripts"%in%objects){
 if(load){
   
   library(ade4)
-  library(dendextend)
-    
+     
   sp="human"
   
   ## functions for genome browser plots
@@ -43,6 +42,7 @@ if(prepare){
   sim=simulated.contacts[[sp]]
 
   info=sampleinfo[[sp]]
+  rownames(info)=info$Sample.ID
   
   samples=info$Sample.ID 
   celltypes=info$Broad.cell.type.or.tissue
@@ -196,7 +196,9 @@ for(sample in samples){
     rect(this.int$start, ypos[sample]-height, this.int$end, ypos[sample]+height, col=col.Shh, border=NA)
   }
 
-  mtext(sample, side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
+  ## mtext(sample, side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
+  
+  mtext(syn.celltype[info[sample, "Broad.cell.type.or.tissue"]],side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
 }
 
 mtext("SHH", side=2, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
@@ -206,7 +208,7 @@ mtext("interactions", side=2, las=2, cex=0.75, line=0.5)
 
 ## Dendrogram of AFC in original samples
 par(mar=c(0, 0.1, 0, 0.3)) 
-plot_horiz.dendrogram(hcl.AFC, main="", axes=F, side=T)
+plot_horiz.dendrogram(hcl, main="", axes=F, side=T)
 
 ##############################################################################################
 
