@@ -46,27 +46,28 @@ if(prepare){
   
   samples=info$Sample.ID 
   celltypes=info$Broad.cell.type.or.tissue
+  names(celltypes)=samples
   
   print(paste("there are", length(samples), "samples"))
-  if(sp == "human"){
-    breaks_class=c(0, 1, 5, 10, 15, 20, length(samples))
-    nb_samples_names=c("1", "2-5", "6-10", "11-15", "16-20", paste("21-", length(samples), sep=""))
-  }else{
-    breaks_class=c(0, 1, 3, 7, 10, length(samples))
-    nb_samples_names=c("1", "2-3", "4-6", "7-10", paste("11-", length(samples), sep=""))
-  }
   
+  breaks_samples=c(0, 1, 5, 10, 15, 20, length(samples))
+  nb_samples_names=c("1", "2-5", "6-10", "11-15", "16-20", paste("21-", length(samples), sep=""))
+    
   obs$nb_samples <- apply(obs[,samples], 1, function(x) sum(!is.na(x)))
   obs$sample_class <- cut(obs$nb_samples, breaks=breaks_class, include.lowest = T)
   obs$dist_class <- cut(obs$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
   obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
+  obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:7, max(obs$nb_celltypes)), include.lowest=T)
+  levels(obs$celltype_class)=c(as.character(1:7), ">7")
   
   sim$nb_samples <- apply(sim[,samples], 1, function(x) sum(!is.na(x)))
   sim$sample_class <- cut(sim$nb_samples, breaks=breaks_class, include.lowest = T)
   sim$dist_class <- cut(sim$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
   sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
+  sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:7, max(sim$nb_celltypes)), include.lowest=T)
+  levels(sim$celltype_class)=c(as.character(1:7), ">7")
 
   filtered_data <- list("Original"=obs, "Simulated"=sim) ## data is already unbaited, in cis, in the right distance range
  
@@ -78,13 +79,21 @@ if(prepare){
   nb_samples_matrix=t(nb_samples_matrix)
   pc_nb_samples_matrix=100*nb_samples_matrix/apply(nb_samples_matrix,1, sum)
 
-  ## divide interactions based on distance, compute mean number of samples by distance class
+  ## same for cell types
   
-  mean_nb_samples_dist <- t(sapply(filtered_data, function(x)   tapply(x$nb_samples, as.factor(x$dist_class), mean, na.rm=T)))
+  nb_celltypes_matrix <- sapply(filtered_data, function(x) as.numeric(table(x$celltype_class)))
+  rownames(nb_celltypes_matrix) = levels(obs$celltype_class)
+
+  nb_celltypes_matrix=t(nb_celltypes_matrix)
+  pc_nb_celltypes_matrix=100*nb_celltypes_matrix/apply(nb_celltypes_matrix,1, sum)
+
+  ## divide interactions based on distance, compute mean number of samples by distance class
+
+  mean_nb_celltypes_dist <- t(sapply(filtered_data, function(x)   tapply(x$nb_celltypes, as.factor(x$dist_class), mean, na.rm=T)))
   mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
   
-  dist_conf_low <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
-  dist_conf_high <- t(sapply(filtered_data, function(x) tapply(x$nb_samples, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
+  dist_conf_low_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
+  dist_conf_high_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
   # dendrogram based on the % of shared interactions between samples, observed-simulated 
 
@@ -102,11 +111,11 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7)
+pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7.5)
 
 ## layout
 
-m=matrix(rep(NA, 50*10), nrow=50)
+m=matrix(rep(NA, 51*10), nrow=51)
 
 for(i in 1:6){
   m[i,]=c(rep(1,1), rep(2,9))
@@ -125,7 +134,7 @@ for(i in 30:32){
   m[i,]=c(rep(7, 1), rep(8,9))
 }
 
-for(i in 33:50){
+for(i in 33:51){
   m[i,]=c(rep(9, 5), rep(10, 5))
 }
 
@@ -141,7 +150,7 @@ plot.new()
 
 ## annotations in the Shh region
 
-par(mar=c(0.25, 5.5, 2.0, 4.5))
+par(mar=c(0.25, 0.5, 2.0, 9.75))
 ## plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
 ## quick fix for gene names, will be removed later
@@ -154,7 +163,7 @@ plot.annotations.genes(gene.coords=shhgenecoords, focus.gene=shhid, gene.biotype
 
 ## axis label
 
-mtext("genes", side=4, las=2, cex=0.75, line=0.75)
+mtext("genes", side=2, las=2, cex=0.7, line=1.75)
 
 ## shhchr
 
@@ -162,8 +171,7 @@ mtext("chr7", at=shhxlim[2]+diff(shhxlim)/20, line=0.5, side=3, cex=0.75)
 
 ## plot label
 
-mtext("A", side=3, line=0.75, at=shhxlim[1]-diff(shhxlim)/8, font=2, cex=1.2)
-
+mtext("A", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/9, font=2, cex=1.2)
 
 #############################################################################################
 
@@ -175,26 +183,25 @@ plot.new()
 
 ## baits in the Shh region
 
-par(mar=c(0.5, 5.5, 0.1, 4.5)) ## left and right margin should be the same as above
+par(mar=c(0.5, 0.5, 0.1, 10.5)) ## left and right margin should be the same as above
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
 segments(shhxlim[1], 0.5, shhxlim[2], 0.5, lwd=0.5, lty=3, col="gray40")
 
 rect(allshhbaits$start, 0.15, allshhbaits$end, 0.85, col="gray40", border="gray40")
 
-mtext("baits", side=4, las=2, cex=0.75, line=0.75)
-
+mtext("baits", side=2, las=2, cex=0.7, line=1.75)
 
 ##############################################################################################
 
 ## Dendrogram of samples
-par(mar=c(0, 0.1, 0, 0.3)) 
-plot(as.phylo(hcl), direction="leftwards", show.tip.label=FALSE)
+par(mar=c(0.5, 0.15, 0.105, 0.3)) 
+plot(as.phylo(hcl), direction="rightwards", show.tip.label=FALSE)
 
 ##############################################################################################
 
 ## interactions in the Shh region
-par(mar=c(0.5, 5.5, 0.1, 4.5)) ## left and right margin should be the same as above
+par(mar=c(0.5, 0.5, 0.1, 10.5)) ## left and right margin should be the same as above
 
 ylim=c(0, length(samples)+1)
 height=0.25
@@ -210,14 +217,19 @@ for(sample in samples){
   if(dim(this.int)[1]>0){
     rect(this.int$start, ypos[sample]-height, this.int$end, ypos[sample]+height, col=col.Shh, border=NA)
   }
-
-  ## mtext(sample, side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
-  
-  mtext(syn.celltypes[info[sample, "Broad.cell.type.or.tissue"]],side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
 }
 
-mtext("SHH", side=4, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
-mtext("interactions", side=4, las=2, cex=0.75, line=0.5)
+## labels for the cell types
+
+ywidth=diff(ypos)[1]
+segx=shhxlim[2]+diff(shhxlim)/100
+
+for(c in unique(celltypes)){
+  all.ypos=ypos[samples[which(celltypes[samples]==c)]]
+  segments(segx, min(all.ypos)-ywidth/3, segx, max(all.ypos)+ywidth/3, xpd=NA)
+  
+  mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.65, at=mean(all.ypos))
+}
 
 ##############################################################################################
 
@@ -228,7 +240,7 @@ plot.new()
 
 ## enhancers in the Shh region
 
-par(mar=c(0.5, 5.5, 0.1, 4.5)) ## left and right margin should be the same as above
+par(mar=c(0.15, 0.5, 0.1, 10.5)) ## left and right margin should be the same as above
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
 
 ypos=seq(from=0.1, to=0.9, length=length(shhenhancers))
@@ -244,8 +256,8 @@ for(ed in names(shhenhancers)){
   mtext(enh.syn[ed], side=4, at=ypos[ed], line=0.25, las=2, cex=0.65)
 }
 
-mtext("predicted", side=2, las=2, cex=0.75, line=0.75, at=0.75)
-mtext("enhancers", side=2, las=2, cex=0.75, line=0.75, at=0.4)
+mtext("predicted", side=2, las=2, cex=0.7, line=0.75, at=0.75)
+mtext("enhancers", side=2, las=2, cex=0.7, line=0.75, at=0.4)
 
 ## Zrs enhancer
 
@@ -257,7 +269,6 @@ segments(zrspos, 0,  zrspos, 1,col="gray40")
 
 mtext("ZRS", font=3, cex=0.7, side=3, at=zrspos, line=0.15)
 
-
 ###############################################################################################
 
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
@@ -265,32 +276,27 @@ par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 
 #################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
 
-b=barplot(as.matrix(pc_nb_samples_matrix), beside=T, xlab='', names=rep("", dim(pc_nb_samples_matrix)[2]), ylim=c(0,80), space=c(0.4,1), ylab="", border=dataset.colors[c("Original", "Simulated")], col="white", lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
+b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='', names=rep("", dim(pc_nb_samples_matrix)[2]), ylim=c(0,80), space=c(0.4,1), ylab="", border=dataset.colors[c("Original", "Simulated")], col="white", lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
 
-mtext(colnames(nb_samples_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
+mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
 
 ## axis labels
-mtext("number of samples", side=1, line=2.25, cex=0.85)
-mtext("% of interactions", side=2, line=2.5, cex=0.85)
+mtext("number of cell types", side=1, line=2.25, cex=0.8)
+mtext("% of interactions", side=2, line=2.5, cex=0.8)
 
 ## legend & plot label
-if(sp=="human"){
-  legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")], fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-  mtext("B", side=3, line=1, at=-2.75, font=2, cex=1.2)
-  }else{
-  legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")], fill="white", bty='n', cex=0.8, inset=c(0.05, -0.1), xpd=NA)
-  mtext("A", side=3, line=1, at=-2.75, font=2, cex=1.2)
-}
-
+legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")], fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
+mtext("B", side=3, line=1, at=-2.75, font=2, cex=1.2)
 
 ################################################################################################
 
-#################### Fig 1.C - Distribution of number of samples according to distance #####################
+#################### Fig 1.C - Distribution of number of cell types according to distance #####################
 
-YLIM=c(0, max(c(as.numeric(mean_nb_samples_dist["Original",]), as.numeric(mean_nb_samples_dist["Simulated",]))))
+ylim=c(0, max(c(as.numeric(mean_nb_samples_dist["Original",]), as.numeric(mean_nb_samples_dist["Simulated",]))))
+ylim[2]=ylim[2]+1
 
-plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_samples_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=YLIM, xlab="", ylab="", axes=F)
-lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_samples_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5)
+plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=ylim, xlab="", ylab="", axes=F)
+lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_celltypes_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5)
 
 ## X axis
 xax=pretty(range(as.numeric(mean_dist)))
@@ -300,8 +306,8 @@ axis(side=1, at=xax, labels=labels, mgp=c(3, 0.65, 0), cex.axis=1.1)
 axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
 
 ## axis labels
-mtext("distance between interacting fragments (Mb)", side=1, line=2.25, cex=0.85)
-mtext("mean number of samples", side=2, line=2.5, cex=0.85)
+mtext("distance between interacting fragments (Mb)", side=1, line=2.25, cex=0.8)
+mtext("mean number of cell types", side=2, line=2.5, cex=0.8)
 
 ## confidence intervals
 
@@ -310,14 +316,9 @@ for(dataset in rownames(mean_dist)){
 }
 
 ## legend & plot label
-if(sp=="human"){
-  legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-  mtext("C", side=3, line=1, at=-3.95e5, font=2, cex=1.2)
-}else{
-  legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=0.8, inset=c(0.05, -0.1), xpd=NA)
-  mtext("B", side=3, line=1, at=-2.75, font=2, cex=1.2)
-}
 
+legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
+mtext("C", side=3, line=1, at=-3.95e5, font=2, cex=1.2)
 
 ###########################################################################################
 
