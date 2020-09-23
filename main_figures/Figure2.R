@@ -38,8 +38,8 @@ barcenter <- barplot(enh_prop$data, border=rep(c("darkgreen", "firebrick3", "whi
                      col="white", lwd=1.5, cex.names=0.8,
                      ylim=c(0,15), ylab="Enhancer proportion (%)", axisnames = F, main="", las=2)
 
-axis(side=1, at=c(1.4,4.7,8.5,12.1), labels=enhancers_names, mgp=c(3, 0.65, 0), cex.axis=1.1)
-#text(c(1.4,4.7,8.5,12.1), par("usr")[3]-0.005, labels = enhancers_names, pos = 1, xpd = TRUE, cex=1)
+axis(side=1, at=c(1.4,4.7,8.5,12.1), labels=enh.syn, mgp=c(3, 0.65, 0), cex.axis=1.1)
+#text(c(1.4,4.7,8.5,12.1), par("usr")[3]-0.005, labels = enh.syn, pos = 1, xpd = TRUE, cex=1)
 legend("topleft", legend = c("Original", "Simulated"), border=c("darkgreen", "firebrick3"), fill="white", bty='n', cex=1.2)
 par(lwd=1)
 
@@ -78,7 +78,7 @@ for (enh in enhancers){
 
 class_leg <- c("0", "0.5", "1", "1.5", "2")
 axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
-legend("topright", legend=enhancers_names, col=color, bty='n', lty=1, cex=1, ncol=2)
+legend("topright", legend=enh.syn, col=color, bty='n', lty=1, cex=1, ncol=2)
 mtext("B", side=3, line=1, at=-4.5, font=2, cex=1.2)
 mtext("Linear distance to promoters regions (Mb)", side=1, line=2.25, cex=0.7)
 
@@ -172,7 +172,7 @@ mtext("E", side=3, line=1, at=-4.5, font=2, cex=1.2)
 # 
 # plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
 # 
-# legend("center", legend=enhancers_names, lty=1, cex=1.2, bty='n', col = color)
+# legend("center", legend=enh.syn, lty=1, cex=1.2, bty='n', col = color)
 # 
 # mtext("Enhancer Datasets: ", line=-4, at=0.25, cex=1)
 
