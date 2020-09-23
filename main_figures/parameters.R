@@ -42,7 +42,7 @@ enhancer.datasets[["mouse"]]=c("ENCODE", "FANTOM5")
 label.enhancers=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap Epigenomics")
 names(label.enhancers)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 
-enh.syn=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap")
+enh.syn=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap Epigenomics")
 names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 
 #######################################################################################
@@ -51,10 +51,10 @@ names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 col.enhancers=c("red", "navy", "forestgreen", "orange") ## colors for the datasets
 names(col.enhancers)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 
-dataset.colors=c("navy", "gray50") ##c("forestgreen", "firebrick1")
+dataset.colors=c("navy", "gray30") ##c("forestgreen", "firebrick1")
 names(dataset.colors)=c("Original", "Simulated")
 
-col.Shh="forestgreen"
+col.Shh=dataset.colors["Original"]
 
 #######################################################################################
 

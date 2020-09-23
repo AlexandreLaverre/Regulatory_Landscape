@@ -276,7 +276,7 @@ par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 
 #################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
 
-b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='', names=rep("", dim(pc_nb_samples_matrix)[2]), ylim=c(0,80), space=c(0.4,1), ylab="", border=dataset.colors[c("Original", "Simulated")], col="white", lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
+b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='', names=rep("", dim(pc_nb_celltypes_matrix)[2]), ylim=c(0,80), space=c(0.4,1), ylab="", border=dataset.colors[c("Original", "Simulated")], col="white", lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
 
 mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
 
@@ -286,13 +286,13 @@ mtext("% of interactions", side=2, line=2.5, cex=0.8)
 
 ## legend & plot label
 legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")], fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("B", side=3, line=1, at=-2.75, font=2, cex=1.2)
+mtext("B", side=3, line=1, at=-3.5, font=2, cex=1.2)
 
 ################################################################################################
 
 #################### Fig 1.C - Distribution of number of cell types according to distance #####################
 
-ylim=c(0, max(c(as.numeric(mean_nb_samples_dist["Original",]), as.numeric(mean_nb_samples_dist["Simulated",]))))
+ylim=c(0, max(c(as.numeric(mean_nb_celltypes_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Simulated",]))))
 ylim[2]=ylim[2]+1
 
 plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=ylim, xlab="", ylab="", axes=F)
@@ -312,7 +312,7 @@ mtext("mean number of cell types", side=2, line=2.5, cex=0.8)
 ## confidence intervals
 
 for(dataset in rownames(mean_dist)){
-  segments(as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_low[dataset,]),  as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_high[dataset,]), col=dataset.colors[dataset])
+  segments(as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_low_celltypes[dataset,]),  as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_high_celltypes[dataset,]), col=dataset.colors[dataset])
 }
 
 ## legend & plot label
