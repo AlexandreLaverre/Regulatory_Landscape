@@ -54,7 +54,7 @@ if(prepare){
   nb_samples_names=c("1", "2-5", "6-10", "11-15", "16-20", paste("21-", length(samples), sep=""))
     
   obs$nb_samples <- apply(obs[,samples], 1, function(x) sum(!is.na(x)))
-  obs$sample_class <- cut(obs$nb_samples, breaks=breaks_class, include.lowest = T)
+  obs$sample_class <- cut(obs$nb_samples, breaks=breaks_samples, include.lowest = T)
   obs$dist_class <- cut(obs$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
   obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
@@ -62,7 +62,7 @@ if(prepare){
   levels(obs$celltype_class)=c(as.character(1:7), ">7")
   
   sim$nb_samples <- apply(sim[,samples], 1, function(x) sum(!is.na(x)))
-  sim$sample_class <- cut(sim$nb_samples, breaks=breaks_class, include.lowest = T)
+  sim$sample_class <- cut(sim$nb_samples, breaks=breaks_samples, include.lowest = T)
   sim$dist_class <- cut(sim$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
   sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
