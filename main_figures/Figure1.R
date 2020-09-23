@@ -14,8 +14,8 @@ if(!"pathScripts"%in%objects){
 ## load all necessary data, scripts and libraries for the figure
 
 if(load){
-  
-  library(ade4)
+ 
+  library(ape)
      
   sp="human"
   
@@ -109,20 +109,20 @@ pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7)
 m=matrix(rep(NA, 50*10), nrow=50)
 
 for(i in 1:6){
-  m[i,]=c(rep(1,9), rep(2,1))
+  m[i,]=c(rep(1,1), rep(2,9))
 }
 
 for(i in c(7)){
-  m[i,]=c(rep(3, 9), rep(4,1))
+  m[i,]=c(rep(3, 1), rep(4,9))
 }
 
 for(i in c(8:29)){
-  m[i,]=c(rep(5, 9), rep(6,1))
+  m[i,]=c(rep(5, 1), rep(6,9))
 }
 
 
 for(i in 30:32){
-  m[i,]=c(rep(7, 9), rep(8,1))
+  m[i,]=c(rep(7, 1), rep(8,9))
 }
 
 for(i in 33:50){
@@ -130,6 +130,12 @@ for(i in 33:50){
 }
 
 layout(m)
+
+############################################################################################
+
+## empty plot
+par(mar=c(0, 0.1, 0, 0.3)) 
+plot.new()
 
 ############################################################################################
 
@@ -148,7 +154,7 @@ plot.annotations.genes(gene.coords=shhgenecoords, focus.gene=shhid, gene.biotype
 
 ## axis label
 
-mtext("genes", side=2, las=2, cex=0.75, line=0.75)
+mtext("genes", side=4, las=2, cex=0.75, line=0.75)
 
 ## shhchr
 
@@ -158,6 +164,10 @@ mtext("chr7", at=shhxlim[2]+diff(shhxlim)/20, line=0.5, side=3, cex=0.75)
 
 mtext("A", side=3, line=0.75, at=shhxlim[1]-diff(shhxlim)/8, font=2, cex=1.2)
 
+
+#############################################################################################
+
+## empty plot
 par(mar=c(0, 0.1, 0, 0.3)) 
 plot.new()
 
@@ -172,9 +182,14 @@ segments(shhxlim[1], 0.5, shhxlim[2], 0.5, lwd=0.5, lty=3, col="gray40")
 
 rect(allshhbaits$start, 0.15, allshhbaits$end, 0.85, col="gray40", border="gray40")
 
-mtext("baits", side=2, las=2, cex=0.75, line=0.75)
+mtext("baits", side=4, las=2, cex=0.75, line=0.75)
+
+
+##############################################################################################
+
+## Dendrogram of samples
 par(mar=c(0, 0.1, 0, 0.3)) 
-plot.new()
+plot(as.phylo(hcl), direction="leftwards", show.tip.label=FALSE)
 
 ##############################################################################################
 
@@ -198,17 +213,16 @@ for(sample in samples){
 
   ## mtext(sample, side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
   
-  mtext(syn.celltype[info[sample, "Broad.cell.type.or.tissue"]],side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
+  mtext(syn.celltypes[info[sample, "Broad.cell.type.or.tissue"]],side=4, at=ypos[sample], cex=0.65, line=0.25, las=2)
 }
 
-mtext("SHH", side=2, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
-mtext("interactions", side=2, las=2, cex=0.75, line=0.5)
+mtext("SHH", side=4, las=2, cex=0.75, line=1.75, font=3, at=mean(ylim)+diff(ylim)/20)
+mtext("interactions", side=4, las=2, cex=0.75, line=0.5)
 
 ##############################################################################################
 
-## Dendrogram of AFC in original samples
 par(mar=c(0, 0.1, 0, 0.3)) 
-plot_horiz.dendrogram(hcl, main="", axes=F, side=T)
+plot.new()
 
 ##############################################################################################
 
@@ -242,8 +256,7 @@ zrspos=(156791088+156791875)/2
 segments(zrspos, 0,  zrspos, 1,col="gray40")
 
 mtext("ZRS", font=3, cex=0.7, side=3, at=zrspos, line=0.15)
-par(mar=c(0, 0.1, 0, 0.3)) 
-plot.new()
+
 
 ###############################################################################################
 
