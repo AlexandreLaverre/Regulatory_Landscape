@@ -29,10 +29,14 @@ rownames(expdiv)=expdiv$IDHuman
 #regland=read.table("../../results/landscape_conservation/human2mouse_conservation_by_gene_0.4.txt", h=T, stringsAsFactors=F, sep="\t")
 enhancers <- c("CAGE", "ENCODE", "RoadMap", "GRO_seq")
 
+
 enh="ENCODE"
 treshold = "0.5"
-regland = read.table(paste(path_evol, enh, "_original_summary_conserv_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
-regland_simul = read.table(paste(path_evol, enh, "_simulated_summary_conserv_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+file = paste("/home/laverre/Data/Regulatory_landscape/result/Supplementary_dataset6_regulatory_landscape_evolution/human/", enh, "_original_evolution_summary_all_100000.txt", sep="")
+regland = read.table(file, h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+
+#regland = read.table(paste(path_evol, enh, "_original_summary_conserv_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+#regland_simul = read.table(paste(path_evol, enh, "_simulated_summary_conserv_", treshold, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
 
 common=intersect(rownames(expdiv), rownames(regland))
 common=intersect(common, rownames(regland_simul))
@@ -165,12 +169,12 @@ mtext("Number of contacted regions", side=1, line=2.75)
 
 #pdf("figures/ExpressionDivergence_NbContacts_2classes.pdf",width=4, height=5)
 boxplot(expdiv$ExpressionDivergence~regland$class_nb_contact, outline=F, notch=T,
-        xlab="Total number of contacts", ylab="Expression divergence", names=breaks_names, boxwex = 0.5)
+        xlab="Total number of contacts", ylab="Expression divergence", names=breaks_names, boxwex = 0.7)
 #dev.off()
 
 
 #pdf("figures/ResidualExpressionDivergence_NbContacts_Class.pdf")
-boxplot(expdiv$ResidualExpressionDivergence~regland$class_nb_contact, outline=F, notch=T,
+boxplot(expdiv$ResidualExpressionDivergence~regland$class_nb_contact, outline=F, notch=T, boxwex = 0.7,
         xlab="Total number of contacts", ylab="Residual expression divergence", names=breaks_names)
 #dev.off()
 
