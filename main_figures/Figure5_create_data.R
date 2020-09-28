@@ -36,8 +36,8 @@ for (enh in enhancers){
   message(enh)
   all_obs <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), header=T, sep="\t")
   all_simul <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_simulated_interactions.txt", sep=""), header=T, sep="\t")
-  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
-  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_original2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
+  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_simulated2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
   
   # Select specific genes
   if(selected_genes != "all"){
@@ -99,8 +99,8 @@ for (enh in enhancers){
 for (enh in enhancers){
   all_obs <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), header=T, sep="\t")
   all_simul <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_simulated_interactions.txt", sep=""), header=T, sep="\t")
-  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
-  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_original2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
+  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_simulated2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
   
   # Select specific genes
   if(selected_genes != "all"){
@@ -162,10 +162,11 @@ for (enh in enhancers){
 ################################################# Conserv ~ nb samples #################################################
 
 for (enh in enhancers){
+  message(enh)
   all_obs <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), header=T, sep="\t")
   all_simul <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_simulated_interactions.txt", sep=""), header=T, sep="\t")
-  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
-  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_original2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
+  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_simulated2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
   
   # Select specific genes
   if(selected_genes != "all"){
@@ -197,7 +198,7 @@ for (enh in enhancers){
   class_lab=c("1", "2-3", "4-6", "7-9", "10-14")}
   
   all_obs$class_dist <- cut(all_obs$nb_sample, breaks=c(sample_class, max(all_obs$nb_sample)), include.lowest = T)
-  all_simul$class_dist <- cut(all_simul$nb_sample, breaks=c(sample_class, max(all_simul$nb_sample)), include.lowest = T)
+  all_simul$class_dist <- cut(all_simul$nb_sample, breaks=c(sample_class, max(all_simul$nb_sample)+1), include.lowest = T)
   contact_obs$class_dist <- cut(contact_obs$nb_sample, breaks=c(sample_class, max(contact_obs$nb_sample)), include.lowest = T)
   contact_simul$class_dist <- cut(contact_simul$nb_sample, breaks=c(sample_class, max(contact_simul$nb_sample)), include.lowest = T)
   
@@ -265,8 +266,8 @@ for (enh in enhancers){
   
   all_obs <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), header=T, sep="\t")
   all_simul <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_simulated_interactions.txt", sep=""), header=T, sep="\t")
-  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
-  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_original2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
+  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_simulated2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
   
   # Select specific genes
   if(selected_genes != "all"){
@@ -376,14 +377,14 @@ if (ref_sp == "mouse"){
        conserv_dist_FANTOM5, conserv_dist_ENCODE, 
        conserv_sample_FANTOM5, conserv_sample_ENCODE,
        conserv_similar_sample_FANTOM5, conserv_similar_sample_ENCODE,
-       file = paste(pathFigures, "/Fig5_", ref_sp, "_", selected_genes, "_genes.Rdata", sep=""))
+       file = paste(pathFigures, "/Fig5_", ref_sp, "_", selected_genes, "_genes_unique.Rdata", sep=""))
   
 }else{
   save(conserv_global,
        conserv_dist_FANTOM5, conserv_dist_ENCODE, conserv_dist_RoadmapEpigenomics, conserv_dist_FOCS_GRO_seq,
        conserv_sample_FANTOM5, conserv_sample_ENCODE, conserv_sample_RoadmapEpigenomics, conserv_sample_FOCS_GRO_seq,
        conserv_similar_sample_FANTOM5, conserv_similar_sample_ENCODE, conserv_similar_sample_RoadmapEpigenomics, conserv_similar_sample_FOCS_GRO_seq,
-       file = paste(pathFigures, "/Fig5_", ref_sp, "_", selected_genes, "_genes.Rdata", sep=""))
+       file = paste(pathFigures, "/Fig5_", ref_sp, "_", selected_genes, "_genes_unique.Rdata", sep=""))
 }
 
 

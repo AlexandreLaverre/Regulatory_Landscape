@@ -7,7 +7,7 @@ library(vioplot)
 ref_sp = "human" 
 if (ref_sp == "human"){target_sp = "mouse"}else{target_sp = "human"}
 # Choose genes within : all ; dvpt ; other
-selected_genes = "dvpt"
+selected_genes = "all"
 
 enhancers <- c("FANTOM5", "ENCODE")
 if (ref_sp == "human"){enh_names <- c(enhancers, "RoadMap\nEpigenomics", "GRO-seq"); enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
@@ -16,14 +16,14 @@ load(paste(pathFigures, "RData/Fig5_", ref_sp, "_", selected_genes, "_genes.Rdat
 
 col <- c("red", "navy", "forestgreen", "orange")
 #########################################################################################################################
-if(ref_sp == "human"){pdf_name="Figure5_dvpt.pdf"}else{pdf_name="Sup_Figure14.pdf"}
+if(ref_sp == "human"){pdf_name="Figure5.pdf"}else{pdf_name="Sup_Figure14.pdf"}
 
 pdf(paste(pathFigures, pdf_name, sep=""), width=8.5, height=8)
 par(mai = c(0.8, 0.8, 0.5, 0.1)) # bottom, left, top, right
 layout(matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE))
 
 ############################################   A - Global contact conservation ############################################ 
-if (ref_sp == "human"){YMAX=50}else{YMAX=30}
+if (ref_sp == "human"){YMAX=25}else{YMAX=30}
 
 par(lwd = 1.5) 
 bar <- barplot(conserv_global$data, border=rep(c("darkgreen", "firebrick3", "black"),4), beside=T, space = c(0, 0.1, 0),
@@ -75,7 +75,7 @@ bar <- barplot(result ~ data+class, beside=T, data=conserv, space = c(0.1, 0.6),
                main="")
 
 arrows(x0=bar,y0=conserv[c(1,6,2,7,3,8,4,9,5,10),]$confup,y1=conserv[c(1,6,2,7,3,8,4,9,5,10),]$conflow,angle=90,code=3,length=0.05)
-legend("topright", fill="white", border=c("darkgreen", "firebrick"), legend = c("Original", "Simulated"), bty='n', cex=0.9)
+legend("topleft", fill="white", border=c("darkgreen", "firebrick"), legend = c("Original", "Simulated"), bty='n', cex=0.9)
 
 text(conserv[c(1,6,2,7,3,8,4,9,5,10),]$count,x = bar, y=conserv[c(1,6,2,7,3,8,4,9,5,10),]$confup+3, cex=0.7)
 mtext("C", side=3, line=1, at=0.1, font=2, cex=1.2)

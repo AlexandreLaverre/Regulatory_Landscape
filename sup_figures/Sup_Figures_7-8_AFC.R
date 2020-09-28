@@ -9,7 +9,7 @@ original_data <- read.table(paste(path, "Supplementary_dataset1_original_interac
 
 #################### AFC ####################
 ##### Filters 
-test_data <- original_data[which(original_data$type == "unbaited" & original_data$distance >= 25000 & original_data$distance <= 10000000),]
+test_data <- original_data[which(original_data$type == "unbaited" & original_data$distance >= 100000 & original_data$distance <= 10000000),]
 
 data <- test_data[,-c(1:8)]
 data[!is.na(data)] <- 1
@@ -31,7 +31,7 @@ dendo <- fviz_dend(cah, cex=0.5)
 sample <- fviz_ca_row(AFC, repel = TRUE)
 
 # Plot
-pdf(paste(path, "Figures/AFC_", ref_sp, ".pdf", sep=""), width=8, height=4)
+pdf(paste(path, "Figures/AFC_", ref_sp, "_100kb.pdf", sep=""), width=8, height=4)
 ggarrange(dendo, sample, 
           labels = c("A", "B"),
           ncol = 2, nrow = 1)

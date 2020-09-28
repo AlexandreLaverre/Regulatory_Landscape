@@ -56,6 +56,8 @@ for (enh in enhancers){
   # According to distance
   obs$dist_class <-cut(obs$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
   simul$dist_class <- cut(simul$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
+  obs$SpearmanCorrelation <- abs(obs$SpearmanCorrelation)
+  simul$SpearmanCorrelation <- abs(simul$SpearmanCorrelation)
   
   if(enh == "FANTOM5"){
     obs_correl_activity_dist <- data.frame(matrix(vector(), length(levels(obs$dist_class)), 1))
@@ -87,5 +89,5 @@ correl_activity <- list(obs=obs_correl_activity_dist, simul=simul_correl_activit
 
 ################################################# Save RData ################################################# 
 
-save(gene_expression_enhancers, correl_activity, file = paste(pathFigures, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
+save(gene_expression_enhancers, correl_activity, file = paste(pathFigures, "Fig2_", ref_sp, "_D_E_abs.Rdata", sep=""))
 
