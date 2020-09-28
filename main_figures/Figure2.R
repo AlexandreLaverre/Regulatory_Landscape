@@ -19,7 +19,7 @@ color <- c("red", "navy", "forestgreen", "orange") ## colors for the datasets
 if(load){
   ref_sp = "human"
   
-  load(paste(pathFigures, "RData/Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
+  load(paste(pathFigures, "RData/Fig2_", ref_sp, "_A_B_C_unique.Rdata", sep=""))
   load(paste(pathFigures, "RData/Fig2_", ref_sp, "_D_E.Rdata", sep=""))
   
   enhancers = enhancer.datasets[[ref_sp]]
@@ -27,7 +27,7 @@ if(load){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "Figure2.pdf", sep=""), width=8.5, height=5)
+pdf(paste(pathFigures, "Figure2_unique.pdf", sep=""), width=8.5, height=5)
 
 par(mai = c(0.5, 0.7, 0.3, 0.2)) # bottom, left, top, right
 layout(matrix(c(1, 1, 2, 2, 3, 4, 5, 5), nrow = 2, byrow = TRUE))
@@ -38,7 +38,7 @@ barcenter <- barplot(enh_prop$data, border=rep(c("darkgreen", "firebrick3", "whi
                      col="white", lwd=1.5, cex.names=0.8,
                      ylim=c(0,15), ylab="Enhancer proportion (%)", axisnames = F, main="", las=2)
 
-axis(side=1, at=c(1.4,4.7,8.5,12.1), labels=enhancers_names, mgp=c(3, 0.65, 0), cex.axis=1.1)
+axis(side=1, at=c(1.4,4.7,8.5,12.1), labels=label.enhancers, mgp=c(3, 0.65, 0), cex.axis=1.1)
 #text(c(1.4,4.7,8.5,12.1), par("usr")[3]-0.005, labels = enhancers_names, pos = 1, xpd = TRUE, cex=1)
 legend("topleft", legend = c("Original", "Simulated"), border=c("darkgreen", "firebrick3"), fill="white", bty='n', cex=1.2)
 par(lwd=1)
@@ -56,14 +56,17 @@ mtext("A", side=3, line=1, at=-1.5, font=2, cex=1.2)
 ############################################  Fig2-B - Enhancer proportion according to distance ############################################ 
 if(ref_sp=="human"){YMAX=0.2}else{YMAX=0.15}
 
-plot(prop_dist[["obs"]]$CAGE[0:50], type="l", col="white", ylab="Enhancer length proportion (mean)", main="", las=2,
+plot(prop_dist[["obs"]]$CAGE, type="l", col="white", ylab="Enhancer length proportion (mean)", main="", las=2,
      xlab='', xaxt = "n", ylim=c(0,YMAX))
 
 nb_col = 1
+enhancers <- c("CAGE", "ENCODE")
+if (ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}
+
 for (enh in enhancers){
   
-  points(prop_dist[["obs"]][[paste0(enh)]][0:50], type="l", col=color[nb_col])
-  for (row in 1:nrow(prop_dist[["obs"]][0:50,])){
+  points(prop_dist[["obs"]][[paste0(enh)]], type="l", col=color[nb_col])
+  for (row in 1:nrow(prop_dist[["obs"]])){
     segments(x0=row,y0=prop_dist[["obs"]][row,paste0(enh, "_conflow")],
              x1=row,y1=prop_dist[["obs"]][row,paste0(enh, "_confup")], col=color[nb_col], lwd=0.5)}
   
@@ -141,8 +144,8 @@ mtext("Quantile of Number of contacted enhancers", side=1, line=2.25, cex=0.7)
 ############################################ Fig2-E - Correlation Gene expression and enhancers activity ############################################ 
 if(ref_sp=="human"){YMAX=0.2}else{YMAX=0.15}
 
-plot(correl_activity[["obs"]]$CAGE, type="l", col="white", ylab="Spearman's correlation coefficient (mean)", main="", las=2,
-     xlab="", xaxt = "n", ylim=c(-0.02,0.32))
+plot(correl_activity[["obs"]]$FANTOM5, type="l", col="white", ylab="Spearman's correlation coefficient (mean)", main="", las=2,
+     xlab="", xaxt = "n", ylim=c(0,0.35))
 
 nb_col = 1
 for (enh in enhancers){
@@ -169,12 +172,9 @@ mtext("Linear distance to promoters regions (Mb)", side=1, line=2.25, cex=0.7)
 mtext("E", side=3, line=1, at=-4.5, font=2, cex=1.2)
 
 ## Legend
-# 
-# plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
-# 
-# legend("center", legend=enhancers_names, lty=1, cex=1.2, bty='n', col = color)
-# 
-# mtext("Enhancer Datasets: ", line=-4, at=0.25, cex=1)
+plot(NULL ,xaxt='n',yaxt='n',bty='n',ylab='',xlab='', xlim=0:1, ylim=0:1)
+legend("center", legend=enhancers, lty=1, cex=1.2, bty='n', col = color)
+mtext("Enhancer Datasets: ", line=-4, at=0.25, cex=1)
 
 dev.off()
 
