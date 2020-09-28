@@ -377,9 +377,9 @@ write.table(expdiv[order(-expdiv$ExpressionDivergence),3:4],"test_div_expression
 write.table(expdiv[order(-expdiv$Bcell),3:4],"test_div_expression_Bcell.txt",sep="\t",row.names=TRUE, quote=F)
 
 
-plot(expdiv$CorrelationSpearman, expdiv$ExpressionDivergence, cex=0.6)
-rho=cor(expdiv$CorrelationSpearman, expdiv$ExpressionDivergence, method="spearman")
-R=cor(expdiv$CorrelationSpearman, expdiv$ExpressionDivergence, method="pearson")
+plot(expdiv$ExpressionDivergence, expdiv$CorrelationSpearman, cex=0.6)
+rho=cor(expdiv$ExpressionDivergence, expdiv$CorrelationSpearman, method="spearman")
+R=cor(expdiv$ExpressionDivergence, expdiv$CorrelationSpearman, method="pearson")
 
 mtext(paste("R2 = ", round(R, digits=2), ", rho = ",round(rho, digits=2),sep=""), side=3, line=0.5)
 abline(lm(expdiv$ExpressionDivergence~expdiv$CorrelationSpearman), col="red")

@@ -25,7 +25,8 @@ layout(matrix(c(1, 1, 2, 3), nrow = 2, byrow = TRUE))
 # Gene - ENCODE synteny
 enh="ENCODE"
 bar <- barplot((1-conserv_synteny[[enh]]$data)*100, beside = TRUE, ylim = c(0,30), xpd=FALSE, las=2,
-               border = c("darkgreen", "firebrick3", "white"),col="white",
+               border=c(dataset.colors, "white"), col=c(dataset.colors, "white"),
+               lwd=1.5, cex.names=0.8, density=c(dataset.density,0), angle=c(dataset.angle,0),
                main="", ylab='Re-arranged \n gene-enhancer pairs (%)')
 
 # Axis and legend
@@ -35,7 +36,8 @@ middle_bar = seq(2,27,3)
 
 axis(side=1, at=bar_position, labels=species, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 
-legend("topleft", border=c("darkgreen", "firebrick3"), fill="white", legend = c("Original", "Simulated"), bty='n', cex=0.8)
+legend("topleft", legend = c("Original", "Simulated"), 
+       border=dataset.colors, density=c(dataset.density,0), angle=c(dataset.angle,0), bty='n', cex=0.8)
 
 # Confidence intervals
 arrows(x0=bar,y0=(1-conserv_synteny[[enh]]$conf_up)*100,y1=(1-conserv_synteny[[enh]]$conf_low)*100,angle=90,code=3,length=0.05)

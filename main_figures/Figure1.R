@@ -276,7 +276,10 @@ par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 
 #################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
 
-b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='', names=rep("", dim(pc_nb_celltypes_matrix)[2]), ylim=c(0,80), space=c(0.4,1), ylab="", border=dataset.colors[c("Original", "Simulated")], col="white", lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
+b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='',
+          names=rep("", dim(pc_nb_celltypes_matrix)[2]), ylim=c(0,80), space=c(0.4,1),
+          ylab="", border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
+          lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1, density=dataset.density[c("Original", "Simulated")], angle=dataset.angle[c("Original", "Simulated")])
 
 mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
 
@@ -285,7 +288,9 @@ mtext("number of cell types", side=1, line=2.25, cex=0.8)
 mtext("% of interactions", side=2, line=2.5, cex=0.8)
 
 ## legend & plot label
-legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")], fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
+legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
+       fill=dataset.colors[c("Original", "Simulated")], bty='n', density=c(20,10), angle=c(45,-45),
+       cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 mtext("B", side=3, line=1, at=-3.5, font=2, cex=1.2)
 
 ################################################################################################
