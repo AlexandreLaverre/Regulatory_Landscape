@@ -9,6 +9,7 @@ dirs=unlist(strsplit(pwd, split="/"))
 path=paste(dirs[1:(length(dirs)-2)], collapse="/")
 path=paste(path, "/", sep="")
 
+path="/home/laverre/Anouk/"
 ####################################################################################
 
 pathExpression=paste(path, "results/expression_estimation/", sep="")
@@ -95,8 +96,7 @@ expdiv.mean=as.data.frame(expdiv.mean)
 
 ####################################################################################
 
-write.table(expdiv.median, file=paste(pathExpressionDivergence, "ExpressionDivergence_CellTypes_MedianTPM.txt", sep=""), row.names=T, col.names=T, sep="\t")
+write.table(expdiv.median, file=paste("/home/laverre/Manuscript/SupplementaryDataset6/expression_divergence/ExpressionDivergence_CellTypes_MedianTPM.txt", sep=""), row.names=T, col.names=T, sep="\t", quote=F)
+write.table(expdiv.mean, file=paste("/home/laverre/Manuscript/SupplementaryDataset6/expression_divergence/ExpressionDivergence_CellTypes_MeanTPM.txt", sep=""), row.names=T, col.names=T, sep="\t", quote=F)
 
-write.table(expdiv.mean, file=paste(pathExpressionDivergence, "ExpressionDivergence_CellTypes_MeanTPM.txt", sep=""), row.names=T, col.names=T, sep="\t")
-            
 ####################################################################################

@@ -20,12 +20,12 @@ names(dataset.colors) = cells
 ################################################################################################################
 ############################################## Datas ###########################################################
 
-ortho <- read.table(paste(pathFinalData, "SupplementaryDataset3/human2mouse_ortholog_one2one_genes_Ensembl94.txt", sep="/"), h=T, sep="\t")
+ortho <- read.table(paste(pathFinalData, "SupplementaryDataset7/human/gene_orthology/human2mouse_orthologue_dNdS.txt", sep="/"), h=T, sep="\t")
 rownames(ortho) <- ortho$GenestableID
 ortho$dNdS <- ortho$dN/ortho$dS
 ortho <- ortho[which(!is.na(ortho$dNdS) & ortho$dNdS < 50),]
 
-expdiv=read.table(paste(path_exp, "expression_divergence/ExpressionDivergence_CellTypes_MeanTPM.txt",sep=""), h=T, stringsAsFactors=F, sep="\t")
+expdiv=read.table(paste(path_exp, "expression_divergence/ExpressionDivergence_CellTypes_MedianTPM.txt",sep=""), h=T, stringsAsFactors=F, sep="\t")
 colnames(expdiv) = c("IDHuman", "IDMouse", "adipo", "Bcell", "ESC")
 expdiv <- expdiv[complete.cases(expdiv), ] # to remove if we find a solution to NA
 
@@ -111,7 +111,7 @@ for (cell in cells){
 }
 
 ### Plot PART 1 ###
-pdf(paste(pathFigures, "Figure7_human.pdf", sep=""), width=7, height=5)
+#pdf(paste(pathFigures, "Figure7.pdf", sep=""), width=7, height=5)
 par(mai = c(0.5, 0.1, 0.5, 0.1)) # bottom, left, top, right
 
 a <- matrix(c(1,2,3,4,5,6), nrow = 1, byrow=F)
@@ -171,27 +171,42 @@ mtext("E", side=3, line=1, font=2, cex=1)
 par(mai = c(0.5, 0.5, 0.5, 0.1)) # bottom, left, top, right
 
 data_cell <- list()
-
+par(mfrow=c(1,3))
 for (cell in cells){
-  regland = read.table(paste(path_evol, ref_sp, "/evolution_summary_by_gene/", enh, "/original_evolution_summary_", cell, ".txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
-  regland <- regland[which(regland$nb_total > 5),]
-  common=intersect(rownames(expdiv), rownames(regland))
-  expdiv_cell=expdiv[common,]
+  #file = paste(path_evol, ref_sp, "/evolution_summary_by_gene/", enh, "/original_evolution_summary_", cell, ".txt", sep="")
+  file = paste("/home/laverre/Data/Regulatory_landscape/result/Supplementary_dataset6_regulatory_landscape_evolution/human/", enh, "_original_evolution_summary_", cell, "_100kb.txt", sep="")
+  regland = read.table(file, h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+
+  #firstquantile <- summary(log2(expdiv[[paste(ref_sp, cell, "Mean", sep="_")]]))[1]
+  #expdiv_cell <- expdiv[which(log2(expdiv[[paste(ref_sp, cell, "Mean", sep="_")]]) > firstquantile ),]
+  
+  common=intersect(rownames(expdiv_cell), rownames(regland))
+  expdiv_cell=expdiv_cell[common,]
   regland=regland[common,]
   
+
   # Made decile of nb enhancers
-  regland$class_nb_contact <- cut2(regland$nb_total, g=5)
+  if (enh == "ENCODE"){BREAKS=c(1, 5, 10, 20, 30, max(regland$nb_total))}else{BREAKS=c(1, 5, 8, 10, 15, max(regland$nb_total))}
+  
+  regland$class_nb_contact <- cut(regland$nb_total, breaks=BREAKS, include.lowest=T)
+  regland$class_distance <- cut(regland$median_dist, breaks=c(0, 100000, 250000, 500000, 1000000, max(regland$median_dist)), include.lowest=T)
+  regland$divergence <- expdiv_cell[[paste0(cell)]] #, "_ResidualExpressionDivergence"
+  regland$class_expression <- cut2(expdiv_cell[[paste0("human_", cell, "_Mean")]], g=3)
+
+  #regland <- regland[which(regland$nb_total > 5),]
 
   regland$ratio_cons_seq = regland$nb_seq_conserv/regland$nb_total
+  regland$ratio_cons_synt = ifelse(regland$nb_seq_conserv > 0, regland$nb_synt2M_conserv/regland$nb_seq_conserv, 0)
   regland$ratio_cons_int = ifelse(regland$nb_seq_conserv > 0, regland$nb_contact_conserv/regland$nb_seq_conserv, 0)
   
-  regland$class_cons_seq=cut(regland$ratio_cons_seq, breaks=c(0, 0.001, 0.25, 0.50, 0.75, 1), include.lowest=T)
-  regland$class_cons_int=cut(regland$ratio_cons_int,  breaks=c(0, 0.001, 0.25, 0.50, 0.75, 1), include.lowest=T)
-  
-  regland$divergence <- expdiv_cell[[paste0(cell)]]
+  regland$class_cons_seq=cut(regland$ratio_cons_seq, breaks=c(0, 0.25, 0.4, 0.50, 0.75, 1), include.lowest=T)
+  regland$class_cons_synt=cut(regland$ratio_cons_synt, breaks=c(0, 0.75, 1), include.lowest=T)
+  regland$class_cons_int=cut(regland$ratio_cons_int,  breaks=c(0, 0.01, 0.25, 0.5, 0.75, 1), include.lowest=T)
   
   data_cell[[cell]] <- regland
+  
 }
+
 
 ######################################################################################################################
 #################################### F - Expression Divergence vs Number of enhancers ################################
@@ -199,7 +214,9 @@ mean_divergence <- t(sapply(data_cell, function(x)   tapply(x$divergence, as.fac
 divergence_conf_low <- t(sapply(data_cell, function(x) tapply(x$divergence, as.factor(x$class_nb_contact), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
 divergence_conf_high <- t(sapply(data_cell, function(x) tapply(x$divergence, as.factor(x$class_nb_contact), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-plot(as.numeric(mean_divergence["Bcell",]), type="l", col=dataset.colors["Bcell"], ylim=c(0.5,0.75), xlab="", ylab="", axes=F)
+if (enh == "ENCODE"){YLIM=c(0.4,0.7)}else{YLIM=c(0.2,0.75)}
+#if (enh == "ENCODE"){YLIM=c(-0.05,0.05)}else{YLIM=c(0.2,0.75)}
+plot(as.numeric(mean_divergence["Bcell",]), type="l", col=dataset.colors["Bcell"], ylim=YLIM, xlab="", ylab="", axes=F)
 lines(as.numeric(mean_divergence["ESC",]), col=dataset.colors["ESC"], lwd=1.5)
 lines(as.numeric(mean_divergence["adipo",]), col=dataset.colors["adipo"], lwd=1.5)
 
@@ -223,18 +240,20 @@ for(dataset in rownames(mean_divergence)){
 #legend("topright", legend=names(dataset.colors), col=dataset.colors, lty=1, bty='n', inset=c(0.05, 0), xpd=NA, cex=1.4)
 mtext("F", side=3, line=1, at=1, font=2, cex=1.2)
 
+
 ######################################################################################################################
 ################################  G - Expression Divergence vs Number of conserved enhancers ######################## 
 mean_divergence <- t(sapply(data_cell, function(x)   tapply(x$divergence, as.factor(x$class_cons_seq), mean, na.rm=T)))
 divergence_conf_low <- t(sapply(data_cell, function(x) tapply(x$divergence, as.factor(x$class_cons_seq), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
 divergence_conf_high <- t(sapply(data_cell, function(x) tapply(x$divergence, as.factor(x$class_cons_seq), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-plot(as.numeric(mean_divergence["Bcell",]), type="l", col=dataset.colors["Bcell"], ylim=c(0.5,0.75), xlab="", ylab="", axes=F)
+plot(as.numeric(mean_divergence["Bcell",]), type="l", col=dataset.colors["Bcell"], ylim=YLIM, xlab="", ylab="", axes=F)
 lines(as.numeric(mean_divergence["ESC",]), col=dataset.colors["ESC"], lwd=1.5)
 lines(as.numeric(mean_divergence["adipo",]), col=dataset.colors["adipo"], lwd=1.5)
 
 ## X axis
-breaks_names=c(">0.1", "0.1-25", "26-50", "51-75", ">75")
+breaks_names=c(">25", "25-40", "41-50", "51-75", ">75")
+
 axis(side=1, at=1:5, labels=breaks_names, mgp=c(3, 0.65, 0), cex.axis=0.8)
 axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.8)
 
@@ -252,13 +271,14 @@ for(dataset in rownames(mean_divergence)){
 ## plot label
 mtext("G", side=3, line=1, at=1, font=2, cex=1)
 
+
 ######################################################################################################################
 ############################## H - Expression Divergence vs Number of conserved contacts ############################# 
 mean_divergence <- t(sapply(data_cell, function(x)   tapply(x$divergence, as.factor(x$class_cons_int), mean, na.rm=T)))
 divergence_conf_low <- t(sapply(data_cell, function(x) tapply(x$divergence, as.factor(x$class_cons_int), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
 divergence_conf_high <- t(sapply(data_cell, function(x) tapply(x$divergence, as.factor(x$class_cons_int), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-plot(as.numeric(mean_divergence["Bcell",]), type="l", col=dataset.colors["Bcell"], ylim=c(0.45,0.7), xlab="", ylab="", axes=F)
+plot(as.numeric(mean_divergence["Bcell",]), type="l", col=dataset.colors["Bcell"], ylim=YLIM, xlab="", ylab="", axes=F)
 lines(as.numeric(mean_divergence["ESC",]), col=dataset.colors["ESC"], lwd=1.5)
 lines(as.numeric(mean_divergence["adipo",]), col=dataset.colors["adipo"], lwd=1.5)
 
@@ -281,4 +301,85 @@ for(dataset in rownames(mean_divergence)){
 ## plot label
 mtext("H", side=3, line=1, at=1, font=2, cex=1)
 
-dev.off()
+#dev.off()
+
+######################################################################################################################
+########################################## Cardoso - Moreira Divergence ##########################################
+setwd("/home/laverre/Manuscript/SupplementaryDataset6/expression_divergence")
+
+expdiv=read.table("ExpressionDivergence_CardosoMoreira2019_correlations.txt", h=T, stringsAsFactors=F, sep="\t")
+rownames(expdiv)=expdiv$IDHuman
+enh="ENCODE"
+maxdist = "25000"
+file = paste("/home/laverre/Data/Regulatory_landscape/result/Supplementary_dataset6_regulatory_landscape_evolution/human/", enh, "_original_evolution_summary_all_", maxdist, ".txt", sep="")
+regland = read.table(file, h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+
+common=intersect(rownames(expdiv), rownames(regland))
+expdiv=expdiv[common,]
+regland=regland[common,]
+
+regland$ratio_cons_seq = regland$nb_seq_conserv/regland$nb_total
+regland$ratio_cons_synt = ifelse(regland$nb_seq_conserv > 0, regland$nb_synt2M_conserv/regland$nb_seq_conserv, NA)
+regland$ratio_cons_int = ifelse(regland$nb_seq_conserv > 0, regland$nb_contact_conserv/regland$nb_seq_conserv, 0)
+
+regland$class_nb_contact=cut(regland$nb_total, breaks=c(1,5,10,25,50,75, max(regland$nb_total)), include.lowest=T)
+regland$class_cons_seq=cut(regland$ratio_cons_seq, breaks=c(0, 0.25, 0.4, 0.50, 0.75, 1), include.lowest=T)
+regland$class_cons_synt=cut(regland$ratio_cons_synt, breaks=c(0, 0.75, 1), include.lowest=T)
+regland$class_cons_int=cut(regland$ratio_cons_int,  breaks=c(0, 0.01, 0.25, 0.5, 0.75, 1), include.lowest=T)
+
+# Divergence ~ Nb contact
+par(mfrow=c(1,1))
+breaks_names = c("1-5","6-10","11-25", "26-50", "51-75",">75")
+
+boxplot(expdiv$CorrelationSpearman~regland$class_nb_contact, outline=F, notch=T,
+        xlab="Total number of contacts", ylab="Spearman's correlation", names=breaks_names, boxwex = 0.7)
+
+boxplot(expdiv$ResidualSpearman~regland$class_nb_contact, outline=F, notch=T, boxwex = 0.7,
+        xlab="Total number of contacts", ylab="Residual expression divergence", names=breaks_names)
+
+# Divergence ~ Nb seq conserv
+regland <- regland[which(regland$nb_total >= 5),]
+common=intersect(rownames(expdiv), rownames(regland))
+expdiv=expdiv[common,]
+regland=regland[common,]
+
+par(mfrow=c(1,2))
+boxplot(expdiv$CorrelationSpearman~regland$class_cons_seq, outline=F, notch=T,
+        xlab="Ratio of conserved sequences", ylab="Spearman's correlation", boxwex = 0.7)
+
+boxplot(expdiv$ResidualSpearman~regland$class_cons_seq, outline=F, notch=T, boxwex = 0.7,
+        xlab="Ratio of conserved sequences", ylab="Residual Spearman's correlation")
+
+# Divergence ~ Nb synteny conserv
+par(mfrow=c(1,2))
+boxplot(expdiv$CorrelationSpearman~regland$class_cons_synt, outline=F, notch=T,
+        xlab="Ratio of conserved synteny", ylab="Spearman's correlation", boxwex = 0.7)
+
+boxplot(expdiv$ResidualExpressionDivergence~regland$class_cons_synt, outline=F, notch=T, boxwex = 0.7,
+        xlab="Ratio of conserved synteny", ylab="Residual Spearman's correlation")
+
+# Divergence ~ Nb contact conserv
+regland <- regland[which(regland$nb_seq_conserv >= 5),]
+common=intersect(rownames(expdiv), rownames(regland))
+expdiv=expdiv[common,]
+regland=regland[common,]
+
+par(mfrow=c(1,2))
+
+boxplot(expdiv$CorrelationSpearman~regland$class_cons_int, outline=F, notch=T,
+        xlab="Ratio of conserved contact", ylab="Spearman's correlation", boxwex = 0.7)
+
+boxplot(expdiv$ResidualSpearman~regland$class_cons_int, outline=F, notch=T, boxwex = 0.7,
+        xlab="Ratio of conserved contact", ylab="Residual Spearman's correlation")
+
+write.table(regland[order(-regland$ratio_cons_int),11:13],"test.txt",sep="\t",row.names=TRUE, quote=F)
+write.table(expdiv[order(-expdiv$ExpressionDivergence),3:4],"test_div_expression.txt",sep="\t",row.names=TRUE, quote=F)
+write.table(expdiv[order(-expdiv$Bcell),3:4],"test_div_expression_Bcell.txt",sep="\t",row.names=TRUE, quote=F)
+
+
+plot(expdiv$CorrelationSpearman, expdiv$ExpressionDivergence, cex=0.6)
+rho=cor(expdiv$CorrelationSpearman, expdiv$ExpressionDivergence, method="spearman")
+R=cor(expdiv$CorrelationSpearman, expdiv$ExpressionDivergence, method="pearson")
+
+mtext(paste("R2 = ", round(R, digits=2), ", rho = ",round(rho, digits=2),sep=""), side=3, line=0.5)
+abline(lm(expdiv$ExpressionDivergence~expdiv$CorrelationSpearman), col="red")
