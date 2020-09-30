@@ -286,7 +286,7 @@ mtext("% of interactions", side=2, line=2.5, cex=0.8)
 
 ## legend & plot label
 legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")], fill="white", bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("B", side=3, line=1, at=-3.5, font=2, cex=1.2)
+mtext("B", side=3, line=1, at=-3.75, font=2, cex=1.2)
 
 ################################################################################################
 
