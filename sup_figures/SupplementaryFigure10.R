@@ -43,12 +43,12 @@ if(prepare){
     names(celltypes)=samples
 
     obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-    obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:7, max(obs$nb_celltypes)), include.lowest=T)
-    levels(obs$celltype_class)=c(as.character(1:7), ">7")
+    obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:5, max(obs$nb_celltypes)), include.lowest=T)
+    levels(obs$celltype_class)=c(as.character(1:5), ">5")
 
     sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-    sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:7, max(sim$nb_celltypes)), include.lowest=T)
-    levels(sim$celltype_class)=c(as.character(1:7), ">7")
+    sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:5, max(sim$nb_celltypes)), include.lowest=T)
+    levels(sim$celltype_class)=c(as.character(1:5), ">5")
 
     ## bait annotation
 
