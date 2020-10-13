@@ -21,6 +21,12 @@ if(load){
 
   minRPKM=1
 
+  maxval=c(7, 5)
+  names(maxval)=c("human", "mouse")
+
+  labels=c("A", "B")
+  names(labels)=c("human", "mouse")
+  
   load=FALSE
 }
 
@@ -42,13 +48,15 @@ if(prepare){
     celltypes=info$Broad.cell.type.or.tissue
     names(celltypes)=samples
 
+    M=maxval[sp]
+    
     obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-    obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:5, max(obs$nb_celltypes)), include.lowest=T)
-    levels(obs$celltype_class)=c(as.character(1:5), ">5")
+    obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:M, max(obs$nb_celltypes)), include.lowest=T)
+    levels(obs$celltype_class)=c(as.character(1:M), paste(M+1, "+", sep=""))
 
     sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-    sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:5, max(sim$nb_celltypes)), include.lowest=T)
-    levels(sim$celltype_class)=c(as.character(1:5), ">5")
+    sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:M, max(sim$nb_celltypes)), include.lowest=T)
+    levels(sim$celltype_class)=c(as.character(1:M), paste(M+1, "+", sep=""))
 
     ## bait annotation
 
@@ -85,9 +93,9 @@ if(prepare){
 
 ##########################################################################
 
-pdf(paste(pathFigures, "SupplementaryFigure10.pdf", sep=""), width=4.49, height=3)
+pdf(paste(pathFigures, "SupplementaryFigure10.pdf", sep=""), width=6.85, height=3.5)
 
-m=matrix(c(1,2), nrow=1)
+m=matrix(c(rep(1, 8), rep(2, 6)), nrow=1)
 
 layout(m)
 
@@ -103,18 +111,29 @@ for(sp in c("human", "mouse")){
   xpos=1:nbclass
   smallx=c(-0.25, 0.25)
 
+  xlim=c(0.5, nbclass+0.5)
+  
   ylim=c(0, max(c(obs$NbSamplesExpressed, sim$NbSamplesExpressed)))
+  ylim[2]=ylim[2]+diff(ylim)/20
 
-  plot(1, type="n", xlab="", ylab="", axes=F)
+  par(mar=c(3.5, 3.5, 1.5, 1.1))
+      
+  plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim)
+  
   for(i in 1:nbclass){
     wobs=which(obs$celltype_class==classes[i])
-    boxplot(obs$NbSamplesExpressed[wobs], outline=F, add=T, axes=F, at=xpos[i]+smallx[1], border=dataset.colors["Original"])
-    
-    wsim=which(sim$celltype_class==classes[i])
-    boxplot(sim$NbSamplesExpressed[wsim], outline=F, add=T, axes=F, at=xpos[i]+smallx[1], border=dataset.colors["Original"])
-    
+    boxplot(obs$NbSamplesExpressed[wobs], outline=F, add=T, axes=F, at=xpos[i], border=dataset.colors["Original"], notch=T)
   }
+
+  mtext(sp, side=3, cex=0.75)
+
+  axis(side=1, at=1:nbclass, labels=classes, cex.axis=0.9, mgp=c(3, 0.5, 0))
+  mtext("number of cell types in which contacts are observed", side=1, line=2, cex=0.7)
   
+  axis(side=2, cex.axis=0.9, mgp=c(3, 0.75, 0))
+  mtext("number of samples with detectable expression", side=2, line=2, cex=0.7)
+
+  mtext(labels[sp], side=3, at=xlim[1]-diff(xlim)/(nbclass-0.8), line=0, font=2)
 }
 
 ##########################################################################
