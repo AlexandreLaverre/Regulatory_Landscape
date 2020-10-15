@@ -118,9 +118,8 @@ for (enh in enhancers){
 # Output
 
 if (ref_sp == "mouse"){
-  save(conserv_synteny, conserv_synteny_dist_FANTOM5, conserv_synteny_dist_ENCODE, file = paste(pathFigures, "/Fig4_", ref_sp, ".Rdata", sep=""))
+  save(conserv_synteny, conserv_synteny_dist_FANTOM5, conserv_synteny_dist_ENCODE, file = paste(pathFigures, "/Fig4_", ref_sp, "_unique.Rdata", sep=""))
 }else{
   save(conserv_synteny, conserv_synteny_dist_FANTOM5, conserv_synteny_dist_ENCODE, conserv_synteny_dist_RoadmapEpigenomics, conserv_synteny_dist_FOCS_GRO_seq,
-       file = paste(pathFigures, "/Fig4_", ref_sp, ".Rdata", sep=""))
+       file = paste(pathFigures, "/Fig4_", ref_sp, "_unique.Rdata", sep=""))
 }
-

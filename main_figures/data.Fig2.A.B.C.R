@@ -4,12 +4,12 @@ options(stringsAsFactors = FALSE)
 
 source("parameters.R") ## pathFinalData defined based on the user name
 
-ref_sp = "mouse"
+ref_sp = "human"
 minDistance=25e3
 maxDistance=2e6
 
-enhancers <- c("CAGE", "ENCODE")
-if (ref_sp == "human"){enhancers <- c(enhancers, "RoadMap", "GRO_seq")}
+enhancers <- c("ENCODE", "FANTOM5")
+if (ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
 
 obs <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
 simul <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
@@ -107,4 +107,4 @@ prop_nb_sample <- list(obs=obs_enh_cell, simul=simul_enh_cell)
 
 ################################################# Save RData ################################################# 
 
-save(enh_prop, prop_nb_sample, prop_dist, file = paste(pathFigures, "Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
+save(enh_prop, prop_nb_sample, prop_dist, file = paste(pathFigures, "RData/Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))

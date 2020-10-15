@@ -1,12 +1,10 @@
-###########################################################################################
-## if it's the first time we run this figure, we load and prepare data
-
+## same as Figure 1 for mouse
 objects=ls()
 
 if(!"pathScripts"%in%objects){
   load=T
   prepare=T
-  source("parameters.R") ## paths are defined based on the user name
+  source("../main_figures/parameters.R") ## paths are defined based on the user name
 }
 
 ###########################################################################################
@@ -14,21 +12,12 @@ if(!"pathScripts"%in%objects){
 ## load all necessary data, scripts and libraries for the figure
 
 if(load){
- 
-  library(ape)
-     
-  sp="human"
-  
-  ## functions for genome browser plots
-
-  source(paste(pathScripts, "/genome_browser/plot.annotations.R", sep=""))
-  source(paste(pathScripts, "/genome_browser/plot.interactions.R", sep=""))
+      
+  sp="mouse"
   
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-  load(paste(pathFigures, "RData/data.Shh.figure.RData", sep=""))
-  load(paste(pathFigures, "RData/data.sample.clustering.RData", sep=""))
-
+ 
   load=FALSE ## we only do this once
 }
 
@@ -95,11 +84,7 @@ if(prepare){
   dist_conf_low_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
   dist_conf_high_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-  # dendrogram based on the % of shared interactions between samples, observed-simulated 
-
-  hcl=sample.clustering[[sp]][["hclust.alldist"]]
-  sample.order=sample.clustering[[sp]][["sample.order.alldist"]]
-  
+   
   ## we finish preparing the data
   prepare=FALSE
 }
@@ -111,170 +96,24 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7.5)
+pdf(paste(pathFigures, "SupplementaryFigure9.pdf", sep=""), width=6.85, height=2.5)
 
 ## layout
 
-m=matrix(rep(NA, 51*10), nrow=51)
+m=matrix(rep(NA, 5*10), nrow=5)
 
-for(i in 1:6){
-  m[i,]=c(rep(1,1), rep(2,9))
-}
-
-for(i in c(7)){
-  m[i,]=c(rep(3, 1), rep(4,9))
-}
-
-for(i in c(8:29)){
-  m[i,]=c(rep(5, 1), rep(6,9))
-}
-
-
-for(i in 30:32){
-  m[i,]=c(rep(7, 1), rep(8,9))
-}
-
-for(i in 33:51){
-  m[i,]=c(rep(9, 5), rep(10, 5))
+for(i in 1:5){
+  m[i,]=c(rep(1, 5), rep(2, 5))
 }
 
 layout(m)
 
 ############################################################################################
 
-## empty plot
-par(mar=c(0, 0.1, 0, 0.3)) 
-plot.new()
-
-############################################################################################
-
-## annotations in the Shh region
-
-par(mar=c(0.25, 0.5, 2.0, 9.75))
-## plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
-
-## quick fix for gene names, will be removed later
-shhgenecoords$name=rep(NA, dim(shhgenecoords)[1])
-shhgenecoords$name[which(shhgenecoords$id==shhid)]="SHH"
-shhgenecoords$name[which(shhgenecoords$id=="ENSG00000105983")]="LMBR1"
-shhgenecoords$name[which(shhgenecoords$id=="ENSG00000182648")]="LINC01006" 
-
-plot.annotations.genes(gene.coords=shhgenecoords, focus.gene=shhid, gene.biotypes=c("protein_coding", "lincRNA"), xlim=shhxlim, col.focus=col.Shh, col.other="gray60", axis=T, axisunit="Mb", axisside=3, cex.name=0.9, name.position="top", show.arrows=T, highlighted.genes=c("ENSG00000105983", "ENSG00000182648"))
-
-## axis label
-
-mtext("genes", side=2, las=2, cex=0.7, line=1.75)
-
-## shhchr
-
-mtext("chr7", at=shhxlim[2]+diff(shhxlim)/20, line=0.5, side=3, cex=0.75)
-
-## plot label
-
-mtext("A", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/9, font=2, cex=1.2)
-
-#############################################################################################
-
-## empty plot
-par(mar=c(0, 0.1, 0, 0.3)) 
-plot.new()
-
-#############################################################################################
-
-## baits in the Shh region
-
-par(mar=c(0.5, 0.5, 0.1, 10.5)) ## left and right margin should be the same as above
-plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
-
-segments(shhxlim[1], 0.5, shhxlim[2], 0.5, lwd=0.5, lty=3, col="gray40")
-
-rect(allshhbaits$start, 0.15, allshhbaits$end, 0.85, col="gray40", border="gray40")
-
-mtext("baits", side=2, las=2, cex=0.7, line=1.75)
-
-##############################################################################################
-
-## Dendrogram of samples
-par(mar=c(0.5, 0.15, 0.105, 0.3)) 
-plot(as.phylo(hcl), direction="rightwards", show.tip.label=FALSE)
-
-##############################################################################################
-
-## interactions in the Shh region
-par(mar=c(0.5, 0.5, 0.1, 10.5)) ## left and right margin should be the same as above
-
-ylim=c(0, length(samples)+1)
-height=0.25
-ypos=1:length(samples)
-names(ypos)=sample.order # re-order according to AFC
-
-plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=ylim, xaxs="i", yaxs="i")
-
-for(sample in samples){
-  abline(h=ypos[sample], col="gray40",lwd=0.5, lty=3)
-  
-  this.int=shhinteractions[which(!is.na(shhinteractions[,sample])),]
-  if(dim(this.int)[1]>0){
-    rect(this.int$start, ypos[sample]-height, this.int$end, ypos[sample]+height, col=col.Shh, border=NA)
-  }
-}
-
-## labels for the cell types
-
-ywidth=diff(ypos)[1]
-segx=shhxlim[2]+diff(shhxlim)/100
-
-for(c in unique(celltypes)){
-  all.ypos=ypos[samples[which(celltypes[samples]==c)]]
-  segments(segx, min(all.ypos)-ywidth/3, segx, max(all.ypos)+ywidth/3, xpd=NA)
-  
-  mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.65, at=mean(all.ypos))
-}
-
-##############################################################################################
-
-par(mar=c(0, 0.1, 0, 0.3)) 
-plot.new()
-
-##############################################################################################
-
-## enhancers in the Shh region
-
-par(mar=c(0.15, 0.5, 0.1, 10.5)) ## left and right margin should be the same as above
-plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=c(0,1), xaxs="i", yaxs="i")
-
-ypos=seq(from=0.1, to=0.9, length=length(shhenhancers))
-names(ypos)=names(shhenhancers)
-
-height=0.05
-
-for(ed in names(shhenhancers)){
-  this.enhancers=shhenhancers[[ed]]
-  segments(shhxlim[1], ypos[ed], shhxlim[2], ypos[ed], lwd=0.5, lty=3, col="gray40")
-  rect(this.enhancers$start, ypos[ed]-height, this.enhancers$end, ypos[ed]+height, col="gray40", border=NA)
-
-  mtext(enh.syn[ed], side=4, at=ypos[ed], line=0.25, las=2, cex=0.65)
-}
-
-mtext("predicted", side=2, las=2, cex=0.7, line=0.75, at=0.75)
-mtext("enhancers", side=2, las=2, cex=0.7, line=0.75, at=0.4)
-
-## Zrs enhancer
-
-## ZRS coordinates from Vista database: chr7:156,791,088-156,791,875 (after liftOver transformation to hg38)
-
-zrspos=(156791088+156791875)/2
-
-segments(zrspos, 0,  zrspos, 1,col="gray40")
-
-mtext("ZRS", font=3, cex=0.7, side=3, at=zrspos, line=0.15)
-
-###############################################################################################
-
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
 par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 
-#################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
+#################### A - Histogram with number of cell types in which an interaction is observed #####################
 
 b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='',
           names=rep("", dim(pc_nb_celltypes_matrix)[2]), ylim=c(0,80), space=c(0.4,1),
@@ -291,11 +130,11 @@ mtext("% of interactions", side=2, line=2.5, cex=0.8)
 legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
        fill=dataset.colors[c("Original", "Simulated")], bty='n', density=dataset.density, angle=dataset.angle,
        cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("B", side=3, line=1, at=-3.75, font=2, cex=1.2)
+mtext("A", side=3, line=1, at=-3.75, font=2, cex=1.2)
 
 ################################################################################################
 
-#################### Fig 1.C - Distribution of number of cell types according to distance #####################
+#################### B - Distribution of number of cell types according to distance #####################
 
 ylim=c(0, max(c(as.numeric(mean_nb_celltypes_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Simulated",]))))
 ylim[2]=ylim[2]+1
@@ -323,7 +162,7 @@ for(dataset in rownames(mean_dist)){
 ## legend & plot label
 
 legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("C", side=3, line=1, at=-3.95e5, font=2, cex=1.2)
+mtext("B", side=3, line=1, at=-3.95e5, font=2, cex=1.2)
 
 ###########################################################################################
 

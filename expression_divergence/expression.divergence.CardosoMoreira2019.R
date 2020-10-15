@@ -1,4 +1,5 @@
 ######################################################################################
+#setwd("/home/laverre/Anouk/data/enhancers/")
 
 stages=read.table("../../data/gene_expression_CardosoMoreira2019/DevelopmentalStages.txt", h=T, stringsAsFactors=F)
 exp.human=read.table("../../data/gene_expression_CardosoMoreira2019/Human.RPKM.txt", h=T, stringsAsFactors=F)
@@ -73,7 +74,19 @@ names(distance)=rownames(relexp.human)
 
 ######################################################################################
 
-results=data.frame("IDMouse"=rownames(relexp.mouse), "IDHuman"=rownames(relexp.human), "ExpressionDivergence"=distance, stringsAsFactors=F)
+correlation.sper=unlist(lapply(1:dim(relexp.human)[1],
+                          function(x) {y=as.numeric(relexp.mouse[x,]); z=as.numeric(relexp.human[x,]); return(abs(cor(y,z, method="spearman")))}))
+names(correlation.sper)=rownames(relexp.human)
+
+correlation.pear=unlist(lapply(1:dim(relexp.human)[1],
+                               function(x) {y=as.numeric(relexp.mouse[x,]); z=as.numeric(relexp.human[x,]); return(abs(cor(y,z, method="pearson")))}))
+names(correlation.pear)=rownames(relexp.human)
+
+######################################################################################
+
+results=data.frame("IDMouse"=rownames(relexp.mouse), "IDHuman"=rownames(relexp.human), "ExpressionDivergence"=distance,
+                   "CorrelationSpearman"=correlation.sper, "CorrelationPearson"=correlation.pear, stringsAsFactors=F)
+
 
 for(sample in colnames(avgexp.human)){
   results[,paste("Human_",sample,sep="")]=avgexp.human[,sample]
@@ -89,12 +102,17 @@ results$Mouse_MeanRPKM=apply(results[,grep("^Mouse_", colnames(results))],1, mea
 results$MeanRPKM=(results$Human_MeanRPKM+results$Mouse_MeanRPKM)/2
 
 lm1=lm(results$ExpressionDivergence~log2(results$MeanRPKM+1))
-
 results$ResidualExpressionDivergence=lm1$residuals
+
+lm1=lm(results$CorrelationSpearman~log2(results$MeanRPKM+1))
+results$ResidualSpearman=lm1$residuals
+
+lm1=lm(results$CorrelationPearson~log2(results$MeanRPKM+1))
+results$ResidualPearson=lm1$residuals
 
 ######################################################################################
 
-write.table(results, file="../../results/expression_divergence/ExpressionDivergence_CardosoMoreira2019.txt", row.names=F, col.names=T, sep="\t", quote=F)
+write.table(results, file="/home/laverre/Manuscript/SupplementaryDataset6/expression_divergence/ExpressionDivergence_CardosoMoreira2019_correlations.txt", row.names=F, col.names=T, sep="\t", quote=F)
 
 ######################################################################################
 ######################################################################################

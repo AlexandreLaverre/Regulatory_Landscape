@@ -6,14 +6,15 @@ pathTables=paste(pathFinalData, "SupplementaryTables/", sep="")
 
 #######################################################################################
 
-separators=c(",", "\t")
-names(separators)=c("human", "mouse")
+suptable1=read.table(paste(pathTables, "SupplementaryTable1.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
+
+#######################################################################################
 
 sampleinfo=list()
 
 for(sp in c("human", "mouse")){
   
-  this.info=read.table(paste(pathTables, sp, "_samples_informations.csv",sep=""), sep=separators[sp], h=T, stringsAsFactors=F)
+  this.info=suptable1[which(suptable1$Species==sp),]
 
   sampleinfo[[sp]]=this.info
 }

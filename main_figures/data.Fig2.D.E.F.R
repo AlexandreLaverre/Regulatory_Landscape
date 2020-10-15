@@ -15,7 +15,7 @@ if (ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO
 ################################## Fig2-D - Correlation Gene expression & Nb enhancers ################################## 
 
 ## Gene expression
-expdiv=read.table(paste(pathFinalData, "/SupplementaryDataset6/ExpressionDivergence_CardosoMoreira2019.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+expdiv=read.table(paste(pathFinalData, "/SupplementaryDataset6/expression_divergence/ExpressionDivergence_CardosoMoreira2019.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
 
 if(ref_sp == "human"){rownames(expdiv)=expdiv$IDHuman}else{rownames(expdiv)=expdiv$IDMouse}
 
@@ -28,21 +28,21 @@ for (enh in enhancers){
   regland = read.table(paste(pathFinalData, "/SupplementaryDataset7/", ref_sp, "/evolution_summary_by_gene/", enh, "/original_evolution_summary_all_sample.txt",sep=""), h=T, sep="\t", row.names = 1)
   regland <- regland[which(regland$nb_total < 250),]
   common=intersect(rownames(expdiv), rownames(regland))
-  expdiv=expdiv[common,]
+  expdiv_enh=expdiv[common,]
   regland=regland[common,]
   
   # Made decile of nb enhancers
   if(enh=="FANTOM5"){regland$fraction_group <- cut2(regland$nb_total, g=nb_class_CAGE)
   }else{regland$fraction_group <- cut2(regland$nb_total, g=10)}
   
-  box <- boxplot(log2(expdiv$Human_MeanRPKM+1)~regland$fraction_group, plot=F)
+  box <- boxplot(log2(expdiv_enh$Human_MeanRPKM+1)~regland$fraction_group, plot=F)
   gene_expression_enhancers[[paste0(enh)]] <- box$stats[3,]
   gene_expression_enhancers[[paste0(enh, "_conflow")]] <-  box$conf[1,]
   gene_expression_enhancers[[paste0(enh, "_confup")]] <- box$conf[2,]
   
-  R=cor.test(regland$nb_total,log2(expdiv$MeanRPKM+1), method="pearson")
+  R=cor.test(regland$nb_total,log2(expdiv_enh$MeanRPKM+1), method="pearson")
   print(R)
-  rho=cor.test(regland$nb_total,log2(expdiv$MeanRPKM+1), method="spearman")
+  rho=cor.test(regland$nb_total,log2(expdiv_enh$MeanRPKM+1), method="spearman")
   print(rho)
   
 }
@@ -56,6 +56,8 @@ for (enh in enhancers){
   # According to distance
   obs$dist_class <-cut(obs$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
   simul$dist_class <- cut(simul$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
+  obs$SpearmanCorrelation <- obs$SpearmanCorrelation
+  simul$SpearmanCorrelation <- simul$SpearmanCorrelation
   
   if(enh == "FANTOM5"){
     obs_correl_activity_dist <- data.frame(matrix(vector(), length(levels(obs$dist_class)), 1))
@@ -87,5 +89,5 @@ correl_activity <- list(obs=obs_correl_activity_dist, simul=simul_correl_activit
 
 ################################################# Save RData ################################################# 
 
-save(gene_expression_enhancers, correl_activity, file = paste(pathFigures, "Fig2_", ref_sp, "_D_E.Rdata", sep=""))
+save(gene_expression_enhancers, correl_activity, file = paste(pathFigures, "RData/Fig2_", ref_sp, "_D_E.Rdata", sep=""))
 
