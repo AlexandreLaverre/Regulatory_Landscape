@@ -23,6 +23,15 @@ for(sp in c("human", "mouse")){
   obs=obs[which(obs$distance>=minDistance & obs$distance<=maxDistance),]
   sim=sim[which(sim$distance>=minDistance & sim$distance<=maxDistance),]
 
+  ## discard interactions with uncommon restriction fragments length
+  obs$bait_length = obs$end_bait-obs$start_bait
+  obs$contacted_length = obs$end-obs$start
+  simul$bait_length = simul$end_bait-simul$start_bait
+  simul$contacted_length = simul$end-simul$start
+  
+  obs=obs[which(obs$bait_length>=250 & obs$bait_length<=20000 & obs$contacted_length>=250 & obs$contacted_length<=20000),]
+  simul=simul[which(simul$bait_length>=250 & simul$bait_length<=20000 & simul$contacted_length>=250 & simul$contacted_length<=20000),]
+    
   ## bait and fragment id
 
   obs$id_bait=paste(obs$chr_bait, obs$start_bait, obs$end_bait, sep=":")

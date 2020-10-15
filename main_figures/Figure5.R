@@ -16,7 +16,7 @@ load(paste(pathFigures, "RData/Fig5_", ref_sp, "_", selected_genes, "_genes.Rdat
 
 
 #########################################################################################################################
-if(ref_sp == "human"){pdf_name="Figure5.pdf"}else{pdf_name="Sup_Figure14.pdf"}
+if(ref_sp == "human"){pdf_name="Figure5_new.pdf"}else{pdf_name="Sup_Figure14.pdf"}
 
 pdf(paste(pathFigures, pdf_name, sep=""), width=8.5, height=8)
 par(mai = c(0.8, 0.8, 0.5, 0.1)) # bottom, left, top, right
@@ -41,7 +41,7 @@ legend("topright", legend = c("Original", "Simulated"),
 mtext("A", side=3, line=1, at=0.1, font=2, cex=1.2)
 
 ############################################  B - Contact conservation by distance from TSS ############################################ 
-if (ref_sp == "human"){YLIM=c(-3,8)}else{YLIM=c(-5, 20)}
+if (ref_sp == "human"){YLIM=c(-2,7)}else{YLIM=c(-5, 20)}
 color_n = 1 # To change color between each enhancers dataset
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 
@@ -73,13 +73,13 @@ par(lwd = 1.5)
 enh = "ENCODE"
 conserv = get(paste("conserv_sample", enh, sep="_"))
 
-bar <- barplot(result ~ data+class, beside=T, data=conserv, space = c(0.1, 0.6), ylim=c(0,60),
+bar <- barplot(result ~ data+class, beside=T, data=conserv, space = c(0.1, 0.6), ylim=c(0,45),
                border=dataset.colors, col=dataset.colors,
                cex.names=0.8, density=dataset.density, angle=dataset.angle,
                 ylab="Conserved contact (%)", xlab="Number of sample", 
                main="")
 
-arrows(x0=bar,y0=conserv[c(1,6,2,7,3,8,4,9,5,10),]$confup,y1=conserv[c(1,6,2,7,3,8,4,9,5,10),]$conflow,angle=90,code=3,length=0.05)
+arrows(x0=bar,y0=conserv[order(conserv$class),]$confup,y1=conserv[order(conserv$class),]$conflow,angle=90,code=3,length=0.05)
 
 legend("topleft", border=dataset.colors, fill=dataset.colors, density=dataset.density, angle=dataset.angle,
        legend = c("Original", "Simulated"), bty='n')

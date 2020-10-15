@@ -4,7 +4,7 @@ options(stringsAsFactors = FALSE)
 
 source("parameters.R") ## pathFinalData defined based on the user name
 
-ref_sp = "human"
+ref_sp = "mouse"
 minDistance=25e3
 maxDistance=2e6
 
@@ -16,7 +16,8 @@ simul <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/stat
 obs <- obs[which(obs$baited == "unbaited" & obs$BLAT_match == 1),]
 simul <- simul[which(simul$baited == "unbaited" & simul$BLAT_match == 1),]
 
-############################### Fig2-A - Proportions of contacted sequences which overlap with enhancers ############################### 
+####################################################################################################################################
+############################### Fig2-A - Proportions of contacted sequences which overlap with enhancers ########################### 
 data <- c()
 conf_up <- c()
 conf_low <- c()
@@ -40,7 +41,8 @@ for (enh in enhancers){
 
 enh_prop <- data.frame(data=data, conf_up=conf_up, conf_low=conf_low)
 
-###############################  Fig2-B - According to distance from promoters ############################################################### 
+####################################################################################################################################
+###############################  Fig2-B - According to distance from promoters ##################################################### 
 obs$dist_class <-cut(obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
 simul$dist_class <- cut(simul$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
 
@@ -66,10 +68,11 @@ for (enh in enhancers){
 
 prop_dist <- list(obs=obs_enh_dist, simul=simul_enh_dist)
 
-###############################  Fig2-C - According to number of samples ############################################################### 
-obs$nb_cell <- as.factor(obs$nb_sample)
+####################################################################################################################################
+###############################  Fig2-C - According to number of cell types ########################################################### 
+obs$nb_cell <- as.factor(obs$nb_cell)
 obs_enh_cell <- data.frame(matrix(vector(), length(levels(obs$nb_cell)), 1)) 
-simul$nb_cell <- as.factor(simul$nb_sample)
+simul$nb_cell <- as.factor(simul$nb_cell)
 simul_enh_cell <- data.frame(matrix(vector(), length(levels(simul$nb_cell)), 1)) 
 
 #### Proportion of the sequences that is enhancer

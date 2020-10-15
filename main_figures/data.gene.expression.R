@@ -50,6 +50,6 @@ for(sp in c("human", "mouse")){
 
 ###########################################################################
 
-save(list=c("exp.common.celltypes", "expstats.cm2019", "avgexp.cm2019"), file=paste(pathFigures, "RData/data.gene.expression.RData", sep=""))
+save(list=c("exp.common.celltypes", "expstats.cm2019", "avgexp.cm2019"), file=paste(pathFigures, "RData/data.gene.expression2.RData", sep=""))
 
 ###########################################################################
