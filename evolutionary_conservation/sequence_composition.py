@@ -7,7 +7,7 @@ import numpy as np
 path_overlap = "/home/laverre/Documents/Regulatory_Landscape/data/"
 path_dupli = "/home/laverre/Data/Regulatory_landscape/result/Supplementary_dataset3_annotations/"
 path_HIC = "/home/laverre/Data/Regulatory_landscape/result/"
-path_output = "/home/laverre/Documents/Regulatory_Landscape/result/"
+path_output = "/home/laverre/Manuscript/SupplementaryDataset5/"
 origin_sp = "human"
 
 # Samples to cell types
@@ -173,8 +173,8 @@ def HiC_stats(origin_sp, data):
                         GRO_seq_contact[bait] += GRO_seq_count[PIR]
 
     print("Writting output...")
-    output = open("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt_new2", 'w')
-    if os.stat("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt_new2").st_size == 0:
+    output = open(path_output + origin_sp + "/statistics_contacted_sequence" + data + ".txt", 'w')
+    if os.stat(path_output + origin_sp + "/statistics_contacted_sequence" + data + ".txt").st_size == 0:
         output.write("chr\tstart\tend\tlength\tFANTOM5_bp\tENCODE_bp\t")
         if origin_sp == "human":
             output.write("RoadmapEpigenomics_bp\tFOCS_GRO_seq_bp\t")
