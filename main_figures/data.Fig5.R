@@ -2,27 +2,42 @@
 library(data.table)
 options(stringsAsFactors = FALSE)
 
-source("parameters.R") ## pathFinalDataFinalDatas are defined based on the user name
+#########################################################################
 
-# Choose species within : human ; mouse
-ref_sp = "human" 
+## if it's the first time we run this figure, we load and prepare data
 
-# Choose genes within : all ; dvpt ; other
-selected_genes = "all"
-if (selected_genes == "dvpt"){`%get%` <- `%in%`}else{`%get%` <- Negate(`%in%`)}
+objects=ls()
 
-minDistance=25e3
-maxDistance=2e6
-
-enhancers = c("FANTOM5", "ENCODE")
-
-if(ref_sp == "human"){
-  enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")
-  target_sp = "mouse"
+if(!"pathScripts"%in%objects){
+  load=T
+  prepare=T
+  source("../main_figures/parameters.R")
 }
 
-path_evol <- paste(pathFinalData, "SupplementaryDataset7/", ref_sp, "/", sep="")
-path_contact <- paste(pathFinalData, "SupplementaryDataset4/", ref_sp, "/", sep="")
+##################################################################
+
+if(load){
+  sp="human"
+  
+  # Choose genes within : all ; dvpt ; other
+  selected_genes = "all" 
+  if (selected_genes == "dvpt"){`%get%` <- `%in%`}else{`%get%` <- Negate(`%in%`)}
+
+  minDistance=25e3
+  maxDistance=2e6
+  
+  load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
+  load(paste(pathFigures, "RData/data.gene.enhancer.contacts.conservation.RData", sep=""))
+  load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
+  
+  path_contact=paste(pathFinalData, "SupplementaryDataset4/", sp, "/", sep="")
+  
+  if(selected_genes != "all"){
+    dev_gene <- read.table(paste(pathFinalData, "SupplementaryDataset3/genes/", sp, "_dvpt_process_genes.txt", sep=""), header=T, sep="\t")
+  }
+    
+  load=FALSE
+}
 
 
 ##############################################################################################################################
@@ -32,16 +47,16 @@ conf_low_global <- c()
 conf_up_global <- c()
 n_total_global <- c()
 
-for (enh in enhancers){
+for (enh in enhancer.datasets[[sp]]){
   message(enh)
-  all_obs <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), header=T, sep="\t")
-  all_simul <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_simulated_interactions.txt", sep=""), header=T, sep="\t")
-  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_original2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
-  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_simulated2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  all_obs <- gene.enhancer.contacts[[sp]][[enh]][["real"]] 
+  all_simul <- gene.enhancer.contacts[[sp]][[enh]][["simulated"]] 
+  
+  contact_obs <- contacts.conservation[[sp]][[enh]][["real"]] 
+  contact_simul <- contacts.conservation[[sp]][[enh]][["simulated"]] 
   
   # Select specific genes
   if(selected_genes != "all"){
-    dev_gene <- read.table(paste(pathFinalData, "SupplementaryDataset3/genes/", ref_sp, "_dvpt_process_genes.txt", sep=""), header=T, sep="\t")
     all_obs <- all_obs[which(all_obs$gene %get% dev_gene$Gene.ID),]
     all_simul <- all_simul[which(all_simul$gene %get% dev_gene$Gene.ID),]
     contact_obs <- contact_obs[which(contact_obs$origin_gene %get% dev_gene$Gene.ID),]
@@ -50,8 +65,8 @@ for (enh in enhancers){
   
   
   # Select only contacts with no duplicated enhancers
-  obs_stats <- read.table(paste(path_contact, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
-  simul_stats <- read.table(paste(path_contact, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
+  obs_stats <- enhancer.statistics[[sp]][[enh]][["real"]]
+  simul_stats <- enhancer.statistics[[sp]][[enh]][["simulated"]]
   obs_stats$enh <-  do.call(paste,c(obs_stats[c("chr","start","end")],sep=":"))
   simul_stats$enh <-  do.call(paste,c(simul_stats[c("chr","start","end")],sep=":"))
   obs_stats <- obs_stats[which(obs_stats$BLAT_match < 2),]
@@ -96,21 +111,21 @@ for (enh in enhancers){
 
 ################################################# Conserv ~ genomic distance   #################################################
 
-for (enh in enhancers){
-  all_obs <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), header=T, sep="\t")
-  all_simul <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_simulated_interactions.txt", sep=""), header=T, sep="\t")
-  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_original2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
-  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_simulated2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+for (enh in enhancer.datasets[[sp]]){
+  all_obs <- gene.enhancer.contacts[[sp]][[enh]][["real"]] 
+  all_simul <- gene.enhancer.contacts[[sp]][[enh]][["simulated"]] 
+  
+  contact_obs <- contacts.conservation[[sp]][[enh]][["real"]] 
+  contact_simul <- contacts.conservation[[sp]][[enh]][["simulated"]] 
   
   # Select specific genes
   if(selected_genes != "all"){
-    dev_gene <- read.table(paste(pathFinalData, "SupplementaryDataset3/genes/", ref_sp, "_dvpt_process_genes.txt", sep=""), header=T, sep="\t")
     all_obs <- all_obs[which(all_obs$gene %get% dev_gene$Gene.ID),]
     all_simul <- all_simul[which(all_simul$gene %get% dev_gene$Gene.ID),]
     contact_obs <- contact_obs[which(contact_obs$origin_gene %get% dev_gene$Gene.ID),]
     contact_simul <- contact_simul[which(contact_simul$origin_gene %get% dev_gene$Gene.ID),]
   }
-  
+
   # Distance classes
   all_obs$class_dist <-cut(all_obs$dist, breaks=seq(from=0, to=maxDistance, by=50000), include.lowest = T)
   all_simul$class_dist <-cut(all_simul$dist, breaks=seq(from=0, to=maxDistance, by=50000), include.lowest = T)
@@ -118,8 +133,8 @@ for (enh in enhancers){
   contact_simul$class_dist <-cut(contact_simul$origin_dist, breaks=seq(from=0, to=maxDistance, by=50000), include.lowest = T)
   
   # Select only contacts with no duplicated enhancers
-  obs_stats <- read.table(paste(path_contact, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
-  simul_stats <- read.table(paste(path_contact, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
+  obs_stats <- enhancer.statistics[[sp]][[enh]][["real"]]
+  simul_stats <- enhancer.statistics[[sp]][[enh]][["simulated"]]
   obs_stats$enh <-  do.call(paste,c(obs_stats[c("chr","start","end")],sep=":"))
   simul_stats$enh <-  do.call(paste,c(simul_stats[c("chr","start","end")],sep=":"))
   obs_stats <- obs_stats[which(obs_stats$BLAT_match < 2),]
@@ -159,27 +174,28 @@ for (enh in enhancers){
 }
 
 
-################################################# Conserv ~ nb samples #################################################
+################################################# Conserv ~ nb cell #################################################
 
-for (enh in enhancers){
+for (enh in enhancer.datasets[[sp]]){
   message(enh)
-  all_obs <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), header=T, sep="\t")
-  all_simul <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_simulated_interactions.txt", sep=""), header=T, sep="\t")
-  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_original2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
-  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_simulated2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  all_obs <- gene.enhancer.contacts[[sp]][[enh]][["real"]] 
+  all_simul <- gene.enhancer.contacts[[sp]][[enh]][["simulated"]] 
+  
+  contact_obs <- contacts.conservation[[sp]][[enh]][["real"]] 
+  contact_simul <- contacts.conservation[[sp]][[enh]][["simulated"]] 
   
   # Select specific genes
   if(selected_genes != "all"){
-    dev_gene <- read.table(paste(pathFinalData, "SupplementaryDataset3/genes/", ref_sp, "_dvpt_process_genes.txt", sep=""), header=T, sep="\t")
     all_obs <- all_obs[which(all_obs$gene %get% dev_gene$Gene.ID),]
     all_simul <- all_simul[which(all_simul$gene %get% dev_gene$Gene.ID),]
     contact_obs <- contact_obs[which(contact_obs$origin_gene %get% dev_gene$Gene.ID),]
     contact_simul <- contact_simul[which(contact_simul$origin_gene %get% dev_gene$Gene.ID),]
   }
   
+  
   # Select only contacts with no duplicated enhancers
-  obs_stats <- read.table(paste(path_contact, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
-  simul_stats <- read.table(paste(path_contact, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
+  obs_stats <- enhancer.statistics[[sp]][[enh]][["real"]]
+  simul_stats <- enhancer.statistics[[sp]][[enh]][["simulated"]]
   obs_stats$enh <-  do.call(paste,c(obs_stats[c("chr","start","end")],sep=":"))
   simul_stats$enh <-  do.call(paste,c(simul_stats[c("chr","start","end")],sep=":"))
   obs_stats <- obs_stats[which(obs_stats$BLAT_match < 2),]
@@ -191,16 +207,21 @@ for (enh in enhancers){
   contact_simul <- contact_simul[which(contact_simul$origin_enh %in% simul_stats$enh),]
   
   # Sample classes
-  if(ref_sp=="human"){
-    sample_class = c(1, 2, 5, 10, 20)
-    class_lab=c("1", "2-5", "6-10", "11-20", "21-26")
-  }else{sample_class = c(1, 2, 3, 6, 9)
-  class_lab=c("1", "2-3", "4-6", "7-9", "10-14")}
+  if(sp=="human"){
+    sample_class = 0:7
+    class_lab=c(as.character(1:7), ">7")
+  }else{sample_class = 0:5
+  class_lab=c(as.character(1:5), ">5")}
   
-  all_obs$class_dist <- cut(all_obs$nb_sample, breaks=c(sample_class, max(all_obs$nb_sample)), include.lowest = T)
-  all_simul$class_dist <- cut(all_simul$nb_sample, breaks=c(sample_class, max(all_simul$nb_sample)+1), include.lowest = T)
-  contact_obs$class_dist <- cut(contact_obs$nb_sample, breaks=c(sample_class, max(contact_obs$nb_sample)), include.lowest = T)
-  contact_simul$class_dist <- cut(contact_simul$nb_sample, breaks=c(sample_class, max(contact_simul$nb_sample)), include.lowest = T)
+  all_obs$class_dist <- cut(all_obs$nb_cell, breaks=c(sample_class, max(all_obs$nb_cell)), include.lowest = T)
+  levels(all_obs$class_dist) = class_lab
+  all_simul$class_dist <- cut(all_simul$nb_cell, breaks=c(sample_class, max(all_simul$nb_cell)), include.lowest = T)
+  levels(all_simul$class_dist) = class_lab
+  
+  contact_obs$class_dist <- cut(contact_obs$nb_cell, breaks=c(sample_class, max(contact_obs$nb_cell)), include.lowest = T)
+  levels(contact_obs$class_dist) = class_lab
+  contact_simul$class_dist <- cut(contact_simul$nb_cell, breaks=c(sample_class, max(contact_simul$nb_cell)), include.lowest = T)
+  levels(contact_simul$class_dist) = class_lab
   
   # Overlap with target enhancer
   if (enh %in% c("FANTOM5", "ENCODE")){
@@ -237,12 +258,12 @@ for (enh in enhancers){
     (nrow(contact_simul[which(contact_simul$class_dist == x ),])/(nrow(all_simul[which(all_simul$class_dist == x ),])))*100))
   
   conserv_simul$conflow <- sapply(levels(all_simul$class_dist), function(x) 
-    tryCatch((prop.test(x = nrow(contact_simul[which(contact_simul$class_dist == x ),]),
-               n=nrow(all_simul[which(all_simul$class_dist == x ),]), p=0.5)$conf.int[1])*100,error=function(e) 0))
+    (prop.test(x = nrow(contact_simul[which(contact_simul$class_dist == x ),]),
+               n=nrow(all_simul[which(all_simul$class_dist == x ),]), p=0.5)$conf.int[1])*100)
 
-  conserv_simul$confup <- sapply(levels(all_simul$class_dist), function(x)  
-    tryCatch((prop.test(x = nrow(contact_simul[which(contact_simul$class_dist == x ),]),
-                        n=nrow(all_simul[which(all_simul$class_dist == x ),]), p=0.5)$conf.int[2])*100,error=function(e) 0))
+  conserv_simul$confup <- sapply(levels(all_simul$class_dist), function(x)
+    (prop.test(x = nrow(contact_simul[which(contact_simul$class_dist == x ),]), 
+               n=nrow(all_simul[which(all_simul$class_dist == x ),]), p=0.5)$conf.int[2])*100)
   
   conserv_simul$data <- "simul"
   conserv_simul$class <- class_lab
@@ -256,7 +277,7 @@ for (enh in enhancers){
 }
 
 ################################################# Conserv in similar samples #################################################
-for (enh in enhancers){
+for (enh in enhancer.datasets[[sp]]){
   message(enh)
   data <- c()
   conf_low <- c()
@@ -264,14 +285,14 @@ for (enh in enhancers){
   p_test <- c()
   n_total <- c()
   
-  all_obs <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), header=T, sep="\t")
-  all_simul <- read.table(paste(path_contact, "/", enh, "/gene_enhancer_contacts_simulated_interactions.txt", sep=""), header=T, sep="\t")
-  contact_obs <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_original2", target_sp, "_original.txt", sep=""), header=T, sep="\t")
-  contact_simul <- read.table(paste(path_evol,"/contact_conservation/", enh, "/", ref_sp, "_simulated2", target_sp, "_simulated.txt", sep=""), header=T, sep="\t")
+  all_obs <- gene.enhancer.contacts[[sp]][[enh]][["real"]] 
+  all_simul <- gene.enhancer.contacts[[sp]][[enh]][["simulated"]] 
+  
+  contact_obs <- contacts.conservation[[sp]][[enh]][["real"]] 
+  contact_simul <- contacts.conservation[[sp]][[enh]][["simulated"]] 
   
   # Select specific genes
   if(selected_genes != "all"){
-    dev_gene <- read.table(paste(pathFinalData, "SupplementaryDataset3/genes/", ref_sp, "_dvpt_process_genes.txt", sep=""), header=T, sep="\t")
     all_obs <- all_obs[which(all_obs$gene %get% dev_gene$Gene.ID),]
     all_simul <- all_simul[which(all_simul$gene %get% dev_gene$Gene.ID),]
     contact_obs <- contact_obs[which(contact_obs$origin_gene %get% dev_gene$Gene.ID),]
@@ -279,8 +300,8 @@ for (enh in enhancers){
   }
   
   # Select only contacts with no duplicated enhancers
-  obs_stats <- read.table(paste(path_contact, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
-  simul_stats <- read.table(paste(path_contact, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
+  obs_stats <- enhancer.statistics[[sp]][[enh]][["real"]]
+  simul_stats <- enhancer.statistics[[sp]][[enh]][["simulated"]]
   obs_stats$enh <-  do.call(paste,c(obs_stats[c("chr","start","end")],sep=":"))
   simul_stats$enh <-  do.call(paste,c(simul_stats[c("chr","start","end")],sep=":"))
   obs_stats <- obs_stats[which(obs_stats$BLAT_match < 2),]
@@ -307,7 +328,7 @@ for (enh in enhancers){
   
   
   ### Select relative cell type
-  if (ref_sp == "human"){
+  if (sp == "human"){
     # Pre-adipocytes
     all_obs_adip <- all_obs[which(!is.na(all_obs$pre_adipo)),]
     all_simul_adip <- all_simul[which(!is.na(all_simul$pre_adipo)),]
@@ -372,39 +393,19 @@ for (enh in enhancers){
   
 }
 
-if (ref_sp == "mouse"){
+if (sp == "mouse"){
   save(conserv_global,
        conserv_dist_FANTOM5, conserv_dist_ENCODE, 
        conserv_sample_FANTOM5, conserv_sample_ENCODE,
        conserv_similar_sample_FANTOM5, conserv_similar_sample_ENCODE,
-       file = paste(pathFigures, "/Fig5_", ref_sp, "_", selected_genes, "_genes_unique.Rdata", sep=""))
+       file = paste(pathFigures, "RData/Fig5_", sp, "_", selected_genes, "_genes.Rdata", sep=""))
   
 }else{
   save(conserv_global,
        conserv_dist_FANTOM5, conserv_dist_ENCODE, conserv_dist_RoadmapEpigenomics, conserv_dist_FOCS_GRO_seq,
        conserv_sample_FANTOM5, conserv_sample_ENCODE, conserv_sample_RoadmapEpigenomics, conserv_sample_FOCS_GRO_seq,
        conserv_similar_sample_FANTOM5, conserv_similar_sample_ENCODE, conserv_similar_sample_RoadmapEpigenomics, conserv_similar_sample_FOCS_GRO_seq,
-       file = paste(pathFigures, "/Fig5_", ref_sp, "_", selected_genes, "_genes_unique.Rdata", sep=""))
+       file = paste(pathFigures, "RData/Fig5_", sp, "_", selected_genes, "_genes.Rdata", sep=""))
 }
 
 
-
-
-
-# test_obs <- data.frame(result = sapply(levels(as.factor(all_obs$nb_sample)), function(x)
-#   (nrow(contact_obs[which(as.factor(contact_obs$nb_sample) == x),])/(nrow(all_obs[which(as.factor(all_obs$nb_sample) == x ),])))*100))
-# 
-# test_obs$data <- "obs"
-# test_obs$class <- levels(as.factor(all_obs$nb_sample))
-# 
-# test_simul <- data.frame(result = sapply(levels(as.factor(all_simul$nb_sample)), function(x)
-#   (nrow(contact_simul[which(as.factor(contact_simul$nb_sample) == x),])/(nrow(all_simul[which(as.factor(all_simul$nb_sample) == x ),])))*100))
-# 
-# test_simul$data <- "simul"
-# test_simul$class <- levels(as.factor(all_simul$nb_sample))
-# test_conserv <- rbind(test_obs, test_simul)
-# test_conserv$class <- ordered(test_conserv$class, levels = levels(as.factor(all_obs$nb_sample)))
-# 
-# bar <- barplot(result ~ data+class, beside=T, data=test_conserv, space = c(0.1, 0.6),
-#                border=c("darkgreen", "firebrick1"), col="white", ylab="Conserved contact (%)", xlab="Number of sample", 
-#                main="")
