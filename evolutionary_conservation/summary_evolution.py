@@ -4,9 +4,10 @@
 import os
 import numpy as np
 
-ref_sp = "mouse"
+ref_sp = "human"
 target_sp = "mouse" if ref_sp == "human" else "human"
-seuil = 0.6
+treshold = 0.8
+min_dist = 25000
 
 path = "/home/laverre/Data/Regulatory_landscape/result"
 path_evol = path + "/Supplementary_dataset6_regulatory_landscape_evolution/" + ref_sp + "/"
@@ -65,16 +66,20 @@ def cover(data, sample):
                     else [colnames.index("preadip_D0"), colnames.index("preadip_D2"), colnames.index("preadip_4H")]
             elif sample == "ESC":
                 ref = [colnames.index("hESC")] if ref_sp == "human" \
-                    else [colnames.index("ESC"), colnames.index("ESC_18"), colnames.index("ESC_NKO"),  colnames.index("ESC_wild")]
+                    else [colnames.index("ESC"), colnames.index("ESC_18"), colnames.index("ESC_wild")]
             elif sample == "Bcell":
-                ref = [colnames.index("Bcell"), colnames.index("TB"), colnames.index("NB")] if ref_sp == "human" \
+                ref = [colnames.index("TB"), colnames.index("NB")] if ref_sp == "human" \
                     else [colnames.index("preB_aged"), colnames.index("preB_young")]
             else:
                 ref = [1]
 
+            # Get only specific contacts
+            not_ref = [x for x in range(8, len(colnames)) if x not in ref]
+            #and all(i[y] == "NA" for y in not_ref)
+
             if any(i[x] != "NA" for x in ref):
                 if i[0] == i[3]:    # cis-interaction
-                    if 25000 <= float(i[7]) <= 10000000:
+                    if min_dist <= float(i[7]) <= 10000000:
                         if i[6] == "unbaited":
 
                             if bait in bait2gene.keys():
@@ -117,7 +122,7 @@ def enh_score(enh_name):
             except ZeroDivisionError:
                 align_score = 0
 
-            if enh in duplication.keys(): #align_score > seuil and
+            if enh in duplication.keys(): #align_score > treshold and
                 align[enh] = align_score
 
     overlap_target = {}
@@ -146,7 +151,7 @@ def enh_score(enh_name):
     #         else:
     #             align_score = float(i[4])
     #
-    #         if align_score > seuil:
+    #         if align_score > treshold:
     #             align[enh_origin] = align_score
     #
     # return align
@@ -163,19 +168,21 @@ def enh_synteny(enh_name, data, enh_conserved):
             i = i.split("\t")
             gene = i[0]
             enh = i[2]
+            gene_enh_dist = float(i[3])
 
-            if gene in enh_conserved.keys() and enh in enh_conserved[gene]:
-                if i[7] != "trans" and float(i[7]) < 10000000:          # cis interaction
-                    if gene not in synteny_10M.keys():
-                        synteny_10M[gene] = [enh]
-                    elif enh not in synteny_10M[gene]:
-                        synteny_10M[gene].append(enh)
+            if gene_enh_dist > min_dist:
+                if gene in enh_conserved.keys() and enh in enh_conserved[gene]:
+                    if i[7] != "trans" and float(i[7]) < 10000000:          # cis interaction
+                        if gene not in synteny_10M.keys():
+                            synteny_10M[gene] = [enh]
+                        elif enh not in synteny_10M[gene]:
+                            synteny_10M[gene].append(enh)
 
-                    if float(i[7]) < 2000000:
-                        if gene not in synteny_2M.keys():
-                            synteny_2M[gene] = [enh]
-                        elif enh not in synteny_2M[gene]:
-                            synteny_2M[gene].append(enh)
+                        if float(i[7]) < 2000000:
+                            if gene not in synteny_2M.keys():
+                                synteny_2M[gene] = [enh]
+                            elif enh not in synteny_2M[gene]:
+                                synteny_2M[gene].append(enh)
 
     return synteny_10M, synteny_2M
 
@@ -195,36 +202,41 @@ def enh_contact(enh_name, data, sample, duplication, align_score, overlap_target
             i = i.split("\t")
             gene = i[0]
             enh = i[1]
+            dist = float(i[2])
 
-            if sample == "pre_adipo":
-                ref = [colnames.index("pre_adipo")]
-                target = [colnames.index("preadip_D0"), colnames.index("preadip_D2"), colnames.index("preadip_4H")]
-            elif sample == "ESC":
-                ref = [colnames.index("hESC")]
-                target = [colnames.index("ESC"), colnames.index("ESC_18"), colnames.index("ESC_NKO"),  colnames.index("ESC_wild")]
-            elif sample == "Bcell":
-                ref = [colnames.index("Bcell"), colnames.index("TB"), colnames.index("NB")]
-                target = [colnames.index("preB_aged"), colnames.index("preB_young")]
-            else:
-                ref = [1]
-                target = [1]
+            if dist > min_dist:
+                if sample == "pre_adipo":
+                    ref = [colnames.index("pre_adipo")]
+                    target = [colnames.index("preadip_D0"), colnames.index("preadip_D2"), colnames.index("preadip_4H")]
+                elif sample == "ESC":
+                    ref = [colnames.index("hESC")]
+                    target = [colnames.index("ESC"), colnames.index("ESC_18"),  colnames.index("ESC_wild")]
+                elif sample == "Bcell":
+                    ref = [colnames.index("TB"), colnames.index("NB")]
+                    target = [colnames.index("preB_aged"), colnames.index("preB_young")]
+                else:
+                    ref = [1]
+                    target = [1]
 
-            if any(i[x] != '0' for x in ref) and any(i[x] != '0' for x in target):
-                if enh in duplication.keys():
-                    if enh in align_score.keys() and align_score[enh] > seuil:
-                        # Contact dict
-                        if gene not in contact.keys():
-                            contact[gene] = [enh]
-                        elif enh not in contact[gene]:
-                            contact[gene].append(enh)
+                col_ref = range(colnames.index("Bcell"), colnames.index("NCD8")+1)
+                col_target = range(colnames.index("EpiSC"), colnames.index("preadip_4H")+1)
 
-                        if enh_name in ["CAGE", "ENCODE"]:
-                            # Contact and overlap dict
-                            if enh in overlap_target.keys():
-                                if gene not in contact_overlap.keys():
-                                    contact_overlap[gene] = [enh]
-                                elif enh not in contact_overlap[gene]:
-                                    contact_overlap[gene].append(enh)
+                if any(i[x] != '0' for x in ref) and any(i[x] != '0' for x in target):
+                    if enh in duplication.keys():
+                        if enh in align_score.keys() and align_score[enh] > treshold:
+                            # Contact dict
+                            if gene not in contact.keys():
+                                contact[gene] = [enh]
+                            elif enh not in contact[gene]:
+                                contact[gene].append(enh)
+
+                            if enh_name in ["CAGE", "ENCODE"]:
+                                # Contact and overlap dict
+                                if enh in overlap_target.keys():
+                                    if gene not in contact_overlap.keys():
+                                        contact_overlap[gene] = [enh]
+                                    elif enh not in contact_overlap[gene]:
+                                        contact_overlap[gene].append(enh)
 
     return contact, contact_overlap
 
@@ -248,47 +260,50 @@ def summary(enh_name, data, sample):
             i = i.split("\t")
             gene = i[0]
             enh = i[1]
+            gene_enh_dist = float(i[4])
             enh_length = int(enh.split(":")[2]) - int(enh.split(":")[1])
-            if gene not in dist.keys():
-                dist[gene] = [float(i[4])]
-            else:
-                dist[gene].append(float(i[4]))
 
-            if sample == "pre_adipo":
-                ref = [colnames.index("pre_adipo")] if ref_sp == "human" \
-                    else [colnames.index("preadip_D0"), colnames.index("preadip_D2"), colnames.index("preadip_4H")]
-            elif sample == "ESC":
-                ref = [colnames.index("hESC")] if ref_sp == "human" \
-                    else [colnames.index("ESC"), colnames.index("ESC_18"), colnames.index("ESC_NKO"),  colnames.index("ESC_wild")]
-            elif sample == "Bcell":
-                ref = [colnames.index("Bcell"), colnames.index("TB"), colnames.index("NB")] if ref_sp == "human" \
-                    else [colnames.index("preB_aged"), colnames.index("preB_young")]
-            else:
-                ref = [1]
+            if gene_enh_dist > min_dist:
+                if gene not in dist.keys():
+                    dist[gene] = [float(i[4])]
+                else:
+                    dist[gene].append(float(i[4]))
 
-            if any(i[x] != "nan" for x in ref):
-                if enh in duplication.keys():
-                    if enh not in align_score.keys():
-                        align_score[enh] = 0
+                if sample == "pre_adipo":
+                    ref = [colnames.index("pre_adipo")] if ref_sp == "human" \
+                        else [colnames.index("preadip_D0"), colnames.index("preadip_D2"), colnames.index("preadip_4H")]
+                elif sample == "ESC":
+                    ref = [colnames.index("hESC")] if ref_sp == "human" \
+                        else [colnames.index("ESC"), colnames.index("ESC_18"), colnames.index("ESC_wild")]
+                elif sample == "Bcell":
+                    ref = [colnames.index("TB"), colnames.index("NB")] if ref_sp == "human" \
+                        else [colnames.index("preB_aged"), colnames.index("preB_young")]
+                else:
+                    ref = [1]
 
-                    if gene not in enh_total.keys():
-                        enh_total[gene] = [float(align_score[enh])]
-                        enh_total_length[gene] = [enh_length]
-                    elif enh not in enh_total[gene]:
-                        enh_total[gene].append(float(align_score[enh]))
-                        enh_total_length[gene].append(enh_length)
+                if any(i[x] != "nan" for x in ref):
+                    if enh in duplication.keys():
+                        if enh not in align_score.keys():
+                            align_score[enh] = 0
 
-                    if enh in align_score.keys() and align_score[enh] > seuil:
-                        if gene not in enh_conserv.keys():
-                            enh_conserv[gene] = [float(align_score[enh])]
-                            enh_conserv_list[gene] = [enh]
-                        elif enh not in enh_conserv_list[gene]:
-                            enh_conserv[gene].append(float(align_score[enh]))
-                            enh_conserv_list[gene].append(enh)
+                        if gene not in enh_total.keys():
+                            enh_total[gene] = [float(align_score[enh])]
+                            enh_total_length[gene] = [enh_length]
+                        elif enh not in enh_total[gene]:
+                            enh_total[gene].append(float(align_score[enh]))
+                            enh_total_length[gene].append(enh_length)
+
+                        if enh in align_score.keys() and align_score[enh] > treshold:
+                            if gene not in enh_conserv.keys():
+                                enh_conserv[gene] = [float(align_score[enh])]
+                                enh_conserv_list[gene] = [enh]
+                            elif enh not in enh_conserv_list[gene]:
+                                enh_conserv[gene].append(float(align_score[enh]))
+                                enh_conserv_list[gene].append(enh)
 
     enh_synt10M, enh_synt2M = enh_synteny(enh_name, data, enh_conserv_list)
 
-    output_file = path_evol + enh_name + "_" + data + "_evolution_summary_" + sample + ".txt_unique"
+    output_file = path_evol + enh_name + "_" + data + "_evolution_summary_" + sample + "_" + str(min_dist) + "_" + str(treshold) + ".txt"
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         output.write("gene\tnb_total\tnb_seq_conserv\tnb_synt10M_conserv\tnb_synt2M_conserv\t"
@@ -326,7 +341,7 @@ def summary(enh_name, data, sample):
 
 datas = ["original", "simulated"]
 enh_data = ["ENCODE", "CAGE"]
-samples = ["Bcell", "pre_adipo", "ESC"]
+samples = ["all"] #, "Bcell", "pre_adipo", "ESC"]
 if ref_sp == "human":
      enh_data.extend(["GRO_seq", "RoadMap"])
 

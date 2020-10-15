@@ -73,7 +73,7 @@ def enh_conserv(enh_name, score):
 
         align_all_sp[enh].append(align_score)
 
-    output_file = path_evol + ref_sp + "/sequence_conservation/" + enh_name + "/Alignments_stats_all_species_" + score + ".txt3"
+    output_file = path_evol + ref_sp + "/sequence_conservation/" + enh_name + "/Alignments_stats_all_species_" + score + ".txt"
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         other = "human" if ref_sp == "mouse" else "mouse"

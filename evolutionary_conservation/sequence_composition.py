@@ -10,6 +10,15 @@ path_HIC = "/home/laverre/Data/Regulatory_landscape/result/"
 path_output = "/home/laverre/Documents/Regulatory_Landscape/result/"
 origin_sp = "human"
 
+# Samples to cell types
+sample2cell = {}
+with open(path_dupli + "SupplementaryTable1.txt") as table:
+    for i in table.readlines()[1:]:
+        i = i.strip("\n")
+        i = i.split("\t")
+        sample = str(i[1])
+        cell = str(i[2])
+        sample2cell[sample] = cell
 
 # Composition in base pairs
 def dic_pb(file):
@@ -105,7 +114,7 @@ def HiC_stats(origin_sp, data):
     with open(path_HIC + infile) as f3:
         first_line = f3.readline().strip("\n")
         first_line = first_line.split("\t")
-        cell_name = first_line[8:]
+        sample_names = first_line[8:]
 
         for i in f3.readlines():
             i = i.strip("\n")
@@ -117,7 +126,7 @@ def HiC_stats(origin_sp, data):
                 dist = float(i[7])
                 if 25000 <= dist <= 10000000:
                     contact = [float(x) if x != "NA" else np.nan for x in i[8:]]
-                    nb_bait_in_cell = [1 if x != "NA" else 0 for x in i[8:]]  #  Nb bait for each cell
+                    nb_bait_in_cell = [1 if x != "NA" else 0 for x in i[8:]]  # Nb bait for each cell
                     score = str(np.median([float(x) for x in i[8:] if x != "NA"]))
 
                     # PIR side
@@ -166,17 +175,23 @@ def HiC_stats(origin_sp, data):
     print("Writting output...")
     output = open("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt_new2", 'w')
     if os.stat("../../result/conservation/contacted_sequence_composition_" + origin_sp + data + ".txt_new2").st_size == 0:
-        output.write("chr\tstart\tend\tlength\tCAGE_bp\tENCODE_bp\t")
+        output.write("chr\tstart\tend\tlength\tFANTOM5_bp\tENCODE_bp\t")
         if origin_sp == "human":
-            output.write("RoadMap_bp\tGRO_seq_bp\t")
+            output.write("RoadmapEpigenomics_bp\tFOCS_GRO_seq_bp\t")
         output.write("bait_contacted\tgenes_contacted\tmean_baits_contacts\tmedian_score\tmedian_dist\tbaited\tnb_sample\t"
-                     "BLAT_match\tall_exon_bp\trepet_noexon_bp\tcoding_exon_pb\tnocoding_exon_pb\trepeat_bp\t"
+                     "nb_cell\tBLAT_match\tall_exon_bp\trepet_noexon_bp\tcoding_exon_pb\tnocoding_exon_pb\trepeat_bp\t"
                      "GC_bp\tTSS_count\t")
 
-        output.write('\t'.join(cell_name) + "\n")
+        output.write('\t'.join(sample_names) + "\n")
 
     for PIR in PIR_infos.keys():
-        nb_sample = str(len([x for x in PIR_infos[PIR][2] if float(x) > 0]))
+        samples = [i for i in range(len(PIR_infos[PIR][2])) if float(PIR_infos[PIR][2][i]) > 0]
+        nb_sample = str(len(samples))
+
+        sample_name = [sample_names[sample] for sample in samples]
+        cell_names = [sample2cell[sample] for sample in sample_name]
+        nb_cell = str(len(set(cell_names)))
+
         bait_contact = [len(bait_infos[bait][0]) for bait in PIR_infos[PIR][0]]  # nb contact of contacted baits
         length = str(int(PIR.split(':')[2]) - int(PIR.split(':')[1]))
 
@@ -188,7 +203,8 @@ def HiC_stats(origin_sp, data):
         output.write(str(len(PIR_infos[PIR][0])) + '\t' + str(len(PIR_infos[PIR][6])) + '\t' + str(np.mean(bait_contact)) + '\t')
         output.write(str(np.median([float(x) for x in PIR_infos[PIR][5]])) + '\t')  # median_score
         output.write(str(np.median([float(x) for x in PIR_infos[PIR][1]])) + '\t' + str(PIR_infos[PIR][4]) + '\t')
-        output.write(str(nb_sample) + '\t' + str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t')
+        output.write(str(nb_sample) + '\t' + str(nb_cell) + '\t')
+        output.write(str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t')
         output.write(str(all_exon250[PIR]) + '\t' + str(coding_exon[PIR]) + '\t' + str(nocoding_exon[PIR]) + '\t')
         output.write(str(repeat_pb[PIR]) + '\t' + str(GC_pb[PIR]) + '\t' + str(TSS_count[PIR]) + '\t')
         output.write(str('\t'.join(str(x) for x in PIR_infos[PIR][3])) + '\n')
@@ -206,7 +222,7 @@ def HiC_stats(origin_sp, data):
     for Bait in bait_infos.keys():
         PIR_contact = [len(PIR_infos[PIR][0]) for PIR in bait_infos[Bait][0]]  # nb contact of contacted PIR
 
-        output_bait.write(Bait.split(':')[0] + '\t' + Bait.split(':')[1] + '\t' + Bait.split(':')[2]+ '\t')
+        output_bait.write(Bait.split(':')[0] + '\t' + Bait.split(':')[1] + '\t' + Bait.split(':')[2] + '\t')
         output_bait.write(str(CAGE_contact[Bait]) + '\t' + str(ENCODE_contact[Bait]) + '\t')
         if origin_sp == "human":
             output_bait.write(str(RoadMap_contact[Bait]) + '\t' + str(GRO_seq_count[Bait]) + '\t')
@@ -214,7 +230,7 @@ def HiC_stats(origin_sp, data):
         output_bait.write(str(len(bait_infos[Bait][0])) + '\t' + str(len(contact_unbaited[Bait])) + '\t' +
                           str(np.mean(PIR_contact)) + '\t' + str(np.median([float(x) for x in bait_infos[Bait][1]]))
                           + '\t' + str(frag_dupli[Bait]) + '\t' + str(all_exon[Bait]) + '\t' + str(all_exon250[Bait])
-                          + '\t' + str(coding_exon[Bait]) + '\t' + str(nocoding_exon[Bait])+ '\t' + str(repeat_pb[Bait])
+                          + '\t' + str(coding_exon[Bait]) + '\t' + str(nocoding_exon[Bait]) + '\t' + str(repeat_pb[Bait])
                           + '\t' + str(GC_pb[Bait]) + '\t' + str(TSS_count_bait[Bait])
                           + '\t' + str(len(gene_count_bait[Bait])) + '\t' + str(",".join(gene_count_bait[Bait])) + '\n')
 

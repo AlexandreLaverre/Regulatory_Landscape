@@ -54,9 +54,9 @@ def HiC_stats(origin_sp, enh):
         contact_unbaited = {}
 
         if data == "_simulated":
-            infile = "Supplementary_dataset4_genes_enhancers_contacts/" + origin_sp + "/" + enh + "/gene_" + enh + "_enhancers_simulated_interactions.txt"
+            infile = "Supplementary_dataset4_genes_enhancers_contacts/" + origin_sp + "/" + enh + "/gene_" + enh + "_enhancers_simulated_interactions.txt_unique"
         else:
-            infile = "Supplementary_dataset4_genes_enhancers_contacts/" + origin_sp + "/" + enh + "/gene_" + enh + "_enhancers_original_interactions.txt"
+            infile = "Supplementary_dataset4_genes_enhancers_contacts/" + origin_sp + "/" + enh + "/gene_" + enh + "_enhancers_original_interactions.txt_unique"
 
         with open(path_HIC + infile) as f3:
             first_line = f3.readline().strip("\n")
@@ -66,9 +66,9 @@ def HiC_stats(origin_sp, enh):
             for i in f3.readlines():
                 i = i.strip("\n")
                 i = i.split("\t")
-                bait = str(i[0])
-                gene = str(i[1])
-                PIR = str(i[3])
+                baits = [i[2].split(",")]
+                gene = str(i[0])
+                PIR = str(i[1])
 
                 dist = str(i[4])
                 contact_score = [float(x) if x != "nan" else np.nan for x in i[7:]]
@@ -77,11 +77,12 @@ def HiC_stats(origin_sp, enh):
 
                 # PIR side
                 if PIR not in PIR_infos.keys():
-                    PIR_infos[PIR] = [[bait], [dist], contact_score, contacted_gene_in_cell, [median_score], [gene]]
+                    PIR_infos[PIR] = [baits, [dist], contact_score, contacted_gene_in_cell, [median_score], [gene]]
 
                 else:
-                    if bait not in PIR_infos[PIR][0]:
-                        PIR_infos[PIR][0].append(bait)
+                    for bait in baits:
+                        if bait not in PIR_infos[PIR][0]:
+                            PIR_infos[PIR][0].append(bait)
                     if gene not in PIR_infos[PIR][5]:
                         PIR_infos[PIR][5].append(gene)
 
@@ -106,8 +107,8 @@ def HiC_stats(origin_sp, enh):
 
         ############################################## OUTPUT ##############################################
         print("Writting output...")
-        output = open(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_new2", 'w')
-        if os.stat(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_new2").st_size == 0:
+        output = open(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_unique", 'w')
+        if os.stat(path_annot + "/" + origin_sp + "/contacted_" + enh + "_composition_" + origin_sp + data + ".txt_unique").st_size == 0:
             output.write("chr\tstart\tend\tlength\t")
             output.write("bait_contacted\tgenes_contacted\tmean_genes_contacts\tmedian_score\tmedian_dist\tnb_sample\t"
                          "BLAT_match\tall_exon_bp\trepeat_bp\tGC_bp\t")
@@ -130,7 +131,7 @@ def HiC_stats(origin_sp, enh):
         output.close()
 
 
-origin_sp = "human"
+origin_sp = "mouse"
 enhancers = ["CAGE", "ENCODE"]
 if origin_sp == "human":
     enhancers.extend(["RoadMap", "GRO_seq"])
