@@ -173,7 +173,7 @@ results$ResidualPearson=lm3$residuals
 
 ######################################################################################
 
-write.table(results, file=paste(paste(pathSupplementaryDataset6, "expression_divergence/ExpressionDivergence_CardosoMoreira2019.txt", row.names=F, col.names=T, sep="\t", quote=F)
+write.table(results, file=paste(pathSupplementaryDataset6, "expression_divergence/ExpressionDivergence_CardosoMoreira2019.txt",sep=""), row.names=F, col.names=T, sep="\t", quote=F)
 
 ######################################################################################
 ######################################################################################
