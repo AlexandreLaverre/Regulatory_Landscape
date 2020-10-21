@@ -1,6 +1,25 @@
 ############################################################################
 
-pathExpression="../../../RegulatoryLandscapesManuscript/SupplementaryDataset6/"
+## define paths
+
+user=as.character(Sys.getenv()["USER"])
+
+if(user=="laverre"){
+  pathFinalData="/home/laverre/Manuscript/"
+}
+
+if(user=="necsulea"){
+  pathFinalData="/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
+}
+
+
+if(user=="ubuntu"){
+  pathFinalData="/mnt/RegulatoryLandscapesManuscript/"
+}
+
+######################################################################################
+
+pathExpression=paste(pathFinalData, "SupplementaryDataset6/", sep="")
 
 ############################################################################
 
@@ -33,7 +52,7 @@ for(sp in c("human", "mouse")){
 
   if(dataset=="CardosoMoreira2019"){
     tissue=unlist(lapply(samples, function(x) unlist(strsplit(x, split="\\."))[1]))
-    age=unlist(lapply(samples, function(x) unlist(strsplit(x, split="\\."))[2]))
+    age=unlist(lapply(samples, function(x) {y=unlist(strsplit(x, split="\\.")); return(paste(y[-c(1, length(y))], collapse="."))}))
     
     tissage=as.factor(paste(tissue, age, sep="."))
     
