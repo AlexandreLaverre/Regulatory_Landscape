@@ -132,7 +132,7 @@ expdiv.mean=as.data.frame(expdiv.mean)
 
 write.table(expdiv.median, file=paste(pathExpressionData,"expression_divergence/ExpressionDivergence_CardosoMoreira2019_OrganStage_MedianTPM.txt", sep=""), row.names=T, col.names=T, sep="\t", quote=F)
 
-write.table(expdiv.mean, file=paste(pathExpressionData, "/expression_divergence/ExpressionDivergence_CardosoMoreira2019_OrganStage__MeanTPM.txt", sep=""), row.names=T, col.names=T, sep="\t", quote=F)
+write.table(expdiv.mean, file=paste(pathExpressionData, "/expression_divergence/ExpressionDivergence_CardosoMoreira2019_OrganStage_MeanTPM.txt", sep=""), row.names=T, col.names=T, sep="\t", quote=F)
 
 ######################################################################################
 ######################################################################################
