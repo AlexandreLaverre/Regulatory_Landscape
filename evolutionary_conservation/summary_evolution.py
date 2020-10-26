@@ -6,17 +6,24 @@ import numpy as np
 
 ref_sp = "human"
 target_sp = "mouse" if ref_sp == "human" else "human"
-treshold = 0.8
+treshold = 0.4
 min_dist = 25000
 
-path = "/home/laverre/Data/Regulatory_landscape/result"
-path_evol = path + "/Supplementary_dataset6_regulatory_landscape_evolution/" + ref_sp + "/"
-path_annot = path + "/Supplementary_dataset3_annotations/" + ref_sp + "/"
-path_contact = path + "/Supplementary_dataset4_genes_enhancers_contacts/" + ref_sp + "/"
+pathData = "/home/laverre/Manuscript/SupplementaryDataset1/" + ref_sp + "/"
+pathSimulation = "/home/laverre/Manuscript/SupplementaryDataset2/" + ref_sp + "/"
+pathEnhContact = "/home/laverre/Manuscript/SupplementaryDataset4/" + ref_sp + "/"
+
+pathEvolution = "/home/laverre/Manuscript/SupplementaryDataset7/" + ref_sp
+pathAlignment = pathEvolution + "/sequence_conservation/enhancers/"
+pathSynteny = pathEvolution + "/synteny_conservation/"
+pathContact = pathEvolution + "/contact_conservation/"
+pathOutput = pathEvolution + "/evolution_summary_by_gene/"
+
+path_annot = "/home/laverre/Data/Regulatory_landscape/result/Supplementary_dataset3_annotations/" + ref_sp + "/"
 
 ########################################### Orthologous gene one2one ###############################################
 ortho = {}
-with open(path_evol + "gene_orthology/" + ref_sp + "2" + target_sp + "_orthologue.txt") as f3:
+with open(pathEvolution + "/gene_orthology/" + ref_sp + "2" + target_sp + "_orthologue.txt") as f3:
     for i in f3.readlines()[1:]:
         i = i.strip("\n")
         i = i.split("\t")
@@ -43,9 +50,9 @@ with open(path_annot + "/restriction_fragments/bait_overlap_TSS_1kb.txt") as f1:
 ######################################## Coverage of contacted region per gene ########################################
 def cover(data, sample):
     if data == "original":
-        infile = path + "/Supplementary_dataset1_original_interactions/" + ref_sp + "/all_interactions.txt"
+        infile = pathData + "/all_interactions.txt"
     else:
-        infile = path + "/Supplementary_dataset2_simulated_interactions/" + ref_sp + "/simulated_all_interactions.txt"
+        infile = pathSimulation + "/simulated_all_interactions.txt"
 
     coverage = {}
     gene_contact = {}
@@ -110,8 +117,7 @@ def enh_score(enh_name):
             if int(i[4]) == 1:
                 duplication[enh] = i[4]
 
-    with open(path_evol + "sequence_conservation/" + enh_name +
-              "/AlignmentStatistics_Excluding_all_Exons_" + ref_sp + "2" + target_sp + "_" + enh_name + ".txt") as f1:
+    with open(pathAlignment + enh_name + "/AlignmentStatistics_Excluding_Exons_" + ref_sp + "2" + target_sp + ".txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -126,9 +132,8 @@ def enh_score(enh_name):
                 align[enh] = align_score
 
     overlap_target = {}
-    if enh_name in ["CAGE", "ENCODE"]:
-        with open(path_evol + "sequence_conservation/" + enh_name + "/" +
-                  enh_name + "_lifted_overlap_" + enh_name + "_target.txt") as f1:
+    if enh_name in ["FANTOM5", "ENCODE"]:
+        with open(pathAlignment + enh_name + "/enhancer_overlap_target_enhancer.txt") as f1:
             for i in f1.readlines()[1:]:
                 i = i.strip("\n")
                 i = i.split("\t")
@@ -139,30 +144,12 @@ def enh_score(enh_name):
 
     return duplication, align, overlap_target
 
-    # with open(path_evol + "/sequence_conservation/PhastCons/PhastCons_vertebrates_" +
-    #           enh_name + "_MaskedExons_Ensembl94.txt") as f1:
-    #     for i in f1.readlines()[1:]:
-    #         i = i.strip("\n")
-    #         i = i.split("\t")
-    #
-    #         enh_origin = i[0].strip(":+")
-    #         if i[4] == "NA":
-    #             align_score = 0
-    #         else:
-    #             align_score = float(i[4])
-    #
-    #         if align_score > treshold:
-    #             align[enh_origin] = align_score
-    #
-    # return align
-
 
 ############################################# Synteny conservation ###################################################
 def enh_synteny(enh_name, data, enh_conserved):
     synteny_10M = {}
     synteny_2M = {}
-    with open(path_evol + "synteny_conservation/" + enh_name + "/" + ref_sp + "2" + target_sp + "_"
-              + enh_name + "_" + data + "_synteny.txt_unique") as f1:
+    with open(pathSynteny + enh_name + "/" + ref_sp + "2" + target_sp + "_" + data + "_synteny.txt") as f1:
         for i in f1.readlines()[1:]:
             i = i.strip("\n")
             i = i.split("\t")
@@ -191,8 +178,7 @@ def enh_synteny(enh_name, data, enh_conserved):
 def enh_contact(enh_name, data, sample, duplication, align_score, overlap_target):
     contact = {}
     contact_overlap = {}
-    with open(path_evol + "contact_conservation/" + enh_name + "/" + ref_sp + "_" + data + "2" + target_sp +
-              "_" + data + ".txt_unique") as f1:
+    with open(pathContact + enh_name + "/" + ref_sp + "_" + data + "2" + target_sp + "_" + data + ".txt") as f1:
 
         colnames = f1.readline().strip("\n")
         colnames = colnames.split("\t")
@@ -251,7 +237,7 @@ def summary(enh_name, data, sample):
     enh_total_length = {}
     enh_conserv = {}
     enh_conserv_list = {}
-    with open(path_contact + "/" + enh_name + "/gene_" + enh_name + "_enhancers_" + data + "_interactions.txt_unique") as f1:
+    with open(pathEnhContact + "/" + enh_name + "/gene_enhancer_contacts_" + data + "_interactions.txt") as f1:
         colnames = f1.readline().strip("\n")
         colnames = colnames.split("\t")
 
@@ -303,13 +289,13 @@ def summary(enh_name, data, sample):
 
     enh_synt10M, enh_synt2M = enh_synteny(enh_name, data, enh_conserv_list)
 
-    output_file = path_evol + enh_name + "_" + data + "_evolution_summary_" + sample + "_" + str(min_dist) + "_" + str(treshold) + ".txt"
+    output_file = pathOutput + enh_name + "/" + data + "_evolution_summary_" + sample + "_" + str(treshold) + ".txt"
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         output.write("gene\tnb_total\tnb_seq_conserv\tnb_synt10M_conserv\tnb_synt2M_conserv\t"
                      "nb_contact_conserv\tmed_align_score\tcontacted_coverage\ttotal_enh_length\tmedian_dist")
 
-        if enh_name in ["CAGE", "ENCODE"]:
+        if enh_name in ["FANTOM5", "ENCODE"]:
             output.write("\tnb_overlap_target\n")
         else:
             output.write("\n")
@@ -329,7 +315,7 @@ def summary(enh_name, data, sample):
             output.write(gene + '\t' + nb_total + '\t' + nb_conserv + '\t' + nb_synt10M + '\t' + nb_synt2M + '\t' +
                          nb_contact + '\t' + med_align + '\t' + coverage[gene] + '\t' + enh_cover + '\t' + median_dist)
 
-            if enh_name in ["CAGE", "ENCODE"]:
+            if enh_name in ["FANTOM5", "ENCODE"]:
                 nb_overlap_target = str(len(contact_overlap[gene])) if gene in contact_overlap.keys() else str(0)
                 output.write("\t" + nb_overlap_target + "\n")
 
@@ -340,10 +326,10 @@ def summary(enh_name, data, sample):
 
 
 datas = ["original", "simulated"]
-enh_data = ["ENCODE", "CAGE"]
-samples = ["all"] #, "Bcell", "pre_adipo", "ESC"]
+enh_data = ["FANTOM5", "ENCODE"]
+samples = ["all", "Bcell", "pre_adipo", "ESC"]
 if ref_sp == "human":
-     enh_data.extend(["GRO_seq", "RoadMap"])
+     enh_data.extend(["FOCS_GRO_seq", "RoadmapEpigenomics"])
 
 for enh_dat in enh_data:
     for dat in datas:
