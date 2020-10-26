@@ -2,6 +2,7 @@
 library(data.table)
 options(stringsAsFactors = FALSE)
 
+#setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
 #########################################################################
 
 ## if it's the first time we run this figure, we load and prepare data
@@ -30,7 +31,7 @@ if(load){
   load(paste(pathFigures, "RData/data.gene.enhancer.contacts.conservation.RData", sep=""))
   load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
   
-  path_contact=paste(pathFinalData, "SupplementaryDataset4/", sp, "/", sep="")
+  path_overlap=paste(pathFinalData, "SupplementaryDataset7/", sp, "/sequence_conservation/enhancers/", sep="")
   
   if(selected_genes != "all"){
     dev_gene <- read.table(paste(pathFinalData, "SupplementaryDataset3/genes/", sp, "_dvpt_process_genes.txt", sep=""), header=T, sep="\t")
@@ -79,7 +80,7 @@ for (enh in enhancer.datasets[[sp]]){
   
   # Overlap with target enhancer
   if (enh %in% c("FANTOM5", "ENCODE")){
-    overlap_enh <- read.table(paste(path_contact, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
+    overlap_enh <- read.table(paste(path_overlap, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
     enh_tot = nrow(overlap_enh)
     overlap_enh <- overlap_enh[which(overlap_enh[,5] != "NA"),]
     enh_overlap = nrow(overlap_enh)
@@ -225,7 +226,7 @@ for (enh in enhancer.datasets[[sp]]){
   
   # Overlap with target enhancer
   if (enh %in% c("FANTOM5", "ENCODE")){
-    overlap_enh <- read.table(paste(path_contact, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
+    overlap_enh <- read.table(paste(path_overlap, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
     enh_tot = nrow(overlap_enh)
     overlap_enh <- overlap_enh[which(overlap_enh[,5] != "NA"),]
     enh_overlap = nrow(overlap_enh)
@@ -314,7 +315,7 @@ for (enh in enhancer.datasets[[sp]]){
   
   # Overlap with target enhancer
   if (enh %in% c("FANTOM5", "ENCODE")){
-    overlap_enh <- read.table(paste(path_contact, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
+    overlap_enh <- read.table(paste(path_overlap, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
     enh_tot = nrow(overlap_enh)
     overlap_enh <- overlap_enh[which(overlap_enh[,5] != "NA"),]
     enh_overlap = nrow(overlap_enh)
@@ -338,8 +339,8 @@ for (enh in enhancer.datasets[[sp]]){
     all_simul_ESC <- all_simul[which(!is.na(all_simul$hESC)),]
 
     # Bcell
-    all_obs_Bcell <- all_obs[which(!is.na(all_obs$Bcell) | !is.na(all_obs$TB) | !is.na(all_obs$NB)),]
-    all_simul_Bcell <- all_simul[which(!is.na(all_simul$Bcell) | !is.na(all_simul$TB) | !is.na(all_simul$NB)),]
+    all_obs_Bcell <- all_obs[which(!is.na(all_obs$TB) | !is.na(all_obs$NB)),]
+    all_simul_Bcell <- all_simul[which(!is.na(all_simul$Bcell) | !is.na(all_simul$TB)),]
 
   }else{
     # Pre-adipocytes
@@ -347,8 +348,8 @@ for (enh in enhancer.datasets[[sp]]){
     all_simul_adip <-  all_simul[which(!is.na(all_simul$preadip_D0) | !is.na(all_simul$preadip_D2) | !is.na(all_simul$preadip_4H) ),]
 
     # ESC
-    all_obs_ESC <- all_obs[which(!is.na(all_obs$ESC) | !is.na(all_obs$ESC_18) | !is.na(all_obs$ESC_NKO) | !is.na(all_obs$ESC_wild)),]
-    all_simul_ESC <- all_simul[which(!is.na(all_simul$ESC) | !is.na(all_simul$ESC_18) | !is.na(all_simul$ESC_NKO) | !is.na(all_simul$ESC_wild)),]
+    all_obs_ESC <- all_obs[which(!is.na(all_obs$ESC) | !is.na(all_obs$ESC_18)  | !is.na(all_obs$ESC_wild)),]
+    all_simul_ESC <- all_simul[which(!is.na(all_simul$ESC) | !is.na(all_simul$ESC_18) | !is.na(all_simul$ESC_wild)),]
 
     # Bcell
     all_obs_Bcell <- all_obs[which(!is.na(all_obs$preB_aged) | !is.na(all_obs$preB_young)),]
@@ -360,12 +361,12 @@ for (enh in enhancer.datasets[[sp]]){
   contact_simul_adip <- contact_simul[which(contact_simul$pre_adipo > 0 & (contact_simul$preadip_D0 > 0 | contact_simul$preadip_D2 > 0 | contact_simul$preadip_4H > 0 )),]
   
   # ESC
-  contact_obs_ESC <- contact_obs[which(contact_obs$hESC > 0 & (contact_obs$ESC > 0 | contact_obs$ESC_18 > 0 | contact_obs$ESC_NKO > 0 | contact_obs$ESC_wild > 0 )),]
-  contact_simul_ESC <- contact_simul[which(contact_simul$hESC > 0 & (contact_simul$ESC > 0 | contact_simul$ESC_18 > 0 | contact_simul$ESC_NKO > 0 | contact_simul$ESC_wild > 0)),]
+  contact_obs_ESC <- contact_obs[which(contact_obs$hESC > 0 & (contact_obs$ESC > 0 | contact_obs$ESC_18 > 0  | contact_obs$ESC_wild > 0 )),]
+  contact_simul_ESC <- contact_simul[which(contact_simul$hESC > 0 & (contact_simul$ESC > 0 | contact_simul$ESC_18 > 0 | contact_simul$ESC_wild > 0)),]
   
   # Bcell
-  contact_obs_Bcell <- contact_obs[which((contact_obs$Bcell > 0 | contact_obs$TB > 0) & (contact_obs$preB_aged > 0 | contact_obs$preB_young > 0)),]
-  contact_simul_Bcell <- contact_simul[which((contact_simul$Bcell > 0 | contact_simul$TB > 0) & (contact_simul$preB_aged > 0 | contact_simul$preB_young > 0)),]
+  contact_obs_Bcell <- contact_obs[which((contact_obs$TB > 0 | contact_obs$NB > 0) & (contact_obs$preB_aged > 0 | contact_obs$preB_young > 0)),]
+  contact_simul_Bcell <- contact_simul[which((contact_simul$TB > 0 | contact_simul$NB > 0) & (contact_simul$preB_aged > 0 | contact_simul$preB_young > 0)),]
   
   for (cell in c("adip", "ESC", "Bcell")){
     # Calculate proportion

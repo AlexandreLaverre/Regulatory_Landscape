@@ -13,10 +13,9 @@ enhancers = c("FANTOM5", "ENCODE")
 if(ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
 if(ref_sp == "human"){pdf_name="Figure3_test.pdf"}else{pdf_name="Sup_Figure11.pdf"}
 
-col <- c("red", "navy", "forestgreen", "orange")
 #########################################################################################################################
 
-pdf(paste(pathFigures, pdf_name, sep=""), width=7, height=10)
+#pdf(paste(pathFigures, pdf_name, sep=""), width=7, height=10)
 par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right 
 a <- matrix(c(1,1,2,2,3,3),ncol=6, nrow = 2, byrow=T)
 b <- matrix(c(4,4,4,5,5,5), nrow=1, byrow=F)
@@ -177,24 +176,20 @@ mtext("F", side=3, line=1, at=-1.5, font=2, cex=1.2)
 par(mai = c(0.8, 0.6, 0.2, 1)) #bottom, left, top and right 
 if(ref_sp=="human"){ymin=0.25; ymax=0.55}else{ymin=0.5; ymax=0.7}
 
-color_n = 1 # To change color between each enhancers dataset
- 
 for (enh in enhancers){
   # Plot first enhancer
    if (enh == "FANTOM5"){
-     plot(list_conserv_enh[[enh]], type="l", col=col[color_n], main="",
+     plot(list_conserv_enh[[enh]], type="l", col=col.enhancers[enh], main="",
           xlab="", ylab="Alignment score", xaxt = "n", ylim=c(ymin,ymax), las=2)
     
   # Add the others
-   }else{lines(list_conserv_enh[[enh]], type="l", col=col[color_n])}
+   }else{lines(list_conserv_enh[[enh]], type="l", col=col.enhancers[enh])}
    
   # Add confidence intervals
    for (row in 1:length(list_conserv_enh[[enh]])){
      segments(x0=row,y0=list_conserv_enh[[paste0(enh, "_start")]][row],
-              x1=row,y1=list_conserv_enh[[paste0(enh, "_end")]][row], col=col[color_n], lty=3, lwd=0.6)
+              x1=row,y1=list_conserv_enh[[paste0(enh, "_end")]][row], col=col.enhancers[enh], lty=3, lwd=0.6)
    }
-   
-   color_n = color_n + 1 
  }
  
 
@@ -208,7 +203,7 @@ par(xpd=TRUE)
 enhancers_name = c("FANTOM5", "ENCODE")
 if (ref_sp == "human"){enhancers_name <- c(enhancers_name, "RoadMap\nEpigenomics", "GRO-seq")}
  
-legend("right", inset=c(-0.55,0), col=col, legend = enhancers, bty='n', lty=1)
+legend("right", inset=c(-0.55,0), col=col.enhancers, legend = enhancers, bty='n', lty=1)
 
-dev.off()
+#dev.off()
 

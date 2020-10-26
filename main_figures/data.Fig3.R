@@ -10,13 +10,14 @@ minDistance=25e3
 maxDistance=2e6
 
 enhancers = c("FANTOM5", "ENCODE")
-target_sp = "human"
-closest_sp="rat"
 
 if(ref_sp == "human"){
   enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")
   target_sp = "mouse"
   closest_sp="macaque"
+}else{
+  target_sp = "human"
+  closest_sp="rat"
   }
 
 path_evol <- paste(pathFinalData, "SupplementaryDataset7/", ref_sp, "/", sep="")
@@ -53,7 +54,7 @@ align_obs_enh <- align[which(align[,1] %in% obs[which(obs$ENCODE_bp > 0),]$ID), 
 ################################################# Fig3-C & G - Enhancers Alignment  ############################################################ 
 list_conserv_enh <- list()
 for (enh in enhancers){
-  align <- read.table(paste(path_evol,"sequence_conservation/enhancers/", enh, "Alignments_stats_all_species_nonexonic_ungapped.txt", sep="/"), header=T)
+  align <- read.table(paste(path_evol,"sequence_conservation/enhancers/", enh, "Alignments_stats_all_species_nonexonic_identity.txt", sep="/"), header=T)
   obs_stats <- read.table(paste(path_annot, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
   simul_stats <- read.table(paste(path_annot, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
   
@@ -64,12 +65,12 @@ for (enh in enhancers){
   species <- c("macaque", target_sp, "rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken")
   align <- align[, c("enh", species)]
   
-  obs_stats$dist_class <- cut(obs_stats$med_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
-  simul_stats$dist_class <-cut(simul_stats$med_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
+  obs_stats$dist_class <- cut(obs_stats$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
+  simul_stats$dist_class <-cut(simul_stats$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
   
   # Select unduplicated and with repeat_part < 20%
-  obs_stats <- obs_stats[which(obs_stats$BLAT_match < 2),] # & (obs_stats$repeat_pb/obs_stats$length) < 0.2
-  simul_stats <- simul_stats[which(simul_stats$BLAT_match < 2),] # & (simul_stats$repeat_pb/simul_stats$length) < 0.2
+  obs_stats <- obs_stats[which(obs_stats$BLAT_match < 2 & (obs_stats$repeat_bp/obs_stats$length) < 0.01),] 
+  simul_stats <- simul_stats[which(simul_stats$BLAT_match < 2 & (simul_stats$repeat_bp/simul_stats$length) < 0.01),] 
   
   #### Fig 3-C - Distribution of alignment score of ENCODE enh according to all species
   if (enh == "ENCODE"){
@@ -91,20 +92,6 @@ for (enh in enhancers){
   
   list_conserv_enh <- c(list_conserv_enh, align_enhancers_dist)
   
-  score = align_enhancers_obs[[target_sp]]
-  mean_nb_enh = obs_stats[align_enhancers_obs$enh,]$mean_baits_contacts
-  
-  ## Correlation 
-  R=cor(log2(ortho_regland[[paste0(ref_sp, "_", cell)]]+1), ortho_regland$sp_complex, method="pearson")
-  rho=cor(log2(ortho_regland[[paste0(ref_sp, "_", cell)]]+1), ortho_regland$sp_complex, method="spearman")
-  
-  smoothScatter(log2(ortho_regland[[paste0(ref_sp, "_", cell)]]+1), ortho_regland$sp_complex, main=paste(enh, "in", cell),
-                xlab=paste(ref_sp, "gene expression log2(TPM)", sep=" "), ylab="Number of contacted enhancer", cex.lab=1.2)
-  
-  mtext(paste("Pearson's R = ", round(R, digits=2), ", Spearman's rho = ", round(rho, digits=2),sep=""), side=3, line=0.5, cex=0.8)
-  x=log2(ortho_regland[[paste0(ref_sp, "_", cell)]]+1)
-  y=ortho_regland$sp_complex
-  abline(lm(y~x), col="red")
 }
 
 ################################################################################################################################################

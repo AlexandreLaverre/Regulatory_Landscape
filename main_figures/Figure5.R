@@ -16,7 +16,7 @@ load(paste(pathFigures, "RData/Fig5_", ref_sp, "_", selected_genes, "_genes.Rdat
 
 
 #########################################################################################################################
-if(ref_sp == "human"){pdf_name="Figure5_new.pdf"}else{pdf_name="Sup_Figure14.pdf"}
+if(ref_sp == "human"){pdf_name="Figure5_new2.pdf"}else{pdf_name="Sup_Figure14.pdf"}
 
 pdf(paste(pathFigures, pdf_name, sep=""), width=8.5, height=8)
 par(mai = c(0.8, 0.8, 0.5, 0.1)) # bottom, left, top, right
