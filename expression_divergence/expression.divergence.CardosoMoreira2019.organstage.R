@@ -120,6 +120,11 @@ medexp.mouse=medexp.mouse[ortho$Mouse,]
 expdiv.median=list()
 expdiv.mean=list()
 
+expdiv.median$IDHuman = ortho$Human
+expdiv.median$IDMouse = ortho$Mouse
+expdiv.mean$IDHuman = ortho$Human
+expdiv.mean$IDMouse = ortho$Mouse
+
 for(sample in unique(samples)){
   expdiv.median[[sample]]=abs(medexp.human[,sample]-medexp.mouse[,sample])/apply(cbind(medexp.human[,sample], medexp.mouse[,sample]), 1, max)
   expdiv.mean[[sample]]=abs(avgexp.human[,sample]-avgexp.mouse[,sample])/apply(cbind(avgexp.human[,sample], avgexp.mouse[,sample]), 1, max)
