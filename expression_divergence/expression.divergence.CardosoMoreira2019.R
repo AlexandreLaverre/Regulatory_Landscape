@@ -148,9 +148,28 @@ for(set in c("AllOrgans", "SomaticOrgans")){
   
   ######################################################################################
 
-  results=data.frame("IDMouse"=rownames(relexp.mouse), "IDHuman"=rownames(relexp.human), "EuclideanDistance"=distance, "CorrelationSpearman"=correlation.spearman, "CorrelationPearson"=correlation.pearson, stringsAsFactors=F)
+  results=data.frame("IDMouse"=rownames(relexp.mouse), "IDHuman"=rownames(relexp.human),
+                     "EuclideanDistance"=distance, "CorrelationSpearman"=correlation.spearman,
+                     "CorrelationPearson"=correlation.pearson, stringsAsFactors=F)
   
   ######################################################################################
+
+  ## calcul Specificity Tau
+  compute.tau <- function(exp){
+    if(max(exp)==0){
+      return(NA)
+    }
+    
+    n=length(exp)
+    newexp=exp/max(exp)
+    
+    tau=sum(1-newexp)/(n-1)
+    
+    return(tau)
+  }
+  
+  results$TauHuman=apply(avgexp.human, 1, function(x) compute.tau(as.numeric(x)))
+  results$TauMouse=apply(avgexp.mouse, 1, function(x) compute.tau(as.numeric(x)))
 
   ## correct for average expression 
   
