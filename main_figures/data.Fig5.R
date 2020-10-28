@@ -78,6 +78,19 @@ for (enh in enhancer.datasets[[sp]]){
   contact_obs <- contact_obs[which(contact_obs$origin_enh %in% obs_stats$enh),]
   contact_simul <- contact_simul[which(contact_simul$origin_enh %in% simul_stats$enh),]
   
+  # Calculate proportion
+  mat <- matrix(c(nrow(contact_obs), nrow(contact_simul), nrow(all_obs)-nrow(contact_obs), nrow(all_simul)-nrow(contact_simul)),2)
+  
+  conf_low_global <- append(conf_low_global, c((prop.test(x = nrow(contact_obs), n=nrow(all_obs), p=0.5)$conf.int[1])*100,
+                                 (prop.test(x = nrow(contact_simul), n=nrow(all_simul), p=0.5)$conf.int[1])*100))
+  
+  conf_up_global <- append(conf_up_global, c((prop.test(x = nrow(contact_obs), n=nrow(all_obs), p=0.5)$conf.int[2])*100,
+                               (prop.test(x = nrow(contact_simul), n=nrow(all_simul), p=0.5)$conf.int[2])*100))
+  
+  data_global <- append(data_global, c( (nrow(contact_obs)/nrow(all_obs))*100, (nrow(contact_simul)/nrow(all_simul))*100))
+  
+  n_total_global <- append(n_total_global, c(paste0("N = ", nrow(all_obs)), paste0("N = ", nrow(all_simul))))
+  
   # Overlap with target enhancer
   if (enh %in% c("FANTOM5", "ENCODE")){
     overlap_enh <- read.table(paste(path_overlap, enh, "/enhancer_overlap_target_enhancer.txt", sep=""), header=T, sep="\t")
@@ -85,30 +98,33 @@ for (enh in enhancer.datasets[[sp]]){
     overlap_enh <- overlap_enh[which(overlap_enh[,5] != "NA"),]
     enh_overlap = nrow(overlap_enh)
     message("Proportion of lifted_enh overlap target enh : ", enh_overlap, " on ", enh_tot, " = ", enh_overlap/enh_tot  )
-
+    
     all_obs <- all_obs[which(all_obs$enhancer %in% overlap_enh[,1]),]
     all_simul <- all_simul[which(all_simul$enhancer %in% overlap_enh[,1]),]
     contact_obs <- contact_obs[which(contact_obs$origin_enh %in% overlap_enh[,1]),]
     contact_simul <- contact_simul[which(contact_simul$origin_enh %in% overlap_enh[,1]),]
+    mat <- matrix(c(nrow(contact_obs), nrow(contact_simul), nrow(all_obs)-nrow(contact_obs), nrow(all_simul)-nrow(contact_simul)),2)
+    
+    conf_low_global <- append(conf_low_global, c((prop.test(x = nrow(contact_obs), n=nrow(all_obs), p=0.5)$conf.int[1])*100,
+                                                 (prop.test(x = nrow(contact_simul), n=nrow(all_simul), p=0.5)$conf.int[1])*100))
+    
+    conf_up_global <- append(conf_up_global, c((prop.test(x = nrow(contact_obs), n=nrow(all_obs), p=0.5)$conf.int[2])*100,
+                                               (prop.test(x = nrow(contact_simul), n=nrow(all_simul), p=0.5)$conf.int[2])*100))
+    
+    data_global <- append(data_global, c( (nrow(contact_obs)/nrow(all_obs))*100, (nrow(contact_simul)/nrow(all_simul))*100))
+    
+    n_total_global <- append(n_total_global, c(paste0("N = ", nrow(all_obs)), paste0("N = ", nrow(all_simul))))
+    
   }
-
-  # Calculate proportion
-  mat <- matrix(c(nrow(contact_obs), nrow(contact_simul), nrow(all_obs)-nrow(contact_obs), nrow(all_simul)-nrow(contact_simul)),2)
   
-  conf_low_global <- append(conf_low_global, c((prop.test(x = nrow(contact_obs), n=nrow(all_obs), p=0.5)$conf.int[1])*100,
-                                 (prop.test(x = nrow(contact_simul), n=nrow(all_simul), p=0.5)$conf.int[1])*100, NA))
-  
-  conf_up_global <- append(conf_up_global, c((prop.test(x = nrow(contact_obs), n=nrow(all_obs), p=0.5)$conf.int[2])*100,
-                               (prop.test(x = nrow(contact_simul), n=nrow(all_simul), p=0.5)$conf.int[2])*100, NA))
-  
-  data_global <- append(data_global, c( (nrow(contact_obs)/nrow(all_obs))*100, (nrow(contact_simul)/nrow(all_simul))*100, NA))
-  
-  n_total_global <- append(n_total_global, c(paste0("N = ", nrow(all_obs)), paste0("N = ", nrow(all_simul)), NA))
-  
-  conserv <- data.frame(data=data_global, conf_low=conf_low_global, conf_up=conf_up_global, n_total=n_total_global)
-  assign("conserv_global", conserv)
-  
+  conf_low_global <- append(conf_low_global, NA)
+  conf_up_global <- append(conf_up_global, NA)
+  data_global <- append(data_global, NA)
+  n_total_global <- append(n_total_global, NA)
 }
+
+conserv <- data.frame(data=data_global, conf_low=conf_low_global, conf_up=conf_up_global, n_total=n_total_global)
+assign("conserv_global", conserv)
 
 ################################################# Conserv ~ genomic distance   #################################################
 

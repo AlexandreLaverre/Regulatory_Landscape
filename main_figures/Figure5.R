@@ -9,14 +9,11 @@ if (ref_sp == "human"){target_sp = "mouse"}else{target_sp = "human"}
 # Choose genes within : all ; dvpt ; other
 selected_genes = "all"
 
-enhancers <- c("FANTOM5", "ENCODE")
-if (ref_sp == "human"){enh_names <- c(enhancers, "RoadMap\nEpigenomics", "GRO-seq"); enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
-
 load(paste(pathFigures, "RData/Fig5_", ref_sp, "_", selected_genes, "_genes.Rdata", sep=""))
 
 
 #########################################################################################################################
-if(ref_sp == "human"){pdf_name="Figure5_new2.pdf"}else{pdf_name="Sup_Figure14.pdf"}
+if(ref_sp == "human"){pdf_name="Figure5_new.pdf"}else{pdf_name="Sup_Figure14.pdf"}
 
 pdf(paste(pathFigures, pdf_name, sep=""), width=8.5, height=8)
 par(mai = c(0.8, 0.8, 0.5, 0.1)) # bottom, left, top, right
@@ -26,71 +23,91 @@ layout(matrix(c(1, 2, 3, 4), nrow = 2, byrow = TRUE))
 if (ref_sp == "human"){YMAX=25}else{YMAX=30}
 
 par(lwd = 1.5) 
-bar <- barplot(conserv_global$data, border=c(dataset.colors, "white"), col=c(dataset.colors, "white"),
-               cex.names=0.8, density=c(dataset.density,0), angle=c(dataset.angle,0),
-               beside=T, space = c(0, 0.1, 0), ylim=c(0,YMAX), main="", ylab="Conserved contact (%)", las=2)
+bar <- barplot(conserv_global$data, border=c(rep(c(rep(dataset.colors,2),"white"),2), rep(c(dataset.colors,"white"),2)),
+               col=c(rep(c(rep(dataset.colors,2),"white"),2), rep(c(dataset.colors,"white"),2)),
+               density=c(rep(c(10,5,25,20,0),2), rep(c(dataset.density,0),2)),
+               angle=c(rep(c(rep(dataset.angle,2),0),2), rep(c(dataset.angle,0),2)),
+               cex.names=0.8, cex.lab=1.2,
+               beside=T, ylim=c(0,25), main="", ylab="Conserved contact (%)", las=2)
 
 arrows(x0=bar,y0=conserv_global$conf_up,y1=conserv_global$conf_low,angle=90,code=3,length=0.05)
 #text(conserv_global$n_total, x=bar, y=conserv_global$conf_up+2, cex=0.7)
 
-axis(side=1, at=c(1,4.2,7.4,10.4), labels=enh_names, mgp=c(3, 1.2, 0), cex.axis=0.8)
+#axis(side=1, at=c(1,4.2,7.4,10.4), labels=enh_names, mgp=c(3, 1.2, 0), cex.axis=0.8)
+mtext(c("FANTOM5", "ENCODE"), side=1, at=c(2.5,8.5), line=0.5, cex=0.7)
+mtext(c("RoadMap\nEpigenomics","FOCS\nGRO-seq"), side=1, at=c(13.2,17), line=1.2, cex=0.7)
 
-legend("topright", legend = c("Original", "Simulated"), 
-       border=dataset.colors, density=c(dataset.density,0), angle=c(dataset.angle,0), bty='n', cex=0.8)
+legend("topright", legend = c("Original", "Simulated", "Overlapping"), 
+       border=dataset.colors, density=c(dataset.density,25,0), angle=c(dataset.angle,25,0), bty='n', cex=1.2)
 
 mtext("A", side=3, line=1, at=0.1, font=2, cex=1.2)
 
 ############################################  B - Contact conservation by distance from TSS ############################################ 
 if (ref_sp == "human"){YLIM=c(-2,7)}else{YLIM=c(-5, 20)}
-color_n = 1 # To change color between each enhancers dataset
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 
 par(lwd = 0.7) 
-for (enh in enhancers){
+for (enh in enhancer.datasets[[ref_sp]]){
   conserv = get(paste("conserv_dist", enh, sep="_"))
-  if (enh == "FANTOM5"){ # First enhancers dataset
-    plot(log((conserv$result-conserv$simul)/conserv$simul), type="l", col=col.enhancers[color_n], xaxt = "n", ylim=YLIM,
+  if (enh == "ENCODE"){ # First enhancers dataset
+    plot(log((conserv$result-conserv$simul)/conserv$simul), pch=20, col=col.enhancers[[enh]], xaxt = "n", ylim=YLIM,
          xlab="Distance from TSS (Mb)", ylab="Excess of contact conservation\n from expected (log)", main="", las=2)
-  }else{lines(log((conserv$result-conserv$simul)/conserv$simul), type="l", col=col.enhancers[color_n])} # Add lines of other enhancers datasets
+  }else{points(log((conserv$result-conserv$simul)/conserv$simul), pch=20, col=col.enhancers[enh])} # Add lines of other enhancers datasets
   
   for (row in 1:nrow(conserv)){
     segments(x0=row,y0=log((conserv[row,]$obs_conflow-conserv[row,]$simul_conflow)/conserv[row,]$simul_conflow),
              x1=row,y1=log((conserv[row,]$obs_confup-conserv[row,]$simul_confup)/conserv[row,]$simul_confup),
-             col=col.enhancers[color_n], lwd=0.3)}
-  
-  color_n = color_n + 1
+             col=col.enhancers[enh], lwd=0.3)}
   
 }
 
 
 axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
-legend("topleft", col=col.enhancers, legend = enh_names, bty='n', lty=1, cex=0.8)
+legend("topleft", col=col.enhancers, legend = label.enhancers, bty='n',pch=20, cex=1)
 mtext("B", side=3, line=1, at=0.1, font=2, cex=1.2)
 
 ############################################  C - Contact conservation by nb samples ############################################ 
-color_n = 1
-par(lwd = 1.5)
-enh = "ENCODE"
-conserv = get(paste("conserv_sample", enh, sep="_"))
+ylim=c(0, 40)
+xlim=c(0.5, 8.5)
+xpos=seq(1, 8, 1)
+names(xpos) = 1:8
 
-bar <- barplot(result ~ data+class, beside=T, data=conserv, space = c(0.1, 0.6), ylim=c(0,45),
-               border=dataset.colors, col=dataset.colors,
-               cex.names=0.8, density=dataset.density, angle=dataset.angle,
-                ylab="Conserved contact (%)", xlab="Number of sample", 
-               main="")
+smallx=c(-0.15, -0.075, 0.075, 0.15)
+names(smallx)=enhancer.datasets[[ref_sp]]
 
-arrows(x0=bar,y0=conserv[order(conserv$class),]$confup,y1=conserv[order(conserv$class),]$conflow,angle=90,code=3,length=0.05)
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
-legend("topleft", border=dataset.colors, fill=dataset.colors, density=dataset.density, angle=dataset.angle,
-       legend = c("Original", "Simulated"), bty='n')
+for(enh in enhancer.datasets[[ref_sp]]){
+  conserv = get(paste("conserv_sample", enh, sep="_"))
+  conserv = conserv[which(conserv$data == "obs"),]
+  
+  for(row in 1:nrow(conserv)){
+    
+    x=xpos[row]+smallx[enh]
+    points(x, conserv[row,'result'], pch=20, col=col.enhancers[enh], cex=1.1)
+    segments(x, conserv[row,'conflow'], x, conserv[row,'confup'], col=col.enhancers[enh])
+  }
+}
 
-#text(conserv[c(1,6,2,7,3,8,4,9,5,10),]$count,x = bar, y=conserv[c(1,6,2,7,3,8,4,9,5,10),]$confup+3, cex=0.7)
+abline(v=xpos[1:7]+0.5, lty=3, col="gray40")
+axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", 8))
+mtext(conserv$class, at=xpos, side=1, line=1)
+mtext("Number of cell types", side=1, line=2.5)
+
+axis(side=2, mgp=c(3, 0.75, 0))
+mtext("Conserved contact (%)", side=2, line=2.5)
+
+legend("topleft", legend=label.enhancers, pch=20, 
+       col=col.enhancers, bty="n", cex=1)
+
 mtext("C", side=3, line=1, at=0.1, font=2, cex=1.2)
+
 
 ############################################ D - Contact conservation by similar samples ####################################
 if (ref_sp == "human"){YMAX=30; side="topright"}else{YMAX=17; side="topleft"}
 
 par(lwd = 1.5) 
+enh="ENCODE"
 conserv = get(paste("conserv_similar_sample", enh, sep="_"))
 
 bar <- barplot(conserv$data, border=c(dataset.colors,"white"), col=c(dataset.colors,"white"),
