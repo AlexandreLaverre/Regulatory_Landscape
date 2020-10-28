@@ -15,7 +15,7 @@ if (ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO
 ################################## Fig2-D - Correlation Gene expression & Nb enhancers ################################## 
 
 ## Gene expression
-expdiv=read.table(paste(pathFinalData, "/SupplementaryDataset6/expression_divergence/ExpressionDivergence_CardosoMoreira2019.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+expdiv=read.table(paste(pathFinalData, "/SupplementaryDataset6/expression_divergence/ExpressionDivergence_CardosoMoreira2019_SomaticOrgans.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
 
 if(ref_sp == "human"){rownames(expdiv)=expdiv$IDHuman}else{rownames(expdiv)=expdiv$IDMouse}
 
@@ -56,8 +56,6 @@ for (enh in enhancers){
   # According to distance
   obs$dist_class <-cut(obs$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
   simul$dist_class <- cut(simul$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
-  obs$SpearmanCorrelation <- obs$SpearmanCorrelation
-  simul$SpearmanCorrelation <- simul$SpearmanCorrelation
   
   if(enh == "FANTOM5"){
     obs_correl_activity_dist <- data.frame(matrix(vector(), length(levels(obs$dist_class)), 1))

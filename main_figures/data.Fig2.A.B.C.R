@@ -4,7 +4,7 @@ options(stringsAsFactors = FALSE)
 
 source("parameters.R") ## pathFinalData defined based on the user name
 
-ref_sp = "mouse"
+ref_sp = "human"
 minDistance=25e3
 maxDistance=2e6
 

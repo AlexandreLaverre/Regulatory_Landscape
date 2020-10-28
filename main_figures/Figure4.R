@@ -11,13 +11,10 @@ load(paste(pathFigures, "RData/Fig4_", ref_sp, ".Rdata", sep=""))
 
 species <- c("macaque", "dog", "cow", "elephant", "rabbit", "rat", target_sp, "opossum", "chicken")
 
-enhancers <- c("FANTOM5", "ENCODE")
-if(ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
-
 #########################################################################################################################
 if(ref_sp == "human"){pdf_name="Figure4.pdf"}else{pdf_name="Sup_Figure12.pdf"}
 
-pdf(paste(pathFigures, "Figure4_", ref_sp, ".pdf", sep=""))
+pdf(paste(pathFigures, pdf_name, sep=""))
 par(mai = c(0.7, 0.8, 0.4, 0.2)) # bottom, left, top, right
 layout(matrix(c(1, 1, 2, 3), nrow = 2, byrow = TRUE))
 
@@ -55,70 +52,36 @@ for (test in conserv_synteny[[enh]]$p_test){
 
 mtext("A", side=3, line=1, at=-1.5, font=2, cex=1.2)
 
-###################################  B - Synteny conservation and distance from promoters - all species ################################# 
-# if (ref_sp == "human"){YMAX=0.25}else{YMAX=0.35}
-# 
-# conserv = get(paste("conserv_synteny_dist", enh, sep="_"))
-# col <- c("#A50026","#D73027","#F46D43","#FDAE61","#FEE090","#ABD9E9","#74ADD1","#4575B4","#313695")
-# color_n = 1 # To change color between each enhancers dataset
-# 
-# par(lwd = 1.2) 
-# for (sp in species){
-#   # First sp
-#   if (sp == "macaque"){ 
-#     plot((conserv[[sp]]$obs-conserv[[sp]]$simul)/conserv[[sp]]$simul, type="l", col=col[color_n], xaxt = "n", las=2, ylim=c(-0.2,YMAX), 
-#          xlab="", ylab="Original-Simulated \n gene-enh maintained in synteny", main="", lwd=0.8)
-#   
-#   # Add lines of other species
-#   }else{lines((conserv[[sp]]$obs-conserv[[sp]]$simul)/conserv[[sp]]$simul, type="l", col=col[color_n], lwd=0.8)} 
-#   
-#   # Add confidences intervals
-#   for (row in 1:nrow(conserv[[sp]])){
-#     segments(x0=row,y0=(conserv[[sp]][row,"conf_low_obs"]-conserv[[sp]][row,"conf_low_simul"])/conserv[[sp]][row,"conf_low_simul"],
-#              x1=row,y1=(conserv[[sp]][row,"conf_up_obs"]-conserv[[sp]][row,"conf_up_simul"])/conserv[[sp]][row,"conf_up_simul"], col=col[color_n], lwd=0.3)}
-#   
-#   color_n = color_n + 1 
-# }
-# 
-# # Axis and legends
-# par(lwd = 1) 
-# abline(h=0, lty=2, col='black')
-# class_leg <- c("0", "0.5", "1", "1.5", "2")
-# axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
-# mtext("Distance from TSS (Mb)", side=1, line=2.25, cex=0.85)
-# legend("bottomleft", col=col, ncol=3, legend = species, bty='n', lty=1, cex=0.8)
-# mtext("B", side=3, line=1, at=-1.5, font=2, cex=1.2)
-
-####################################  C & D - Synteny conservation and distance from promoters - all enhancers datasets ############################### 
+####################################  B & C - Synteny conservation and distance from promoters - all enhancers datasets ############################### 
 species = c(target_sp, "chicken")
 par(mai = c(0.7, 0.8, 0.4, 0.1)) # bottom, left, top, right
 
 for (sp in species){
-  col <- c("red", "navy", "forestgreen", "orange")
-  color_n = 1 # To change color between each enhancers dataset
-  
-  for (enhancer in enhancers){
-    conserv = get(paste("conserv_synteny_dist_", enhancer, sep=""))
+  for (enh in enhancer.datasets[[ref_sp]]){
+    conserv = get(paste("conserv_synteny_dist_", enh, sep=""))
     
-    if (enhancer == "FANTOM5"){ # First sp
-      if (sp == target_sp){YLAB="Excess of gene-enh \n conserved in synteny (%)"
+    if (enh == "ENCODE"){ # First sp
+      if (sp == target_sp){
+        YLAB="Excess of gene-enh \n conserved in synteny (%)"
+        YLIM=c(-2,15)
       }else{YLAB=""
+      YLIM=c(-10,80)
       par(mai = c(0.7, 0.4, 0.4, 0.4))} # bottom, left, top, right
       
-      plot((conserv[[sp]]$obs-conserv[[sp]]$simul)*100/conserv[[sp]]$simul, type="l", col=col[color_n], xaxt = "n", las=2, lwd=0.8,
-           xlab="", ylab=YLAB, main="")
+      plot((conserv[[sp]]$obs-conserv[[sp]]$simul)*100/conserv[[sp]]$simul, type="l",
+           col=col.enhancers[[enh]], xaxt = "n", las=2, lwd=0.8,
+           xlab="", ylab=YLAB, ylim=YLIM, main="")
       
       # Add lines of other enhancers datasets
-    }else{lines((conserv[[sp]]$obs-conserv[[sp]]$simul)*100/conserv[[sp]]$simul, type="l", col=col[color_n] , lwd=0.8)} 
+    }else{lines((conserv[[sp]]$obs-conserv[[sp]]$simul)*100/conserv[[sp]]$simul, type="l", col=col.enhancers[[enh]] , lwd=0.8)} 
     
     # Add confidences intervals
     for (row in 1:nrow(conserv[[sp]])){
       segments(x0=row,y0=(conserv[[sp]][row,"conf_low_obs"]-conserv[[sp]][row,"conf_low_simul"])*100/conserv[[sp]][row,"conf_low_simul"],
                x1=row,y1=(conserv[[sp]][row,"conf_up_obs"]-conserv[[sp]][row,"conf_up_simul"])*100/conserv[[sp]][row,"conf_up_simul"],
-               col=col[color_n], lwd=0.3)
+               col=col.enhancers[[enh]], lwd=0.3)
     }
     
-    color_n = color_n + 1 
   }
   
   # Axis and legends
