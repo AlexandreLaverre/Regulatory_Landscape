@@ -15,8 +15,8 @@ source("parameters.R") ## paths are defined based on the user name
 if(load){
   ref_sp = "human"
   
-  load(paste(pathFigures, "RData/Fig2_", ref_sp, "_A_B_C.Rdata", sep=""))
-  load(paste(pathFigures, "RData/Fig2_", ref_sp, "_D_E.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp, ".Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.promoter.e", ref_sp, "_D_E.Rdata", sep=""))
   
   enhancers = enhancer.datasets[[ref_sp]]
 }
