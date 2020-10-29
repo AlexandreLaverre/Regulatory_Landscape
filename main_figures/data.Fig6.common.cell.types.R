@@ -42,8 +42,8 @@ for (cell in cells){
   
   expdiv_cells[[paste0(cell, "_Mean")]] <- (expdiv_cells[[paste0("human_", cell, "_Mean")]] + expdiv_cells[[paste0("mouse_", cell, "_Mean")]])/2
   
-  lm1 = lm(expdiv_cells[,cell]~log2(expdiv_cells[[paste0(cell, "_Mean")]]+1))
-  expdiv_cells[[paste0(cell, "_ResidualExpressionDivergence")]] = lm1$residuals
+  lm1 = lm(1-expdiv_cells[,cell]~log2(expdiv_cells[[paste0(cell, "_Mean")]]+1))
+  expdiv_cells[[paste0(cell, "_ResidualExpressionConservation")]] = lm1$residuals
 }
 
 #########################################################################################################################
@@ -67,9 +67,11 @@ for (cell in cells){
   
   regland_cell$class_align_score=cut2(regland_cell$med_align_score, g=5, include.lowest=T)
   regland_cell$class_cons_seq=cut(regland_cell$ratio_cons_seq, breaks=c(0, 0.001, 0.25, 0.50, 0.75, 1), include.lowest=T)
+  regland_cell$class_cons_synt=cut(regland_cell$ratio_cons_synt,  breaks=c(0, 0.75, 0.99, 1), include.lowest=T)
   regland_cell$class_cons_int=cut(regland_cell$ratio_cons_int,  breaks=c(0, 0.001, 0.25, 0.50, 0.75, 1), include.lowest=T)
   
-  regland_cell$divergence <- expdiv_cell[[paste0(cell, "_ResidualExpressionDivergence")]] # expdiv_cells[[paste0(cell, "_ResidualExpressionDivergence")]]
+  regland_cell$Conservation <- 1-expdiv_cell[[cell]] 
+  regland_cell$ResidualConservation <- expdiv_cell[[paste0(cell, "_ResidualExpressionConservation")]]
   
   data_cell[[cell]] <- regland_cell
 }
