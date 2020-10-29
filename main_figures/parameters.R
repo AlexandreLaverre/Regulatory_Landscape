@@ -53,7 +53,7 @@ names(col.enhancers)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics"
 
 
 dataset.colors=c("navy", "gray30") ##c("forestgreen", "firebrick1")
-dataset.density=c(10,5)
+dataset.density=c(10,10)
 dataset.angle=c(45,-45)
 
 names(dataset.colors)=c("Original", "Simulated")
