@@ -42,7 +42,7 @@ enhancer.datasets[["mouse"]]=c("ENCODE", "FANTOM5")
 label.enhancers=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap Epigenomics")
 names(label.enhancers)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 
-enh.syn=c("ENCODE", "FANTOM5", " FOCS GRO-seq", " Roadmap Epigenomics")
+enh.syn=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap Epigenomics")
 names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 
 #######################################################################################

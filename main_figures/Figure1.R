@@ -253,7 +253,7 @@ for(ed in names(shhenhancers)){
   segments(shhxlim[1], ypos[ed], shhxlim[2], ypos[ed], lwd=0.5, lty=3, col="gray40")
   rect(this.enhancers$start, ypos[ed]-height, this.enhancers$end, ypos[ed]+height, col="gray40", border=NA)
 
-  mtext(enh.syn[ed], side=4, at=ypos[ed], line=0.25, las=2, cex=0.65)
+  mtext(enh.syn[ed], side=4, at=ypos[ed], line=0.35, las=2, cex=0.65)
 }
 
 mtext("predicted", side=2, las=2, cex=0.7, line=0.75, at=0.75)
