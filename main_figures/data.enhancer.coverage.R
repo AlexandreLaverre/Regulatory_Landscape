@@ -6,9 +6,6 @@ options(stringsAsFactors = FALSE)
 
 source("parameters.R") 
 
-minDistance=25e3
-maxDistance=2e6
-
 #########################################################################################################################
 
 for(ref_sp in c("human", "mouse")){
