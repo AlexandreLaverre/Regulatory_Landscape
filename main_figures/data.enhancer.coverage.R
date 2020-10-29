@@ -76,12 +76,12 @@ for(ref_sp in c("human", "mouse")){
   
   for (enh in enhancers){
     obs_enh_cell[[enh]] <- tapply((obs[, paste0(enh, "_bp")]/obs[, "length"]), obs$nb_cell, mean)
-    obs_enh_cell[[paste0(enh, "_conflow")]] <- tapply((obs[, paste0(enh, "_bp")]/obs[, "length"]), obs$nb_cell, tryCatch(t.test(x)[["conf.int"]][1], error=function(e) 0))
-    obs_enh_cell[[paste0(enh, "_confup")]] <- tapply((obs[, paste0(enh, "_bp")]/obs[, "length"]), obs$nb_cell, tryCatch(t.test(x)[["conf.int"]][2], error=function(e) 0))
+    obs_enh_cell[[paste0(enh, "_conflow")]] <- tapply((obs[, paste0(enh, "_bp")]/obs[, "length"]), obs$nb_cell, function(x) tryCatch(t.test(x)[["conf.int"]][1], error=function(e) 0))
+    obs_enh_cell[[paste0(enh, "_confup")]] <- tapply((obs[, paste0(enh, "_bp")]/obs[, "length"]), obs$nb_cell, function(x) tryCatch(t.test(x)[["conf.int"]][2], error=function(e) 0))
     
     simul_enh_cell[[enh]] <- tapply((simul[, paste0(enh, "_bp")]/simul[, "length"]), simul$nb_cell, mean)
-    simul_enh_cell[[paste0(enh, "_conflow")]] <- tapply((simul[, paste0(enh, "_bp")]/simul[, "length"]), simul$nb_cell, tryCatch(t.test(x)[["conf.int"]][1], error=function(e) 0))
-    simul_enh_cell[[paste0(enh, "_confup")]] <- tapply((simul[, paste0(enh, "_bp")]/simul[, "length"]), simul$nb_cell, tryCatch(t.test(x)[["conf.int"]][2], error=function(e) 0))
+    simul_enh_cell[[paste0(enh, "_conflow")]] <- tapply((simul[, paste0(enh, "_bp")]/simul[, "length"]), simul$nb_cell, function(x) tryCatch(t.test(x)[["conf.int"]][1], error=function(e) 0))
+    simul_enh_cell[[paste0(enh, "_confup")]] <- tapply((simul[, paste0(enh, "_bp")]/simul[, "length"]), simul$nb_cell, function(x) tryCatch(t.test(x)[["conf.int"]][2], error=function(e) 0))
   }
   
   enh_prop_nb_cell <- list(obs=obs_enh_cell, simul=simul_enh_cell)
