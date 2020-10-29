@@ -45,6 +45,9 @@ names(label.enhancers)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomic
 enh.syn=c("ENCODE", "FANTOM5", "FOCS GRO-seq", "Roadmap Epigenomics")
 names(enh.syn)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 
+enh.syn.narrow=c("ENCODE", "FANTOM5", "FOCS\nGRO-seq", "Roadmap\nEpigenomics")
+names(enh.syn.narrow)=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
+
 #######################################################################################
 ## colors for the plots
 
