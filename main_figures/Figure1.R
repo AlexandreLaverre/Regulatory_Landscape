@@ -171,7 +171,7 @@ mtext("chr7", at=shhxlim[2]+diff(shhxlim)/20, line=0.5, side=3, cex=0.75)
 
 ## plot label
 
-mtext("a", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/7, font=2, cex=1.2)
+mtext("a", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/7.5, font=2, cex=1.2)
 
 #############################################################################################
 
@@ -323,7 +323,7 @@ for(dataset in rownames(mean_dist)){
 ## legend & plot label
 
 legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("c", side=3, line=1, at=-3.3e5, font=2, cex=1.2)
+mtext("c", side=3, line=1, at=-3.28e5, font=2, cex=1.2)
 
 ###########################################################################################
 
