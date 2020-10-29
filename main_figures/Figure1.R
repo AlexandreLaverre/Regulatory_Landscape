@@ -288,7 +288,7 @@ mtext("number of cell types", side=1, line=2.25, cex=0.8)
 mtext("% of interactions", side=2, line=2.5, cex=0.8)
 
 ## legend & plot label
-legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
+legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
        fill=dataset.colors[c("Original", "Simulated")], bty='n', density=dataset.density, angle=dataset.angle,
        cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 mtext("b", side=3, line=1, at=-3.9, font=2, cex=1.2)
@@ -322,7 +322,7 @@ for(dataset in rownames(mean_dist)){
 
 ## legend & plot label
 
-legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
+legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 mtext("c", side=3, line=1, at=-3.28e5, font=2, cex=1.2)
 
 ###########################################################################################
