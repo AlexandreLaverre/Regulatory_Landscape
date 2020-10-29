@@ -16,40 +16,56 @@ if(load){
   ref_sp = "human"
   
   load(paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp, ".Rdata", sep=""))
-  load(paste(pathFigures, "RData/data.promoter.e", ref_sp, "_D_E.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.", ref_sp, ".Rdata", sep=""))
   
   enhancers = enhancer.datasets[[ref_sp]]
 }
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "Figure2.pdf", sep=""), width=8.5, height=5)
+## 1 column width 85 mm = 3.34 in
+## 1.5 column width 114 mm = 4.49 in 
+## 2 columns width 174 mm = 6.85 in
+## max height: 11 in
 
-par(mai = c(0.5, 0.7, 0.3, 0.2)) # bottom, left, top, right
+########################################################################################################################
+
+pdf(paste(pathFigures, "Figure2.pdf", sep=""), width=6.85, height=5)
+
+
+par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
+
 layout(matrix(c(1, 1, 2, 2, 3, 4, 5, 5), nrow = 2, byrow = TRUE))
 
 #########################################################################################################################
-############################################  Fig2-A - Global enhancer proportion #######################################
+############################################  % length covered by enhancers  #######################################
 
-barcenter <- barplot(enh_prop$data, border=dataset.colors, col=dataset.colors,
+par(mar=c(4.1, 4.5, 2.5, 1))
+
+m.prop=t(matrix(enh_prop$data, nrow=4, byrow=T))
+
+barcenter <- barplot(m.prop, beside=T,  border=dataset.colors, col=dataset.colors, 
                      lwd=1.5, cex.names=0.8, density=dataset.density, angle=dataset.angle,
-                     ylim=c(0,15), ylab="Enhancer proportion (%)", axisnames = F, main="", las=2)
+                     ylim=c(0,15), ylab="", axisnames = F, main="", space=c(0.1, 1), las=2)
 
-text(c(1.3,4.9,8.5,12.1), par("usr")[3]-0.005, labels = enh.syn, pos = 1, xpd = TRUE, cex=1)
 
-legend("topleft", legend = c("Original", "Simulated"), 
-       border=dataset.colors, density=c(dataset.density,0), angle=c(dataset.angle,0), bty='n', cex=1.2)
+xposlab=apply(barcenter, 2, mean)
+mtext(enh.syn.narrow, line=c(rep(0.5,2), rep(1.3,2)), side=1, at=xposlab, cex=0.75)
 
-par(lwd=1)
-segments(barcenter, enh_prop$conf_up, barcenter, enh_prop$conf_low, lwd = 3)
-arrows(barcenter, enh_prop$conf_up, barcenter, enh_prop$conf_low, lwd = 1.5, angle = 90, code = 3, length = 0.05)
+mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=6)
 
-for (x in seq(1,length(barcenter)-1, by=3)){
-  segments(barcenter[x], enh_prop$data[x]+1, barcenter[x+1], enh_prop$data[x]+1) 
-  text("***", x=(barcenter[x]+barcenter[x+1])/2, y=enh_prop$data[x]+1.5)
-}
+legend("topleft", legend = c("PCHi-C data", "simulated data"), border=dataset.colors, density=c(dataset.density), angle=c(dataset.angle), bty='n', cex=1.2)
 
-mtext("A", side=3, line=1, at=-1.5, font=2, cex=1.2)
+## par(lwd=1)
+## segments(barcenter, enh_prop$conf_up, barcenter, enh_prop$conf_low, lwd = 3)
+## arrows(barcenter, enh_prop$conf_up, barcenter, enh_prop$conf_low, lwd = 1.5, angle = 90, code = 3, length = 0.05)
+
+## for (x in seq(1,length(barcenter)-1, by=3)){
+##   segments(barcenter[x], enh_prop$data[x]+1, barcenter[x+1], enh_prop$data[x]+1) 
+##   text("***", x=(barcenter[x]+barcenter[x+1])/2, y=enh_prop$data[x]+1.5)
+## }
+
+mtext("a", side=3, line=1, at=-1.4, font=2, cex=1.2)
 
 ###########################################################################################################################
 ##########################  Fig2-B - Enhancer proportion according to distance ############################################
