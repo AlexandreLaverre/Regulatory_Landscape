@@ -46,7 +46,7 @@ for(ref_sp in c("human", "mouse")){
   
   enh_prop <- data.frame(id=id, data=data, conf_up=conf_up, conf_low=conf_low)
   
-  ############################### enhancer coverage according to distance from promoters ##########################################
+  ############################### enhancer coverage according to distance from promoters #################
   
   obs$dist_class <-cut(obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
   simul$dist_class <- cut(simul$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
@@ -66,14 +66,14 @@ for(ref_sp in c("human", "mouse")){
   
   enh_prop_dist <- list(obs=obs_enh_dist, simul=simul_enh_dist)
 
-   ###############################  proportion of sequence covered by enhancers by cell type  #########################################
+  ###############################  proportion of sequence covered by enhancers by cell type  ############
   
   obs$nb_cell <- as.factor(obs$nb_cell)
   simul$nb_cell <- as.factor(simul$nb_cell)
   
   obs_enh_cell <- list()
   simul_enh_cell <- list()
-
+  
   for (enh in enhancers){
     obs_enh_cell[[enh]] <- tapply((obs[, paste0(enh, "_bp")]/obs[, "length"]), obs$nb_cell, mean)
     obs_enh_cell[[paste0(enh, "_conflow")]] <- tapply((obs[, paste0(enh, "_bp")]/obs[, "length"]), obs$nb_cell, tryCatch(t.test(x)[["conf.int"]][1], error=function(e) 0))
