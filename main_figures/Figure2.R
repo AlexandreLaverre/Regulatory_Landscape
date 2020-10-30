@@ -34,14 +34,17 @@ pdf(paste(pathFigures, "Figure2.pdf", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 
-layout(matrix(c(1, 1, 2, 2, 3, 4, 5, 5), nrow = 2, byrow = TRUE))
+m=matrix(rep(NA, 2*10), nrow=2)
+m[1,]=c(rep(1,5), rep(2,5))
+m[2,]=c(rep(3,5), rep(4,5))
+layout(m)
 
 ##################################################################################################################
 ############################################  % length covered by enhancers  #####################################
 
-par(mar=c(4.1, 4.5, 2.75, 1))
-
 m.prop=t(matrix(enh_prop$data, nrow=4, byrow=T))
+
+par(mar=c(2.1, 4.5, 2.75, 1))
 
 barcenter <- barplot(m.prop, beside=T,  border=dataset.colors, col=dataset.colors, 
                      lwd=1.5, cex.names=0.8, density=dataset.density, angle=dataset.angle,
@@ -66,7 +69,7 @@ for (x in seq(1,length(allxpos)-1, by=2)){
    text("***", x=(allxpos[x]+allxpos[x+1])/2, y=enh_prop$data[x]+1.5, cex=1.2)
  }
 
-mtext("a", side=3, line=2, at=-1.4, font=2, cex=1.2)
+mtext("a", side=3, line=1.45, at=-1.4, font=2, cex=1.2)
 
 ###########################################################################################################################
 ##########################  Fig2-B - Enhancer proportion according to distance ############################################
@@ -80,6 +83,8 @@ ymin=min(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs
 
 ymax=ymax*1.1
 
+par(mar=c(3.1, 4.5, 2.75, 1))
+
 plot(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"], main="", type="n", xlab="",ylab="",  axes=F, ylim=c(ymin,ymax))
 
 lines(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"])
@@ -89,7 +94,7 @@ lines(enh_prop_dist[["simul"]][[enh]], col=dataset.colors["Simulated"])
 xpos=1:length(enh_prop_dist[["obs"]][[enh]])
 
 segments(xpos, enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], xpos, enh_prop_dist[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
-segments(xpos, enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], xpos, enh_prop_dist[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simuated"])
+segments(xpos, enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], xpos, enh_prop_dist[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simulated"])
 
 
 class_leg <- c("0", "0.5", "1", "1.5", "2")
@@ -98,88 +103,73 @@ axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 
 legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 
-mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=(ymin+ymax)*0.8/2)
+mtext("% length covered by enhancers", side=2, cex=0.85, line=2.25, at=(ymin+ymax)*0.9/2)
 mtext("linear distance to promoter regions (Mb)", side=1, line=2.25, cex=0.85)
 
-mtext("b", side=3, line=1, at=-5, font=2, cex=1.2)
+mtext("b", side=3, line=1.45, at=-5.75, font=2, cex=1.2)
 
-## ###########################################################################################################################
-## ################################  Fig2-C - Enhancer proportion according to nb of cell types ##############################
-## if(ref_sp=="human"){YMAX=0.2; x_leg_class=5}else{YMAX=0.15; x_leg_class=2}
+#############################################################################################################################
+##################################  Fig2-C - Enhancer proportion according to nb of cell types ##############################
 
-## plot(prop_nb_sample[["obs"]]$FANTOM5, col="white", ylim=c(0,YMAX), las=2,
-##      ylab="Enhancer length proportion (mean)", xlab="", xaxt = "n", main="")
+ymax=max(c(enh_prop_nb_cell[["obs"]][[paste0(enh,"_conflow")]], enh_prop_nb_cell[["obs"]][[paste0(enh,"_confup")]],  enh_prop_nb_cell[["simul"]][[paste0(enh,"_conflow")]], enh_prop_nb_cell[["simul"]][[paste0(enh,"_confup")]]))
 
-## col_nb = 1
-## for (enh in enhancers){
-##   points(prop_nb_sample[["obs"]][[enh]], type="l", col=col.enhancers[col_nb])
-##   for (row in 1:nrow(prop_nb_sample[["obs"]])){
-##     segments(x0=row,y0=prop_nb_sample[["obs"]][row,paste0(enh, "_conflow")],
-##              x1=row,y1=prop_nb_sample[["obs"]][row,paste0(enh, "_confup")], col=col.enhancers[col_nb], lwd=0.5)}
-  
-##   col_nb = col_nb + 1
-## }
+ylim=c(0, ymax)
 
-## if (ref_sp == "mouse"){class_leg <- c("1", "3", "5", "7", "9", "11", "13"); max_nb_cell=13
-## }else{class_leg <- c("1", "5", "10", "15", "20", "25"); max_nb_cell=25}
+par(mar=c(3.1, 4.5, 3, 1))
 
-## at=seq(0,max_nb_cell+1, x_leg_class)
-## at[1] <- 1
-## axis(side=1, at=at, labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1)
+plot(enh_prop_nb_cell[["obs"]][[enh]], type="n", ylim=ylim,  axes=F, xlab="", ylab="")
 
-## mtext("C", side=3, line=1, at=-4.5, font=2, cex=1.2)
-## mtext("Number of cell types", side=1, line=2.25, cex=0.7)
+lines(enh_prop_nb_cell[["obs"]][[enh]], col=dataset.colors["Original"])
+lines(enh_prop_nb_cell[["simul"]][[enh]], col=dataset.colors["Simulated"])
 
-## ##################################################################################################################################
-## ############################################ Fig2-D - Gene expression vs nb enhancers ############################################ 
-## plot(gene_expression_enhancers$ENCODE, type="l", col="white", ylab="Average expression level (log2 RPKM)", main="", las=2,
-##      xlab="", xaxt = "n", ylim=c(2.7,3.5))
+xpos=1:length(enh_prop_nb_cell[["obs"]][[enh]])
 
-## nb_col = 1
-## for (enh in enhancers){
-  
-##   points(gene_expression_enhancers[[paste0(enh)]], type="l", col=col.enhancers[nb_col])
-##   for (row in 1:nrow(gene_expression_enhancers)){
-##     segments(x0=row,y0=gene_expression_enhancers[row,paste0(enh, "_conflow")],
-##              x1=row,y1=gene_expression_enhancers[row,paste0(enh, "_confup")], col=col.enhancers[nb_col], lwd=0.5)}
+segments(xpos, enh_prop_nb_cell[["obs"]][[paste0(enh,"_conflow")]], xpos, enh_prop_nb_cell[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
+segments(xpos, enh_prop_nb_cell[["simul"]][[paste0(enh,"_conflow")]], xpos, enh_prop_nb_cell[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simulated"])
 
-##   nb_col = nb_col + 1
-## }
+axis(side=1, mgp=c(3, 0.65, 0), cex.axis=1.1, at=seq(from=1, to=max(xpos), by=2))
+axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 
-## axis(side=1, at=seq(1,10,1), labels=seq(1,10,1), mgp=c(3, 0.65, 0), cex.axis=1)
 
-## mtext("D", side=3, line=1, at=-1, font=2, cex=1.2)
-## mtext("Quantile of Number of contacted enhancers", side=1, line=2.25, cex=0.7)
+mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=sum(ylim)*0.9/2)
+mtext("number of cell types", side=1, line=2, cex=0.85)
 
-## ##################################################################################################################################
-## ############################################ Fig2-E - Correlation Gene expression and enhancers activity ##########################
+mtext("c", side=3, line=1.25, at=-2.1, font=2, cex=1.2)
+
+
+## ##########################################################################################################################
+## ############################################ correlation gene expression and enhancers activity ##########################
 ## if(ref_sp=="human"){YMAX=0.2}else{YMAX=0.15}
 
-## plot(correl_activity[["obs"]]$FANTOM5, type="l", col="white", ylab="Spearman's correlation coefficient (mean)", main="", las=2,
-##      xlab="", xaxt = "n", ylim=c(0,0.35))
+ymin=min(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
+ymax=max(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
 
-## nb_col = 1
-## for (enh in enhancers){
-  
-##   points(correl_activity[["obs"]][[paste0(enh)]], type="l", col=col.enhancers[nb_col])
-##   for (row in 1:nrow(correl_activity[["obs"]])){
-##     segments(x0=row,y0=correl_activity[["obs"]][row,paste0(enh, "_conflow")],
-##              x1=row,y1=correl_activity[["obs"]][row,paste0(enh, "_confup")], col=col.enhancers[nb_col], lwd=0.5)}
-  
-##   points(correl_activity[["simul"]][[paste0(enh)]], type="l", lty=2, col=col.enhancers[nb_col], lwd=0.6)
-##   for (row in 1:nrow(correl_activity[["simul"]])){
-##     segments(x0=row,y0=correl_activity[["simul"]][row,paste0(enh, "_conflow")],
-##              x1=row,y1=correl_activity[["simul"]][row,paste0(enh, "_confup")], col=col.enhancers[nb_col], lwd=0.5)}
+ylim=c(ymin, ymax)
 
-##   nb_col = nb_col + 1
-## }
+par(mar=c(3.1, 4.5, 3, 1))
 
-## class_leg <- c("0", "0.5", "1", "1.5", "2")
-## axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
-## legend("topright", legend="Simulated", col="black", bty='n', lty=2, cex=1.2)
-## mtext("Linear distance to promoters regions (Mb)", side=1, line=2.25, cex=0.7)
+plot(correl_activity[["obs"]][[enh]], type="n", ylab="", main="", las=2, ylim=ylim, axes=F)
 
-## mtext("E", side=3, line=1, at=-4.5, font=2, cex=1.2)
+lines(correl_activity[["obs"]][[enh]], col=dataset.colors["Original"])
+lines(correl_activity[["simul"]][[enh]], col=dataset.colors["Simulated"])
+
+xpos=1:length(correl_activity[["obs"]][[enh]])
+
+segments(xpos, correl_activity[["obs"]][[paste0(enh,"_conflow")]], xpos, correl_activity[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
+segments(xpos, correl_activity[["simul"]][[paste0(enh,"_conflow")]], xpos, correl_activity[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simulated"])
+
+
+
+class_leg <- c("0", "0.5", "1", "1.5", "2")
+axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
+axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
+
+mtext("Spearman's rho", side=2, cex=0.85, line=3, at=(ymin+ymax)*0.9/2)
+mtext("linear distance to promoter regions (Mb)", side=1, line=2, cex=0.85)
+
+mtext("d", side=3, line=1.25, at=-8, font=2, cex=1.2)
+
+##################################################################################################################################
 
 dev.off()
 
