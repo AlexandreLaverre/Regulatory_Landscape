@@ -137,9 +137,9 @@ mtext("number of cell types", side=1, line=2, cex=0.85)
 mtext("c", side=3, line=1.25, at=-2.1, font=2, cex=1.2)
 
 
-## ##########################################################################################################################
-## ############################################ correlation gene expression and enhancers activity ##########################
-## if(ref_sp=="human"){YMAX=0.2}else{YMAX=0.15}
+############################################################################################################################
+############################################## correlation gene expression and enhancers activity ##########################
+
 
 ymin=min(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
 ymax=max(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
