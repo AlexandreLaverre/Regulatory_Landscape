@@ -11,7 +11,6 @@ load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
 sp="human"
 if (sp == "human"){target_sp = "mouse"}else{target_sp = "human"}
 
-enh="ENCODE"
 cells <- c("Bcell", "ESC", "adipo")
 
 #############################################################################################################
@@ -51,33 +50,42 @@ for (cell in cells){
 
 data_cell <- list()
 for (cell in cells){
-  regland_cell = read.table(paste(path_evol, sp, "/evolution_summary_by_gene/", enh, "/original_evolution_summary_", cell, "_0.4.txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
-  
-  regland_cell <- regland_cell[which(regland_cell$nb_total >= 5 & regland_cell$nb_total <= 100),] 
-  common=intersect(rownames(expdiv_cells), rownames(regland_cell))
-  expdiv_cell=expdiv_cells[common,]
-  regland_cell=regland_cell[common,]
-  
-  # Made decile of nb enhancers
-  regland_cell$class_nb_contact <- cut2(regland_cell$nb_total, g=5)
-  
-  regland_cell$ratio_cons_seq = regland_cell$nb_seq_conserv/regland_cell$nb_total
-  regland_cell$ratio_cons_synt = ifelse(regland_cell$nb_seq_conserv > 5 & regland_cell$nb_seq_conserv < 100, regland_cell$nb_synt2M_conserv/regland_cell$nb_seq_conserv, NA)
-  regland_cell$ratio_cons_int = ifelse(regland_cell$nb_seq_conserv > 5 & regland_cell$nb_seq_conserv < 100, regland_cell$nb_contact_conserv/regland_cell$nb_seq_conserv, NA)
-  
-  regland_cell$class_align_score=cut2(regland_cell$med_align_score, g=5, include.lowest=T)
-  regland_cell$class_cons_seq=cut(regland_cell$ratio_cons_seq, breaks=c(0, 0.001, 0.25, 0.50, 0.75, 1), include.lowest=T)
-  regland_cell$class_cons_synt=cut(regland_cell$ratio_cons_synt,  breaks=c(0, 0.75, 0.99, 1), include.lowest=T)
-  regland_cell$class_cons_int=cut(regland_cell$ratio_cons_int,  breaks=c(0, 0.001, 0.25, 0.50, 0.75, 1), include.lowest=T)
-  
-  regland_cell$Conservation <- 1-expdiv_cell[[cell]] 
-  regland_cell$ResidualConservation <- expdiv_cell[[paste0(cell, "_ResidualExpressionConservation")]]
-  
-  data_cell[[cell]] <- regland_cell
+  for (enh in enhancer.datasets[[sp]]){
+    regland_cell = read.table(paste(path_evol, sp, "/evolution_summary_by_gene/", enh, "/original_evolution_summary_", cell, "_0.4.txt",sep=""), h=T, stringsAsFactors=F, sep="\t", row.names = 1)
+    
+    if (enh == "FANTOM5"){nb_min=2}else{nb_min=5}
+    #regland_cell <- regland_cell[which(regland_cell$nb_total >= 5 & regland_cell$nb_total <= 100),] 
+    common=intersect(rownames(expdiv_cells), rownames(regland_cell))
+    expdiv_cell=expdiv_cells[common,]
+    regland_cell=regland_cell[common,]
+    
+    regland_cell$MeanRPKM <- expdiv_cell[[paste0(cell, "_Mean")]]
+    
+    # Made decile of nb enhancers
+    regland_cell$class_nb_contact <- cut2(regland_cell$nb_total, g=5)
+    
+    regland_cell$nb_seq_conserv <- ifelse(regland_cell$nb_total >= nb_min | regland_cell$nb_total <= 100, regland_cell$nb_seq_conserv , NA)
+    
+    regland_cell$ratio_cons_seq = ifelse(regland_cell$nb_total >= nb_min & regland_cell$nb_total <= 100, regland_cell$nb_seq_conserv/regland_cell$nb_total, NA)
+    regland_cell$ratio_cons_synt = ifelse(regland_cell$nb_seq_conserv >= nb_min & regland_cell$nb_seq_conserv <= 100, regland_cell$nb_synt2M_conserv/regland_cell$nb_seq_conserv, NA)
+    regland_cell$ratio_cons_int = ifelse(regland_cell$nb_seq_conserv >= nb_min & regland_cell$nb_seq_conserv <= 100, regland_cell$nb_contact_conserv/regland_cell$nb_seq_conserv, NA)
+    
+    regland_cell$class_align_score=cut2(regland_cell$med_align_score, g=5, include.lowest=T)
+    regland_cell$class_cons_seq=cut(regland_cell$ratio_cons_seq, breaks=c(0, 0.001, 0.25, 0.50, 0.75, 1), include.lowest=T)
+    regland_cell$class_cons_synt=cut(regland_cell$ratio_cons_synt,  breaks=c(0, 0.75, 0.99, 1), include.lowest=T)
+    regland_cell$class_cons_int=cut(regland_cell$ratio_cons_int,  breaks=c(0, 0.001, 0.25, 0.50, 0.75, 1), include.lowest=T)
+    
+    regland_cell$Conservation <- 1-expdiv_cell[[cell]] 
+    regland_cell$ResidualConservation <- expdiv_cell[[paste0(cell, "_ResidualExpressionConservation")]]
+    
+    data_cell[[cell]][[enh]] <- regland_cell
+  }
+
 }
 
 #########################################################################################################################
 ############################  Parallel trends among cell types  #######################################################
+enh = "ENCODE"
 ortho <- read.table(paste(path_evol, sp, "/gene_orthology/human2mouse_orthologue_dNdS.txt", sep="/"), h=T, sep="\t")
 rownames(ortho) <- ortho$GenestableID
 ortho$dNdS <- ortho$dN/ortho$dS

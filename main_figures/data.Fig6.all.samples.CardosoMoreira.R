@@ -13,11 +13,10 @@ if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
 
 #######################################################################################################
 ################################### Expression divergence #############################################
-expdiv_all=read.table(paste0(pathFinalData, "SupplementaryDataset6/expression_divergence/v1/ExpressionDivergence_CardosoMoreira2019_correlations.txt"), h=T, stringsAsFactors=F, sep="\t")
+expdiv_all=read.table(paste0(pathFinalData, "SupplementaryDataset6/expression_divergence/ExpressionDivergence_CardosoMoreira2019_SomaticOrgans.txt"), h=T, stringsAsFactors=F, sep="\t")
 rownames(expdiv_all)=expdiv_all[[paste0("ID", sp_name)]]
 
 expdiv_all$classTau=cut2(expdiv_all[[paste0("Tau", sp_name)]], g=4, include.lowest=T)
-expdiv_all$EuclidianSimilarity = 1-expdiv_all$ResidualExpressionDivergence
 
 #select genes: protein-coding genes
 annot=gene.annot[[sp]]
@@ -41,14 +40,15 @@ for (enh in enhancer.datasets[[sp]]){
   
   if (enh == "FANTOM5"){nb_min=2}else{nb_min=5}
   
-  regland_enh <- regland_enh[which(regland_enh$nb_total >= nb_min & regland_enh$nb_total <= 100),] 
+  #regland_enh <- regland_enh[which(regland_enh$nb_total >= nb_min & regland_enh$nb_total <= 100),] 
   common=intersect(rownames(expdiv_all), rownames(regland_enh))
   regland_enh = regland_enh[common,]
   expdiv_enh = expdiv_all[common,]
   
-  regland_enh$ratio_cons_seq = regland_enh$nb_seq_conserv/regland_enh$nb_total
-  regland_enh$ratio_cons_synt = ifelse(regland_enh$nb_seq_conserv > nb_min & regland_enh$nb_seq_conserv < 100, regland_enh$nb_synt2M_conserv/regland_enh$nb_seq_conserv, NA)
-  regland_enh$ratio_cons_int = ifelse(regland_enh$nb_seq_conserv > nb_min & regland_enh$nb_seq_conserv < 100, regland_enh$nb_contact_conserv/regland_enh$nb_seq_conserv, NA)
+  regland_enh$nb_seq_conserv <- ifelse(regland_enh$nb_total >= nb_min | regland_enh$nb_total <= 100, regland_enh$nb_seq_conserv , NA)
+  regland_enh$ratio_cons_seq = ifelse(regland_enh$nb_total >= nb_min & regland_enh$nb_total <= 100, regland_enh$nb_seq_conserv/regland_enh$nb_total, NA)
+  regland_enh$ratio_cons_synt = ifelse(regland_enh$nb_seq_conserv >= nb_min & regland_enh$nb_seq_conserv <= 100, regland_enh$nb_synt2M_conserv/regland_enh$nb_seq_conserv, NA)
+  regland_enh$ratio_cons_int = ifelse(regland_enh$nb_seq_conserv >= nb_min & regland_enh$nb_seq_conserv <= 100, regland_enh$nb_contact_conserv/regland_enh$nb_seq_conserv, NA)
   
   regland_enh$class_nb_contact=cut2(regland_enh$nb_total, g=5, include.lowest=T)
   regland_enh$class_cons_seq=cut(regland_enh$ratio_cons_seq, breaks=c(0, 0.10, 0.25, 0.5, 0.75, 1), include.lowest=T)

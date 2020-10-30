@@ -74,9 +74,9 @@ mtext(xpos, at=xpos, side=1, line=1, cex=0.8)
 mtext("Alignment score", side=1, line=2.5, cex=0.9)
 
 axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
-mtext("Spearman's coefficient", side=2, line=2.5, cex=0.9)
+mtext("Spearman's rho", side=2, line=2.5, cex=0.9)
 
-mtext("A", side=3, at=0.45, font=2, cex=1.1, line=0.5)
+mtext("a", side=3, at=0.45, font=2, cex=1.1, line=0.5)
 legend("bottomright", legend=label.enhancers[enhancer.datasets[[sp]]], pch=20, 
              col=col.enhancers[enhancer.datasets[[sp]]], cex=1,
              bty="o", box.col="white", bg="white",  inset=c(0, 0.01))
@@ -110,7 +110,7 @@ abline(v=xpos[1:2]+0.5, lty=3, col="gray40")
 axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(regland[[enh]]$class_cons_synt))), cex.axis=0.8)
 mtext(c("<75%", "75-99%", ">99%"), at=xpos, side=1, line=1, cex=0.8)
 mtext("Synteny Conservation", side=1, line=2.5, cex=0.9)
-mtext("B", side=3, at=0.45, font=2, cex=1.1, line=0.5)
+mtext("b", side=3, at=0.45, font=2, cex=1.1, line=0.5)
 
 #### C - Gene expression profil similarity and enhancers conserved in contact ####
 xlim=c(0.5, length(levels(regland[[enh]]$class_cons_int))+0.5)
@@ -137,7 +137,7 @@ abline(v=xpos[1:4]+0.5, lty=3, col="gray40")
 axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(regland[[enh]]$class_cons_int))), cex.axis=0.8)
 mtext(c("<1%", "1-25%", "25-50%", "50-75%", ">75%"), at=xpos, side=1, line=1, cex=0.8)
 mtext("Contact Conservation", side=1, line=2.5, cex=0.9)
-mtext("C", side=3, at=0.45, font=2, cex=1.1, line=0.5)
+mtext("c", side=3, at=0.45, font=2, cex=1.1, line=0.5)
 
 
 ################################################################################################################################
@@ -151,13 +151,13 @@ par(mai = c(0.5, 0.5, 0.5, 0)) # bottom, left, top, right
 YLIM=c(0.3,0.6)
 
 ########################  D - Expression Conservation vs Number of conserved enhancers ######################## 
-mean_divergence <- t(sapply(data_cell, function(x)   tapply(x$Conservation, as.factor(x$class_align_score), mean, na.rm=T)))
-divergence_conf_low <- t(sapply(data_cell, function(x) tapply(x$Conservation, as.factor(x$class_align_score), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
-divergence_conf_high <- t(sapply(data_cell, function(x) tapply(x$Conservation, as.factor(x$class_align_score), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
+mean_divergence <- t(sapply(data_cell, function(x)   tapply(x[["ENCODE"]]$Conservation, as.factor(x[["ENCODE"]]$class_align_score), mean, na.rm=T)))
+divergence_conf_low <- t(sapply(data_cell, function(x) tapply(x[["ENCODE"]]$Conservation, as.factor(x[["ENCODE"]]$class_align_score), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
+divergence_conf_high <- t(sapply(data_cell, function(x) tapply(x[["ENCODE"]]$Conservation, as.factor(x[["ENCODE"]]$class_align_score), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-plot(as.numeric(mean_divergence["Bcell",]), type="l", col=dataset.colors["Bcell"], ylim=YLIM, xlab="", ylab="", axes=F)
-lines(as.numeric(mean_divergence["ESC",]), col=dataset.colors["ESC"], lwd=1.5)
-lines(as.numeric(mean_divergence["adipo",]), col=dataset.colors["adipo"], lwd=1.5)
+plot(as.numeric(mean_divergence["Bcell",]), pch=20, col=dataset.colors["Bcell"], ylim=YLIM, xlab="", ylab="", axes=F)
+points(as.numeric(mean_divergence["ESC",]), col=dataset.colors["ESC"], pch=20)
+points(as.numeric(mean_divergence["adipo",]), col=dataset.colors["adipo"], pch=20)
 
 ## X axis
 axis(side=1, at=1:5, labels=1:5, mgp=c(3, 0.65, 0))
@@ -168,7 +168,7 @@ mtext("Alignment score", side=1, line=2.25, cex=0.9)
 mtext("Expression Conservation", side=2, line=2.5, cex=0.9)
 
 #legend
-legend("topright", legend=c("Bcell", "ESC", "Pre-adipocytes"), lty=1, col=dataset.colors[cells], bty="n", cex=1.2)
+legend("topright", legend=c("Bcell", "ESC", "Pre-adipocytes"), pch=20, col=dataset.colors[cells], bty="n", cex=1.2)
 
 ## confidence intervals
 for(dataset in rownames(mean_divergence)){
@@ -178,16 +178,16 @@ for(dataset in rownames(mean_divergence)){
 }
 
 ## plot label
-mtext("D", side=3, line=1, at=1, font=2, cex=1)
+mtext("d", side=3, line=1, at=1, font=2, cex=1)
 
 ############## E - Expression Conservation vs Number of conserved contacts ############################# 
-mean_divergence <- t(sapply(data_cell, function(x)   tapply(x$Conservation, as.factor(x$class_cons_synt), mean, na.rm=T)))
-divergence_conf_low <- t(sapply(data_cell, function(x) tapply(x$Conservation, as.factor(x$class_cons_synt), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
-divergence_conf_high <- t(sapply(data_cell, function(x) tapply(x$Conservation, as.factor(x$class_cons_synt), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
+mean_divergence <- t(sapply(data_cell, function(x)   tapply(x[["ENCODE"]]$Conservation, as.factor(x[["ENCODE"]]$class_cons_synt), mean, na.rm=T)))
+divergence_conf_low <- t(sapply(data_cell, function(x) tapply(x[["ENCODE"]]$Conservation, as.factor(x[["ENCODE"]]$class_cons_synt), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
+divergence_conf_high <- t(sapply(data_cell, function(x) tapply(x[["ENCODE"]]$Conservation, as.factor(x[["ENCODE"]]$class_cons_synt), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-plot(as.numeric(mean_divergence["Bcell",]), type="l", col=dataset.colors["Bcell"], ylim=YLIM, xlab="", ylab="", axes=F)
-lines(as.numeric(mean_divergence["ESC",]), col=dataset.colors["ESC"], lwd=1.5)
-lines(as.numeric(mean_divergence["adipo",]), col=dataset.colors["adipo"], lwd=1.5)
+plot(as.numeric(mean_divergence["Bcell",]), pch=20, col=dataset.colors["Bcell"], ylim=YLIM, xlab="", ylab="", axes=F)
+points(as.numeric(mean_divergence["ESC",]), col=dataset.colors["ESC"], pch=20)
+points(as.numeric(mean_divergence["adipo",]), col=dataset.colors["adipo"], pch=20)
 
 ## X axis
 breaks_names=c(">75%", "75-99%", ">99%")
@@ -205,16 +205,16 @@ for(dataset in rownames(mean_divergence)){
 }
 
 ## plot label
-mtext("E", side=3, line=1, at=1, font=2, cex=1)
+mtext("e", side=3, line=1, at=1, font=2, cex=1)
 
 ############## F - Expression Conservation vs Number of conserved contacts ############################# 
-mean_divergence <- t(sapply(data_cell, function(x)   tapply(x$Conservation, as.factor(x$class_cons_int), mean, na.rm=T)))
-divergence_conf_low <- t(sapply(data_cell, function(x) tapply(x$Conservation, as.factor(x$class_cons_int), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
-divergence_conf_high <- t(sapply(data_cell, function(x) tapply(x$Conservation, as.factor(x$class_cons_int), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
+mean_divergence <- t(sapply(data_cell, function(x)   tapply(x[["ENCODE"]]$Conservation, as.factor(x[["ENCODE"]]$class_cons_int), mean, na.rm=T)))
+divergence_conf_low <- t(sapply(data_cell, function(x) tapply(x[["ENCODE"]]$Conservation, as.factor(x[["ENCODE"]]$class_cons_int), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
+divergence_conf_high <- t(sapply(data_cell, function(x) tapply(x[["ENCODE"]]$Conservation, as.factor(x[["ENCODE"]]$class_cons_int), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
-plot(as.numeric(mean_divergence["Bcell",]), type="l", col=dataset.colors["Bcell"], ylim=YLIM, xlab="", ylab="", axes=F)
-lines(as.numeric(mean_divergence["ESC",]), col=dataset.colors["ESC"], lwd=1.5)
-lines(as.numeric(mean_divergence["adipo",]), col=dataset.colors["adipo"], lwd=1.5)
+plot(as.numeric(mean_divergence["Bcell",]), pch=20, col=dataset.colors["Bcell"], ylim=YLIM, xlab="", ylab="", axes=F)
+points(as.numeric(mean_divergence["ESC",]), col=dataset.colors["ESC"], pch=20)
+points(as.numeric(mean_divergence["adipo",]), col=dataset.colors["adipo"], pch=20)
 
 ## X axis
 breaks_names=c("<1%", "1-25%", "25-50%", "50-75%", ">75%")
@@ -232,6 +232,6 @@ for(dataset in rownames(mean_divergence)){
 }
 
 ## plot label
-mtext("F", side=3, line=1, at=1, font=2, cex=1)
+mtext("f", side=3, line=1, at=1, font=2, cex=1)
 
 #dev.off()
