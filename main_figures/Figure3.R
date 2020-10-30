@@ -1,209 +1,251 @@
 #########################################################################################################################
-source("parameters.R") ## pathFiguress are defined based on the user name
 
-library(ape)
-library(vioplot)
+objects=ls()
 
-ref_sp = "human"
-target_sp = "mouse"
+if(!"pathFigures"%in%objects){
 
-load(paste(pathFigures, "RData/Fig3_", ref_sp, ".Rdata", sep=""))
+ source("parameters.R")
 
-enhancers = c("FANTOM5", "ENCODE")
-if(ref_sp == "human"){enhancers <- c(enhancers, "RoadmapEpigenomics", "FOCS_GRO_seq")}
-if(ref_sp == "human"){pdf_name="Figure3_test.pdf"}else{pdf_name="Sup_Figure11.pdf"}
+ library(ape)
+ library(vioplot)
+
+ load=T
+}
 
 #########################################################################################################################
 
-#pdf(paste(pathFigures, pdf_name, sep=""), width=7, height=10)
-par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right 
-a <- matrix(c(1,1,2,2,3,3),ncol=6, nrow = 2, byrow=T)
-b <- matrix(c(4,4,4,5,5,5), nrow=1, byrow=F)
-c <- matrix(c(6,6,6,7,7,7), nrow=1, byrow=F)
-d <- rbind(a,b,c)
-layout(d)
+if(load){
+ ref_sp = "human"
+ close_sp= "macaque"
+ target_sp = "mouse"
 
-################################## A - Phylogenetic tree ################################################################ 
-tree <- read.tree(paste(pathFigures, "Ensembl_species_tree", sep=""))
+ enhancers = enhancer.datasets[[ref_sp]]
+
+ selenh="ENCODE"
+
+ load(paste(pathFigures, "RData/data.sequence.conservation.", ref_sp, ".Rdata", sep=""))
+
+ load=F
+}
+
+#########################################################################################################################
+
+## 1 column width 85 mm = 3.34 in
+## 1.5 column width 114 mm = 4.49 in
+## 2 columns width 174 mm = 6.85 in
+## max height: 11 in
+
+#########################################################################################################################
+
+pdf(paste(pathFigures, "Figure3.pdf", sep=""), width=6.85, height=9)
+
+par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right
+
+m=matrix(rep(NA, 7*6), nrow=7)
+
+for(i in 1:3){
+ m[i,]=c(1,1,2,2,3,3)
+}
+
+for(i in 4:5){
+ m[i,]=c(4,4,4,6,6,6)
+}
+
+for(i in 6:7){
+ m[i,]=c(5,5,5,7,7,7)
+}
+
+layout(m)
+
+################################## a - Phylogenetic tree ################################################################
+
+tree <- read.tree(paste(pathFigures, "RData/Ensembl_species_tree", sep=""))
+
 tree <- keep.tip(tree, c("Mus_musculus", "Homo_sapiens", "Rattus_norvegicus", "Macaca_mulatta", "Oryctolagus_cuniculus", "Canis_lupus_familiaris", "Bos_taurus", "Loxodonta_africana", "Monodelphis_domestica", "Gallus_gallus"))
 species <- c("macaque", "mouse", "rat", "rabbit", "cow", "dog", "elephant", "opossum", "chicken")
 species_names <- c("human", species)
 
-# Rotate tree to get reference species at bottom of the plot
-if(ref_sp == "mouse"){
-  tree <- rotate(tree, c(1,5))
-  species <- c( "rat", "rabbit", "human", "macaque", "cow", "dog", "elephant", "opossum", "chicken")}
-
-plot(tree, cex=1.2, y.lim=c(0.3,10.3), x.lim=c(0,1.07), label.offset = 0.01, show.tip.label = F, main="")
-tiplabels(species_names, bg = NA, adj = -0.1, frame="none", cex=1.3)
+par(mar=c(4.1,1.1, 2.1, 1))
+plot(tree, cex=1.2, y.lim=c(0.3,10.5), x.lim=c(0,1.07), label.offset = 0.01, show.tip.label = F, main="")
 tiplabels(species_names, bg = NA, adj = -0.1, frame="none", cex=1.3)
 
-# Legend
-mtext("A", side=3, line=1, at=0, font=2, cex=1.2)
+ # legend for the plot
 
-par(xpd=TRUE)
-legend(y=0.5, x=0, fill=c("firebrick1","dodgerblue", "forestgreen"), 
-       legend = c("Simulated", "Original with enhancer", "Original"),
-       text.width=c(0.4), ncol=2, bty='n', cex=1.3)
+legend("bottomleft", fill=dataset.colors, border=dataset.colors, legend = c("PCHi-C data", "simulated data"), bty='n', cex=1.3, xpd=T, inset=c(-0.01, -0.05), horiz=FALSE)
 
-######################## B - Restriction fragments sequence conservation ######################## 
+# label
+mtext("a", side=3, line=0.5, at=-0.05, font=2, cex=1.2)
+
+######################## b - Restriction fragments sequence conservation ########################
+
+ylim=c(-2, 38.5)
+xlim=c(0, 100)
+
+plot(1, type="n", xlab="", ylab="", axes=F, ylim=ylim, xlim=xlim, main="", bty="n")
+
 # Simulated
-vioplot(c(0,align_simul[,species]), at=c(0,4,8,12,16,20,24,28,32,36), border="firebrick1", col=rgb(t(col2rgb('firebrick1')/255), alpha = 0.6),
-        plotCentre="line", axes=F, yaxt='n', horizontal = T, las=1, cex.main = 1.2, main="")
+ypos.sim=c(4,8,12,16,20,24,28,32,36)
+
+par(bty="n")
+
+vioplot(100*frag_align_simul[,species], at=ypos.sim, add=T, border=dataset.colors["Simulated"], col=rgb(t(col2rgb(dataset.colors["Simulated"])/255), alpha = 0.6), plotCentre="line", axes=F, xaxt="n", yaxt="n", horizontal = T, las=1, cex.main = 1.2, main="", bty="n")
 
 # Original
-vioplot(c(0,align_obs[,species]), at=c(1,5,9,13,17,21,25,29,33,37), add=T, axes=F, horizontal = T, 
-        border="forestgreen", col=rgb(t(col2rgb('forestgreen')/255), alpha = 0.6), plotCentre="line") 
+ypos.obs=c(5,9,13,17,21,25,29,33,37)
 
-# Original with enhancer
-vioplot(c(0,align_obs_enh[,species]), at=c(2,6,10,14,18,22,26,30,34,38), add=T, axes=F, horizontal = T,
-        border="dodgerblue", col=rgb(t(col2rgb('dodgerblue')/255), alpha = 0.6), plotCentre="line") 
+vioplot(100*frag_align_obs[,species], at=ypos.obs, add=T, axes=F, xaxt="n", yaxt="n", horizontal = T, border=dataset.colors["Original"], col=rgb(t(col2rgb(dataset.colors["Original"])/255), alpha = 0.6), plotCentre="line")
 
-# Add mean point
-points(x=apply(align_simul[,species], 2, mean), y=c(4,8,12,16,20,24,28,32,36), col = "white", pch=20, cex=0.8)
-points(x = apply(align_obs[,species], 2, mean), y = c(5,9,13,17,21,25,29,33,37), col = "white", pch=20, cex=0.8)
-points(x = apply(align_obs_enh[,species], 2, mean), y = c(6,10,14,18,22,26,30,34,38), col = "white", pch=20, cex=0.8)
+## add mean point
 
-# Axis and legend
-axis(1, pos=0.7, at=seq(0,1,0.2), labels=c("0.0", "0.2", "0.4", "0.6", "0.8", "1.0"), cex.lab=1.2)
-mtext("Alignment score", side=1, xpd = TRUE, cex=0.8)
-mtext("B", side=3, line=1, at=0.1, font=2, cex=1.2)
+points(x=100*apply(frag_align_simul[,species], 2, mean), y = ypos.sim, col = "white", pch=20, cex=0.8)
+points(x=100*apply(frag_align_obs[,species], 2, mean), y = ypos.obs, col = "white", pch=20, cex=0.8)
 
-######################## C - ENCODE enhancers sequence conservation ######################## 
-# Simulated enhancer
-vioplot(c(0, align_enhancers_simul[,species]), at=c(0,3,6,9,12,15,18,21,24,27), col=rgb(t(col2rgb('firebrick1')/255), alpha = 0.6), border="firebrick1",
-        axes=F, yaxt='n', horizontal = T, las=1, cex.main = 1.2, main="", plotCentre="line")
+## axis and legend
 
-# Original enhancer
-vioplot(c(0, align_enhancers_obs[,species]),at=c(1,4,7,10,13,16,19,22,25,28), col=rgb(t(col2rgb('forestgreen')/255), alpha = 0.6), border="forestgreen",
-        add=T, axes=F, horizontal = T, plotCentre="line")
+axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1.2)
+mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.8, line=0.5)
 
-# Add mean point
-points(x=apply(align_enhancers_simul[,species], 2, mean), y=c(3,6,9,12,15,18,21,24,27), col = "white", pch=20, cex=0.8)
-points(x = apply(align_enhancers_obs[,species], 2, mean), y = c(4,7,10,13,16,19,22,25,28), col = "white", pch=20, cex=0.8)
+mtext("restriction fragments", side=3, line=-1, cex=0.8)
 
-# Axis and legend
-axis(1, pos=0.7, at=seq(0,1,0.2), labels=c("0.0", "0.2", "0.4", "0.6", "0.8", "1.0"), cex.lab=1.2)
-mtext("Alignment score", side=1, xpd = TRUE, cex=0.8)
-mtext("C", side=3, line=1, at=0.1, font=2, cex=1.2)
+mtext("b", side=3, line=0.5, at=-8, font=2, cex=1.2)
 
-######################## D - Conserved sequence Human to mouse vs distance to promoters ########################
-par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right 
-par(xpd=FALSE)
+########################## c - ENCODE enhancers sequence conservation ########################
+
+align_enhancers_obs=list_align_enh[[selenh]][["enh_align_obs"]]
+align_enhancers_simul=list_align_enh[[selenh]][["enh_align_simul"]]
+
+ylim=c(-2, 38.5)
+xlim=c(0, 100)
+
+plot(1, type="n", xlab="", ylab="", axes=F, ylim=ylim, xlim=xlim, main="", bty="n")
+
+# simulated enhancer
+vioplot(100*align_enhancers_simul[,species], at=ypos.sim, col=rgb(t(col2rgb(dataset.colors["Simulated"])/255), alpha = 0.6), border=dataset.colors["Simulated"], add=T, axes=F, xaxt="n", yaxt="n", horizontal = T, las=1, cex.main = 1.2, main="", plotCentre="line")
+
+# original enhancer
+vioplot(100*align_enhancers_obs[,species],at=ypos.obs, col=rgb(t(col2rgb(dataset.colors["Original"])/255), alpha = 0.6), border=dataset.colors["Original"], add=T, axes=F, xaxt="n", yaxt="n", horizontal = T, plotCentre="line")
+
+# add mean point
+points(x = apply(100*align_enhancers_simul[,species], 2, mean, na.rm=T), y=ypos.sim, col = "white", pch=20, cex=0.8)
+points(x = apply(100*align_enhancers_obs[,species], 2, mean, na.rm=T), y = ypos.obs, col = "white", pch=20, cex=0.8)
+
+# axis and legend
+axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1.2)
+
+mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.8, line=0.5)
+
+mtext("enhancers", side=3, line=-1, cex=0.8)
+
+mtext("c", side=3, line=1, at=-8, font=2, cex=1.2)
+
+######################## d - Conserved sequence human to macaque & mouse vs distance to promoters, restriction fragments ########################
+
+par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
+par(mar=c(4.1,5.5, 1.1, 1))
+
+nbclasses=length(levels( frag_align_obs$dist_class))
+xpos=1:nbclasses
+
+xlim=c(-0.5, max(xpos)+1)
+
+## axis position
 class_leg <- c("0", "0.5", "1", "1.5", "2")
+xax=seq(from=0, to=max(xpos)+1, by=10)
 
-xmin=0.2
-xmax=0.4
-CEX=1.2
-CEX_lines=1
+labels=c("d", "f")
+names(labels)=c(close_sp, target_sp)
 
-# Original
-plot(obs_dist[,"inter"], type="l", col="forestgreen", cex=CEX_lines, main="",
-     xlab="", ylab="Alignment score", xaxt = "n", ylim=c(xmin,xmax), cex.lab=CEX, cex.axis=CEX, las=2)
+for(other_sp in c(close_sp, target_sp)){
+ mean.val.obs=tapply(frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.obs=tapply(frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.obs=tapply(frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
-for (row in 1:nrow(obs_dist)){
-  segments(x0=row,y0=obs_dist[row,"int_start"],x1=row,y1=obs_dist[row,"int_end"], col='forestgreen', lwd=0.3)}
+ mean.val.simul=tapply(frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.simul=tapply(frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.simul=tapply(frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
-# Simulated
-lines(simul_dist[,"inter"], type="l", col="firebrick1", cex=CEX_lines)
-for (row in 1:nrow(simul_dist)){
-  segments(x0=row,y0=simul_dist[row,"int_start"],x1=row,y1=simul_dist[row,"int_end"], col='firebrick1', lwd=0.3)}
+ ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul))
 
-# Original with enhancer
-lines(obs_enh_dist[,"inter"], type="l", col="dodgerblue", cex=CEX_lines)
-for (row in 1:nrow(obs_enh_dist)){
-  segments(x0=row,y0=obs_enh_dist[row,"int_start"],x1=row,y1=obs_enh_dist[row,"int_end"], col='dodgerblue', lwd=0.3)}
+ dy=diff(ylim)/20
+ ylim=ylim+c(-dy, dy)
 
-# Axis and legend
-axis(1, at=seq(1,nrow(obs_dist)+1,10), labels=F)
-text(seq(1,nrow(obs_dist)+1,10),par("usr")[3]-0.02, class_leg, xpd = TRUE, cex=CEX)
-mtext("Distance to promoters (Mb)", side=1, line=2, cex=0.8)
-mtext("D", side=3, line=1, at=-1.5, font=2, cex=1.2)
+ plot(1, type="n", xlab="", ylab="", axes=F, main="", xlim=xlim, ylim=ylim, xaxs="i")
 
-######################## E - Conserved sequence to closest specie vs distance to promoters ######################## 
-if(ref_sp=="human"){ymin=0.78; ymax=0.95}else{ymin=0.55; ymax=0.75}
+ lines(xpos, mean.val.obs, col=dataset.colors["Original"])
+ segments(xpos, ci.low.obs, xpos, ci.high.obs, col=dataset.colors["Original"])
 
-# Original
-plot(obs_dist_mac[,"inter"], type="l", col="forestgreen", cex=CEX_lines, main="",
-     xlab="", ylab="Alignment score", xaxt = "n", ylim=c(ymin,ymax), cex.lab=CEX, cex.axis=CEX, las=2)
+ lines(xpos, mean.val.simul, col=dataset.colors["Simulated"])
+ segments(xpos, ci.low.simul, xpos, ci.high.simul, col=dataset.colors["Simulated"])
 
-for (row in 1:nrow(obs_dist_mac)){
-  segments(x0=row,y0=obs_dist_mac[row,"int_start"],x1=row,y1=obs_dist_mac[row,"int_end"], col='forestgreen', lwd=0.3)}
+ axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
+ mtext("distance to promoters (Mb)", side=1, line=2.1, cex=0.8)
 
-# Simulated
-lines(simul_dist_mac[,"inter"], type="l", col="firebrick1", cex=CEX_lines)
-for (row in 1:nrow(simul_dist_mac)){
-  segments(x0=row,y0=simul_dist_mac[row,"int_start"],x1=row,y1=simul_dist_mac[row,"int_end"], col='firebrick1', lwd=0.3)}
+ axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
+ mtext("% aligned sequence", side=2, line=3.5, cex=0.8)
 
-# Original with enhancer
-lines(obs_enh_dist_mac[,"inter"], type="l", col="dodgerblue", cex=CEX_lines)
-for (row in 1:nrow(obs_enh_dist_mac)){
-  segments(x0=row,y0=obs_enh_dist_mac[row,"int_start"],x1=row,y1=obs_enh_dist_mac[row,"int_end"], col='dodgerblue', lwd=0.3)}
+ mtext(paste(ref_sp, " vs. ", other_sp, ", restriction fragments",sep=""), side=3, cex=0.8)
 
-# Axis and legend
-axis(1, at=seq(1,nrow(obs_dist)+1,10), labels=F)
-text(seq(1,nrow(obs_dist)+1,10),par("usr")[3]-0.02, class_leg, xpd = TRUE, cex=CEX)
-mtext("Distance to promoters (Mb)", side=1, line=2.5, cex=0.8)
-mtext("E", side=3, line=1, at=-1.5, font=2, cex=1.2)
+ mtext(labels[other_sp], side=3, line=1, at=-8, font=2, cex=1.2)
+}
 
-######################## F - Repeat proportion vs distance to promoters ######################## 
-if(ref_sp=="human"){ymin=20; ymax=50}else{ymin=25; ymax=50}
+#######################################################################################################
 
-# Original
-plot(obs_repet_dist[,"inter"], type="l", col="forestgreen", cex=CEX_lines, main="",
-     xlab="", ylab="No-exonic repeat proportion (%)", xaxt = "n", ylim=c(ymin,ymax), cex.lab=CEX, cex.axis=CEX, las=2)
+## same, for enhancers
 
-for (row in 1:nrow(obs_repet_dist)){
-  segments(x0=row,y0=obs_repet_dist[row,"int_start"],x1=row,y1=obs_repet_dist[row,"int_end"], col='forestgreen', lwd=0.3)}
+enh_align_obs=list_align_enh[[selenh]][["enh_align_obs"]]
+enh_align_simul=list_align_enh[[selenh]][["enh_align_simul"]]
 
-# Simulated
-lines(simul_repet_dist[,"inter"], type="l", col="firebrick1", cex=CEX_lines)
-for (row in 1:nrow(simul_repet_dist)){
-  segments(x0=row,y0=simul_repet_dist[row,"int_start"],x1=row,y1=simul_repet_dist[row,"int_end"], col='firebrick1', lwd=0.3)}
+par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
 
-# Original with enhancer
-lines(obs_enh_repet_dist[,"inter"], type="l", col="dodgerblue", cex=CEX_lines)
-for (row in 1:nrow(obs_enh_repet_dist)){
-  segments(x0=row,y0=obs_enh_repet_dist[row,"int_start"],x1=row,y1=obs_enh_repet_dist[row,"int_end"], col='dodgerblue', lwd=0.3)}
+par(mar=c(3.5,5.5, 1.5, 1))
 
-# Axis and legend
-axis(1, at=seq(1,nrow(obs_repet_dist)+1,10), labels=F)
-text(seq(1,nrow(obs_repet_dist)+1,10),par("usr")[3]-3, class_leg, xpd = TRUE, cex=CEX)
-mtext("Distance to promoters (Mb)", side=1, line=2.5, cex=0.8)
-mtext("F", side=3, line=1, at=-1.5, font=2, cex=1.2)
+nbclasses=length(levels( frag_align_obs$dist_class))
+xpos=1:nbclasses
 
- ######################## G - Conserv enhancers vs distance to promoters ######################## 
-par(mai = c(0.8, 0.6, 0.2, 1)) #bottom, left, top and right 
-if(ref_sp=="human"){ymin=0.25; ymax=0.55}else{ymin=0.5; ymax=0.7}
+xlim=c(-0.5, max(xpos)+1)
 
-for (enh in enhancers){
-  # Plot first enhancer
-   if (enh == "FANTOM5"){
-     plot(list_conserv_enh[[enh]], type="l", col=col.enhancers[enh], main="",
-          xlab="", ylab="Alignment score", xaxt = "n", ylim=c(ymin,ymax), las=2)
-    
-  # Add the others
-   }else{lines(list_conserv_enh[[enh]], type="l", col=col.enhancers[enh])}
-   
-  # Add confidence intervals
-   for (row in 1:length(list_conserv_enh[[enh]])){
-     segments(x0=row,y0=list_conserv_enh[[paste0(enh, "_start")]][row],
-              x1=row,y1=list_conserv_enh[[paste0(enh, "_end")]][row], col=col.enhancers[enh], lty=3, lwd=0.6)
-   }
- }
- 
+## axis position
+class_leg <- c("0", "0.5", "1", "1.5", "2")
+xax=seq(from=0, to=max(xpos)+1, by=10)
 
-# Axis and legend
-axis(1, at=seq(1,length(list_conserv_enh[[enh]])+1, 10), labels=F)
-text(seq(1,length(list_conserv_enh[[enh]])+1,10), par("usr")[3]-0.04, class_leg, xpd = TRUE, cex=CEX)
-mtext("Distance to promoters (Mb)", side=1, line=2.5, cex=0.8)
-mtext("G", side=3, line=1, at=-1.5, font=2, cex=1.2)
- 
-par(xpd=TRUE)
-enhancers_name = c("FANTOM5", "ENCODE")
-if (ref_sp == "human"){enhancers_name <- c(enhancers_name, "RoadMap\nEpigenomics", "GRO-seq")}
- 
-legend("right", inset=c(-0.55,0), col=col.enhancers, legend = enhancers, bty='n', lty=1)
+labels=c("e", "g")
+names(labels)=c(close_sp, target_sp)
 
-#dev.off()
+for(other_sp in c(close_sp, target_sp)){
+ mean.val.obs=tapply(enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.obs=tapply(enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.obs=tapply(enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
+ mean.val.simul=tapply(enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.simul=tapply(enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.simul=tapply(enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
+
+ ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul))
+
+ dy=diff(ylim)/20
+ ylim=ylim+c(-dy, dy)
+
+ plot(1, type="n", xlab="", ylab="", axes=F, main="", xlim=xlim, ylim=ylim, xaxs="i")
+
+ lines(xpos, mean.val.obs, col=dataset.colors["Original"])
+ segments(xpos, ci.low.obs, xpos, ci.high.obs, col=dataset.colors["Original"])
+
+ lines(xpos, mean.val.simul, col=dataset.colors["Simulated"])
+ segments(xpos, ci.low.simul, xpos, ci.high.simul, col=dataset.colors["Simulated"])
+
+ axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
+ mtext("distance to promoters (Mb)", side=1, line=2.1, cex=0.8)
+
+ axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
+ mtext("% aligned sequence", side=2, line=3.5, cex=0.8)
+
+ mtext(paste(ref_sp, " vs. ", other_sp, ", enhancers", sep=""), side=3, cex=0.8)
+
+ mtext(labels[other_sp], side=3, line=1, at=-8, font=2, cex=1.2)
+}
+
+#######################################################################################################
+
+dev.off()
+
+#######################################################################################################
