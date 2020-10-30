@@ -26,7 +26,7 @@ for(ref_sp in c("human", "mouse")){
   
   for(enh in enhancers){
     obs[,paste0(enh,"_pclen")]=obs[,paste0(enh, "_bp")]*100/obs$length
-    simul[,paste0(enh,"_pclen")]=simul[,paste0(enh, "_bp")]*100/obs$length
+    simul[,paste0(enh,"_pclen")]=simul[,paste0(enh, "_bp")]*100/simul$length
   }
   
   ###################### Proportions of contacted sequences covered by enhancers ########################
