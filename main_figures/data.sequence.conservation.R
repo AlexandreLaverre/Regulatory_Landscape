@@ -99,7 +99,7 @@ for(ref_sp in c("human", "mouse")){
     enh_align_simul$dist_class <- enh_simul_stats[enh_align_simul$enh, "dist_class"]
 
     ## store results
-    list_align_enh[[enh]] <- list("enh_align_obs", "enh_align_simul")
+    list_align_enh[[enh]] <- list("enh_align_obs"=enh_align_obs, "enh_align_simul"=enh_align_simul)
   }
 
   ## save results
