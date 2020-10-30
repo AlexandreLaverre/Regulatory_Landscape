@@ -47,7 +47,8 @@ for(ref_sp in c("human", "mouse")){
 
   #### alignment score vs all species, for restriction fragments 
   frag_align <- read.table(paste(path_evol,"sequence_conservation/restriction_fragments/Alignments_stats_all_species_nonexonic_ungapped.txt", sep="/"), header=T)
-    
+
+  colnames(frag_align)[which(colnames(frag_align)=="enh")]=paste("ID", ref_sp, sep=".")
   ID=paste("ID", ref_sp, sep=".")
   
   frag_align_obs <- frag_align[which(frag_align[,ID] %in% obs$ID), c(ID, species)]
