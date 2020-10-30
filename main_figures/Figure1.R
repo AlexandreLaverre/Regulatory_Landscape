@@ -279,7 +279,7 @@ par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='',
           names=rep("", dim(pc_nb_celltypes_matrix)[2]), ylim=c(0,80), space=c(0.4,1),
           ylab="", border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
-          lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1, density=dataset.density[c("Original", "Simulated")], angle=dataset.angle[c("Original", "Simulated")])
+          lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1, las=2,  density=dataset.density[c("Original", "Simulated")], angle=dataset.angle[c("Original", "Simulated")])
 
 mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
 
@@ -308,7 +308,7 @@ xax=pretty(range(as.numeric(mean_dist)))
 labels=xax/1e6
 axis(side=1, at=xax, labels=labels, mgp=c(3, 0.65, 0), cex.axis=1.1)
 
-axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
+axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1, las=2)
 
 ## axis labels
 mtext("distance between interacting fragments (Mb)", side=1, line=2.25, cex=0.8)
@@ -323,7 +323,7 @@ for(dataset in rownames(mean_dist)){
 ## legend & plot label
 
 legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("c", side=3, line=1, at=-3.28e5, font=2, cex=1.2)
+mtext("c", side=3, line=1, at=-3.15e5, font=2, cex=1.2)
 
 ###########################################################################################
 
