@@ -59,7 +59,7 @@ if [ ${type} = "enhancers" ]; then
     export pathResults=${pathSequenceConservation}/${type}/${enh}
 fi
 
-if [ ${type} = "fragments" ]; then
+if [ ${type} = "restriction_fragments" ]; then
     export pathCoords=${pathInteractions}/frag_coords_${genome}.txt
     export pathResults=${pathSequenceConservation}/${type}
 fi
