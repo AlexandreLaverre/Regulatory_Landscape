@@ -62,7 +62,7 @@ for(ref_sp in c("human", "mouse")){
     path_evol <- paste(pathFinalData, "SupplementaryDataset7/", ref_sp, "/", sep="")
     path_annot <- paste(pathFinalData, "SupplementaryDataset4/", ref_sp, "/", sep="")
     
-### statistics for the contacted restriction fragments
+   ### statistics for the contacted restriction fragments
 
     obs <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
     simul <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
