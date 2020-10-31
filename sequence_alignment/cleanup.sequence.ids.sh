@@ -20,17 +20,21 @@ do
 	if [ -e ${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt ]; then
 	    mv ${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt ${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt
 	fi
-	    
-	perl ${pathScripts}/cleanup.sequence.ids.pl --pathInput=${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt --pathOutput=${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt
-	    
+
+	if [ -e ${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt ]; then
+	    perl ${pathScripts}/cleanup.sequence.ids.pl --pathInput=${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt --pathOutput=${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt
+	fi
+
     fi
 
     if [ ${type} = "restriction_fragments" ]; then
 	if [ -e ${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt ]; then
 	    mv ${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt ${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt
 	fi
-	
-	perl ${pathScripts}/cleanup.sequence.ids.pl --pathInput=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt --pathOutput=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt
+
+	if [ -e ${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt ]; then
+	    perl ${pathScripts}/cleanup.sequence.ids.pl --pathInput=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt --pathOutput=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt
+	fi
     fi
     
 done
