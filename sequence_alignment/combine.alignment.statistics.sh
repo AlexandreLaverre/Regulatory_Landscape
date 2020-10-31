@@ -28,7 +28,7 @@ if [ ${ref} = "human" ]; then
 	    export pathsAln=${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt,${pathsAln}
 	fi
 
-	if [ ${type} = "fragments" ]; then
+	if [ ${type} = "restriction_fragments" ]; then
 	    export pathsAln=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt,${pathsAln}
 	fi
 
@@ -46,7 +46,7 @@ if [ ${ref} = "mouse" ]; then
 	    export pathsAln=${pathSequenceConservation}/${type}/${enh}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt,${pathsAln}
 	fi
 
-	if [ ${type} = "fragments" ]; then
+	if [ ${type} = "restriction_fragments" ]; then
 	    export pathsAln=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt,${pathsAln}
 	fi
     done
@@ -55,12 +55,12 @@ fi
 #####################################################################
 
 if [ ${type} = "enhancers" ]; then
-    export pathsCoords=${pathEnhancers}/${enh}/enhancer_coordinates.bed
+    export pathCoords=${pathEnhancers}/${enh}/enhancer_coordinates.bed
     export pathResults=${pathSequenceConservation}/${type}/${enh}
 fi
 
 if [ ${type} = "fragments" ]; then
-    export pathsCoords=${pathInteractions}/frag_coords_${genome}.txt
+    export pathCoords=${pathInteractions}/frag_coords_${genome}.txt
     export pathResults=${pathSequenceConservation}/${type}
 fi
 
