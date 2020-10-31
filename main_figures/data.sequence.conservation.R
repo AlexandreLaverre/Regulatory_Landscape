@@ -61,8 +61,8 @@ for(ref_sp in c("human", "mouse")){
     frag_align_obs <- frag_align[which(frag_align$ID %in% obs$ID), c("ID", species)]
     frag_align_simul <- frag_align[which(frag_align$ID %in% simul$ID), c("ID", species) ]
     
-    frag_align_obs$median_dist <- obs[frag_align_obs[,ID],"median_dist"]
-    frag_align_simul$median_dist <- simul[frag_align_simul[,ID],"median_dist"]
+    frag_align_obs$median_dist <- obs[frag_align_obs$ID,"median_dist"]
+    frag_align_simul$median_dist <- simul[frag_align_simul$ID,"median_dist"]
 
     frag_align_obs$dist_class <- cut(frag_align_obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
     frag_align_simul$dist_class <-cut(frag_align_simul$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
