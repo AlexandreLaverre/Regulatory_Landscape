@@ -154,8 +154,8 @@ for(ref_sp in c("human", "mouse")){
 
       ## select previously filtered enhancers
 
-      enh_obs_stats=enh_obs_stats[which(enh_obs_stats$enh%in%enh.contact.obs$enhancer),]
-      enh_simul_stats=enh_simul_stats[which(enh_simul_stats$enh%in%enh.contact.obs$enhancer),]
+      enh_obs_stats=enh_obs_stats[which(enh_obs_stats$enh%in%enh.contacts.obs$enhancer),]
+      enh_simul_stats=enh_simul_stats[which(enh_simul_stats$enh%in%enh.contacts.obs$enhancer),]
       
       ## distance class
       enh_obs_stats$dist_class <- cut(enh_obs_stats$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
