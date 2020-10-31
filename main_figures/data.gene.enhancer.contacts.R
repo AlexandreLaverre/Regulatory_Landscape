@@ -25,9 +25,15 @@ for(sp in c("human", "mouse")){
 
     real=read.table(paste(pathContacts, sp, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
     real$nb_cell <- apply(real[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-    
+   
     sim=read.table(paste(pathContacts, sp, "/", enh, "/gene_enhancer_contacts_simulated_interactions.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
     sim$nb_cell <- apply(sim[,samples], 1, function(x) length(unique(celltypes[which(!is.na(x))])))
+    
+    ## select interactions in the accepted distance range
+    real=real[which(real$dist>=minDistance & real$dist<=maxDistance),]
+    sim=sim[which(sim$dist>=minDistance & sim$dist<=maxDistance),]
+
+    ## save data
     
     gene.enhancer.contacts[[sp]][[enh]]=list("real"=real, "simulated"=sim)
   }
