@@ -189,7 +189,7 @@ for(ref_sp in c("human", "mouse")){
 
     ## save results
 
-    save(list=c("frag_align_obs", "frag_align_simul", "list_align_enh"), file=paste(pathFigures, "RData/data.sequence.conservation.",outnames[type],".",ref_sp,".Rdata", sep=""))
+    save(list=c("frag_align_obs", "frag_align_simul", "list_align_enh"), file=paste(pathFigures, "RData/data.sequence.conservation.celltypes.",outnames[type],".",ref_sp,".Rdata", sep=""))
 
   }
 }
