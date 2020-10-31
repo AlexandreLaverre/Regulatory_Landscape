@@ -51,7 +51,7 @@ for(ref_sp in c("human", "mouse")){
     simul <- simul[which(simul$BLAT_match < 2),]
 
    ## alignment score vs all species, for restriction fragments 
-    frag_align <- read.table(paste(path_evol,"sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep="/"), header=T)
+    frag_align <- read.table(paste(path_evol,"/sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
 
     ## replace NA values with 0
     for(sp in species){
@@ -74,7 +74,7 @@ for(ref_sp in c("human", "mouse")){
     for (enh in enhancers){
       print(enh)
       
-      enh_align <- read.table(paste(path_evol,"sequence_conservation/enhancers/", enh, "AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt ", sep="/"), header=T)
+      enh_align <- read.table(paste(path_evol,"/sequence_conservation/enhancers/", enh, "/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
 
       ## replace NA values with 0
       for(sp in species){
