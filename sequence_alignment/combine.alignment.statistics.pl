@@ -87,8 +87,7 @@ sub readAlignmentStatistics{
 	my $idtg=$s[$header{"ID.".$tg}];
 
 	my @t=split(":", $idref);
-	pop @t;
-	my $id=join(":", @t);
+	my $id=join(":", @t[0..2]);
 
 	my $identicallength=$s[$header{"FilteredIdenticalLength"}]+0;
 	my $ungappedlength=$s[$header{"FilteredUngappedLength"}]+0;
