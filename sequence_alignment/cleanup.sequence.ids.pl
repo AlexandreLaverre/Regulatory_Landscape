@@ -108,7 +108,14 @@ if(-e $parameters{"pathInput"}) {
     open(my $output, ">".$parameters{"pathOutput"});
 
     my $line=<$input>; ## header
-    print $output $line;
+    chomp $line;
+    my @s=split("\t", $line);
+    
+    my $id1=shift @s;
+    my @t=split(":", @$id1);
+    $id1=$t[0];
+        
+    print $output $id1."\t".join("\t", @s)."\n";
 
     $line=<$input>;
 
