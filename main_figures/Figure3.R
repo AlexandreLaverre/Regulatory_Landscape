@@ -23,7 +23,7 @@ if(load){
 
  selenh="ENCODE"
 
- load(paste(pathFigures, "RData/data.sequence.conservation.", ref_sp, ".Rdata", sep=""))
+ load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".Rdata", sep=""))
 
  load=F
 }
@@ -84,14 +84,14 @@ xlim=c(0, 100)
 plot(1, type="n", xlab="", ylab="", axes=F, ylim=ylim, xlim=xlim, main="", bty="n")
 
 # Simulated
-ypos.sim=c(4,8,12,16,20,24,28,32,36)
+ypos.sim=c(4,8,12,16,20,24,28,32,36)-0.27
 
 par(bty="n")
 
 vioplot(100*frag_align_simul[,species], at=ypos.sim, add=T, border=dataset.colors["Simulated"], col=rgb(t(col2rgb(dataset.colors["Simulated"])/255), alpha = 0.6), plotCentre="line", axes=F, xaxt="n", yaxt="n", horizontal = T, las=1, cex.main = 1.2, main="", bty="n")
 
 # Original
-ypos.obs=c(5,9,13,17,21,25,29,33,37)
+ypos.obs=c(5,9,13,17,21,25,29,33,37)+0.27
 
 vioplot(100*frag_align_obs[,species], at=ypos.obs, add=T, axes=F, xaxt="n", yaxt="n", horizontal = T, border=dataset.colors["Original"], col=rgb(t(col2rgb(dataset.colors["Original"])/255), alpha = 0.6), plotCentre="line")
 
@@ -136,12 +136,12 @@ mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.8, line=0.5)
 
 mtext("enhancers", side=3, line=-1, cex=0.8)
 
-mtext("c", side=3, line=1, at=-8, font=2, cex=1.2)
+mtext("c", side=3, line=0.5, at=-8, font=2, cex=1.2)
 
 ######################## d - Conserved sequence human to macaque & mouse vs distance to promoters, restriction fragments ########################
 
 par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
-par(mar=c(4.1,5.5, 1.1, 1))
+par(mar=c(4.1, 4.5, 2, 1.5))
 
 nbclasses=length(levels( frag_align_obs$dist_class))
 xpos=1:nbclasses
@@ -156,13 +156,13 @@ labels=c("d", "f")
 names(labels)=c(close_sp, target_sp)
 
 for(other_sp in c(close_sp, target_sp)){
- mean.val.obs=tapply(frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) mean(x, na.rm=T))
- ci.low.obs=tapply(frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
- ci.high.obs=tapply(frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
+ mean.val.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
- mean.val.simul=tapply(frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) mean(x, na.rm=T))
- ci.low.simul=tapply(frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
- ci.high.simul=tapply(frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
+ mean.val.simul=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.simul=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.simul=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
  ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul))
 
@@ -178,14 +178,14 @@ for(other_sp in c(close_sp, target_sp)){
  segments(xpos, ci.low.simul, xpos, ci.high.simul, col=dataset.colors["Simulated"])
 
  axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
- mtext("distance to promoters (Mb)", side=1, line=2.1, cex=0.8)
+ mtext("distance to promoters (Mb)", side=1, line=2.2, cex=0.8)
 
  axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
- mtext("% aligned sequence", side=2, line=3.5, cex=0.8)
+ mtext("% aligned sequence", side=2, line=3, cex=0.8)
 
  mtext(paste(ref_sp, " vs. ", other_sp, ", restriction fragments",sep=""), side=3, cex=0.8)
 
- mtext(labels[other_sp], side=3, line=1, at=-8, font=2, cex=1.2)
+ mtext(labels[other_sp], side=3, line=1, at=-7.75, font=2, cex=1.2)
 }
 
 #######################################################################################################
@@ -197,7 +197,7 @@ enh_align_simul=list_align_enh[[selenh]][["enh_align_simul"]]
 
 par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
 
-par(mar=c(3.5,5.5, 1.5, 1))
+par(mar=c(4.1, 4.5, 2, 1.5))
 
 nbclasses=length(levels( frag_align_obs$dist_class))
 xpos=1:nbclasses
@@ -212,13 +212,13 @@ labels=c("e", "g")
 names(labels)=c(close_sp, target_sp)
 
 for(other_sp in c(close_sp, target_sp)){
- mean.val.obs=tapply(enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) mean(x, na.rm=T))
- ci.low.obs=tapply(enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
- ci.high.obs=tapply(enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
+ mean.val.obs=tapply(100*enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.obs=tapply(100*enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.obs=tapply(100*enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
- mean.val.simul=tapply(enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) mean(x, na.rm=T))
- ci.low.simul=tapply(enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
- ci.high.simul=tapply(enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
+ mean.val.simul=tapply(100*enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.simul=tapply(100*enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.simul=tapply(100*enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
  ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul))
 
@@ -234,14 +234,14 @@ for(other_sp in c(close_sp, target_sp)){
  segments(xpos, ci.low.simul, xpos, ci.high.simul, col=dataset.colors["Simulated"])
 
  axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
- mtext("distance to promoters (Mb)", side=1, line=2.1, cex=0.8)
+ mtext("distance to promoters (Mb)", side=1, line=2.2, cex=0.8)
 
  axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
- mtext("% aligned sequence", side=2, line=3.5, cex=0.8)
+ mtext("% aligned sequence", side=2, line=3, cex=0.8)
 
  mtext(paste(ref_sp, " vs. ", other_sp, ", enhancers", sep=""), side=3, cex=0.8)
 
- mtext(labels[other_sp], side=3, line=1, at=-8, font=2, cex=1.2)
+ mtext(labels[other_sp], side=3, line=1, at=-7.75, font=2, cex=1.2)
 }
 
 #######################################################################################################
