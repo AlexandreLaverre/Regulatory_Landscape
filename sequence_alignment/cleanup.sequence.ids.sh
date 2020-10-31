@@ -28,7 +28,7 @@ do
 	if [ -e ${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt ]; then
 	    mv ${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt ${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt
 	    
-	    ${pathScripts}/cleanup.sequence.ids.pl --pathInput=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt --pathOutput=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt
+	    perl ${pathScripts}/cleanup.sequence.ids.pl --pathInput=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}_backup.txt --pathOutput=${pathSequenceConservation}/${type}/AlignmentStatistics_Excluding_Exons_${ref}2${sp}.txt
 	fi
     fi
     
