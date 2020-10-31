@@ -112,7 +112,7 @@ if(-e $parameters{"pathInput"}) {
     my @s=split("\t", $line);
     
     my $id1=shift @s;
-    my @t=split(":", @$id1);
+    my @t=split(":", $id1);
     $id1=$t[0];
         
     print $output $id1."\t".join("\t", @s)."\n";
