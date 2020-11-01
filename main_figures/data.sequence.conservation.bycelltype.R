@@ -187,7 +187,7 @@ for(ref_sp in c("human", "mouse")){
 
       ## median distance computed from filtered contacts
       enh_align_obs$median_dist <- enh.mediandist.obs[enh_align_obs$ID]
-      enh_align_simul$median_dist <- enh.mediandist.sim[enh_align_sim$ID]
+      enh_align_simul$median_dist <- enh.mediandist.sim[enh_align_simul$ID]
       
       enh_align_obs$dist_class <- cut(enh_align_obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
       enh_align_simul$dist_class <- cut(enh_align_simul$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
