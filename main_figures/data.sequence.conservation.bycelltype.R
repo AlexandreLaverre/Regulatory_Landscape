@@ -24,6 +24,9 @@ for(ref_sp in c("human", "mouse")){
   frag.contacts.obs <- observed.contacts[[ref_sp]]
   frag.contacts.sim <- simulated.contacts[[ref_sp]]
 
+  frag.mediandist.obs <- tapply(frag.contacts.obs$distance, as.factor(frag.contacts.obs$id_frag), median)
+  frag.mediandist.sim <- tapply(frag.contacts.sim$distance, as.factor(frag.contacts.sim$id_frag), median)
+
   ## sample info
 
   info=sampleinfo[[ref_sp]]
@@ -62,7 +65,7 @@ for(ref_sp in c("human", "mouse")){
     path_evol <- paste(pathFinalData, "SupplementaryDataset7/", ref_sp, "/", sep="")
     path_annot <- paste(pathFinalData, "SupplementaryDataset4/", ref_sp, "/", sep="")
     
-   ### statistics for the contacted restriction fragments
+    ## statistics for the contacted restriction fragments
 
     obs <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
     simul <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
@@ -73,7 +76,8 @@ for(ref_sp in c("human", "mouse")){
     rownames(obs) <- obs$ID
     rownames(simul) <- simul$ID
     
-                                        # unbaited only
+    ## unbaited only
+    
     obs <- obs[which(obs$baited == "unbaited"),]
     simul <- simul[which(simul$baited == "unbaited"),]
 
@@ -98,9 +102,14 @@ for(ref_sp in c("human", "mouse")){
     frag_align_obs <- frag_align[which(frag_align$ID %in% obs$ID), c("ID", species)]
     frag_align_simul <- frag_align[which(frag_align$ID %in% simul$ID), c("ID", species) ]
     
-    frag_align_obs$median_dist <- obs[frag_align_obs$ID,"median_dist"]
-    frag_align_simul$median_dist <- simul[frag_align_simul$ID,"median_dist"]
+    ## frag_align_obs$median_dist <- obs[frag_align_obs$ID,"median_dist"]
+    ## frag_align_simul$median_dist <- simul[frag_align_simul$ID,"median_dist"]
 
+    ## we compute median distance on filtered contacts
+
+    frag_align_obs$median_dist <- frag.mediandist.obs[frag_align_obs$ID]
+    frag_align_simul$median_dist <- frag.mediandist.sim[frag_align_simul$ID]
+    
     frag_align_obs$dist_class <- cut(frag_align_obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
     frag_align_simul$dist_class <-cut(frag_align_simul$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
 
@@ -120,6 +129,11 @@ for(ref_sp in c("human", "mouse")){
 
       enh.contacts.obs <- gene.enhancer.contacts[[ref_sp]][[enh]][["real"]]
       enh.contacts.sim <- gene.enhancer.contacts[[ref_sp]][[enh]][["simulated"]]
+
+      ## median distance for filtered contacts
+      
+      enh.mediandist.obs <- tapply(enh.contacts.obs$dist, as.factor(enh.contacts.obs$enhancer), median)
+      enh.mediandist.sim <- tapply(enh.contacts.sim$dist, as.factor(enh.contacts.sim$enhancer), median)
 
       ## cell types
       for(c in cells){
@@ -157,10 +171,6 @@ for(ref_sp in c("human", "mouse")){
       enh_obs_stats=enh_obs_stats[which(enh_obs_stats$enh%in%enh.contacts.obs$enhancer),]
       enh_simul_stats=enh_simul_stats[which(enh_simul_stats$enh%in%enh.contacts.sim$enhancer),]
       
-      ## distance class
-      enh_obs_stats$dist_class <- cut(enh_obs_stats$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
-      enh_simul_stats$dist_class <-cut(enh_simul_stats$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
-      
       
       ## Select unduplicated and with repeat_part < 1%
       enh_obs_stats <- enh_obs_stats[which(enh_obs_stats$BLAT_match < 2 & (enh_obs_stats$repeat_bp/enh_obs_stats$length) < 0.01),] 
@@ -172,11 +182,15 @@ for(ref_sp in c("human", "mouse")){
       enh_align_obs <- enh_align[which(enh_align$ID %in% enh_obs_stats$enh),]
       enh_align_simul<- enh_align[which(enh_align$ID %in% enh_simul_stats$enh),]
 
-      enh_align_obs$median_dist <- enh_obs_stats[enh_align_obs$ID, "median_dist"]
-      enh_align_obs$dist_class <- enh_obs_stats[enh_align_obs$ID, "dist_class"]
+      ## enh_align_obs$median_dist <- enh_obs_stats[enh_align_obs$ID, "median_dist"]
+      ## enh_align_simul$median_dist <- enh_simul_stats[enh_align_simul$ID, "median_dist"]
 
-      enh_align_simul$median_dist <- enh_simul_stats[enh_align_simul$ID, "median_dist"]
-      enh_align_simul$dist_class <- enh_simul_stats[enh_align_simul$ID, "dist_class"]
+      ## median distance computed from filtered contacts
+      enh_align_obs$median_dist <- enh.mediandist.obs[enh_align_obs$ID]
+      enh_align_simul$median_dist <- enh.mediandist.sim[enh_align_sim$ID]
+      
+      enh_align_obs$dist_class <- cut(enh_align_obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
+      enh_align_simul$dist_class <- cut(enh_align_simul$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
 
       ## add cell type info
       

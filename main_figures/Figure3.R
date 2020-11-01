@@ -10,6 +10,7 @@ if(!"pathFigures"%in%objects){
  library(vioplot)
 
  load=T
+ prepare=T
 }
 
 #########################################################################################################################
@@ -26,6 +27,15 @@ if(load){
  load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".Rdata", sep=""))
 
  load=F
+}
+
+#########################################################################################################################
+
+if(prepare){
+  align_enhancers_obs=list_align_enh[[selenh]][["enh_align_obs"]]
+  align_enhancers_simul=list_align_enh[[selenh]][["enh_align_simul"]]
+
+  prepare=F
 }
 
 #########################################################################################################################
@@ -111,8 +121,6 @@ mtext("b", side=3, line=0.5, at=-8, font=2, cex=1.2)
 
 ########################## c - ENCODE enhancers sequence conservation ########################
 
-align_enhancers_obs=list_align_enh[[selenh]][["enh_align_obs"]]
-align_enhancers_simul=list_align_enh[[selenh]][["enh_align_simul"]]
 
 ylim=c(-2, 38.5)
 xlim=c(0, 100)
@@ -192,9 +200,6 @@ for(other_sp in c(close_sp, target_sp)){
 
 ## same, for enhancers
 
-enh_align_obs=list_align_enh[[selenh]][["enh_align_obs"]]
-enh_align_simul=list_align_enh[[selenh]][["enh_align_simul"]]
-
 par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
 
 par(mar=c(4.1, 4.5, 2, 1.5))
@@ -212,13 +217,13 @@ labels=c("e", "g")
 names(labels)=c(close_sp, target_sp)
 
 for(other_sp in c(close_sp, target_sp)){
- mean.val.obs=tapply(100*enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) mean(x, na.rm=T))
- ci.low.obs=tapply(100*enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
- ci.high.obs=tapply(100*enh_align_obs[, other_sp], enh_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
+ mean.val.obs=tapply(100*align_enhancer_obs[, other_sp], align_enhancer_obs$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.obs=tapply(100*align_enhancer_obs[, other_sp], align_enhancer_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.obs=tapply(100*align_enhancer_obs[, other_sp], align_enhancer_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
- mean.val.simul=tapply(100*enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) mean(x, na.rm=T))
- ci.low.simul=tapply(100*enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
- ci.high.simul=tapply(100*enh_align_simul[, other_sp], enh_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
+ mean.val.simul=tapply(100*align_enhancer_simul[, other_sp], align_enhancer_simul$dist_class, function(x) mean(x, na.rm=T))
+ ci.low.simul=tapply(100*align_enhancer_simul[, other_sp], align_enhancer_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
+ ci.high.simul=tapply(100*align_enhancer_simul[, other_sp], align_enhancer_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
  ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul))
 
