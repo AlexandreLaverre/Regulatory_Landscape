@@ -12,6 +12,9 @@ simulated.contacts=list()
 for(sp in c("human", "mouse")){
   obs <- fread(paste(pathFinalData, "SupplementaryDataset1/", sp, "/all_interactions.txt", sep=""), header=T, stringsAsFactors=F, sep="\t")
   sim <- fread(paste(pathFinalData, "SupplementaryDataset2/", sp, "/simulated_all_interactions.txt", sep=""), header=T, stringsAsFactors=F, sep="\t")
+
+  class(obs)<- "data.frame"
+  class(sim)<- "data.frame"
   
   ## select interactions in cis
   obs=obs[which(obs$chr_bait==obs$chr),]

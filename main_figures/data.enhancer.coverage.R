@@ -14,6 +14,9 @@ for(ref_sp in c("human", "mouse")){
   
   obs <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
   simul <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
+
+  class(obs) <- "data.frame"
+  class(simul) <- "data.frame"
   
   ## obs <- obs[which(obs$baited == "unbaited" & obs$BLAT_match == 1),]
   ## simul <- simul[which(simul$baited == "unbaited" & simul$BLAT_match == 1),]
@@ -24,8 +27,8 @@ for(ref_sp in c("human", "mouse")){
   ## compute percentage of length covered by enhancers
   
   for(enh in enhancers){
-    obs[,paste0(enh,"_pclen")]=obs[,paste0(enh, "_bp")]*100/obs$length
-    simul[,paste0(enh,"_pclen")]=simul[,paste0(enh, "_bp")]*100/simul$length
+    obs[,paste0(enh,"_pclen")]=as.numeric(obs[,paste0(enh, "_bp")])*100/obs$length
+    simul[,paste0(enh,"_pclen")]=as.numeric(simul[,paste0(enh, "_bp")])*100/simul$length
   }
   
   ###################### Proportions of contacted sequences covered by enhancers ########################

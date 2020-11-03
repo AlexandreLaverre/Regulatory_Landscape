@@ -15,7 +15,8 @@ bait.info=list()
 
 for(sp in c("human", "mouse")){
   baits <- fread(paste(pathFinalData, "SupplementaryDataset1/", sp, "/bait_coords_",genomes[sp],".txt", sep=""), header=T, stringsAsFactors=F, sep="\t")
-
+  class(baits) <- "data.frame"
+  
   rownames(baits)=baits$ID
 
   bait.info[[sp]]=baits

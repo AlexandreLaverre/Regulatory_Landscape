@@ -69,6 +69,9 @@ for(ref_sp in c("human", "mouse")){
 
     obs <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
     simul <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
+
+    class(obs)<-"data.frame"
+    class(simul)<-"data.frame"
     
     obs$ID <-  do.call(paste,c(obs[c("chr","start","end")],sep=":"))
     simul$ID <-  do.call(paste,c(simul[c("chr","start","end")],sep=":"))
@@ -93,7 +96,8 @@ for(ref_sp in c("human", "mouse")){
     
     ## alignment score vs all species, for restriction fragments 
     frag_align <- fread(paste(path_evol,"/sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
-
+    class(frag_align)<-"data.frame"
+    
     ## replace NA values with 0
     for(sp in species){
       frag_align[which(is.na(frag_align[,sp])),sp]=0
@@ -149,7 +153,8 @@ for(ref_sp in c("human", "mouse")){
       ## alignment scores
       
       enh_align <- fread(paste(path_evol,"/sequence_conservation/enhancers/", enh, "/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
-
+      class(enh_align)<-"data.frame"
+      
       ## replace NA values with 0
       for(sp in species){
         enh_align[which(is.na(enh_align[,sp])),sp]=0
@@ -160,6 +165,9 @@ for(ref_sp in c("human", "mouse")){
       enh_obs_stats <- fread(paste(path_annot, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
       enh_simul_stats <- fread(paste(path_annot, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
 
+      class(enh_obs_stats) <- "data.frame"
+      class(enh_simul_stats) <- "data.frame"
+      
       enh_obs_stats$enh <-  do.call(paste,c(enh_obs_stats[c("chr","start","end")],sep=":"))
       enh_simul_stats$enh <-  do.call(paste,c(enh_simul_stats[c("chr","start","end")],sep=":"))
 

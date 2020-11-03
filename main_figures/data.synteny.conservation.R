@@ -39,6 +39,9 @@ for(ref_sp in c("human", "mouse")){
       synt_obs <- fread(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_original_synteny.txt", sep=""), header=T)
       synt_simul <- fread(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_simulated_synteny.txt", sep=""), header=T)
 
+      class(synt_obs)<-"data.frame"
+      class(synt_simul)<-"data.frame"
+      
       ## sequnces have to be aligned
       
       synt_obs <- synt_obs[which(synt_obs$align_score>0),]

@@ -13,6 +13,7 @@ for(file in data.scripts){
   rm(list=objects)
 
   ## run the script
+  print(file)
   source(file)
 }
 

@@ -12,6 +12,8 @@ exp.common.celltypes=list()
 
 for(sp in c("human", "mouse")){
   this.exp=fread(paste(pathExpression, sp, "/TPMValues_CommonCellTypes.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
+  class(this.exp)="data.frame"
+  
   rownames(this.exp)=this.exp$GeneID
    
   this.exp=this.exp[,which(colnames(this.exp)!="GeneID")]
@@ -35,8 +37,10 @@ expstats.cm2019=list()
 
 for(sp in c("human", "mouse")){
   this.exp=fread(paste(pathExpression, sp, "/ExpressionStatistics_CardosoMoreira2019.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
-  rownames(this.exp)=this.exp$GeneID
+  class(this.exp)="data.frame"
 
+  rownames(this.exp)=this.exp$GeneID
+  
   expstats.cm2019[[sp]]=this.exp
 }
 
@@ -46,7 +50,8 @@ avgexp.cm2019=list()
 
 for(sp in c("human", "mouse")){
   this.exp=fread(paste(pathExpression, sp, "/AverageRPKM_CardosoMoreira2019.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
- 
+  class(this.exp)="data.frame"
+  
   avgexp.cm2019[[sp]]=this.exp
 }
 
