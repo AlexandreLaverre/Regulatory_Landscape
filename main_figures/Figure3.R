@@ -32,8 +32,8 @@ if(load){
 #########################################################################################################################
 
 if(prepare){
-  align_enhancers_obs=list_align_enh[[selenh]][["enh_align_obs"]]
-  align_enhancers_simul=list_align_enh[[selenh]][["enh_align_simul"]]
+  align_enhancer_obs=list_align_enh[[selenh]][["enh_align_obs"]]
+  align_enhancer_simul=list_align_enh[[selenh]][["enh_align_simul"]]
 
   prepare=F
 }
@@ -128,14 +128,14 @@ xlim=c(0, 100)
 plot(1, type="n", xlab="", ylab="", axes=F, ylim=ylim, xlim=xlim, main="", bty="n")
 
 # simulated enhancer
-vioplot(100*align_enhancers_simul[,species], at=ypos.sim, col=rgb(t(col2rgb(dataset.colors["Simulated"])/255), alpha = 0.6), border=dataset.colors["Simulated"], add=T, axes=F, xaxt="n", yaxt="n", horizontal = T, las=1, cex.main = 1.2, main="", plotCentre="line")
+vioplot(100*align_enhancer_simul[,species], at=ypos.sim, col=rgb(t(col2rgb(dataset.colors["Simulated"])/255), alpha = 0.6), border=dataset.colors["Simulated"], add=T, axes=F, xaxt="n", yaxt="n", horizontal = T, las=1, cex.main = 1.2, main="", plotCentre="line")
 
 # original enhancer
-vioplot(100*align_enhancers_obs[,species],at=ypos.obs, col=rgb(t(col2rgb(dataset.colors["Original"])/255), alpha = 0.6), border=dataset.colors["Original"], add=T, axes=F, xaxt="n", yaxt="n", horizontal = T, plotCentre="line")
+vioplot(100*align_enhancer_obs[,species],at=ypos.obs, col=rgb(t(col2rgb(dataset.colors["Original"])/255), alpha = 0.6), border=dataset.colors["Original"], add=T, axes=F, xaxt="n", yaxt="n", horizontal = T, plotCentre="line")
 
 # add mean point
-points(x = apply(100*align_enhancers_simul[,species], 2, mean, na.rm=T), y=ypos.sim, col = "white", pch=20, cex=0.8)
-points(x = apply(100*align_enhancers_obs[,species], 2, mean, na.rm=T), y = ypos.obs, col = "white", pch=20, cex=0.8)
+points(x = apply(100*align_enhancer_simul[,species], 2, mean, na.rm=T), y=ypos.sim, col = "white", pch=20, cex=0.8)
+points(x = apply(100*align_enhancer_obs[,species], 2, mean, na.rm=T), y = ypos.obs, col = "white", pch=20, cex=0.8)
 
 # axis and legend
 axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1.2)
