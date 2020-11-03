@@ -1,8 +1,9 @@
 ################################################################################################################################################
+
 library(data.table)
+
 options(stringsAsFactors = FALSE)
 
-#setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
 #########################################################################
 
 ## if it's the first time we run this figure, we load and prepare data

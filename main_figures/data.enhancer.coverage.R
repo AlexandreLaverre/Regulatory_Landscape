@@ -12,15 +12,14 @@ for(ref_sp in c("human", "mouse")){
   
   enhancers = enhancer.datasets[[ref_sp]]
   
-  obs <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
-  simul <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
+  obs <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
+  simul <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
   
   ## obs <- obs[which(obs$baited == "unbaited" & obs$BLAT_match == 1),]
   ## simul <- simul[which(simul$baited == "unbaited" & simul$BLAT_match == 1),]
 
   obs <- obs[which(obs$baited == "unbaited"),]
   simul <- simul[which(simul$baited == "unbaited"),]
-
 
   ## compute percentage of length covered by enhancers
   

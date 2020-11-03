@@ -67,8 +67,8 @@ for(ref_sp in c("human", "mouse")){
     
     ## statistics for the contacted restriction fragments
 
-    obs <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
-    simul <- read.table(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
+    obs <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
+    simul <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
     
     obs$ID <-  do.call(paste,c(obs[c("chr","start","end")],sep=":"))
     simul$ID <-  do.call(paste,c(simul[c("chr","start","end")],sep=":"))
@@ -92,7 +92,7 @@ for(ref_sp in c("human", "mouse")){
     simul <- simul[which(simul$ID%in%frag.contacts.sim$id_frag),]
     
     ## alignment score vs all species, for restriction fragments 
-    frag_align <- read.table(paste(path_evol,"/sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
+    frag_align <- fread(paste(path_evol,"/sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
 
     ## replace NA values with 0
     for(sp in species){
@@ -148,7 +148,7 @@ for(ref_sp in c("human", "mouse")){
 
       ## alignment scores
       
-      enh_align <- read.table(paste(path_evol,"/sequence_conservation/enhancers/", enh, "/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
+      enh_align <- fread(paste(path_evol,"/sequence_conservation/enhancers/", enh, "/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
 
       ## replace NA values with 0
       for(sp in species){
@@ -157,8 +157,8 @@ for(ref_sp in c("human", "mouse")){
 
       ## statistics for enhancers 
       
-      enh_obs_stats <- read.table(paste(path_annot, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
-      enh_simul_stats <- read.table(paste(path_annot, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
+      enh_obs_stats <- fread(paste(path_annot, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
+      enh_simul_stats <- fread(paste(path_annot, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
 
       enh_obs_stats$enh <-  do.call(paste,c(enh_obs_stats[c("chr","start","end")],sep=":"))
       enh_simul_stats$enh <-  do.call(paste,c(enh_simul_stats[c("chr","start","end")],sep=":"))

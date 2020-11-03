@@ -1,5 +1,7 @@
 ####################################################################################################
 
+library(data.table)
+
 options(stringsAsFactors = FALSE)
 
 source("parameters.R")
@@ -34,17 +36,17 @@ for(ref_sp in c("human", "mouse")){
     for (sp in species){
       conserv_synteny[[enh]][[sp]]<-list()
       
-      synt_obs <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_original_synteny.txt", sep=""), header=T)
-      synt_simul <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_simulated_synteny.txt", sep=""), header=T)
+      synt_obs <- fread(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_original_synteny.txt", sep=""), header=T)
+      synt_simul <- fread(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_simulated_synteny.txt", sep=""), header=T)
 
       ## sequnces have to be aligned
       
       synt_obs <- synt_obs[which(synt_obs$align_score>0),]
       synt_simul <- synt_simul[which(synt_simul$align_score>0),]
       
-      ## threshold alignment score: 25% quantile, observed values
+      ## threshold alignment score: 5% quantile, observed values
 
-      align.threshold=quantile(synt_obs$align, p=0.25)
+      align.threshold=quantile(synt_obs$align, p=0.05)
 
       print(paste("alignment score threshold", align.threshold))
       
