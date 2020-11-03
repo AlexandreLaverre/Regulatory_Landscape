@@ -64,7 +64,7 @@ for(ref_sp in c("human", "mouse")){
       prop.test.obs <- prop.test(x = nb_cons_synt_obs, n=nrow(synt_obs), p=0.5)
       prop.test.simul <- prop.test(x = nb_cons_synt_simul, n=nrow(synt_simul), p=0.5)
 
-      conserv_synteny[[enh]][[sp]]=list("synt_obs"=synt_obs, "synt_simul"=synt_simul, "prop_cons_obs"=(nb_cons_synt_obs/nrow(synt_obs)), "prop_cons_simul"=(nb_cons_synt_simul/nrow(synt_simul)), "conf_int_obs"=prop.test.obs$conf.int, "conf_int_simul"=prop.test.obs$conf.int, "pval"=prop.test(mat)$p.value)
+      conserv_synteny[[enh]][[sp]]=list("synt_obs"=synt_obs, "synt_simul"=synt_simul, "prop_cons_obs"=(nb_cons_synt_obs/nrow(synt_obs)), "prop_cons_simul"=(nb_cons_synt_simul/nrow(synt_simul)), "conf_int_obs"=prop.test.obs$conf.int, "conf_int_simul"=prop.test.simul$conf.int, "pval"=prop.test(mat)$p.value)
       
       
       message(sp, " done !")
