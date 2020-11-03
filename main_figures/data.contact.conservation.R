@@ -1,4 +1,4 @@
-################################################################################################################################################
+############################################################################################################
 
 library(data.table)
 
@@ -13,36 +13,29 @@ objects=ls()
 if(!"pathScripts"%in%objects){
   load=T
   prepare=T
-  source("../main_figures/parameters.R")
+  source("parameters.R")
 }
 
 ##################################################################
 
 if(load){
-  sp="human"
-  
-  # Choose genes within : all ; dvpt ; other
-  selected_genes = "all" 
-  if (selected_genes == "dvpt"){`%get%` <- `%in%`}else{`%get%` <- Negate(`%in%`)}
+  ref_sp="human"
+  tg_sp="mouse"
 
   minDistance=25e3
   maxDistance=2e6
   
   load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
-  load(paste(pathFigures, "RData/data.gene.enhancer.contacts.conservation.RData", sep=""))
+  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
   load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
   
   path_overlap=paste(pathFinalData, "SupplementaryDataset7/", sp, "/sequence_conservation/enhancers/", sep="")
-  
-  if(selected_genes != "all"){
-    dev_gene <- read.table(paste(pathFinalData, "SupplementaryDataset3/genes/", sp, "_dvpt_process_genes.txt", sep=""), header=T, sep="\t")
-  }
-    
+      
   load=FALSE
 }
 
 
-##############################################################################################################################
+#################################################################################################################
 ################################################# Conserved contact global   #################################################
 data_global <- c()
 conf_low_global <- c()

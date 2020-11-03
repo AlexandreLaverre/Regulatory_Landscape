@@ -1,5 +1,7 @@
 #######################################################################################
 
+library(data.table)
+
 source("parameters.R")
 
 pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
@@ -16,11 +18,16 @@ for(ref in c("human", "mouse")){
   
   for(enh in enhancer.datasets[[ref]]){
 
-    obsobs=read.table(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    obssim=read.table(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    simobs=read.table(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    simsim=read.table(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    obsobs=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    obssim=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    simobs=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    simsim=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
 
+    class(obsobs)="data.frame"
+    class(obssim)="data.frame"
+    class(simobs)="data.frame"
+    class(simsim)="data.frame"
+    
     contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]]=list("obsobs"=obsobs, "simsim"=simsim, "obssim"=obssim, "simobs"=simobs)
     
   }
@@ -28,7 +35,7 @@ for(ref in c("human", "mouse")){
 
 #######################################################################################
 
-save(list=c("contact.conservation"), file=paste(pathFigures, "RData/data.contact.conservation.RData",sep=""))
+save(list=c("contact.conservation"), file=paste(pathFigures, "RData/data.contact.conservation.enhancers.RData",sep=""))
 
 #######################################################################################
 
