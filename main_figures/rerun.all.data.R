@@ -9,7 +9,7 @@ data.scripts=c("data.Shh.figure.R", "data.sample.info.R", "data.sample.clusterin
 for(file in data.scripts){
   ## cleanup
   objects=ls()
-  objects=setdiff(objects, "data.scripts", "file")
+  objects=setdiff(objects, c("data.scripts", "file"))
   rm(list=objects)
 
   ## run the script
