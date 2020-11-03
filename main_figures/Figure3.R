@@ -180,9 +180,11 @@ for(other_sp in c(close_sp, target_sp)){
  plot(1, type="n", xlab="", ylab="", axes=F, main="", xlim=xlim, ylim=ylim, xaxs="i")
 
  lines(xpos, mean.val.obs, col=dataset.colors["Original"])
+ points(xpos, mean.val.obs, pch=20, col=dataset.colors["Original"])
  segments(xpos, ci.low.obs, xpos, ci.high.obs, col=dataset.colors["Original"])
 
  lines(xpos, mean.val.simul, col=dataset.colors["Simulated"])
+ points(xpos, mean.val.simul, pch=20, col=dataset.colors["Simulated"])
  segments(xpos, ci.low.simul, xpos, ci.high.simul, col=dataset.colors["Simulated"])
 
  axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
