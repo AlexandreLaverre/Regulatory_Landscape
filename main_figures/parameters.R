@@ -78,4 +78,9 @@ names(syn.celltypes)=names(col.celltypes)
 minDistance=25e3
 maxDistance=2e6
 
+minDistanceSyntenyRef=1e5 ## 100 kb
+maxDistanceSyntenyRef=1.5e6 ## 1.5 Mb
+
+maxDistanceSyntenyTarget=2e6 ##2 Mb
+
 #######################################################################################

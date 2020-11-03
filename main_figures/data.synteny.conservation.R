@@ -36,11 +36,22 @@ for(ref_sp in c("human", "mouse")){
       
       synt_obs <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_original_synteny.txt", sep=""), header=T)
       synt_simul <- read.table(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_simulated_synteny.txt", sep=""), header=T)
+
+      ## sequnces have to be aligned
+      
+      synt_obs <- synt_obs[which(synt_obs$align_score>0),]
+      synt_simul <- synt_simul[which(synt_simul$align_score>0),]
+      
+      ## threshold alignment score: 25% quantile, observed values
+
+      align.threshold=quantile(synt_obs$align, p=0.25)
+
+      print(paste("alignment score threshold", align.threshold))
       
       ## enhancer filters
       
-      synt_obs <- synt_obs[which(synt_obs$BLAT_match < 2 & synt_obs$align_score > 0.4 & synt_obs$origin_dist > minDistance & synt_obs$origin_dist < maxDistance),]
-      synt_simul <- synt_simul[which(synt_simul$BLAT_match < 2 & synt_simul$align_score > 0.4 & synt_simul$origin_dist > minDistance & synt_simul$origin_dist < maxDistance),]
+      synt_obs <- synt_obs[which(synt_obs$BLAT_match == 1 & synt_obs$align_score >= align.threshold),]
+      synt_simul <- synt_simul[which(synt_simul$BLAT_match == 1 & synt_simul$align_score >=align.threshold),]
 
       ## compute distance classes for original pairs
 
@@ -55,18 +66,8 @@ for(ref_sp in c("human", "mouse")){
       synt_obs$target_dist <- as.numeric(synt_obs$target_dist)
       synt_simul$target_dist <- as.numeric(synt_simul$target_dist)
       
-      ## calculate proportion of pairs conserved in synteny
-      nb_cons_synt_obs <- length(which(synt_obs$target_dist < maxDistance))
-      nb_cons_synt_simul <- length(which(synt_simul$target_dist < maxDistance))
-      
-      mat <- matrix(c(nb_cons_synt_obs, nb_cons_synt_simul, nrow(synt_obs)-nb_cons_synt_obs, nrow(synt_simul)-nb_cons_synt_simul), nrow=2)
-      
-      prop.test.obs <- prop.test(x = nb_cons_synt_obs, n=nrow(synt_obs), p=0.5)
-      prop.test.simul <- prop.test(x = nb_cons_synt_simul, n=nrow(synt_simul), p=0.5)
-
-      conserv_synteny[[enh]][[sp]]=list("synt_obs"=synt_obs, "synt_simul"=synt_simul, "prop_cons_obs"=(nb_cons_synt_obs/nrow(synt_obs)), "prop_cons_simul"=(nb_cons_synt_simul/nrow(synt_simul)), "conf_int_obs"=prop.test.obs$conf.int, "conf_int_simul"=prop.test.simul$conf.int, "pval"=prop.test(mat)$p.value)
-      
-      
+      conserv_synteny[[enh]][[sp]]=list("synt_obs"=synt_obs, "synt_simul"=synt_simul)
+            
       message(sp, " done !")
     }
   }
