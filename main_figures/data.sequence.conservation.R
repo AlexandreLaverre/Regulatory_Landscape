@@ -1,4 +1,4 @@
-################################################################################################################################################
+#######################################################################################
 
 library(data.table)
 
@@ -6,17 +6,24 @@ options(stringsAsFactors = FALSE)
 
 source("parameters.R") ## paths are defined based on the user name
 
+path_evol <- paste(pathFinalData, "SupplementaryDataset7/", sep="")
+
+#######################################################################################
+
 outnames=c("pcidentity", "pcungapped")
 names(outnames)=c("IdenticalSequence", "UngappedAlignment")
 
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep="")) 
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
+load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep="")) ## enhancers are already filtered for duplication levels, repeat proprtion etc
+load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep="")) ## fragments are already filtered for duplication levels, repeat proprtion etc
 
-################################################################################################################################################
+#######################################################################################
 
 for(ref_sp in c("human", "mouse")){
-  ## bait-fragment contacts, only in cis, unbaited, max distance 2Mb, min distance 25kb
+
+  ## bait-fragment contacts, only in cis, unbaited, within a pre-defined distance range
   
   frag.contacts.obs <- observed.contacts[[ref_sp]]
   frag.contacts.sim <- simulated.contacts[[ref_sp]]
@@ -35,44 +42,21 @@ for(ref_sp in c("human", "mouse")){
       target_sp = "human"
       closest_sp="rat"
     }
-
-    enhancers=enhancer.datasets[[ref_sp]]
-    
+   
     species <- c("macaque", target_sp, "rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken")
     
-    path_evol <- paste(pathFinalData, "SupplementaryDataset7/", ref_sp, "/", sep="")
-    path_annot <- paste(pathFinalData, "SupplementaryDataset4/", ref_sp, "/", sep="")
-    
     ## statistics for the contacted restriction fragments
-    obs <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
-    simul <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
-
-    class(obs) <- "data.frame"
-    class(simul) <- "data.frame"
     
-    obs$ID <-  do.call(paste,c(obs[c("chr","start","end")],sep=":"))
-    simul$ID <-  do.call(paste,c(simul[c("chr","start","end")],sep=":"))
+    obs <- fragment.statistics[[ref_sp]][["original"]]
+    simul <- fragment.statistics[[ref_sp]][["simulated"]]
 
-    rownames(obs) <- obs$ID
-    rownames(simul) <- simul$ID
-    
-    ## unbaited only
-    obs <- obs[which(obs$baited == "unbaited"),]
-    simul <- simul[which(simul$baited == "unbaited"),]
-
-    ## remove duplicated sequences
-    
-    obs <- obs[which(obs$BLAT_match < 2),]
-    simul <- simul[which(simul$BLAT_match < 2),]
-
-
-    ## select previously filtered contacts
+    ## select fragments that are in previously filtered contacts (within correct distance range)
 
     obs <- obs[which(obs$ID%in%frag.contacts.obs$id_frag),]
     simul <- simul[which(simul$ID%in%frag.contacts.sim$id_frag),]
     
     ## alignment score vs all species, for restriction fragments 
-    frag_align <- fread(paste(path_evol,"/sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
+    frag_align <- fread(paste(path_evol, ref_sp, "/sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
     class(frag_align) <- "data.frame"
     
     ## replace NA values with 0
@@ -93,6 +77,8 @@ for(ref_sp in c("human", "mouse")){
     
     ## alignment for enhancers
     
+    enhancers=enhancer.datasets[[ref_sp]]
+        
     list_align_enh <- list()
     
     for (enh in enhancers){
@@ -108,7 +94,7 @@ for(ref_sp in c("human", "mouse")){
       enh.mediandist.obs <- tapply(enh.contacts.obs$dist, as.factor(enh.contacts.obs$enhancer), median)
       enh.mediandist.sim <- tapply(enh.contacts.sim$dist, as.factor(enh.contacts.sim$enhancer), median)
       
-      enh_align <- fread(paste(path_evol,"/sequence_conservation/enhancers/", enh, "/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
+      enh_align <- fread(paste(path_evol, ref_sp, "/sequence_conservation/enhancers/", enh, "/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
       class(enh_align) <- "data.frame"
       
       ## replace NA values with 0
@@ -116,33 +102,16 @@ for(ref_sp in c("human", "mouse")){
       for(sp in species){
         enh_align[which(is.na(enh_align[,sp])),sp]=0
       }
-      
-      enh_obs_stats <- fread(paste(path_annot, enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
-      enh_simul_stats <- fread(paste(path_annot, enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
 
-      class(enh_obs_stats)<-"data.frame"
-      class(enh_simul_stats)<-"data.frame"
-      
-      enh_obs_stats$enh <-  do.call(paste,c(enh_obs_stats[c("chr","start","end")],sep=":"))
-      enh_simul_stats$enh <-  do.call(paste,c(enh_simul_stats[c("chr","start","end")],sep=":"))
+      ## statistics for enhancers 
+      enh_obs_stats <- enhancer.statistics[[ref_sp]][[enh]][["original"]]
+      enh_simul_stats <- enhancer.statistics[[ref_sp]][[enh]][["simulated"]]
 
-      rownames(enh_obs_stats) <- enh_obs_stats[,"enh"]
-      rownames(enh_simul_stats) <- enh_simul_stats[,"enh"]
-
-      ## select previously filtered enhancers
+      ## select previously filtered enhancers, in contact within acceptable distances
 
       enh_obs_stats=enh_obs_stats[which(enh_obs_stats$enh%in%enh.contacts.obs$enhancer),]
       enh_simul_stats=enh_simul_stats[which(enh_simul_stats$enh%in%enh.contacts.sim$enhancer),]
 
-      ## distance class
-      enh_obs_stats$dist_class <- cut(enh_obs_stats$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
-      enh_simul_stats$dist_class <-cut(enh_simul_stats$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
-      
-      
-      ## Select unduplicated and with repeat_part < 1%
-      enh_obs_stats <- enh_obs_stats[which(enh_obs_stats$BLAT_match < 2 & (enh_obs_stats$repeat_bp/enh_obs_stats$length) < 0.01),] 
-      enh_simul_stats <- enh_simul_stats[which(enh_simul_stats$BLAT_match < 2 & (enh_simul_stats$repeat_bp/enh_simul_stats$length) < 0.01),]
-      
       ## select species
       enh_align <- enh_align[, c("ID", species)]
       
@@ -150,6 +119,7 @@ for(ref_sp in c("human", "mouse")){
       enh_align_simul<- enh_align[which(enh_align$ID %in% enh_simul_stats$enh),]
 
       ## median distance computed from filtered contacts
+      
       enh_align_obs$median_dist <- enh.mediandist.obs[enh_align_obs$ID]
       enh_align_simul$median_dist <- enh.mediandist.sim[enh_align_simul$ID]
       
