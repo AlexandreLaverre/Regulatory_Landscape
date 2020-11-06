@@ -279,7 +279,7 @@ par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='',
           names=rep("", dim(pc_nb_celltypes_matrix)[2]), ylim=c(0,80), space=c(0.4,1),
           ylab="", border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
-          lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1, las=2,  density=dataset.density[c("Original", "Simulated")], angle=dataset.angle[c("Original", "Simulated")])
+          lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1, las=2)
 
 mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
 
