@@ -31,7 +31,8 @@ if(load){
   load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
   
   path_overlap=paste(pathFinalData, "SupplementaryDataset7/", sp, "/sequence_conservation/enhancers/", sep="")
-      
+  
+  ortho <- read.table(paste(pathFinalData, "SupplementaryDataset7/", sp, "/gene_orthology/human2mouse_orthologue_dNdS.txt", sep=""), h=T, sep="\t")
   load=FALSE
 }
 
@@ -47,6 +48,10 @@ for (enh in enhancer.datasets[[sp]]){
   message(enh)
   all_obs <- gene.enhancer.contacts[[sp]][[enh]][["real"]] 
   all_simul <- gene.enhancer.contacts[[sp]][[enh]][["simulated"]] 
+  
+  # Select ortho genes
+  all_obs <- all_obs[which(all_obs$gene %in% ortho$GenestableID),]
+  all_simul <- all_simul[which(all_simul$gene %in% ortho$GenestableID),]
   
   contact_obs <- contacts.conservation[[sp]][[enh]][["real"]] 
   contact_simul <- contacts.conservation[[sp]][[enh]][["simulated"]] 
@@ -127,6 +132,10 @@ for (enh in enhancer.datasets[[sp]]){
   all_obs <- gene.enhancer.contacts[[sp]][[enh]][["real"]] 
   all_simul <- gene.enhancer.contacts[[sp]][[enh]][["simulated"]] 
   
+  # Select ortho genes
+  all_obs <- all_obs[which(all_obs$gene %in% ortho$GenestableID),]
+  all_simul <- all_simul[which(all_simul$gene %in% ortho$GenestableID),]
+  
   contact_obs <- contacts.conservation[[sp]][[enh]][["real"]] 
   contact_simul <- contacts.conservation[[sp]][[enh]][["simulated"]] 
   
@@ -192,6 +201,10 @@ for (enh in enhancer.datasets[[sp]]){
   message(enh)
   all_obs <- gene.enhancer.contacts[[sp]][[enh]][["real"]] 
   all_simul <- gene.enhancer.contacts[[sp]][[enh]][["simulated"]] 
+  
+  # Select ortho genes
+  all_obs <- all_obs[which(all_obs$gene %in% ortho$GenestableID),]
+  all_simul <- all_simul[which(all_simul$gene %in% ortho$GenestableID),]
   
   contact_obs <- contacts.conservation[[sp]][[enh]][["real"]] 
   contact_simul <- contacts.conservation[[sp]][[enh]][["simulated"]] 
@@ -298,7 +311,12 @@ for (enh in enhancer.datasets[[sp]]){
   n_total <- c()
   
   all_obs <- gene.enhancer.contacts[[sp]][[enh]][["real"]] 
-  all_simul <- gene.enhancer.contacts[[sp]][[enh]][["simulated"]] 
+  all_simul <- gene.enhancer.contacts[[sp]][[enh]][["simulated"]]
+  
+  # Select ortho genes
+  all_obs <- all_obs[which(all_obs$gene %in% ortho$GenestableID),]
+  all_simul <- all_simul[which(all_simul$gene %in% ortho$GenestableID),]
+  
   
   contact_obs <- contacts.conservation[[sp]][[enh]][["real"]] 
   contact_simul <- contacts.conservation[[sp]][[enh]][["simulated"]] 
