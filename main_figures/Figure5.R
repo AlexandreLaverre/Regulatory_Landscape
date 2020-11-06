@@ -17,11 +17,16 @@ if(load){
   
   enhancers=enhancer.datasets[[ref_sp]]
 
+  load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
   load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
   load(paste(pathFigures,"RData/data.enhancer.statistics.RData", sep=""))
 
-  contact.cons=contact.conservation[["human2mouse"]]
+  contact.cons=contact.conservation[[paste0(ref_sp, "2", target_sp)]]
 
+  sampleinfo.ref=sampleinfo[[ref_sp]]
+  sampleinfo.tg=sampleinfo[[tg_sp]]
+
+  
   load=FALSE
 }
 
@@ -34,6 +39,10 @@ if(prepare){
 
   for(enh in enhancers){
     cons.stats[[enh]]<-list()
+
+    ## contact conservation
+    cc.obs <- contact.cons[[enh]][["obsobs"]]
+    cc.sim <- contact.cons[[enh]][["simsim"]]
 
   }
   
