@@ -18,13 +18,15 @@ if(load){
   enhancers=enhancer.datasets[[ref_sp]]
 
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
+  
+  ## contact conservation data, already filtered to keep only filtered enhancers
+  
   load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
-  load(paste(pathFigures,"RData/data.enhancer.statistics.RData", sep=""))
 
   contact.cons=contact.conservation[[paste0(ref_sp, "2", target_sp)]]
 
   sampleinfo.ref=sampleinfo[[ref_sp]]
-  sampleinfo.tg=sampleinfo[[tg_sp]]
+  sampleinfo.tg=sampleinfo[[target_sp]]
 
   
   load=FALSE
@@ -44,6 +46,15 @@ if(prepare){
     cc.obs <- contact.cons[[enh]][["obsobs"]]
     cc.sim <- contact.cons[[enh]][["simsim"]]
 
+    cons.obs=apply(cc.obs[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
+    cons.sim=apply(cc.sim[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
+    
+    pc.cons.obs <- 100*length(which(cons.obs))/dim(cc.obs)[1]
+    pc.cons.sim <- 100*length(which(cons.sim))/dim(cc.sim)[1]
+
+    test.obs <- prop.test(length(cons.obs), dim(cc.obs)[1])
+    test.sim <- prop.test(length(cons.sim), dim(cc.sim)[1])
+    
   }
   
 
