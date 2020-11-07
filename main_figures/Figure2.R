@@ -58,7 +58,7 @@ mtext(enh.syn.narrow, line=c(rep(0.5,2), rep(1.3,2)), side=1, at=xposlab, cex=0.
 
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=7)
 
-legend("topleft", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors,  bty='n', cex=1.1, inset=c(0, -0.1), xpd=NA)
+legend("topleft", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors,  bty='n', cex=1.1, inset=c(0, -0.1), xpd=NA)
 
 par(lwd=1)
 segments(allxpos, enh_prop$conf_up, allxpos, enh_prop$conf_low, lwd = 3)
