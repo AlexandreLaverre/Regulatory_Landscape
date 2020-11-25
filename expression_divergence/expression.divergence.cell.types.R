@@ -10,6 +10,7 @@ user=as.character(Sys.getenv()["USER"])
 
 if(user=="laverre"){
   pathFinalData="/home/laverre/Manuscript/"
+  pathScripts="/home/laverre/Anouk/scripts/"
 }
 
 if(user=="necsulea"){

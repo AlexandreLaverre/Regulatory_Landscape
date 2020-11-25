@@ -153,24 +153,7 @@ for(set in c("AllOrgans", "SomaticOrgans")){
                      "CorrelationPearson"=correlation.pearson, stringsAsFactors=F)
   
   ######################################################################################
-
-  ## calcul Specificity Tau
-  compute.tau <- function(exp){
-    if(max(exp)==0){
-      return(NA)
-    }
-    
-    n=length(exp)
-    newexp=exp/max(exp)
-    
-    tau=sum(1-newexp)/(n-1)
-    
-    return(tau)
-  }
   
-  results$TauHuman=apply(avgexp.human, 1, function(x) compute.tau(as.numeric(x)))
-  results$TauMouse=apply(avgexp.mouse, 1, function(x) compute.tau(as.numeric(x)))
-
   ## correct for average expression 
   
   for(sample in colnames(avgexp.human)){
@@ -186,14 +169,41 @@ for(set in c("AllOrgans", "SomaticOrgans")){
   
   results$MeanRPKM=(results$Human_MeanRPKM+results$Mouse_MeanRPKM)/2
   
-  lm1=lm(results$EuclideanDistance~log2(results$MeanRPKM+1))
-  results$ResidualEuclideanDistance=lm1$residuals
+  lm1=lm(1-results$EuclideanDistance~log2(results$MeanRPKM+1))
+  results$ResidualEuclideanSimilarity=lm1$residuals
   
   lm2=lm(results$CorrelationSpearman~log2(results$MeanRPKM+1))
   results$ResidualSpearman=lm2$residuals
   
   lm3=lm(results$CorrelationPearson~log2(results$MeanRPKM+1))
   results$ResidualPearson=lm3$residuals
+  
+  ## correct for specificity
+  # calcul Specificity Tau
+  compute.tau <- function(exp){
+    if(max(exp)==0){
+      return(NA)
+    }
+    
+    n=length(exp)
+    newexp=exp/max(exp)
+    
+    tau=sum(1-newexp)/(n-1)
+    
+    return(tau)
+  }
+  
+  results$TauHuman=apply(avgexp.human, 1, function(x) compute.tau(as.numeric(x)))
+  results$TauMouse=apply(avgexp.mouse, 1, function(x) compute.tau(as.numeric(x)))
+  
+  lm1=lm(results$ResidualEuclideanSimilarity~results$TauHuman)
+  results$CorrectedEuclideanSimilarity=lm1$residuals
+  
+  lm2=lm(results$ResidualSpearman~results$TauHuman)
+  results$CorrectedSpearman=lm2$residuals
+  
+  lm3=lm(results$ResidualPearson~results$TauHuman)
+  results$CorrectedPearson=lm3$residuals
   
   ######################################################################################
   
