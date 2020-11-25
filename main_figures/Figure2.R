@@ -13,7 +13,7 @@ source("parameters.R") ## paths are defined based on the user name
 #################################################################################################################
 
 if(load){
-  ref_sp = "human"
+  ref_sp = "mouse"
   
   load(paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp, ".Rdata", sep=""))
   load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.", ref_sp, ".Rdata", sep=""))
@@ -30,7 +30,7 @@ if(load){
 
 #################################################################################################################
 
-pdf(paste(pathFigures, "Figure2.pdf", sep=""), width=6.85, height=5)
+pdf(paste(pathFigures, "SuppFigure2.pdf", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 
