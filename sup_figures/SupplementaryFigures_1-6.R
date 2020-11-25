@@ -109,7 +109,7 @@ for(i in 1:nbfigures){
     
     axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.95)
 
-    mtext("density", side=2, line=2, cex=0.7)
+    mtext("density of nb contacts", side=2, line=2, cex=0.7)
 
     median.obs=round(median(this.obs$distance)/1000, digits=0)
     mtext(paste("median ", median.obs, " Kb", sep=""), side=3, line=-1.5, cex=0.8, col=dataset.colors["Original"])
