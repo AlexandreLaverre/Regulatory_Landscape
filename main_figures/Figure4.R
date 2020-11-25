@@ -101,7 +101,7 @@ if(prepare){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "Figure4.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "Figure4_bis.pdf", sep=""), width=6.85, height=5.5)
 
 layout(matrix(c(1, 1, 2, 3), nrow = 2, byrow = TRUE))
 
@@ -113,15 +113,15 @@ enh="ENCODE"
 
 m <- matrix(c(prop.obs.alldist, prop.sim.alldist), nrow=2, byrow=T)
 
-ylim=c(0, 105)
+ylim=c(0, 35)
 
 par(mar=c(3.1, 4.1, 2.1, 1.1))
 
-bar <-barplot(m, beside=T, space=c(0.25, 1.2), col=dataset.colors, border=dataset.colors, axes=F,  ylim = ylim)
+bar <-barplot(100-m, beside=T, space=c(0.25, 1.2), col=dataset.colors, border=dataset.colors, axes=F,  ylim = ylim)
 colnames(bar)<-species
 
 axis(side=2, las=2,  mgp=c(3, 0.75, 0), cex.axis=0.9)
-mtext("% pairs in conserved synteny", side=2, line=2.5, cex=0.8)
+mtext("% re-arranged pairs", side=2, line=2.5, cex=0.8)
 
 xax=apply(bar, 2, mean)
 axis(side=1, at=xax, mgp=c(3, 0.65, 0), labels=rep("", length(species)))
@@ -129,9 +129,9 @@ mtext(species, side=1, at=xax, line=0.5, cex=0.75)
 
 mtext(paste(ref_sp, "vs."), side=1, line=0.5, at=min(xax)-diff(xax)[1]*1, cex=0.75)
 
-segments(bar[1,], ci.low.obs.alldist, bar[1,], ci.high.obs.alldist, col="black", lwd=1.1)
+segments(bar[1,], 100-ci.low.obs.alldist, bar[1,], 100-ci.high.obs.alldist, col="black", lwd=1.1)
 
-segments(bar[2,], ci.low.sim.alldist, bar[2,], ci.high.sim.alldist, col="black", lwd=1.1)
+segments(bar[2,], 100-ci.low.sim.alldist, bar[2,], 100-ci.high.sim.alldist, col="black", lwd=1.1)
 
 
 smallx=(bar[2,2]-bar[1,2])/10
@@ -153,14 +153,14 @@ for (sp in species){
     }
   }
 
-  ypos=max(prop.obs.alldist[sp], prop.sim.alldist[sp])+5
+  ypos=max(100-prop.obs.alldist[sp], 100-prop.sim.alldist[sp])+2
   
   segments(bar[1,sp]+smallx, ypos, bar[2,sp]-smallx, ypos)
-  text(text, x=mean(as.numeric(bar[,sp])), y=ypos+5.5, xpd=NA, cex=1)
+  text(text, x=mean(as.numeric(bar[,sp])), y=ypos+2.5, xpd=NA, cex=1)
 }
 
 ## legend
-legend("topright", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors, bty='n', cex=0.95, inset=c(0, -0.15), xpd=NA)
+legend("topleft", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors, bty='n', cex=0.95, inset=c(0, -0.15), xpd=NA)
 
 ## plot label
 mtext("a", side=3, line=1, at=xax[1]-diff(xax)[1]*1.42, font=2, cex=1.05)
