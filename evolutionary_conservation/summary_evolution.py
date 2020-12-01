@@ -201,8 +201,11 @@ def enh_contact(enh_name, data, sample, duplication, align_score, overlap_target
                     ref = [colnames.index("TB"), colnames.index("NB")]
                     target = [colnames.index("preB_aged"), colnames.index("preB_young")]
                 else:
-                    ref = [1]
                     target = [1]
+                    if int(i[4]) > 1:
+                        ref = [1]
+                    else:
+                        continue
 
                 col_ref = range(colnames.index("Bcell"), colnames.index("NCD8")+1)
                 col_target = range(colnames.index("EpiSC"), colnames.index("preadip_4H")+1)
@@ -265,7 +268,10 @@ def summary(enh_name, data, sample):
                     ref = [colnames.index("TB"), colnames.index("NB")] if ref_sp == "human" \
                         else [colnames.index("preB_aged"), colnames.index("preB_young")]
                 else:
-                    ref = [1]
+                    if int(i[6]) > 1:
+                        ref = [1]
+                    else:
+                        continue
 
                 if any(i[x] != "nan" for x in ref):
                     if enh in duplication.keys():
@@ -293,7 +299,7 @@ def summary(enh_name, data, sample):
     output = open(output_file, 'w')
     if os.stat(output_file).st_size == 0:
         output.write("gene\tnb_total\tnb_seq_conserv\tnb_synt10M_conserv\tnb_synt2M_conserv\t"
-                     "nb_contact_conserv\tmed_align_score\tcontacted_coverage\ttotal_enh_length\tmedian_dist")
+                     "nb_contact_conserv\tmed_align_score\tmean_align_score\tcontacted_coverage\ttotal_enh_length\tmedian_dist")
 
         if enh_name in ["FANTOM5", "ENCODE"]:
             output.write("\tnb_overlap_target\n")
@@ -307,13 +313,14 @@ def summary(enh_name, data, sample):
             enh_cover = str(sum(length for length in enh_total_length[gene])) if gene in enh_total_length.keys() else str(0)
             nb_conserv = str(len(enh_conserv[gene])) if gene in enh_conserv.keys() else str(0)
             med_align = str(np.median(enh_total[gene])) if gene in enh_total.keys() else str(0)
+            mean_align = str(np.mean(enh_total[gene])) if gene in enh_total.keys() else str(0)
             nb_synt10M = str(len(enh_synt10M[gene])) if gene in enh_synt10M.keys() else str(0)
             nb_synt2M = str(len(enh_synt2M[gene])) if gene in enh_synt2M.keys() else str(0)
             nb_contact = str(len(enh_cont[gene])) if gene in enh_cont.keys() else str(0)
             median_dist = str(np.median(dist[gene])) if gene in dist.keys() else str(0)
 
             output.write(gene + '\t' + nb_total + '\t' + nb_conserv + '\t' + nb_synt10M + '\t' + nb_synt2M + '\t' +
-                         nb_contact + '\t' + med_align + '\t' + coverage[gene] + '\t' + enh_cover + '\t' + median_dist)
+                         nb_contact + '\t' + med_align + '\t' + mean_align + '\t' + coverage[gene] + '\t' + enh_cover + '\t' + median_dist)
 
             if enh_name in ["FANTOM5", "ENCODE"]:
                 nb_overlap_target = str(len(contact_overlap[gene])) if gene in contact_overlap.keys() else str(0)
