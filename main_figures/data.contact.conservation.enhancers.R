@@ -33,6 +33,12 @@ for(ref in c("human", "mouse")){
     class(simobs)="data.frame"
     class(simsim)="data.frame"
     
+    ## take only orthologous genes presents in both species datasets
+    obsobs=obsobs[which(obsobs$target_gene != "NA"),]
+    obssim=obssim[which(obssim$target_gene != "NA"),]
+    simobs=simobs[which(simobs$target_gene != "NA"),]
+    simsim=simsim[which(simsim$target_gene != "NA"),]
+    
     ## filtered enhancers
     enh.obs=enhancer.statistics[[ref]][[enh]][["original"]]
     enh.sim=enhancer.statistics[[ref]][[enh]][["simulated"]]
@@ -43,15 +49,15 @@ for(ref in c("human", "mouse")){
     simobs=simobs[which(simobs$origin_enh%in%enh.sim$enh),]
     simsim=simsim[which(simsim$origin_enh%in%enh.sim$enh),]
 
-    ## take only well conserved enhancers
+    ## take only well conserved and unduplicated enhancers
     ## threshold alignment score: 5% quantile, observed values
     
-    align.threshold <- quantile(obsobs$align_score, p=0.05, na.rm=T)
+    align.threshold <- 0.4 #quantile(obsobs$align_score, p=0.05, na.rm=T)
 
-    obsobs=obsobs[which(obsobs$align_score>=align.threshold),]
-    obssim=obssim[which(obssim$align_score>=align.threshold),]
-    simobs=simsobs[which(simobs$align_score>=align.threshold),]
-    simsim=simsim[which(simsim$align_score>=align.threshold),]
+    obsobs=obsobs[which(obsobs$align_score>=align.threshold & obsobs$BLAT_match < 2),]
+    obssim=obssim[which(obssim$align_score>=align.threshold & obssim$BLAT_match < 2),]
+    simobs=simobs[which(simobs$align_score>=align.threshold & simobs$BLAT_match < 2),]
+    simsim=simsim[which(simsim$align_score>=align.threshold & simsim$BLAT_match < 2),]
    
     
     ## save data
