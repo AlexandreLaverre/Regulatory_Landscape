@@ -12,8 +12,8 @@ if(!"pathScripts"%in%objects){
 ##############################################################################
 
 if(load){
-  ref_sp = "human"
-  tg = "mouse"
+  ref_sp = "mouse"
+  tg=setdiff(c("human", "mouse"), ref_sp)
   
   enhancers=enhancer.datasets[[ref_sp]]
   
@@ -32,7 +32,7 @@ if(load){
 
 ##############################################################################
 
-if (ref_sp == "human"){pdf_name = "Figure5.new.pdf"}else{pdf_name = "SupplementaryFigure24.pdf"}
+if (ref_sp == "human"){pdf_name = "Figure5.pdf"}else{pdf_name = "SupplementaryFigure24.pdf"}
 pdf(paste(pathFigures, pdf_name, sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
@@ -44,7 +44,7 @@ m[2,]=c(rep(3,5), rep(4,5))
 layout(m)
 
 #################### Fig 5.A - % of conserved contacts #####################
-if (ref_sp == "human"){YMAX=40}else{YMAX=30}
+if (ref_sp == "human"){YMAX=40}else{YMAX=50}
 par(lwd = 1.5)
 
 
@@ -57,7 +57,7 @@ arrows(x0=b,y0=cons.conf.low,y1=cons.conf.high,angle=90,code=3,length=0.05)
 ## axis labels
 mtext("% of conserved contacts", side=2, line=2.5,  cex=mtext.CEX)
 mtext(c("ENCODE", "FANTOM5"), side=1, at=apply(b[,1:2], 2, mean), line=0.5, cex=0.6)
-mtext(c("FOCS\nGRO-seq", "RoadMap\nEpigenomics"), side=1, at=apply(b[,3:4], 2, mean), line=1.2, cex=0.6)
+if (ref_sp == "human"){mtext(c("FOCS\nGRO-seq", "RoadMap\nEpigenomics"), side=1, at=apply(b[,3:4], 2, mean), line=1.2, cex=0.6)}
 
 ## legend & plot label
 legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
@@ -67,7 +67,7 @@ legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.col
 mtext("a", side=3, line=1, at=0.1, font=2, cex=mtext.CEX)
 
 ############### Fig 5.B - Contact conservation by distance from TSS ##############
-if (ref_sp == "human"){YLIM=c(-2,7)}else{YLIM=c(-5, 20)}
+if (ref_sp == "human"){YLIM=c(-0.1,5)}else{YLIM=c(-0.5, 3); label.enhancers=enhancers}
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 
 par(lwd = 0.7)
@@ -75,34 +75,37 @@ for (enh in enhancer.datasets[[ref_sp]]){
   
   # Plot first enhancers dataset
   if (enh == "ENCODE"){ 
-    plot(log((cons.dist[[enh]]["obs",]-cons.dist[[enh]]["sim",])/cons.dist[[enh]]["sim",]),
+    plot(log(((cons.dist[[enh]]["obs",]-cons.dist[[enh]]["sim",])/cons.dist[[enh]]["sim",])+1),
          pch=20, col=col.enhancers[[enh]], xaxt = "n", ylim=YLIM,
          xlab="", ylab="", main="", las=2)
     
     # Add lines of other enhancers datasets
-  }else{points(log((cons.dist[[enh]]["obs",]-cons.dist[[enh]]["sim",])/cons.dist[[enh]]["sim",]),
+  }else{points(log(((cons.dist[[enh]]["obs",]-cons.dist[[enh]]["sim",])/cons.dist[[enh]]["sim",])+1),
                pch=20, col=col.enhancers[enh])} 
   
   # Confidence intervals
-  segments(x0=1:length(cons.dist.conf.low[[enh]]),y0=log((cons.dist.conf.low[[enh]]["obs",]-cons.dist.conf.low[[enh]]["sim",])/cons.dist.conf.low[[enh]]["sim",]),
-           x1=1:length(cons.dist.conf.low[[enh]]),y1=log((cons.dist.conf.high[[enh]]["obs",]-cons.dist.conf.high[[enh]]["sim",])/cons.dist.conf.high[[enh]]["sim",]),
+  segments(x0=1:length(cons.dist.conf.low[[enh]]),y0=log(((cons.dist.conf.low[[enh]]["obs",]-cons.dist.conf.low[[enh]]["sim",])/cons.dist.conf.low[[enh]]["sim",])+1),
+           x1=1:length(cons.dist.conf.low[[enh]]),y1=log(((cons.dist.conf.high[[enh]]["obs",]-cons.dist.conf.high[[enh]]["sim",])/cons.dist.conf.high[[enh]]["sim",])+1),
            col=col.enhancers[enh], lwd=0.3)
   
 }
 
 ## axis, legend & plot label
 axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0))
-mtext("Excess of contact conservation\n from expected (log)", side=2, line=2.5,  cex=mtext.CEX)
+mtext("Excess of contact conservation", side=2, line=2.5,  cex=mtext.CEX)
 mtext("Distance from TSS (Mb)", side=1, line=2.5, cex=mtext.CEX)
+abline(h=0, lty=2)
 
 legend("topleft", col=col.enhancers, legend = label.enhancers, bty='n',pch=20)
 mtext("b", side=3, line=1, at=0.1, font=2, cex=mtext.CEX)
 
-#################  Fig 5.C - Contact conservation by nb samples #######################
+#################  Fig 5.C - Contact conservation by nb cell types #######################
+if (ref_sp == "human"){max.nb.cell = 8}else{max.nb.cell = 6}
+
 ylim=c(10, 70)
-xlim=c(0.5, 8.5)
-xpos=seq(1, 8, 1)
-names(xpos) = 1:8
+xlim=c(0.5, max.nb.cell+0.5)
+xpos=seq(1, max.nb.cell, 1)
+names(xpos) = 1:max.nb.cell
 
 smallx=c(-0.15, -0.075, 0.075, 0.15)
 names(smallx)=enhancer.datasets[[ref_sp]]
@@ -110,7 +113,7 @@ names(smallx)=enhancer.datasets[[ref_sp]]
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
 for(enh in enhancer.datasets[[ref_sp]]){
-  for(nb_cell in 1:8){
+  for(nb_cell in 1:max.nb.cell){
     
     x=xpos[nb_cell]+smallx[enh]
     points(x, cons.nb.cell[[enh]]["obs",nb_cell], pch=20, col=col.enhancers[enh])
@@ -118,8 +121,8 @@ for(enh in enhancer.datasets[[ref_sp]]){
   }
 }
 
-abline(v=xpos[1:7]+0.5, lty=3, col="gray40")
-axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", 8))
+abline(v=xpos[1:max.nb.cell-1]+0.5, lty=3, col="gray40")
+axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", max.nb.cell))
 mtext(colnames(cons.nb.cell[[enh]]), at=xpos, side=1, line=1, cex=mtext.CEX)
 mtext("Number of cell types", side=1, line=2.5, cex=mtext.CEX)
 
@@ -133,7 +136,7 @@ mtext("c", side=3, line=1, at=0.1, font=2, cex=mtext.CEX)
 
 
 #################### Fig 5.D - % of conserved contacts in common cells #####################
-if (ref_sp == "human"){YMAX=40}else{YMAX=30}
+if (ref_sp == "human"){YMAX=40}else{YMAX=25}
 par(lwd = 1.5)
 
 b=barplot(cons.common.cell, beside=T, names=rep("", dim(cons.common.cell)[2]), ylim=c(0,YMAX), space=c(0.2,1),
@@ -159,4 +162,3 @@ mtext("d", side=3, line=1, at=0.1, font=2, cex=mtext.CEX)
 dev.off()
 
 ####################################################################################
-

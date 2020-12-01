@@ -19,6 +19,8 @@ for(ref in c("human", "mouse")){
   sampleinfo.ref=sampleinfo[[ref]]
   sampleinfo.tg=sampleinfo[[tg]]
   
+  maxDistance = 1500000+50000
+  
   ##############################################################################
   
   cons.stats <- list()
