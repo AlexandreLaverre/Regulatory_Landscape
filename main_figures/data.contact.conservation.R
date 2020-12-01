@@ -30,6 +30,9 @@ for(ref in c("human", "mouse")){
   cons.nb.cell <- list()
   cons.nb.cell.conf.low <- list()
   cons.nb.cell.conf.high <- list()
+  cons.common.cell <- list()
+  cons.common.cell.conf.low <- list()
+  cons.common.cell.conf.high <- list()
   
   
   for(enh in enhancers){
@@ -50,14 +53,15 @@ for(ref in c("human", "mouse")){
                            "test.obs"=test.obs, "test.sim"=test.sim)
     
     ################ contact conservation in common cell types   ################ 
-    if (enh == "ENCODE"){
-      cons.stats.cell <- list()
+
       cells <- c("ESC", "preadip", "Bcell")
-      
+    
       ESC.common = list("human"= c("hESC"), "mouse"=c("ESC", "ESC_18", "ESC_wild"))
       preadip.common = list("human"= c("pre_adipo"), "mouse"=c("preadip_D0", "preadip_D2", "preadip_4H"))
       Bcell.common = list("human"= c("TB", "NB"), "mouse"=c("preB_aged", "preB_young"))
       common.cell <- list("ESC"=ESC.common, "preadip"=preadip.common, "Bcell"=Bcell.common)
+      
+      cons.stats.cell <- list()
       
       for (cell in cells){        
         cc.obs.cell <- cc.obs[which(apply(cc.obs[common.cell[[cell]][[ref]]], 1, function(x) any(x>0))),]
@@ -75,10 +79,10 @@ for(ref in c("human", "mouse")){
         cons.stats.cell[[cell]]=list("pc.cons.obs" = pc.cons.obs, "pc.cons.sim" = pc.cons.sim,
                                      "test.obs" = test.obs, "test.sim" = test.sim)
       }
-      cons.common.cell = sapply(cells, function(x) c(cons.stats.cell[[x]]$pc.cons.obs, cons.stats.cell[[x]]$pc.cons.sim))
-      cons.common.cell.conf.low =  sapply(cells, function(x) c(cons.stats.cell[[x]]$test.obs$conf.int[1]*100, cons.stats.cell[[x]]$test.sim$conf.int[1]*100))
-      cons.common.cell.conf.high =  sapply(cells, function(x) c(cons.stats.cell[[x]]$test.obs$conf.int[2]*100, cons.stats.cell[[x]]$test.sim$conf.int[2]*100))
-    }
+      
+      cons.common.cell[[enh]] = sapply(cells, function(x) c(cons.stats.cell[[x]]$pc.cons.obs, cons.stats.cell[[x]]$pc.cons.sim))
+      cons.common.cell.conf.low[[enh]] =  sapply(cells, function(x) c(cons.stats.cell[[x]]$test.obs$conf.int[1]*100, cons.stats.cell[[x]]$test.sim$conf.int[1]*100))
+      cons.common.cell.conf.high[[enh]] =  sapply(cells, function(x) c(cons.stats.cell[[x]]$test.obs$conf.int[2]*100, cons.stats.cell[[x]]$test.sim$conf.int[2]*100))
     
     ################ contact conservation according to distance class   ################ 
     cc.obs$dist_class <- cut(cc.obs$origin_dist, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
@@ -127,7 +131,6 @@ for(ref in c("human", "mouse")){
   cons = sapply(enhancers, function(x) c(cons.stats[[x]]$pc.cons.obs, cons.stats[[x]]$pc.cons.sim))
   cons.conf.low =  sapply(enhancers, function(x) c(cons.stats[[x]]$test.obs$conf.int[1]*100, cons.stats[[x]]$test.sim$conf.int[1]*100))
   cons.conf.high =  sapply(enhancers, function(x) c(cons.stats[[x]]$test.obs$conf.int[2]*100, cons.stats[[x]]$test.sim$conf.int[2]*100))
-  
   
   
   ###################### output ###################### 

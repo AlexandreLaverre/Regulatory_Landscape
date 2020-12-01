@@ -139,11 +139,13 @@ mtext("c", side=3, line=1, at=0.1, font=2, cex=mtext.CEX)
 if (ref_sp == "human"){YMAX=40}else{YMAX=25}
 par(lwd = 1.5)
 
-b=barplot(cons.common.cell, beside=T, names=rep("", dim(cons.common.cell)[2]), ylim=c(0,YMAX), space=c(0.2,1),
+enh = "ENCODE"
+
+b=barplot(cons.common.cell[[enh]], beside=T, names=rep("", dim(cons.common.cell[[enh]])[2]), ylim=c(0,YMAX), space=c(0.2,1),
           border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
           mgp=c(3, 0.75, 0), las=2)
 
-arrows(x0=b,y0=cons.common.cell.conf.low,y1=cons.common.cell.conf.high,angle=90,code=3,length=0.05)
+arrows(x0=b,y0=cons.common.cell.conf.low[[enh]],y1=cons.common.cell.conf.high[[enh]],angle=90,code=3,length=0.05)
 
 ## axis labels
 label.cells = c("ESC", "Preadipocytes", "Bcell")
