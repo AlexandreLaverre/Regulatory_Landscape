@@ -12,18 +12,15 @@ objects=ls()
 
 if(!"pathScripts"%in%objects){
   load=T
+  prepare=T
   source("../main_figures/parameters.R")
 }
 
 ##################################################################
 
 if(load){
-  sp="human"
-  tg="mouse"
-  
-  # Choose genes within : all ; dvpt ; other
-  selected_genes = "all" 
-  if (selected_genes == "dvpt"){`%get%` <- `%in%`}else{`%get%` <- Negate(`%in%`)}
+  sp="mouse"
+  tg=setdiff(c("human", "mouse"), sp)
   
   minDistance=25e3
   maxDistance=2e6
@@ -35,12 +32,6 @@ if(load){
   load(paste(pathFigures, "RData/data.synteny.conservation.", sp,".RData", sep=""))
   load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
   
-  path_overlap=paste(pathFinalData, "SupplementaryDataset7/", sp, "/sequence_conservation/enhancers/", sep="")
-  
-  if(selected_genes != "all"){
-    dev_gene <- read.table(paste(pathFinalData, "SupplementaryDataset3/genes/", sp, "_dvpt_process_genes.txt", sep=""), header=T, sep="\t")
-  }
-  
   sampleinfo.tg=sampleinfo[[tg]]
   load=FALSE
 }
@@ -51,12 +42,15 @@ if(prepare){
   chicago.dist <- list()
   chicago.dist.conf.low <- list()
   chicago.dist.conf.high <- list()
+  
   cons.seq <- list()
   cons.seq.conf.low <- list()
   cons.seq.conf.high <- list()
+  
   cons.contact <- list()
   cons.contact.conf.low <- list()
   cons.contact.conf.high <- list()
+  
   cons.synteny <- list()
   cons.synteny.conf.low <- list()
   cons.synteny.conf.high <- list()
@@ -64,7 +58,6 @@ if(prepare){
   for (enh in enhancer.datasets[[sp]]){
     # Calculate sequence conservation 
     enh_obs <- enhancer.statistics[[sp]][[enh]][["original"]]
-    #enh_obs$class_score <- cut(enh_obs$median_score, breaks=c(5, 6, 7, 8, 9,10, max(enh_obs$median_score)), include.lowest = T)
     enh_obs$class_score <- cut2(enh_obs$median_score, g=nb_chicago_class)
     
     enh_align <- list_align_enh[[enh]][["enh_align_obs"]]
@@ -74,9 +67,9 @@ if(prepare){
     enh_align = enh_align[common,]
     enh_align$class_score = enh_obs[common,]$class_score
     
-    cons.seq[[enh]] <- tapply(100*enh_align$mouse, as.factor(enh_align$class_score), function(x) mean(x, na.rm=T))
-    cons.seq.conf.low[[enh]] <- tapply(100*enh_align$mouse, as.factor(enh_align$class_score), function(x) t.test(x)[["conf.int"]][1])
-    cons.seq.conf.high[[enh]] <- tapply(100*enh_align$mouse, as.factor(enh_align$class_score), function(x) t.test(x)[["conf.int"]][2])
+    cons.seq[[enh]] <- tapply(100*enh_align[[tg]], as.factor(enh_align$class_score), function(x) mean(x, na.rm=T))
+    cons.seq.conf.low[[enh]] <- tapply(100*enh_align[[tg]], as.factor(enh_align$class_score), function(x) t.test(x)[["conf.int"]][1])
+    cons.seq.conf.high[[enh]] <- tapply(100*enh_align[[tg]], as.factor(enh_align$class_score), function(x) t.test(x)[["conf.int"]][2])
     
     # Calculate relation with distance to promoter
     contact_obs <- contact.conservation[[paste0(sp, "2", tg)]][[enh]][["obsobs"]] 
@@ -90,7 +83,6 @@ if(prepare){
     # Calculate contact conservation proportion
     contact_obs$cons=apply(contact_obs[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
     
-    #contact_obs$class_score <- cut(contact_obs$origin_med_score, breaks=c(5, 6, 7, 8, 9,10, max(contact_obs$origin_med_score)), include.lowest = T)
     contact_obs$class_score <- cut2(contact_obs$origin_med_score, g=nb_chicago_class)
     
     cons.contact[[enh]] <- sapply(levels(contact_obs$class_score), function(x)
@@ -137,7 +129,7 @@ layout(m)
 
 
 ############################## CHICAGO according to dist ###############################
-ylim=c(5, 10)
+if (sp == "human"){ylim=c(6, 10)}else{ylim=c(6, 9)}
 
 plot(1, type="n", xlim=c(0.5, 25.5), ylim=ylim, xlab="", ylab="", axes=F)
 xpos=1:25
@@ -165,7 +157,8 @@ names(xpos) = 1:nb_chicago_class
 smallx=c(-0.15, -0.075, 0.075, 0.15)
 names(smallx)=enhancer.datasets[[sp]]
 
-ylim=c(40, 65)
+if (sp == "human"){ylim=c(40, 65)}else{ylim=c(50, 66)}
+
 xlim=c(0.5, nb_chicago_class+0.5)
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
@@ -185,10 +178,10 @@ mtext(1:nb_chicago_class, at=xpos, side=1, line=1, cex=mtext.CEX)
 mtext("CHICAGO Score decile", side=1, line=2.5, cex=mtext.CEX)
 
 axis(side=2, mgp=c(3, 0.75, 0))
-mtext("% aligned sequence", side=2, line=2.5, cex=mtext.CEX)
+mtext("% aligned sequence in mouse", side=2, line=2.5, cex=mtext.CEX)
 
 ############################## Synteny conservation ###############################
-ylim=c(85, 95)
+if (sp == "human"){ylim=c(85, 95)}else{ylim=c(80, 100)}
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
@@ -207,10 +200,11 @@ mtext(1:nb_chicago_class, at=xpos, side=1, line=1, cex=mtext.CEX)
 mtext("CHICAGO Score decile", side=1, line=2.5, cex=mtext.CEX)
 
 axis(side=2, mgp=c(3, 0.75, 0))
-mtext("% pairs in synteny in mouse", side=2, line=2.5, cex=mtext.CEX)
+mtext("% pairs in conserved synteny in mouse", side=2, line=2.5, cex=mtext.CEX)
 
 ############################## Contact conservation ###############################
-ylim=c(10, 60)
+if (sp == "human"){ylim=c(10, 60)}else{ylim=c(20, 55)}
+
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
@@ -229,7 +223,7 @@ mtext(1:nb_chicago_class, at=xpos, side=1, line=1, cex=mtext.CEX)
 mtext("CHICAGO Score decile", side=1, line=2.5, cex=mtext.CEX)
 
 axis(side=2, mgp=c(3, 0.75, 0))
-mtext("% pairs in contact in mouse", side=2, line=2.5, cex=mtext.CEX)
+mtext("% pairs in conserved contact in mouse", side=2, line=2.5, cex=mtext.CEX)
 
 #####################################################################################
 
