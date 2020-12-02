@@ -18,11 +18,8 @@ for(ref_sp in c("human", "mouse")){
   class(obs) <- "data.frame"
   class(simul) <- "data.frame"
   
-  ## obs <- obs[which(obs$baited == "unbaited" & obs$BLAT_match == 1),]
-  ## simul <- simul[which(simul$baited == "unbaited" & simul$BLAT_match == 1),]
-
-  obs <- obs[which(obs$baited == "unbaited"),]
-  simul <- simul[which(simul$baited == "unbaited"),]
+  obs <- obs[which(obs$baited == "unbaited" & obs$BLAT_match < 2),]
+  simul <- simul[which(simul$baited == "unbaited" & simul$BLAT_match < 2),]
 
   ## compute percentage of length covered by enhancers
   
