@@ -73,7 +73,7 @@ for(dataset in rownames(mean_divergence)){
 }
 
 ## plot label
-mtext("a", side=3, line=1, at=1, font=2, cex=1)
+mtext("a", side=3, line=1, at=1, font=2, cex=1.05)
 
 ############## B - Expression Conservation vs Number of conserved contacts ############################# 
 mean_divergence <- t(sapply(data_cell, function(x)   tapply(x[["ENCODE"]][,DivergenceMeasure], as.factor(x[["ENCODE"]]$class_cons_synt), mean, na.rm=T)))
@@ -101,7 +101,7 @@ for(dataset in rownames(mean_divergence)){
 }
 
 ## plot label
-mtext("b", side=3, line=1, at=1, font=2, cex=1)
+mtext("b", side=3, line=1, at=1, font=2, cex=1.05)
 
 ############## C - Expression Conservation vs Number of conserved contacts ############################# 
 mean_divergence <- t(sapply(data_cell, function(x)   tapply(x[["ENCODE"]][,DivergenceMeasure], as.factor(x[["ENCODE"]]$class_cons_int), mean, na.rm=T)))
@@ -129,7 +129,7 @@ for(dataset in rownames(mean_divergence)){
 }
 
 ## plot label
-mtext("c", side=3, line=1, at=1, font=2, cex=1)
+mtext("c", side=3, line=1, at=1, font=2, cex=1.05)
 
 ################################################################################################################################
 ############################## PART2 : All cells & Cardoso-Moreira  ##########################################################
@@ -181,7 +181,7 @@ mtext("Alignment score", side=1, line=2.5, cex=0.9)
 axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
 mtext(xlab, side=2, line=2.5, cex=0.9)
 
-mtext("d", side=3, at=0.45, font=2, cex=1.1, line=0.5)
+mtext("d", side=3, at=0.45, font=2, cex=1.05, line=0.5)
 legend("topleft", legend=label.enhancers[enhancer.datasets[[sp]]], pch=20,
        col=col.enhancers[enhancer.datasets[[sp]]], cex=1,
        bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
@@ -215,7 +215,7 @@ abline(v=xpos[1:2]+0.5, lty=3, col="gray40")
 axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(regland[[data]][[enh]]$class_cons_synt))), cex.axis=0.8)
 mtext(c("<75%", "75-99%", ">99%"), at=xpos, side=1, line=1, cex=0.8)
 mtext("Synteny Conservation", side=1, line=2.5, cex=0.9)
-mtext("e", side=3, at=0.45, font=2, cex=1.1, line=0.5)
+mtext("e", side=3, at=0.45, font=2, cex=1.05, line=0.5)
 
 #### F - Gene expression profil similarity and enhancers conserved in contact ####
 xlim=c(0.5, length(levels(regland[[data]][[enh]]$class_cons_int))+0.5)
@@ -242,6 +242,6 @@ abline(v=xpos[1:4]+0.5, lty=3, col="gray40")
 axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(regland[[data]][[enh]]$class_cons_int))), cex.axis=0.8)
 mtext(c("<1%", "1-25%", "25-50%", "50-75%", ">75%"), at=xpos, side=1, line=1, cex=0.8)
 mtext("Contact Conservation", side=1, line=2.5, cex=0.9)
-mtext("f", side=3, at=0.45, font=2, cex=1.1, line=0.5)
+mtext("f", side=3, at=0.45, font=2, cex=1.05, line=0.5)
 
 dev.off()
