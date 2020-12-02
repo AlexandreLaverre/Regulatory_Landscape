@@ -12,12 +12,12 @@ if(!"pathScripts"%in%objects){
 ## load all necessary data, scripts and libraries for the figure
 
 if(load){
-      
   sp="mouse"
   
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
  
+  nb_cell_max = 5
   load=FALSE ## we only do this once
 }
 
@@ -47,16 +47,16 @@ if(prepare){
   obs$dist_class <- cut(obs$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
   obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-  obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:7, max(obs$nb_celltypes)), include.lowest=T)
-  levels(obs$celltype_class)=c(as.character(1:7), ">7")
+  obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:nb_cell_max, max(obs$nb_celltypes)), include.lowest=T)
+  levels(obs$celltype_class)=c(as.character(1:nb_cell_max), paste0(">", nb_cell_max))
   
   sim$nb_samples <- apply(sim[,samples], 1, function(x) sum(!is.na(x)))
   sim$sample_class <- cut(sim$nb_samples, breaks=breaks_samples, include.lowest = T)
   sim$dist_class <- cut(sim$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
   sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-  sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:7, max(sim$nb_celltypes)), include.lowest=T)
-  levels(sim$celltype_class)=c(as.character(1:7), ">7")
+  sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:nb_cell_max, max(sim$nb_celltypes)), include.lowest=T)
+  levels(sim$celltype_class)=c(as.character(1:nb_cell_max),paste0(">", nb_cell_max))
 
   filtered_data <- list("Original"=obs, "Simulated"=sim) ## data is already unbaited, in cis, in the right distance range
  
@@ -118,7 +118,7 @@ par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
 b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='',
           names=rep("", dim(pc_nb_celltypes_matrix)[2]), ylim=c(0,80), space=c(0.4,1),
           ylab="", border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
-          lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1, density=dataset.density[c("Original", "Simulated")], angle=dataset.angle[c("Original", "Simulated")])
+          lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
 
 mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
 
@@ -128,16 +128,16 @@ mtext("% of interactions", side=2, line=2.5, cex=0.8)
 
 ## legend & plot label
 legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
-       fill=dataset.colors[c("Original", "Simulated")], bty='n', density=dataset.density, angle=dataset.angle,
+       fill=dataset.colors[c("Original", "Simulated")], bty='n',
        cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("A", side=3, line=1, at=-3.75, font=2, cex=1.2)
+mtext("A", side=3, line=1, at=-2, font=2, cex=1.2)
 
 ################################################################################################
 
 #################### B - Distribution of number of cell types according to distance #####################
 
-ylim=c(0, max(c(as.numeric(mean_nb_celltypes_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Simulated",]))))
-ylim[2]=ylim[2]+1
+ylim=c(0.5, max(c(as.numeric(mean_nb_celltypes_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Simulated",]))))
+ylim[2]=ylim[2]+0.5
 
 plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=ylim, xlab="", ylab="", axes=F)
 lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_celltypes_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5)
@@ -162,7 +162,7 @@ for(dataset in rownames(mean_dist)){
 ## legend & plot label
 
 legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("B", side=3, line=1, at=-3.95e5, font=2, cex=1.2)
+mtext("B", side=3, line=1, at=-2.5e5, font=2, cex=1.2)
 
 ###########################################################################################
 
