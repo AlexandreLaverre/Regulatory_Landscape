@@ -12,7 +12,7 @@ if(!"pathScripts"%in%objects){
 ##############################################################################
 
 if(load){
-  ref_sp = "human"
+  ref_sp = "mouse"
   tg=setdiff(c("human", "mouse"), ref_sp)
   
   enhancers=enhancer.datasets[[ref_sp]]
@@ -64,7 +64,7 @@ legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.col
        fill=dataset.colors[c("Original", "Simulated")], bty='n', 
        inset=c(0.05, -0.1), xpd=NA)
 
-mtext("a", side=3, line=1, at=0.1, font=2, cex=mtext.CEX)
+mtext("a", side=3, line=1, at=0.1, font=2, cex=1.05)
 
 ############### Fig 5.B - Contact conservation by distance from TSS ##############
 if (ref_sp == "human"){YLIM=c(-0.1,5)}else{YLIM=c(-0.5, 3); label.enhancers=enhancers}
@@ -93,7 +93,7 @@ mtext("Excess of contact conservation", side=2, line=2.5,  cex=mtext.CEX)
 abline(h=0, lty=2)
 
 legend("topleft", col=col.enhancers, legend = label.enhancers, bty='n',pch=20)
-mtext("b", side=3, line=1, at=0.1, font=2, cex=mtext.CEX)
+mtext("b", side=3, line=1, at=0.1, font=2, cex=1.05)
 
 #################  Fig 5.C - Contact conservation by nb cell types #######################
 if (ref_sp == "human"){max.nb.cell = 8}else{max.nb.cell = 6}
@@ -128,7 +128,7 @@ mtext("Conserved contact (%)", side=2, line=2.5, cex=mtext.CEX)
 legend("topleft", legend=label.enhancers, pch=20,
        col=col.enhancers, bty="n", cex=1)
 
-mtext("c", side=3, line=1, at=0.1, font=2, cex=mtext.CEX)
+mtext("c", side=3, line=1, at=0.1, font=2, cex=1.05)
 
 
 #################### Fig 5.D - % of conserved contacts in common cells #####################
@@ -153,7 +153,7 @@ legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.col
        fill=dataset.colors[c("Original", "Simulated")], bty='n', 
        inset=c(0.05, -0.1), xpd=NA)
 
-mtext("d", side=3, line=1, at=0.1, font=2, cex=mtext.CEX)
+mtext("d", side=3, line=1, at=0.1, font=2, cex=1.05)
 
 ####################################################################################
 
