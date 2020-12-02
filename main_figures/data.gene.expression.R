@@ -49,7 +49,7 @@ for(sp in c("human", "mouse")){
 avgexp.cm2019=list()
 
 for(sp in c("human", "mouse")){
-  this.exp=fread(paste(pathExpression, sp, "/AverageRPKM_CardosoMoreira2019.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
+  this.exp=read.table(paste(pathExpression, sp, "/AverageRPKM_CardosoMoreira2019.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
   class(this.exp)="data.frame"
   
   avgexp.cm2019[[sp]]=this.exp
@@ -57,6 +57,6 @@ for(sp in c("human", "mouse")){
 
 ###########################################################################
 
-save(list=c("exp.common.celltypes", "expstats.cm2019", "avgexp.cm2019"), file=paste(pathFigures, "RData/data.gene.expression2.RData", sep=""))
+save(list=c("exp.common.celltypes", "expstats.cm2019", "avgexp.cm2019"), file=paste(pathFigures, "RData/data.gene.expression.RData", sep=""))
 
 ###########################################################################
