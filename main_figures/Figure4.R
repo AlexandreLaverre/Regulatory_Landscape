@@ -7,14 +7,14 @@ if(!"pathFigures"%in%objects){
   source("parameters.R")
   
   ref_sp <- "human"
-  target_sp <- "mouse"
+  target_sp = setdiff(c("human", "mouse"), ref_sp)
 
   if(ref_sp == "human"){
     species <-c("macaque", "mouse", "rat",  "rabbit", "dog", "cow", "elephant", "opossum", "chicken")
   }
   
   if(ref_sp == "mouse"){
-    species <-c("rat", "rabbit", "macaque", "dog", "cow", "elephant", "opossum", "chicken")
+    species <-c("rat", "rabbit", "macaque", "human", "dog", "cow", "elephant", "opossum", "chicken")
   } 
     
   load=T
