@@ -29,8 +29,8 @@ if(load){
 ## max height: 11 in
 
 #################################################################################################################
-
-pdf(paste(pathFigures, "SuppFigure2.pdf", sep=""), width=6.85, height=5)
+if (ref_sp == "human"){pdf_name = "Figure2.pdf"}else{pdf_name = "SupplementaryFigure12.pdf"}
+pdf(paste(pathFigures, pdf_name, sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 
@@ -42,7 +42,7 @@ layout(m)
 ##################################################################################################################
 ############################################  % length covered by enhancers  #####################################
 
-m.prop=t(matrix(enh_prop$data, nrow=4, byrow=T))
+m.prop=t(matrix(enh_prop$data, nrow=length(enhancers), byrow=T))
 
 par(mar=c(2.1, 4.5, 2.75, 1))
 
@@ -54,11 +54,13 @@ barcenter <- barplot(m.prop, beside=T,  border=dataset.colors, col=dataset.color
 xposlab=apply(barcenter, 2, mean)
 allxpos=as.numeric(barcenter)
 
-mtext(enh.syn.narrow, line=c(rep(0.5,2), rep(1.3,2)), side=1, at=xposlab, cex=0.75)
+if (ref_sp == "human"){lab=enh.syn.narrow}else{lab = enhancers}
 
+mtext(lab, line=c(rep(0.5,length(enhancers)/2), rep(1.3,length(enhancers)/2)), side=1, at=xposlab, cex=0.75)
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=7)
 
-legend("topleft", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors,  bty='n', cex=1.1, inset=c(0, -0.1), xpd=NA)
+if(ref_sp=='human'){at="topleft"}else{at="topright"}
+legend(at, legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors,  bty='n', cex=1.1, inset=c(0, -0.1), xpd=NA)
 
 par(lwd=1)
 segments(allxpos, enh_prop$conf_up, allxpos, enh_prop$conf_low, lwd = 3)
@@ -69,14 +71,15 @@ for (x in seq(1,length(allxpos)-1, by=2)){
    text("***", x=(allxpos[x]+allxpos[x+1])/2, y=enh_prop$data[x]+1.5, cex=1.2)
  }
 
-mtext("a", side=3, line=1.45, at=-1.4, font=2, cex=1.2)
+if(ref_sp=='human'){at=-1.3}else{at=-0.1}
+mtext("a", side=3, line=1.45, at=at, font=2, cex=1.2)
 
 ###########################################################################################################################
 ##########################  Fig2-B - Enhancer proportion according to distance ############################################
 
-## only ENCODE
+## only one enhancers datasets
 
-enh="ENCODE"
+if (ref_sp == "human"){enh="ENCODE"}else{enh="FANTOM5"}
 
 ymax=max(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
 ymin=min(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
@@ -134,8 +137,8 @@ axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=sum(ylim)*0.9/2)
 mtext("number of cell types", side=1, line=2, cex=0.85)
 
-mtext("c", side=3, line=1.25, at=-2.1, font=2, cex=1.2)
-
+if(ref_sp=='human'){at=-2.1}else{at=-0.5}
+mtext("c", side=3, line=1.25, at=at, font=2, cex=1.2)
 
 ############################################################################################################################
 ############################################## correlation gene expression and enhancers activity ##########################
@@ -167,7 +170,7 @@ axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 mtext("Spearman's rho", side=2, cex=0.85, line=3, at=(ymin+ymax)*0.9/2)
 mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
 
-mtext("d", side=3, line=1.25, at=-8, font=2, cex=1.2)
+mtext("d", side=3, line=1.25, at=-5.5, font=2, cex=1.2)
 
 ##################################################################################################################################
 
