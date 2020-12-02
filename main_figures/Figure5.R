@@ -12,7 +12,7 @@ if(!"pathScripts"%in%objects){
 ##############################################################################
 
 if(load){
-  ref_sp = "mouse"
+  ref_sp = "human"
   tg=setdiff(c("human", "mouse"), ref_sp)
   
   enhancers=enhancer.datasets[[ref_sp]]
@@ -71,29 +71,25 @@ if (ref_sp == "human"){YLIM=c(-0.1,5)}else{YLIM=c(-0.5, 3); label.enhancers=enha
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 
 par(lwd = 0.7)
+xlim=c(0.5, length(cons.dist[["ENCODE"]]["obs",])+0.5)
+
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
+
 for (enh in enhancer.datasets[[ref_sp]]){
-  
-  # Plot first enhancers dataset
-  if (enh == "ENCODE"){ 
-    plot(log(((cons.dist[[enh]]["obs",]-cons.dist[[enh]]["sim",])/cons.dist[[enh]]["sim",])+1),
-         pch=20, col=col.enhancers[[enh]], xaxt = "n", ylim=YLIM,
-         xlab="", ylab="", main="", las=2)
-    
-    # Add lines of other enhancers datasets
-  }else{points(log(((cons.dist[[enh]]["obs",]-cons.dist[[enh]]["sim",])/cons.dist[[enh]]["sim",])+1),
-               pch=20, col=col.enhancers[enh])} 
+  points(log(((cons.dist[[enh]]["obs",]-cons.dist[[enh]]["sim",])/cons.dist[[enh]]["sim",])+1),pch=20, col=col.enhancers[enh])
   
   # Confidence intervals
   segments(x0=1:length(cons.dist.conf.low[[enh]]),y0=log(((cons.dist.conf.low[[enh]]["obs",]-cons.dist.conf.low[[enh]]["sim",])/cons.dist.conf.low[[enh]]["sim",])+1),
            x1=1:length(cons.dist.conf.low[[enh]]),y1=log(((cons.dist.conf.high[[enh]]["obs",]-cons.dist.conf.high[[enh]]["sim",])/cons.dist.conf.high[[enh]]["sim",])+1),
            col=col.enhancers[enh], lwd=0.3)
-  
 }
 
 ## axis, legend & plot label
 axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0))
-mtext("Excess of contact conservation", side=2, line=2.5,  cex=mtext.CEX)
 mtext("Distance from TSS (Mb)", side=1, line=2.5, cex=mtext.CEX)
+
+axis(side=2, mgp=c(3, 0.75, 0), las=2)
+mtext("Excess of contact conservation", side=2, line=2.5,  cex=mtext.CEX)
 abline(h=0, lty=2)
 
 legend("topleft", col=col.enhancers, legend = label.enhancers, bty='n',pch=20)
