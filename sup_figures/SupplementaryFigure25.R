@@ -26,7 +26,7 @@ for (ref_sp in c("human", "mouse")){
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
   
   for (enh in enhancer.datasets[[ref_sp]]){
-    points(cons.dist[[enh]]["obs",],pch=20, col=col.enhancers[enh])
+    points(cons.dist[[enh]]["obs",],pch=20, col=col.enhancers[enh], cex=0.7)
     
     # Confidence intervals
     segments(x0=1:length(cons.dist.conf.low[[enh]]),y0=cons.dist.conf.low[[enh]]["obs",],
