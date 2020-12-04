@@ -1,5 +1,4 @@
 ##############################################################################
-setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
 
 objects=ls()
 
@@ -12,7 +11,7 @@ if(!"pathScripts"%in%objects){
 ##############################################################################
 
 if(load){
-  ref_sp = "mouse"
+  ref_sp = "ref"
   tg=setdiff(c("human", "mouse"), ref_sp)
   
   enhancers=enhancer.datasets[[ref_sp]]
@@ -32,8 +31,7 @@ if(load){
 
 ##############################################################################
 
-if (ref_sp == "human"){pdf_name = "Figure5.pdf"}else{pdf_name = "SupplementaryFigure24.pdf"}
-pdf(paste(pathFigures, pdf_name, sep=""), width=6.85, height=5)
+pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 mtext.CEX = 0.75
@@ -44,7 +42,9 @@ m[2,]=c(rep(3,5), rep(4,5))
 layout(m)
 
 #################### Fig 5.A - % of conserved contacts #####################
-if (ref_sp == "human"){YMAX=40}else{YMAX=50}
+
+YMAX=40
+
 par(lwd = 1.5)
 
 
@@ -56,8 +56,8 @@ arrows(x0=b,y0=cons.conf.low,y1=cons.conf.high,angle=90,code=3,length=0.05)
 
 ## axis labels
 mtext("% of conserved contacts", side=2, line=2.5,  cex=mtext.CEX)
-mtext(c("ENCODE", "FANTOM5"), side=1, at=apply(b[,1:2], 2, mean), line=0.5, cex=0.6)
-if (ref_sp == "human"){mtext(c("FOCS\nGRO-seq", "RoadMap\nEpigenomics"), side=1, at=apply(b[,3:4], 2, mean), line=1.2, cex=0.6)}
+
+mtext(enh.syn.narrow[enhancers],side=1, at=apply(b, 2, mean), line=0.5, cex=0.6)
 
 ## legend & plot label
 legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
