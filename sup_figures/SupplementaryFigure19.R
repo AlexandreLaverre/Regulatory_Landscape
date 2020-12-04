@@ -19,6 +19,11 @@ if(load){
  
  load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".Rdata", sep=""))
 
+ selenh="ENCODE"
+
+ align_enhancer_obs=list_align_enh[[selenh]][["enh_align_obs"]]
+ align_enhancer_simul=list_align_enh[[selenh]][["enh_align_simul"]]
+ 
  load=F
 }
 
@@ -31,7 +36,7 @@ if(load){
 
 ##########################################################################
 
-pdf(paste(pathFigures, "SupplementaryFigure15.pdf", sep=""), width=6.85, height=11)
+pdf(paste(pathFigures, "SupplementaryFigure19.pdf", sep=""), width=6.85, height=11)
 
 ## layout
 
@@ -47,7 +52,7 @@ par(mar=c(4.1, 4.5, 2.1, 1.5))
 
 for(other_sp in target_species){
   
-  nbclasses=length(levels(frag_align_obs$dist_class))
+  nbclasses=length(levels(align_enhancer_obs$dist_class))
   xpos=1:nbclasses
   
   xlim=c(-0.5, max(xpos)+1)
@@ -56,13 +61,13 @@ for(other_sp in target_species){
   class_leg <- c("0", "0.5", "1", "1.5", "2")
   xax=seq(from=0, to=max(xpos)+1, by=10)
   
-  mean.val.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) mean(x, na.rm=T))
-  ci.low.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
+  mean.val.obs=tapply(100*align_enhancer_obs[, other_sp], align_enhancer_obs$dist_class, function(x) mean(x, na.rm=T))
+  ci.low.obs=tapply(100*align_enhancer_obs[, other_sp], align_enhancer_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
+  ci.high.obs=tapply(100*align_enhancer_obs[, other_sp], align_enhancer_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
   
-  mean.val.simul=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) mean(x, na.rm=T))
-  ci.low.simul=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.simul=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
+  mean.val.simul=tapply(100*align_enhancer_simul[, other_sp], align_enhancer_simul$dist_class, function(x) mean(x, na.rm=T))
+  ci.low.simul=tapply(100*align_enhancer_simul[, other_sp], align_enhancer_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
+  ci.high.simul=tapply(100*align_enhancer_simul[, other_sp], align_enhancer_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
   
   ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul))
   
