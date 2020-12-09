@@ -16,6 +16,7 @@ if(load){
   
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
+  load(paste(pathFigures, "RData/data.samples.cumulative.interactions.Rdata", sep=""))
  
   nb_cell_max = 5
   load=FALSE ## we only do this once
@@ -96,22 +97,11 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "SupplementaryFigure9.pdf", sep=""), width=6.85, height=2.5)
+pdf(paste(pathFigures, "SupplementaryFigure9.pdf", sep=""), width=6.85, height=5)
 
-## layout
-
-m=matrix(rep(NA, 5*10), nrow=5)
-
-for(i in 1:5){
-  m[i,]=c(rep(1, 5), rep(2, 5))
-}
-
-layout(m)
-
-############################################################################################
-
+par(mfrow=c(2,2))
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
-par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
+par(mar = c(3.5, 4.5, 3.1, 1)) # external margins
 
 #################### A - Histogram with number of cell types in which an interaction is observed #####################
 
@@ -130,11 +120,11 @@ mtext("% of interactions", side=2, line=2.5, cex=0.8)
 legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
        fill=dataset.colors[c("Original", "Simulated")], bty='n',
        cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("A", side=3, line=1, at=-2, font=2, cex=1.2)
+mtext("a", side=3, line=1, at=-2, font=2, cex=1.2)
 
 ################################################################################################
 
-#################### B - Distribution of number of cell types according to distance #####################
+#################### B - Distribution of number of cell types according to distance ############
 
 ylim=c(0.5, max(c(as.numeric(mean_nb_celltypes_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Simulated",]))))
 ylim[2]=ylim[2]+0.5
@@ -162,7 +152,30 @@ for(dataset in rownames(mean_dist)){
 ## legend & plot label
 
 legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("B", side=3, line=1, at=-2.5e5, font=2, cex=1.2)
+mtext("b", side=3, line=1, at=-2.5e5, font=2, cex=1.2)
+
+################################################################################################
+
+#################### C - Cumulative number of interactions #######
+
+for (sp in c("human", "mouse")){
+  plot(apply(cumul_int[[sp]][["simulated"]], 2, mean)/max(cumul_int[[sp]][["simulated"]]), pch=19, col=dataset.colors["Simulated"],
+       xlab="", ylab="", main=sp, cex=0.5, mgp=c(2,1,0), axes=F)
+  
+  points(apply(cumul_int[[sp]][["observed"]], 2, mean)/max(cumul_int[[sp]][["observed"]]),  pch=19, col=dataset.colors["Original"], cex=0.5)
+  
+  axis(side=1, mgp=c(3, 0.65, 0), cex.axis=1.1)
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1, las=2)
+  
+  mtext("number of sample", side=1, line=2.25, cex=0.8)
+  
+  if (sp == "human"){
+    legend("bottomright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")], pch=20, bty='n', xpd=NA)
+    mtext("cumulative proportion \n of interactions", side=2, line=2.5, cex=0.8)
+    mtext("c", side=3, line=1, at=-3, font=2, cex=1.2)
+  }
+  
+}
 
 ###########################################################################################
 
