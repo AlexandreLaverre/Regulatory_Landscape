@@ -67,6 +67,7 @@ if(prepare){
     ## expression
 
     exp=avgexp.cm2019[[sp]]
+    nbsamples.tot=dim(exp)[2]
     nbsamples.exp=apply(exp, 1, function(x) length(which(x>=minRPKM)))
     names(nbsamples.exp)=rownames(exp)
 
@@ -95,13 +96,16 @@ if(prepare){
 
 pdf(paste(pathFigures, "SupplementaryFigure10.pdf", sep=""), width=6.85, height=3.5)
 
-m=matrix(c(rep(1, 7), rep(2, 6)), nrow=1)
+m=matrix(c(rep(1, 7), rep(2, 7)), nrow=1)
 
 layout(m)
 
 ##########################################################################
 
 for(sp in c("human", "mouse")){
+  exp=avgexp.cm2019[[sp]]
+  nbsamples.tot=dim(exp)[2]
+  
   obs=all.data[[sp]][["obs"]]
   sim=all.data[[sp]][["sim"]]
 
@@ -111,41 +115,35 @@ for(sp in c("human", "mouse")){
   xpos=1:nbclass
   smallx=c(-0.25, 0.25)
 
-  xlim=c(0.5, nbclass+0.5)
-  
-  if (sp == "human"){ylim=c(70,120)}else{ylim=c(50,100)}
+  xlim=c(0.5, 9.5)
+  ylim=c(0, 100)
 
-  par(mar=c(3.5, 3.5, 1.5, 1.1))
+  par(mar=c(3.5, 3.5, 1.5, 0.5))
       
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim)
   
   for(i in 1:nbclass){
     wobs=which(obs$celltype_class==classes[i])
-    obs_stats = boxplot(obs$NbSamplesExpressed[wobs], plot=F)
+    boxplot(100*obs$NbSamplesExpressed[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[1], col=dataset.colors["Original"], notch=T)
     
     wsim=which(sim$celltype_class==classes[i])
-    sim_stats= boxplot(sim$NbSamplesExpressed[wobs], plot=F)
+    boxplot(100*sim$NbSamplesExpressed[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[2], col=dataset.colors["Simulated"], notch=T)
     
-    
-    points(i, obs_stats$stats[3,], pch=20, col=dataset.colors["Original"])
-    segments(i, obs_stats$conf[1,], i, obs_stats$conf[2,], col=dataset.colors["Original"])
-    
-    points(i, sim_stats$stats[3,], pch=20, col=dataset.colors["Simulated"])
-    segments(i, sim_stats$conf[1,], i, sim_stats$conf[2,], col=dataset.colors["Simulated"])
   }
 
   mtext(sp, side=3, cex=0.75)
 
   axis(side=1, at=1:nbclass, labels=classes, cex.axis=0.9, mgp=c(3, 0.5, 0))
-  mtext("number of cell types in which contacts are observed", side=1, line=2, cex=0.7)
+  mtext("number of cell types w. chromatin contacts", side=1, line=2, cex=0.7, at=(nbclass+1)/2)
   
   axis(side=2, cex.axis=0.9, mgp=c(3, 0.75, 0))
-  mtext("number of samples with detectable expression", side=2, line=2, cex=0.7)
+  mtext("percentage of samples w. detectable expression", side=2, line=2, cex=0.7)
 
-  mtext(labels[sp], side=3, at=xlim[1]-diff(xlim)/(nbclass-0.8), line=0, font=2)
+  mtext(labels[sp], side=3, at=xlim[1]-diff(xlim)/6.5, line=0, font=2)
   
-  if (sp == "human"){legend("topleft", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")], pch=20,
-                            bty='n', inset=c(0.01, 0.05), xpd=NA)}
+  if (sp == "mouse"){
+    legend("topright", legend=c("PCHi-C data", "simulated data"), fill=dataset.colors[c("Original", "Simulated")], bty='n', inset=c(-0.02, -0.01), xpd=NA)
+  }
 }
 
 ##########################################################################
