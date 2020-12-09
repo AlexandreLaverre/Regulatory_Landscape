@@ -130,10 +130,10 @@ for(sp in c("human", "mouse")){
   
   for(i in 1:nbclass){
     wobs=which(obs$classcontact==classes[i])
-    boxplot(100*obs$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[1], col=dataset.colors["Original"], notch=T)
+    boxplot(100*obs$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[1], col=dataset.colors["Original"], notch=T, pch=20)
     
     wsim=which(sim$classcontact==classes[i])
-    boxplot(100*sim$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[2], col=dataset.colors["Simulated"], notch=T)
+    boxplot(100*sim$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[2], col=dataset.colors["Simulated"], notch=T, pch=20)
     
   }
 
