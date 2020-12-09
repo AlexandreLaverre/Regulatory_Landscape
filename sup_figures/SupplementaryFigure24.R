@@ -11,7 +11,7 @@ if(!"pathScripts"%in%objects){
 ##############################################################################
 
 if(load){
-  ref_sp = "human"
+  ref_sp = "mouse"
   tg=setdiff(c("human", "mouse"), ref_sp)
   
   enhancers=enhancer.datasets[[ref_sp]]
@@ -31,7 +31,7 @@ if(load){
 
 ##############################################################################
 
-pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=5)
+pdf(paste(pathFigures, "SupplementaryFigure24.R", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 mtext.CEX = 0.75
@@ -43,9 +43,10 @@ layout(m)
 
 #################### Fig 5.A - % of conserved contacts #####################
 
-YMAX=40
+YMAX=50
 
 par(lwd = 1.5)
+
 
 b=barplot(cons, beside=T, names=rep("", dim(cons)[2]), ylim=c(0,YMAX), space=c(0.2,1),
           border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
@@ -54,22 +55,19 @@ b=barplot(cons, beside=T, names=rep("", dim(cons)[2]), ylim=c(0,YMAX), space=c(0
 arrows(x0=b,y0=cons.conf.low,y1=cons.conf.high,angle=90,code=3,length=0.05)
 
 ## axis labels
-mtext("% conserved contacts", side=2, line=2.5,  cex=mtext.CEX)
-
-mtext(enh.syn.narrow[enhancers[1:2]],side=1, at=apply(b, 2, mean)[1:2], line=0.5, cex=0.6)
-mtext(enh.syn.narrow[enhancers[3:4]],side=1, at=apply(b, 2, mean)[3:4], line=1, cex=0.6)
+mtext("% of conserved contacts", side=2, line=2.5,  cex=mtext.CEX)
+mtext(c("ENCODE", "FANTOM5"), side=1, at=apply(b[,1:2], 2, mean), line=0.5, cex=0.6)
+if (ref_sp == "human"){mtext(c("FOCS\nGRO-seq", "RoadMap\nEpigenomics"), side=1, at=apply(b[,3:4], 2, mean), line=1.2, cex=0.6)}
 
 ## legend & plot label
 legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
        fill=dataset.colors[c("Original", "Simulated")], bty='n', 
        inset=c(0.05, -0.1), xpd=NA)
 
-mtext("a", side=3, line=1, at=-1.2, font=2, cex=1.05)
+mtext("a", side=3, line=1, at=0.1, font=2, cex=1.05)
 
 ############### Fig 5.B - Contact conservation by distance from TSS ##############
-
-YLIM=c(-0.1,5)
-
+if (ref_sp == "human"){YLIM=c(-0.1,5)}else{YLIM=c(-0.5, 3); label.enhancers=enhancers}
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 
 par(lwd = 0.7)
@@ -88,18 +86,17 @@ for (enh in enhancer.datasets[[ref_sp]]){
 
 ## axis, legend & plot label
 axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0))
-mtext("distance from promoter region (Mb)", side=1, line=2.5, cex=mtext.CEX)
+mtext("Distance from TSS (Mb)", side=1, line=2.5, cex=mtext.CEX)
 
 axis(side=2, mgp=c(3, 0.75, 0), las=2)
-mtext("excess of contact conservation", side=2, line=2.5,  cex=mtext.CEX)
-
+mtext("Excess of contact conservation", side=2, line=2.5,  cex=mtext.CEX)
+abline(h=0, lty=2)
 
 legend("topleft", col=col.enhancers, legend = label.enhancers, bty='n',pch=20)
-mtext("b", side=3, line=1, at=-3.75, font=2, cex=1.05)
+mtext("b", side=3, line=1, at=0.1, font=2, cex=1.05)
 
 #################  Fig 5.C - Contact conservation by nb cell types #######################
-
-max.nb.cell = 8
+if (ref_sp == "human"){max.nb.cell = 8}else{max.nb.cell = 6}
 
 ylim=c(10, 70)
 xlim=c(0.5, max.nb.cell+0.5)
@@ -123,17 +120,19 @@ for(enh in enhancer.datasets[[ref_sp]]){
 abline(v=xpos[1:max.nb.cell-1]+0.5, lty=3, col="gray40")
 axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", max.nb.cell))
 mtext(colnames(cons.nb.cell[[enh]]), at=xpos, side=1, line=1, cex=mtext.CEX)
-mtext("number of cell types", side=1, line=2.5, cex=mtext.CEX)
+mtext("Number of cell types", side=1, line=2.5, cex=mtext.CEX)
 
 axis(side=2, mgp=c(3, 0.75, 0), las=2)
-mtext("% conserved contacts", side=2, line=2.5, cex=mtext.CEX)
+mtext("Conserved contact (%)", side=2, line=2.5, cex=mtext.CEX)
 
-mtext("c", side=3, line=1, at=-0.65, font=2, cex=1.05)
+legend("topleft", legend=label.enhancers, pch=20,
+       col=col.enhancers, bty="n", cex=1)
+
+mtext("c", side=3, line=1, at=0.1, font=2, cex=1.05)
 
 
 #################### Fig 5.D - % of conserved contacts in common cells #####################
-
-YMAX=40
+if (ref_sp == "human"){YMAX=40}else{YMAX=25}
 par(lwd = 1.5)
 
 enh = "ENCODE"
@@ -145,12 +144,16 @@ b=barplot(cons.common.cell[[enh]], beside=T, names=rep("", dim(cons.common.cell[
 arrows(x0=b,y0=cons.common.cell.conf.low[[enh]],y1=cons.common.cell.conf.high[[enh]],angle=90,code=3,length=0.05)
 
 ## axis labels
-label.cells = c("ESC", "pre-adipocytes", "B lymphocytes")
-mtext("% conserved contacts", side=2, line=2.5, cex=mtext.CEX)
+label.cells = c("ESC", "Preadipocytes", "Bcell")
+mtext("% of conserved contacts", side=2, line=2.5, cex=mtext.CEX)
 mtext(label.cells, at=apply(b, 2, mean), side=1, line=0.5, cex=mtext.CEX)
 
+## legend & plot label
+legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
+       fill=dataset.colors[c("Original", "Simulated")], bty='n', 
+       inset=c(0.05, -0.1), xpd=NA)
 
-mtext("d", side=3, line=1, at=-0.7, font=2, cex=1.05)
+mtext("d", side=3, line=1, at=0.1, font=2, cex=1.05)
 
 ####################################################################################
 
