@@ -51,13 +51,8 @@ if(prepare){
     M=maxval[sp]
     
     obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-    obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:M, max(obs$nb_celltypes)), include.lowest=T)
-    levels(obs$celltype_class)=c(as.character(1:M), paste0(">",M))
-
     sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-    sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:M, max(sim$nb_celltypes)), include.lowest=T)
-    levels(sim$celltype_class)=c(as.character(1:M), paste0(">",M))
-
+    
     ## bait annotation
 
     bait.annot=bait.info[[sp]]
@@ -67,7 +62,7 @@ if(prepare){
     ## expression
 
     exp=avgexp.cm2019[[sp]]
-    nbsamples.tot=dim(exp)[2]
+   
     nbsamples.exp=apply(exp, 1, function(x) length(which(x>=minRPKM)))
     names(nbsamples.exp)=rownames(exp)
 
@@ -76,10 +71,21 @@ if(prepare){
     obs=obs[which(obs$geneID%in%rownames(exp)),]
     sim=sim[which(sim$geneID%in%rownames(exp)),]
 
-    obs$NbSamplesExpressed=nbsamples.exp[obs$geneID]
-    sim$NbSamplesExpressed=nbsamples.exp[sim$geneID]
+    ## we compute the maximum number of samples in which a gene has chromatin contacts
 
-    all.data[[sp]]=list("obs"=obs, "sim"=sim)
+    nb.celltypes.bygene.obs=tapply(obs$nb_celltypes, as.factor(obs$geneID), max)
+    nb.celltypes.bygene.sim=tapply(sim$nb_celltypes, as.factor(sim$geneID), max)
+
+    fac.celltypes.bygene.obs=cut(nb.celltypes.bygene.obs, breaks=c(0:M, max(obs$nb_celltypes)), include.lowest=T)
+    levels(fac.celltypes.bygene.obs)=c(as.character(1:M), paste0(">",M))
+
+    fac.celltypes.bygene.sim=cut(nb.celltypes.bygene.sim, breaks=c(0:M, max(sim$nb_celltypes)), include.lowest=T)
+    levels(fac.celltypes.bygene.sim)=c(as.character(1:M), paste0(">",M))
+
+    res.obs=data.frame("gene"=names(nb.celltypes.bygene.obs), "nbcontact"= nb.celltypes.bygene.obs, "classcontact"=fac.celltypes.bygene.obs, "nbexp"=nbsamples.exp[names(nb.celltypes.bygene.obs)])
+    res.sim=data.frame("gene"=names(nb.celltypes.bygene.sim), "nbcontact"= nb.celltypes.bygene.sim, "classcontact"=fac.celltypes.bygene.sim, "nbexp"=nbsamples.exp[names(nb.celltypes.bygene.sim)])
+   
+    all.data[[sp]]=list("obs"=res.obs, "sim"=res.sim)
   }
   
   prepare=FALSE
@@ -109,7 +115,7 @@ for(sp in c("human", "mouse")){
   obs=all.data[[sp]][["obs"]]
   sim=all.data[[sp]][["sim"]]
 
-  classes=levels(obs$celltype_class)
+  classes=levels(obs$classcontact)
   nbclass=length(classes)
   
   xpos=1:nbclass
@@ -123,11 +129,11 @@ for(sp in c("human", "mouse")){
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim)
   
   for(i in 1:nbclass){
-    wobs=which(obs$celltype_class==classes[i])
-    boxplot(100*obs$NbSamplesExpressed[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[1], col=dataset.colors["Original"], notch=T)
+    wobs=which(obs$classcontact==classes[i])
+    boxplot(100*obs$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[1], col=dataset.colors["Original"], notch=T)
     
-    wsim=which(sim$celltype_class==classes[i])
-    boxplot(100*sim$NbSamplesExpressed[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[2], col=dataset.colors["Simulated"], notch=T)
+    wsim=which(sim$classcontact==classes[i])
+    boxplot(100*sim$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[2], col=dataset.colors["Simulated"], notch=T)
     
   }
 
