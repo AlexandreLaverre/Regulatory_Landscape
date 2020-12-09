@@ -1,5 +1,7 @@
 ######################################################################################################################
 setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
+
+
 source("parameters.R") ## pathFinalData are defined based on the user name
 
 sp="human"
@@ -28,10 +30,10 @@ CMPlot <- function(var, plot.nb){
   }else if (var == "ResidualSpearman"){ylim=c(0.02, 0.1)
   }else if (var == "CorrectedSpearman"){ylim=c(0.02, 0.1)
   }else if (var == "CorrectedEuclideanSimilarity"){ylim=c(0, 0.02)
-  }else if (var == "EuclideanSimilarity"){ylim=c(0.9, 0.95)
+  }else if (var == "EuclideanSimilarity"){ylim=c(0.9, 0.94)
   }else if (var == "CorrelationSpearman"){ylim=c(0.55, 0.65)
   }else if (var == paste0("Tau", sp_name)){ylim=c(0.62, 0.75)
-  }else if (var == "MeanRPKM"){ylim=c(6, 12)}
+  }else if (var == "MeanRPKM"){ylim=c(7, 11)}
   
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
 
@@ -68,7 +70,7 @@ CMPlot <- function(var, plot.nb){
 MeasuresCM <- c(paste0("Tau", sp_name), "MeanRPKM", "EuclideanSimilarity", "CorrelationSpearman",  "CorrectedEuclideanSimilarity", "CorrectedSpearman")
 names_MeasuresCM <- c("Specificity (Tau)", "Expression level (RPKM)", "Euclidean Similarity", "Spearman's rho",  "Residual Euclidean Similarity", "Residual Spearman's rho" )
 
-pdf(paste(pathFigures, "/SupplementaryFigure31.pdf", sep=""), width=7, height=7)
+pdf(paste(pathFigures, "/SupplementaryFigure30.pdf", sep=""), width=7, height=7)
 par(mfrow=c(3,2))
 par(mai = c(0.5, 0.6, 0.3, 0.4)) # bottom, left, top, right
 
@@ -126,7 +128,7 @@ CellTypesPlot <- function(var, plot.nb){
 MeasuresCellTypes <- c("MeanRPKM", "Conservation", "ResidualConservation") 
 names_MeasuresCellTypes <- c("Expression level (RPKM)", "Expression Conservation", "Residual Expression Conservation")
 
-pdf(paste(pathFigures, "/SupplementaryFigure30.pdf", sep=""), width=7, height=7)
+pdf(paste(pathFigures, "/SupplementaryFigure29.pdf", sep=""), width=7, height=7)
 
 par(mfrow=c(3,3))
 par(mai = c(0.5, 0.5, 0.3, 0)) # bottom, left, top, right

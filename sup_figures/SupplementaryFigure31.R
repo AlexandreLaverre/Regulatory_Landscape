@@ -45,7 +45,7 @@ clearboxplot <- function(measure, divergence, ylim, ylab){
 }
 
 ######################################################################################################################
-pdf(file=paste(pathFigures, "SupplementaryFigure29.pdf", sep=""), width = 8.5)
+pdf(file=paste(pathFigures, "SupplementaryFigure31.pdf", sep=""), width = 8.5)
 
 par(mfrow=c(3,3))
 
