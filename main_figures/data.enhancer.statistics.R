@@ -33,8 +33,11 @@ for(sp in c("human", "mouse")){
     
     ## select enhancers that are not duplicated and with repeat_part < 1%
     
-    obs <- obs[which(obs$BLAT_match < 2 & (obs$repeat_bp/obs$length) < 0.01),] 
-    sim <- sim[which(sim$BLAT_match < 2 & (sim$repeat_bp/sim$length) < 0.01),]
+    # obs <- obs[which(obs$BLAT_match < 2 & (obs$repeat_bp/obs$length) < 0.01),] 
+    # sim <- sim[which(sim$BLAT_match < 2 & (sim$repeat_bp/sim$length) < 0.01),]
+    
+    obs <- obs[which(obs$BLAT_match  == 1),] 
+    sim <- sim[which(sim$BLAT_match == 1),]
     
     ## save results
     
