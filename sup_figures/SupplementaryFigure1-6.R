@@ -112,12 +112,14 @@ for(i in 1:nbfigures){
     mtext("density of nb contacts", side=2, line=2, cex=0.7)
 
     median.obs=round(median(this.obs$distance)/1000, digits=0)
+    median.sim=round(median(this.sim$distance)/1000, digits=0)
     mtext(paste("median ", median.obs, " Kb", sep=""), side=3, line=-1.5, cex=0.8, col=dataset.colors["Original"])
+    mtext(paste("median ", median.sim, " Kb", sep=""), side=3, line=-2.5, cex=0.8, col=dataset.colors["Simulated"])
     
     ## legend
 
     if(sample==this.info$Sample.ID[1]){
-      legend("bottomright", bty="n", fill=dataset.colors, border=dataset.colors, legend=c("original", "simulated"), cex=1.1, inset=0.05, xpd=NA)
+      legend("right", bty="n", col=dataset.colors, lty=1, legend=c("PC-HiC data", "simulated data"), cex=1.1, inset=0.05, xpd=NA)
     }
 
     mtext(labels[sample], side=3, at=-0.55e6, cex=1.1, font=2, line=0.85)
