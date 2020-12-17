@@ -24,19 +24,11 @@ for(ref in c("human", "mouse")){
   sampleinfo.ref=sampleinfo[[ref]]
   sampleinfo.tg=sampleinfo[[tg]]
   
-  cells <- c("ESC", "preadip", "Bcell")
-  
-  ESC.common = list("human"= c("hESC"), "mouse"=c("ESC", "ESC_18", "ESC_wild"))
-  preadip.common = list("human"= c("pre_adipo"), "mouse"=c("preadip_D0", "preadip_D2", "preadip_4H"))
-  Bcell.common = list("human"= c("TB", "NB"), "mouse"=c("preB_aged", "preB_young"))
-  common.cell <- list("ESC"=ESC.common, "preadip"=preadip.common, "Bcell"=Bcell.common)
-  
-  
   for(enh in enhancer.datasets[[ref]]){
     print(enh)
     
-    obsobs=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_original.txt_test", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    simsim=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_simulated.txt_test", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    obsobs=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    simsim=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
     
     class(obsobs)="data.frame"
     class(simsim)="data.frame"
@@ -73,10 +65,10 @@ for(ref in c("human", "mouse")){
 
         nb_total = unlist(with(selected_dist, tapply(origin_enh, factor(origin_gene, levels=all_genes), function(x) length(x))))
         align_score =  unlist(with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), median, na.rm=T)))
-        seq_conserv = unlist(with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), function(x) length(which(x>=0.4)))))
+        seq_conserv = unlist(with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), function(x) length(which(x>=0.8)))))
         
-        selected_align = selected_dist[which(selected_dist$align_score >= 0.4),]
-        synt_conserv = with(selected_align, tapply(target_dist, factor(origin_gene, levels=all_genes), function(x) length(which(x <= maxDistanceSyntenyTarget))))
+        selected_align = selected_dist[which(selected_dist$align_score >= 0.8),]
+        synt_conserv = with(selected_align, tapply(target_dist, factor(origin_gene, levels=all_genes), function(x) length(which(as.numeric(x) <= maxDistanceSyntenyTarget))))
         
         selected_gene = selected_align[which(selected_align$target_data == TRUE),] # ortologous genes present in PCHIC in target specie
         contact_conserv = with(selected_gene, tapply(cons, factor(origin_gene, levels=all_genes), function(x) length(which(x == TRUE))))
@@ -94,7 +86,7 @@ for(ref in c("human", "mouse")){
         # Class of conservation ratio
         genes.conservation[[enh]][[data.name]][[dist]]$class_nb_contact = cut2(genes.conservation[[enh]][[data.name]][[dist]]$nb_total, g=5, include.lowest=T)
         genes.conservation[[enh]][[data.name]][[dist]]$class_cons_seq = cut(genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_seq, breaks=c(0, 0.10, 0.25, 0.5, 0.75, 1), include.lowest=T)
-        genes.conservation[[enh]][[data.name]][[dist]]$class_cons_synt = cut(genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_synt, breaks=c(0, 0.99, 1), include.lowest=T)
+        genes.conservation[[enh]][[data.name]][[dist]]$class_cons_synt = cut(genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_synt, breaks=c(0, 0.75, 0.99, 1), include.lowest=T)
         genes.conservation[[enh]][[data.name]][[dist]]$class_cons_cont = cut(genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_int,  breaks=c(0, 0.01, 0.25, 0.5, 0.75, 1), include.lowest=T)
         genes.conservation[[enh]][[data.name]][[dist]]$class_align_score = cut2(genes.conservation[[enh]][[data.name]][[dist]]$align_score, g=5, include.lowest=T)
         
@@ -104,7 +96,7 @@ for(ref in c("human", "mouse")){
   }
   
   ## save data
-  save(genes.conservation, file=paste(pathFigures, "RData/data.", ref, ".gene.regland.conservation.RData",sep=""))
+  save(genes.conservation, file=paste(pathFigures, "RData/data.", ref, ".gene.regland.conservation.0.8.RData",sep=""))
 }
 
 

@@ -81,7 +81,7 @@ for(ref in c("human", "mouse")){
           synt_conserv = with(selected_align, tapply(target_dist, factor(origin_gene, levels=all_genes), function(x) length(which(x <= maxDistanceSyntenyTarget))))
           
           selected_gene = selected_align[which(selected_align$target_data == TRUE),] # ortologous genes present in PCHIC in target specie
-          contact_conserv = with(selected_gene, tapply(cons, factor(origin_gene, levels=all_genes), function(x) length(which(x == TRUE))))
+          contact_conserv = with(selected_gene, tapply(cons, factor(origin_gene, levels=all_genes), function(x) length(which(as.numeric(x) == TRUE))))
           
           genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]] <- data.frame("nb_total"=nb_total, "align_score"=align_score, "seq_conserv"=seq_conserv, 
                                                                        "synt_conserv"=synt_conserv, "contact_conserv"=contact_conserv)
@@ -96,7 +96,7 @@ for(ref in c("human", "mouse")){
           # Class of conservation ratio
           genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$class_nb_contact = cut2(genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$nb_total, g=5, include.lowest=T)
           genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$class_cons_seq = cut(genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$ratio_cons_seq, breaks=c(0, 0.10, 0.25, 0.5, 0.75, 1), include.lowest=T)
-          genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$class_cons_synt = cut(genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$ratio_cons_synt, breaks=c(0, 0.99, 1), include.lowest=T)
+          genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$class_cons_synt = cut(genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$ratio_cons_synt, breaks=c(0, 0.75, 0.99, 1), include.lowest=T)
           genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$class_cons_cont = cut(genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$ratio_cons_int,  breaks=c(0, 0.01, 0.25, 0.5, 0.75, 1), include.lowest=T)
           genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$class_align_score = cut2(genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$align_score, g=5, include.lowest=T)
           

@@ -26,41 +26,30 @@ if(load){
   if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
   
   cells <- c("Bcell", "ESC", "adipo")
-  dataset.colors=c("firebrick1", "forestgreen", "navy")
-  names(dataset.colors) = cells
+  col.cells = c("navy", "forestgreen", "darkorange")
+  names(col.cells) = cells
+  
   load=FALSE
   
 }
 
 ################################################################################################################################
-Measure = "uncorrected"
-if (Measure == "corrected"){pdf_name="SupplementaryFigure33.pdf"}else{pdf_name="Figure6.pdf"}
-
-#pdf(file=paste(pathFigures, pdf_name, sep=""), width = 8.5)
-
-par(mfrow=c(1,3))
-par(mai = c(0.5, 0.5, 0.5, 0)) # bottom, left, top, right
-
-################################################################################################################################
 ######################################### PART1 : Common cells types  ##########################################################
-if (Measure == "corrected"){DivergenceMeasure = "ResidualExpressionConservation"; ylab="Residual Expression Level Conservation";
-YLIM=c(-0.15, 0.11)
-}else{DivergenceMeasure = "ExpressionConservation"; ylab="Expression Level Conservation"; YLIM=c(0.1,0.75)} 
-
-
-col.cells = c("navy", "forestgreen", "darkorange")
-names(col.cells) = cells
 enh = "ENCODE"
 
-plot_cell <- function(class_conserv, xlab, xnames){
+plot_cell <- function(class_conserv, distances, xlab, xnames){
   smallx=c(-0.15, 0, 0.15)
   names(smallx)=cells
   
-  #par(mai = c(0.5, 0.5, 0.5, 0)) # bottom, left, top, right
-  if (class_conserv == "class_cons_synt"){xmax=2}else{xmax=5}
+  if (Measure == "corrected"){DivergenceMeasure = "ResidualExpressionConservation"; ylab="Residual Expression Level Conservation";
+  YLIM=c(-0.15, 0.11)
+  }else{DivergenceMeasure = "ExpressionConservation"; ylab="Expression Level Conservation"; YLIM=c(0.1,0.75)} 
+  
+
+  if (class_conserv == "class_cons_synt"){xmax=3}else{xmax=5}
   xlim=c(0.5, xmax+0.5)
   
-  for (dist in rev(names(genes.conservation.cells[[enh]][["ESC"]][["obs"]]))){
+  for (dist in distances){
     
     plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
     
@@ -95,55 +84,32 @@ plot_cell <- function(class_conserv, xlab, xnames){
     if (dist == "all"){
       axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
       mtext(ylab, side=2, line=2.5, cex=0.9)
-      mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
-      legend("topleft", legend=rev(cells), pch=20,
-             col=rev(col.cells), cex=1.2, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
+      # mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
+      # legend("topleft", legend=rev(cells), pch=20,
+      #       col=rev(col.cells), cex=1.2, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
       
     }
 
-    mtext(dist, side=3, line=-1, cex=1)
+    #mtext(dist, side=3, line=-1, cex=1)
   }
 
 }
 
-par(mfrow=c(1,4))
-plot_cell("class_align_score", "Alignement score", 1:5)
-# mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
-# legend("topleft", legend=rev(cells), pch=20,
-#        col=rev(col.cells), cex=1.2, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
+################################################################################################################################
+############################## PART2 :  Cardoso-Moreira  #######################################################################
 
-plot_cell("class_cons_synt", "Synteny Conservation", c("without", "with"))
-plot_cell("class_cons_cont", "Contact conservation", c("<1%", "25%", "50%", "75", ">75%"))
-
-
-
-# ################################################################################################################################
-# ############################## PART2 :  Cardoso-Moreira  ##########################################################
-#pdf(paste(pathFigures, "/Fig6_by_distances_all.pdf", sep=""), width = 7, height = 3)
-
-#Measure = "uncorrected"
-
-if (Measure == "corrected"){DivergenceMeasure = "CorrectedSpearman"; ylab="Residual Spearman's rho"; ylim=c(-0.02, 0.13)
-}else{DivergenceMeasure = "CorrelationSpearman"; ylab="Spearman's rho"; ylim=c(0.5, 0.68)}
-
-# expdiv$EuclideanSimilarity = 1-expdiv$EuclideanDistance
-# DivergenceMeasure = "CorrectedEuclideanSimilarity"
-# 
-# if (DivergenceMeasure == "EuclideanSimilarity"){ylab="Euclidean Similarity"; ylim=c(0.89, 0.94)
-# }else{ylab="Residual Euclidean Similarity"; ylim=c(0, 0.02)}
-
-plot_profiles <- function(class_conserv, xlab, xnames){
-  #par(mfrow=c(1,4))
-  #par(mai = c(0.5, 0.5, 0.5, 0)) # bottom, left, top, right
-  
+plot_profiles <- function(class_conserv, distances, xlab, xnames){
   smallx=c(-0.15, -0.075, 0.075, 0.15)
   names(smallx)=enhancer.datasets[[sp]]
   
-  if (class_conserv == "class_cons_synt"){xmax=2}else{xmax=5}
+  if (Measure == "corrected"){DivergenceMeasure = "CorrectedSpearman"; ylab="Residual Spearman's rho"; ylim=c(-0.02, 0.13)
+  }else{DivergenceMeasure = "CorrelationSpearman"; ylab="Spearman's rho"; ylim=c(0.5, 0.7)}
+  
+  if (class_conserv == "class_cons_synt"){xmax=3}else{xmax=5}
   xlim=c(0.5, xmax+0.5)
   
-  for (dist in rev(names(genes.conservation[[enh]][["obs"]]))[1]){
-    
+  for (dist in distances){
+
     plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
     
     for (enh in enhancer.datasets[[sp]]){
@@ -151,9 +117,10 @@ plot_profiles <- function(class_conserv, xlab, xnames){
       genes = intersect(rownames(regland), rownames(expdiv))
       regland = regland[genes,]
       
+      
       for (class in levels(regland[[class_conserv]])){
         this.genes=rownames(regland[which(regland[[class_conserv]] == class),])
-        
+
         b=boxplot(expdiv[this.genes, DivergenceMeasure], plot=F)
         med=median(expdiv[this.genes, DivergenceMeasure])
         ci=as.numeric(b$conf)
@@ -176,19 +143,44 @@ plot_profiles <- function(class_conserv, xlab, xnames){
     if (dist == "all"){
       axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
       mtext(ylab, side=2, line=2.5, cex=0.9)
-      mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
-      legend("bottomleft", legend=enhancer.datasets[[sp]], pch=20,
-             col=col.enhancers, cex=1, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
+      #mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
+      #legend("bottomleft", legend=enhancer.datasets[[sp]], pch=20,
+      #       col=col.enhancers, cex=1, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
     }
     
-    mtext(dist, side=3, line=-1, cex=1)
+    #mtext(dist, side=3, line=-1, cex=1)
   }
+  return(expdiv)
 }
 
-#par(mfrow=c(1,3))
-plot_profiles("class_align_score", "Alignement score", 1:5)
-plot_profiles("class_cons_synt", "Synteny Conservation", c("without", "with"))
-plot_profiles("class_cons_cont", "Contact conservation", c("<1%", "25%", "50%", "75", ">75%"))
+################################################################################################################################
+Measure = "corrected"
+distances =  "all"  # c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
+if (Measure == "corrected"){pdf_name="SupplementaryFigure33.pdf"}else{pdf_name="Figure6.pdf"}
+
+pdf(file=paste(pathFigures, pdf_name, sep=""), width = 8.5)
+
+par(mfrow=c(2,3))
+par(mai = c(0.5, 0.5, 0.5, 0.1)) # bottom, left, top, right
+
+# Gene expression levels
+plot_cell("class_align_score", distances, "Alignement score quantile", 1:5)
+mtext("a", side=3, at=0.45, font=2, cex=1.2, line=0.5)
+legend("topleft", legend=rev(cells), pch=20,
+       col=rev(col.cells), cex=1.2, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
+
+plot_cell("class_cons_synt", distances, "Synteny Conservation", c("<75%", "75-99%", ">99%"))
+plot_cell("class_cons_cont", distances, "Contact conservation", c("<1%", "25%", "50%", "75", ">75%"))
+
+## Gene expression profiles
+expdiv <- plot_profiles("class_align_score", distances,  "Alignement score quantile", 1:5)
+mtext("b", side=3, at=0.45, font=2, cex=1.2, line=0.5)
+legend("topleft", legend=enhancer.datasets[[sp]], pch=20,
+       col=col.enhancers, cex=1, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
+
+expdiv <- plot_profiles("class_cons_synt", distances,  "Synteny Conservation", c("<75%", "75-99%", ">99%"))
+expdiv <- plot_profiles("class_cons_cont", distances,  "Contact conservation", c("<1%", "25%", "50%", "75%", ">75%"))
 
 
-#dev.off()
+dev.off()
+
