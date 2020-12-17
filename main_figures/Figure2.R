@@ -13,7 +13,7 @@ source("parameters.R") ## paths are defined based on the user name
 #################################################################################################################
 
 if(load){
-  ref_sp = "mouse"
+  ref_sp = "human"
   
   load(paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp, ".Rdata", sep=""))
   load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.", ref_sp, ".Rdata", sep=""))
@@ -142,7 +142,6 @@ mtext("c", side=3, line=1.25, at=at, font=2, cex=1.2)
 
 ############################################################################################################################
 ############################################## correlation gene expression and enhancers activity ##########################
-
 
 ymin=min(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
 ymax=max(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
