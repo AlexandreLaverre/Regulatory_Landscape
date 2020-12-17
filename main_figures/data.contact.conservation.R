@@ -1,13 +1,15 @@
 ##############################################################################
 
 source("parameters.R")
+library(Hmisc)
 
 ##############################################################################
 
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-
-## contact conservation data, already filtered to keep only filtered enhancers
 load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
+
+gene.ontologies = c("all", "dvpt", "immune", "other")
+
 
 for(ref in c("human", "mouse")){
   
@@ -20,6 +22,11 @@ for(ref in c("human", "mouse")){
   sampleinfo.tg=sampleinfo[[tg]]
   
   maxDistance = 1500000+50000
+  
+  dvpt = unlist(read.table(paste(pathFinalData, "SupplementaryDataset3/gene_ontology/", ref, "_developmental_process_and_child_terms_genes_Ensembl94.txt", sep="")), use.names = FALSE)
+  immune = unlist(read.table(paste(pathFinalData, "SupplementaryDataset3/gene_ontology/", ref, "_immune_process_and_child_terms_genes_Ensembl94.txt", sep="")), use.names = FALSE)
+  
+  genes <- list("dvpt"=dvpt, "immune"=immune)
   
   ##############################################################################
   
@@ -43,14 +50,24 @@ for(ref in c("human", "mouse")){
     cc.obs$cons=apply(cc.obs[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
     cc.sim$cons=apply(cc.sim[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
     
-    pc.cons.obs <- 100*length(which(cc.obs$cons))/dim(cc.obs)[1]
-    pc.cons.sim <- 100*length(which(cc.sim$cons))/dim(cc.sim)[1]
-    
-    test.obs <- prop.test(length(which(cc.obs$cons)), dim(cc.obs)[1])
-    test.sim <- prop.test(length(which(cc.sim$cons)), dim(cc.sim)[1])
-    
-    cons.stats[[enh]]=list("pc.cons.obs"=pc.cons.obs, "pc.cons.sim"=pc.cons.sim,
-                           "test.obs"=test.obs, "test.sim"=test.sim)
+    for (onto in gene.ontologies){
+      if (onto == "all"){obs = cc.obs; sim = cc.sim
+      }else if(onto == "other"){
+        obs = cc.obs[which(cc.obs$origin_gene %nin% genes[["dvpt"]] & cc.obs$origin_gene %nin% genes[["immune"]]),]
+        sim = cc.sim[which(cc.sim$origin_gene %nin% genes[["dvpt"]] & cc.sim$origin_gene %nin% genes[["immune"]]),]
+        
+        }else{obs = cc.obs[which(cc.obs$origin_gene %in% genes[[onto]]),]
+              sim = cc.sim[which(cc.sim$origin_gene %in% genes[[onto]]),]}
+      
+      pc.cons.obs <- 100*length(which(obs$cons))/dim(obs)[1]
+      pc.cons.sim <- 100*length(which(sim$cons))/dim(sim)[1]
+      
+      test.obs <- prop.test(length(which(obs$cons)), dim(obs)[1])
+      test.sim <- prop.test(length(which(sim$cons)), dim(sim)[1])
+      
+      cons.stats[[enh]][[onto]]=list("pc.cons.obs"=pc.cons.obs, "pc.cons.sim"=pc.cons.sim,
+                             "test.obs"=test.obs, "test.sim"=test.sim)
+      }
     
     ################ contact conservation in common cell types   ################ 
 
@@ -88,16 +105,28 @@ for(ref in c("human", "mouse")){
     cc.obs$dist_class <- cut(cc.obs$origin_dist, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
     cc.sim$dist_class <- cut(cc.sim$origin_dist, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
     
-    contact.data <-  list("obs"=cc.obs, "sim"=cc.sim)
+    for (onto in gene.ontologies){
+      if (onto == "all"){obs = cc.obs; sim = cc.sim
+      }else if(onto == "other"){
+        obs = cc.obs[which(cc.obs$origin_gene %nin% genes[["dvpt"]] & cc.obs$origin_gene %nin% genes[["immune"]]),]
+        sim = cc.sim[which(cc.sim$origin_gene %nin% genes[["dvpt"]] & cc.sim$origin_gene %nin% genes[["immune"]]),]
+        
+      }else{obs = cc.obs[which(cc.obs$origin_gene %in% genes[[onto]]),]
+      sim = cc.sim[which(cc.sim$origin_gene %in% genes[[onto]]),]}
+      
+      contact.data <-  list("obs"=obs, "sim"=sim)
+      
+      cons.dist[[enh]][[onto]] <- t(sapply(contact.data, function(y) sapply(levels(y$dist_class), function(x)
+        (nrow(y[which(y$cons == T & y$dist_class == x),])/nrow(y[which(y$dist_class == x ),]))*100)))
+      
+      cons.dist.conf.low[[enh]][[onto]] <- t(sapply(contact.data, function(y) sapply(levels(y$dist_class), function(x)
+        prop.test(nrow(y[which(y$cons == T & y$dist_class == x),]), nrow(y[which(y$dist_class == x ),]))$conf.int[1]*100)))
+      
+      cons.dist.conf.high[[enh]][[onto]] <- t(sapply(contact.data, function(y) sapply(levels(y$dist_class), function(x)
+        prop.test(nrow(y[which(y$cons == T & y$dist_class == x),]), nrow(y[which(y$dist_class == x ),]))$conf.int[2]*100)))
+      
+    }
     
-    cons.dist[[enh]] <- t(sapply(contact.data, function(y) sapply(levels(y$dist_class), function(x)
-      (nrow(y[which(y$cons == T & y$dist_class == x),])/nrow(y[which(y$dist_class == x ),]))*100)))
-    
-    cons.dist.conf.low[[enh]] <- t(sapply(contact.data, function(y) sapply(levels(y$dist_class), function(x)
-      prop.test(nrow(y[which(y$cons == T & y$dist_class == x),]), nrow(y[which(y$dist_class == x ),]))$conf.int[1]*100)))
-    
-    cons.dist.conf.high[[enh]] <- t(sapply(contact.data, function(y) sapply(levels(y$dist_class), function(x)
-      prop.test(nrow(y[which(y$cons == T & y$dist_class == x),]), nrow(y[which(y$dist_class == x ),]))$conf.int[2]*100)))
     
     ################ contact conservation according to number of cell types   ################ 
     samples=sampleinfo.ref$Sample.ID 
@@ -127,10 +156,15 @@ for(ref in c("human", "mouse")){
     
   }
   
+  cons <- list()
+  cons.conf.low <- list()
+  cons.conf.high <- list()
   
-  cons = sapply(enhancers, function(x) c(cons.stats[[x]]$pc.cons.obs, cons.stats[[x]]$pc.cons.sim))
-  cons.conf.low =  sapply(enhancers, function(x) c(cons.stats[[x]]$test.obs$conf.int[1]*100, cons.stats[[x]]$test.sim$conf.int[1]*100))
-  cons.conf.high =  sapply(enhancers, function(x) c(cons.stats[[x]]$test.obs$conf.int[2]*100, cons.stats[[x]]$test.sim$conf.int[2]*100))
+  for (onto in gene.ontologies){
+    cons[[onto]] = sapply(enhancers, function(x) c(cons.stats[[x]][["all"]]$pc.cons.obs, cons.stats[[x]][["all"]]$pc.cons.sim))
+    cons.conf.low[[onto]] =  sapply(enhancers, function(x) c(cons.stats[[x]]$test.obs$conf.int[1]*100, cons.stats[[x]]$test.sim$conf.int[1]*100))
+    cons.conf.high[[onto]] =  sapply(enhancers, function(x) c(cons.stats[[x]]$test.obs$conf.int[2]*100, cons.stats[[x]]$test.sim$conf.int[2]*100))
+  }
   
   
   ###################### output ###################### 
