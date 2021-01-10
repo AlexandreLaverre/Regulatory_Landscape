@@ -17,7 +17,7 @@ if(load){
   enhancers=enhancer.datasets[[ref_sp]]
   
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-  load(paste(pathFigures, "RData/data.contact.conservation.", ref_sp, ".Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref_sp, ".stats.RData", sep=""))
   
   load=FALSE
 }
