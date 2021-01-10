@@ -76,7 +76,7 @@ for(sp in c("human", "mouse")){
   par(mar=c(0.75,1,1.35,0.1))
   plot(tree, direction="rightwards", show.tip.label=FALSE)
 
-  mtext("A", side=3, at=0, font=2, line=0, cex=0.85)
+  mtext("a", side=3, at=0, font=2, line=0, cex=0.85)
 
   ## matrix obs-sim
 
@@ -116,7 +116,7 @@ for(sp in c("human", "mouse")){
   mtext(paste("PC1 (", explained[1],"% explained variance)",sep=""), side=1, line=1.75, cex=0.6)
   mtext(paste("PC2 (", explained[2],"% explained variance)",sep=""), side=2, line=1.75, cex=0.6)
 
-  mtext("B", side=3, at=xlim[1]-diff(xlim)/5.5, font=2, line=0.5, cex=0.85)
+  mtext("b", side=3, at=xlim[1]-diff(xlim)/5.5, font=2, line=0.5, cex=0.85)
 
   ## legend for the heatmap
 
