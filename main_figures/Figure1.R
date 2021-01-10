@@ -285,7 +285,7 @@ mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex
 
 ## axis labels
 mtext("number of cell types", side=1, line=2.25, cex=0.8)
-mtext("% of interactions", side=2, line=2.5, cex=0.8)
+mtext("% interactions", side=2, line=2.5, cex=0.8)
 
 ## legend & plot label
 legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
