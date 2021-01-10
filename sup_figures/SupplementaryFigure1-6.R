@@ -65,7 +65,7 @@ for(i in 1:nbfigures){
     stop("Weird! multiple species in this figure")
   }
 
-  labels=toupper(letters[1:nbperfile])
+  labels=letters[1:nbperfile]
   names(labels)=this.info$Sample.ID
   
   ## get observed and simulated contacts for this species
@@ -122,7 +122,7 @@ for(i in 1:nbfigures){
       legend("right", bty="n", col=dataset.colors, lty=1, legend=c("PC-HiC data", "simulated data"), cex=1.1, inset=0.05, xpd=NA)
     }
 
-    mtext(labels[sample], side=3, at=-0.55e6, cex=1.1, font=2, line=0.85)
+    mtext(labels[sample], side=3, at=-0.5e6, cex=1.1, font=2, line=0.85)
 
     ## number of interactions per bait
 
