@@ -6,7 +6,6 @@ source("parameters.R")
 
 pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 
-
 #######################################################################################
 
 contact.conservation=list()
@@ -29,11 +28,11 @@ for(ref in c("human", "mouse")){
     obsobs=obsobs[which(obsobs$target_data == "TRUE"),]
     simsim=simsim[which(simsim$target_data == "TRUE"),]
     
-    ## filtered enhancers
+    ## filtered enhancers - single BLAT match, within accepted distance range
     obsobs=obsobs[which(obsobs$BLAT_match == 1 & obsobs$origin_dist >= minDistance & obsobs$origin_dist <= maxDistance),]
     simsim=simsim[which(simsim$BLAT_match == 1 & simsim$origin_dist >= minDistance & simsim$origin_dist <= maxDistance),]
 
-    ## take only well conserved and unduplicated enhancers
+    ## take only well conserved enhancers
     align.threshold <- 0.4 
 
     obsobs=obsobs[which(obsobs$align_score>=align.threshold),]
@@ -41,7 +40,7 @@ for(ref in c("human", "mouse")){
      
     ## save data
     
-    contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]]=list("obsobs"=obsobs, "simsim"=simsim) #"obssim"=obssim, "simobs"=simobs
+    contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]]=list("obsobs"=obsobs, "simsim"=simsim) 
     
   }
 }
