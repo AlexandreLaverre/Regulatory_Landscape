@@ -1,8 +1,8 @@
 ##############################################################################
-setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
 
+source("../main_figures/parameters.R")
 
-source("parameters.R")
+##############################################################################
 
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 par(lwd = 0.7)

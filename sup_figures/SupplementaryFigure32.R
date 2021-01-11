@@ -1,8 +1,7 @@
 ######################################################################################################################
 library(Hmisc)
 
-#setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
-source("parameters.R") ## pathFinalData are defined based on the user name
+source("../main_figures/parameters.R") ## pathFinalData are defined based on the user name
 
 sp="human"
 

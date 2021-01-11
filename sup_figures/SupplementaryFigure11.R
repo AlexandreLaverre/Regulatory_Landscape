@@ -7,7 +7,7 @@ if(!"pathScripts"%in%objects){
   prepare=T
 }
 
-source("parameters.R") ## paths are defined based on the user name
+source("../main_figures/parameters.R") ## paths are defined based on the user name
 
 
 ###########################################################################################################################

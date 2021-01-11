@@ -4,10 +4,12 @@
 objects=ls()
 
 if(!"pathScripts"%in%objects){
+  source("../main_figures/parameters.R") ## paths are defined based on the user name
+
   load=T
 }
 
-source("parameters.R") ## paths are defined based on the user name
+###########################################################################################################################
 
 if(load){
   sp = "mouse"

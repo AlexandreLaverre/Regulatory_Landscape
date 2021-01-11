@@ -4,7 +4,7 @@ objects=ls()
 
 if(!"pathFigures"%in%objects){
   
-  source("parameters.R")
+  source("../main_figures/parameters.R")
   
   ref_sp <- "human"
   target_sp = setdiff(c("human", "mouse"), ref_sp)

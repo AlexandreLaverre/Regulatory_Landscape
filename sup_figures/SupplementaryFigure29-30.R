@@ -1,8 +1,6 @@
-######################################################################################################################
-setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
+###########################################################################################################
 
-
-source("parameters.R") ## pathFinalData are defined based on the user name
+source("../main_figures/parameters.R") ## pathFinalData are defined based on the user name
 
 sp="human"
 sp_name="Human"
@@ -17,7 +15,12 @@ load(paste(pathFigures, "RData/data.", sp, ".gene.regland.conservation.common.ce
 
 expdiv$EuclideanSimilarity <- 1-expdiv$EuclideanDistance
 
-if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
+if (sp == "human"){
+  sp_name="Human"
+}
+else{
+  sp_name="Mouse"
+}
 
 cells <- c("Bcell", "ESC", "adipo")
 dataset.colors=c("firebrick1", "forestgreen", "navy")

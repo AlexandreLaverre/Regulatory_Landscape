@@ -1,8 +1,8 @@
 ##############################################################################
-setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
 
+source("../main_figures/parameters.R")
 
-source("parameters.R")
+##############################################################################
 
 nb = 1
 mtext.CEX = 0.9
