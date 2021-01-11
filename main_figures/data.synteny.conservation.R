@@ -42,19 +42,17 @@ for(ref_sp in c("human", "mouse")){
       class(synt_obs)<-"data.frame"
       class(synt_simul)<-"data.frame"
       
-      ## sequnces have to be aligned
-      
+      ## sequences have to be aligned
       synt_obs <- synt_obs[which(synt_obs$align_score>0),]
       synt_simul <- synt_simul[which(synt_simul$align_score>0),]
       
       ## threshold alignment score: 5% quantile, observed values
 
-      align.threshold=quantile(synt_obs$align, p=0.05)
+      align.threshold=quantile(synt_obs$align, p=0.1)
 
       print(paste("alignment score threshold", align.threshold))
       
-      ## enhancer filters
-      
+      ## enhancer have to be unduplicated and aligned at least at align.threshold in target genome
       synt_obs <- synt_obs[which(synt_obs$BLAT_match == 1 & synt_obs$align_score >= align.threshold),]
       synt_simul <- synt_simul[which(synt_simul$BLAT_match == 1 & synt_simul$align_score >=align.threshold),]
 
@@ -79,7 +77,7 @@ for(ref_sp in c("human", "mouse")){
 
   ## save data 
   
-  save(conserv_synteny, file = paste(pathFigures, "/RData/data.synteny.conservation.", ref_sp, ".RData", sep=""))
+  #save(conserv_synteny, file = paste(pathFigures, "/RData/data.synteny.conservation.", ref_sp, ".RData", sep=""))
   
   ## all done!
 }
