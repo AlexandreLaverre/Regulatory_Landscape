@@ -31,7 +31,7 @@ if(load){
 
 ##############################################################################
 
-pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=5)
+#pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 mtext.CEX = 0.75
@@ -43,7 +43,7 @@ layout(m)
 
 #################### Fig 5.A - % of conserved contacts #####################
 
-YMAX=40
+YMAX=45
 
 par(lwd = 1.5)
 
@@ -53,7 +53,7 @@ cons.conf.high = cons.conf.high[["all"]]
 
 
 b=barplot(cons, beside=T, names=rep("", dim(cons)[2]), ylim=c(0,YMAX), space=c(0.2,1),
-          border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
+          border=dataset.colors[c("Original", "Simulated")],  col=c("yellow", "cadetblue1", dataset.colors[c("Original", "Simulated")]),
           mgp=c(3, 0.75, 0), las=2)
 
 arrows(x0=b,y0=cons.conf.low,y1=cons.conf.high,angle=90,code=3,length=0.05)

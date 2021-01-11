@@ -49,8 +49,11 @@ for(ref in c("human", "mouse")){
     cc.obs <- contact.cons[[enh]][["obsobs"]]
     cc.sim <- contact.cons[[enh]][["simsim"]]
     
-    cc.obs$cons=apply(cc.obs[,sampleinfo.tg$Sample.ID], 1, function(x) sum(x>0) > minSampleTarget)
-    cc.sim$cons=apply(cc.sim[,sampleinfo.tg$Sample.ID], 1, function(x) sum(x>0) > minSampleTarget)
+    cc.obs$cons=apply(cc.obs[,sampleinfo.tg$Sample.ID], 1, function(x) sum(x>0) > 1)
+    cc.sim$cons=apply(cc.sim[,sampleinfo.tg$Sample.ID], 1, function(x) sum(x>0) > 1)
+    
+    cc.obs$cons_anysample=apply(cc.obs[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
+    cc.sim$cons_anysample=apply(cc.sim[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
     
     for (onto in gene.ontologies){
       if (onto == "all"){obs = cc.obs; sim = cc.sim
@@ -64,14 +67,22 @@ for(ref in c("human", "mouse")){
       pc.cons.obs <- 100*length(which(obs$cons))/dim(obs)[1]
       pc.cons.sim <- 100*length(which(sim$cons))/dim(sim)[1]
       
+      pc.cons.obs_anysample <- 100*length(which(obs$cons_anysample))/dim(obs)[1]
+      pc.cons.sim_anysample <- 100*length(which(sim$cons_anysample))/dim(sim)[1]
+      
       mat <- matrix(c(length(which(obs$cons)), length(which(sim$cons)), length(obs$cons)-length(which(obs$cons)), length(sim$cons)-length(which(sim$cons))), nrow=2)
       pval <- chisq.test(mat)$p.value
       
       test.obs <- prop.test(length(which(obs$cons)), dim(obs)[1])
       test.sim <- prop.test(length(which(sim$cons)), dim(sim)[1])
+
+      test.obs_anysample <- prop.test(length(which(obs$cons_anysample)), dim(obs)[1])
+      test.sim_anysample <- prop.test(length(which(sim$cons_anysample)), dim(sim)[1])
       
       cons.stats[[enh]][[onto]]=list("pc.cons.obs"=pc.cons.obs, "pc.cons.sim"=pc.cons.sim,
-                             "test.obs"=test.obs, "test.sim"=test.sim, "pval"=pval)
+                                     "pc.cons.obs.anysample"=pc.cons.obs_anysample, "pc.cons.sim.anysample"=pc.cons.sim_anysample,
+                                     "test.obs"=test.obs, "test.sim"=test.sim, "test.obs.anysample"=test.obs_anysample, "test.sim.anysample"=test.sim_anysample, 
+                                     "pval"=pval)
       }
 
     gene.ontologies <- c("all", "dvpt", "immune", "other")
@@ -81,9 +92,9 @@ for(ref in c("human", "mouse")){
     cons.pval <- list()
     
     for (onto in gene.ontologies){
-      cons[[onto]] = sapply(enhancers, function(x) c(cons.stats[[x]][[onto]]$pc.cons.obs, cons.stats[[x]][[onto]]$pc.cons.sim))
-      cons.conf.low[[onto]] =  sapply(enhancers, function(x) c(cons.stats[[x]][[onto]]$test.obs$conf.int[1]*100, cons.stats[[x]][[onto]]$test.sim$conf.int[1]*100))
-      cons.conf.high[[onto]] =  sapply(enhancers, function(x) c(cons.stats[[x]][[onto]]$test.obs$conf.int[2]*100, cons.stats[[x]][[onto]]$test.sim$conf.int[2]*100))
+      cons[[onto]] = sapply(enhancers, function(x) c(cons.stats[[x]][[onto]]$pc.cons.obs.anysample, cons.stats[[x]][[onto]]$pc.cons.sim.anysample, cons.stats[[x]][[onto]]$pc.cons.obs, cons.stats[[x]][[onto]]$pc.cons.sim))
+      cons.conf.low[[onto]] = sapply(enhancers, function(x) c(cons.stats[[x]][[onto]]$test.obs.anysample$conf.int[1]*100, cons.stats[[x]][[onto]]$test.sim.anysample$conf.int[1]*100, cons.stats[[x]][[onto]]$test.obs$conf.int[1]*100, cons.stats[[x]][[onto]]$test.sim$conf.int[1]*100))
+      cons.conf.high[[onto]] = sapply(enhancers, function(x) c(cons.stats[[x]][[onto]]$test.obs.anysample$conf.int[2]*100, cons.stats[[x]][[onto]]$test.sim.anysample$conf.int[2]*100, cons.stats[[x]][[onto]]$test.obs$conf.int[2]*100, cons.stats[[x]][[onto]]$test.sim$conf.int[2]*100))
       cons.pval[[onto]] = sapply(enhancers, function(x) cons.stats[[x]][[onto]]$pval)
     }
 
