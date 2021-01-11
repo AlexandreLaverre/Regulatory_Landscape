@@ -47,6 +47,10 @@ YMAX=50
 
 par(lwd = 1.5)
 
+cons = cons[["all"]]
+cons.conf.low = cons.conf.low[["all"]]
+cons.conf.high = cons.conf.high[["all"]]
+
 
 b=barplot(cons, beside=T, names=rep("", dim(cons)[2]), ylim=c(0,YMAX), space=c(0.2,1),
           border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
@@ -71,6 +75,10 @@ if (ref_sp == "human"){YLIM=c(-0.1,5)}else{YLIM=c(-0.5, 3); label.enhancers=enha
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 
 par(lwd = 0.7)
+cons.dist = cons.dist[["all"]]
+cons.dist.conf.low = cons.dist.conf.low[["all"]]
+cons.dist.conf.high = cons.dist.conf.high[["all"]]
+
 xlim=c(0.5, length(cons.dist[["ENCODE"]]["obs",])+0.5)
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
