@@ -6,13 +6,13 @@ if(!"pathScripts"%in%objects){
   load=T
   prepare=T
   
-  source("parameters.R")
+  source("../main_figures/parameters.R")
 }
 
 ##############################################################################
 
 if(load){
-  ref = "human"
+  ref = "mouse"
   tg=setdiff(c("human", "mouse"), ref)
   
   enhancers=enhancer.datasets[[ref]]
@@ -97,7 +97,7 @@ if(prepare){
 
 ##############################################################################
 
-pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=2.5)
+pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=2.5)
 
 m=matrix(rep(NA, 1*13), nrow=1)
 m[1,]=c(rep(1,4), rep(2,3), rep(3,6))
@@ -111,7 +111,7 @@ par(lwd = 1.5)
 ## conservation as a function of nb cell types
 
 par(mar=c(3.1, 4.5, 2.5, 0.25))
-b=barplot(matrix.cell, border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")], mgp=c(3, 0.75, 0), las=2, beside=T, cex.axis=1.05, ylim=c(0, 52), space=c(0.2, 1))
+b=barplot(matrix.cell, border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")], mgp=c(3, 0.75, 0), las=2, beside=T, cex.axis=1.05, ylim=c(0, 70), space=c(0.2, 1))
 
 segments(b[1,], ci.low.obs.cell, b[1,], ci.high.obs.cell)
 segments(b[2,], ci.low.sim.cell, b[2,], ci.high.sim.cell)
@@ -131,7 +131,7 @@ legend("topleft", legend=c("PCHi-C data", "simulated data"), border=dataset.colo
 
 ## conservation in common cell types
 
-YMAX=40
+YMAX=25
 
 par(mar=c(4.1, 4.5, 2.5, 1.5))
 
@@ -157,7 +157,7 @@ mtext("b", side=3, line=1, at=-4, font=2, cex=1.05)
 
 xpos=1:length(prop.obs.dist)
 xlim=c(-1, max(xpos)+1)
-ylim=c(-0.5, 40)
+ylim=c(-0.5, max(c(ci.high.obs.dist, ci.high.sim.dist))+5)
 
 par(mar=c(4.1, 4.5, 2.5, 1.5))
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
