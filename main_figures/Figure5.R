@@ -17,7 +17,7 @@ if(load){
   enhancers=enhancer.datasets[[ref_sp]]
   
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref_sp, ".stats.RData", sep=""))
+  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref, ".stats.Rdata", sep=""))
   
   load=FALSE
 }
@@ -31,7 +31,7 @@ if(load){
 
 ##############################################################################
 
-pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=5)
+#pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 mtext.CEX = 0.75
@@ -46,6 +46,9 @@ layout(m)
 YMAX=40
 
 par(lwd = 1.5)
+cons = cons[["all"]]
+cons.conf.low = cons.conf.low[["all"]]
+cons.conf.high = cons.conf.high[["all"]]
 
 b=barplot(cons, beside=T, names=rep("", dim(cons)[2]), ylim=c(0,YMAX), space=c(0.2,1),
           border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
@@ -73,6 +76,10 @@ YLIM=c(-0.1,5)
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 
 par(lwd = 0.7)
+cons.dist = cons.dist[["all"]]
+cons.dist.conf.low = cons.dist.conf.low[["all"]]
+cons.dist.conf.high = cons.dist.conf.high[["all"]]
+
 xlim=c(0.5, length(cons.dist[["ENCODE"]]["obs",])+0.5)
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
@@ -93,6 +100,8 @@ mtext("distance from promoter region (Mb)", side=1, line=2.5, cex=mtext.CEX)
 axis(side=2, mgp=c(3, 0.75, 0), las=2)
 mtext("excess of contact conservation", side=2, line=2.5,  cex=mtext.CEX)
 
+abline(h=0, lty=2)
+abline(a=0, b=0.1, lty=2) # equation de droite hors log  : y = 0.1*exp(x) ?
 
 legend("topleft", col=col.enhancers, legend = label.enhancers, bty='n',pch=20)
 mtext("b", side=3, line=1, at=-3.75, font=2, cex=1.05)
@@ -154,6 +163,6 @@ mtext("d", side=3, line=1, at=-0.7, font=2, cex=1.05)
 
 ####################################################################################
 
-dev.off()
+#dev.off()
 
 ####################################################################################
