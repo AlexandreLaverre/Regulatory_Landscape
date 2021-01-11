@@ -17,7 +17,7 @@ if(load){
   enhancers=enhancer.datasets[[ref_sp]]
   
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-  load(paste(pathFigures, "RData/data.contact.conservation.", ref_sp, ".Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref_sp, ".stats.Rdata", sep=""))
   
   load=FALSE
 }
@@ -43,7 +43,7 @@ layout(m)
 
 #################### Fig 5.A - % of conserved contacts #####################
 
-YMAX=50
+YMAX=40
 
 par(lwd = 1.5)
 
@@ -71,7 +71,8 @@ legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.col
 mtext("a", side=3, line=1, at=0.1, font=2, cex=1.05)
 
 ############### Fig 5.B - Contact conservation by distance from TSS ##############
-if (ref_sp == "human"){YLIM=c(-0.1,5)}else{YLIM=c(-0.5, 3); label.enhancers=enhancers}
+YLIM=c(-0.2, 8)
+label.enhancers=enhancers
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 
 par(lwd = 0.7)
@@ -84,6 +85,7 @@ xlim=c(0.5, length(cons.dist[["ENCODE"]]["obs",])+0.5)
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
 
 for (enh in enhancer.datasets[[ref_sp]]){
+  
   points(log(((cons.dist[[enh]]["obs",]-cons.dist[[enh]]["sim",])/cons.dist[[enh]]["sim",])+1),pch=20, col=col.enhancers[enh])
   
   # Confidence intervals

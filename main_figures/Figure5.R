@@ -17,7 +17,7 @@ if(load){
   enhancers=enhancer.datasets[[ref_sp]]
   
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref, ".stats.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref_sp, ".stats.Rdata", sep=""))
   
   load=FALSE
 }
@@ -31,7 +31,7 @@ if(load){
 
 ##############################################################################
 
-#pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=5)
+pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 mtext.CEX = 0.75
@@ -43,7 +43,7 @@ layout(m)
 
 #################### Fig 5.A - % of conserved contacts #####################
 
-YMAX=40
+YMAX=30
 
 par(lwd = 1.5)
 cons = cons[["all"]]
@@ -71,7 +71,7 @@ mtext("a", side=3, line=1, at=-1.2, font=2, cex=1.05)
 
 ############### Fig 5.B - Contact conservation by distance from TSS ##############
 
-YLIM=c(-0.1,5)
+YLIM=c(-0.1,10)
 
 class_leg <- c("0",  "0.5",  "1", "1.5", "2")
 
@@ -85,6 +85,7 @@ xlim=c(0.5, length(cons.dist[["ENCODE"]]["obs",])+0.5)
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
 
 for (enh in enhancer.datasets[[ref_sp]]){
+  
   points(log(((cons.dist[[enh]]["obs",]-cons.dist[[enh]]["sim",])/cons.dist[[enh]]["sim",])+1),pch=20, col=col.enhancers[enh])
   
   # Confidence intervals
@@ -101,7 +102,6 @@ axis(side=2, mgp=c(3, 0.75, 0), las=2)
 mtext("excess of contact conservation", side=2, line=2.5,  cex=mtext.CEX)
 
 abline(h=0, lty=2)
-abline(a=0, b=0.1, lty=2) # equation de droite hors log  : y = 0.1*exp(x) ?
 
 legend("topleft", col=col.enhancers, legend = label.enhancers, bty='n',pch=20)
 mtext("b", side=3, line=1, at=-3.75, font=2, cex=1.05)
@@ -110,7 +110,7 @@ mtext("b", side=3, line=1, at=-3.75, font=2, cex=1.05)
 
 max.nb.cell = 8
 
-ylim=c(10, 70)
+ylim=c(10, 60)
 xlim=c(0.5, max.nb.cell+0.5)
 xpos=seq(1, max.nb.cell, 1)
 names(xpos) = 1:max.nb.cell
@@ -163,6 +163,6 @@ mtext("d", side=3, line=1, at=-0.7, font=2, cex=1.05)
 
 ####################################################################################
 
-#dev.off()
+dev.off()
 
 ####################################################################################

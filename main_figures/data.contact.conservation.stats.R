@@ -24,8 +24,8 @@ for(ref in c("human", "mouse")){
   sampleinfo.ref=sampleinfo[[ref]]
   sampleinfo.tg=sampleinfo[[tg]]
   
-  dvpt = unlist(read.table(paste(pathFinalData, "SupplementaryDataset3/gene_ontology/", ref, "_developmental_genes_Ensembl94.txt", sep="")), use.names = FALSE)
-  immune = unlist(read.table(paste(pathFinalData, "SupplementaryDataset3/gene_ontology/", ref, "_immune_system_process_genes.txt", sep="")), use.names = FALSE)
+  dvpt = unlist(read.table(paste(pathFinalData, "SupplementaryDataset3/gene_ontology/", ref, "_multicellular_organism_development_genes_Ensembl94.txt", sep="")), use.names = FALSE)
+  immune = unlist(read.table(paste(pathFinalData, "SupplementaryDataset3/gene_ontology/", ref, "_immune_system_process_genes_Ensembl94.txt", sep="")), use.names = FALSE)
   
   genes <- list("dvpt"=dvpt, "immune"=immune)
   
@@ -49,8 +49,8 @@ for(ref in c("human", "mouse")){
     cc.obs <- contact.cons[[enh]][["obsobs"]]
     cc.sim <- contact.cons[[enh]][["simsim"]]
     
-    cc.obs$cons=apply(cc.obs[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
-    cc.sim$cons=apply(cc.sim[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
+    cc.obs$cons=apply(cc.obs[,sampleinfo.tg$Sample.ID], 1, function(x) sum(x>0) > minSampleTarget)
+    cc.sim$cons=apply(cc.sim[,sampleinfo.tg$Sample.ID], 1, function(x) sum(x>0) > minSampleTarget)
     
     for (onto in gene.ontologies){
       if (onto == "all"){obs = cc.obs; sim = cc.sim
@@ -150,10 +150,10 @@ for(ref in c("human", "mouse")){
         (nrow(y[which(y$cons == T & y$dist_class == x),])/nrow(y[which(y$dist_class == x ),]))*100)))
 
       cons.dist.conf.low[[onto]][[enh]] <- t(sapply(contact.data, function(y) sapply(levels(y$dist_class), function(x)
-        prop.test(nrow(y[which(y$cons == T & y$dist_class == x),]), nrow(y[which(y$dist_class == x ),]))$conf.int[1]*100)))
+        tryCatch(prop.test(nrow(y[which(y$cons == T & y$dist_class == x),]), nrow(y[which(y$dist_class == x ),]))$conf.int[1]*100, error=function(e) 0))))
 
       cons.dist.conf.high[[onto]][[enh]] <- t(sapply(contact.data, function(y) sapply(levels(y$dist_class), function(x)
-        prop.test(nrow(y[which(y$cons == T & y$dist_class == x),]), nrow(y[which(y$dist_class == x ),]))$conf.int[2]*100)))
+        tryCatch(prop.test(nrow(y[which(y$cons == T & y$dist_class == x),]), nrow(y[which(y$dist_class == x ),]))$conf.int[2]*100, error=function(e) 0))))
 
     }
 
@@ -179,10 +179,10 @@ for(ref in c("human", "mouse")){
       (nrow(y[which(y$cons == T & y$celltype_class == x),])/nrow(y[which(y$celltype_class == x ),]))*100)))
 
     cons.nb.cell.conf.low[[enh]] <- t(sapply(contact.data, function(y) sapply(levels(y$celltype_class), function(x)
-      prop.test(nrow(y[which(y$cons == T & y$celltype_class == x),]), nrow(y[which(y$celltype_class == x ),]))$conf.int[1]*100)))
+      tryCatch(prop.test(nrow(y[which(y$cons == T & y$celltype_class == x),]), nrow(y[which(y$celltype_class == x ),]))$conf.int[1]*100, error=function(e) 0))))
 
     cons.nb.cell.conf.high[[enh]] <- t(sapply(contact.data, function(y) sapply(levels(y$celltype_class), function(x)
-      prop.test(nrow(y[which(y$cons == T & y$celltype_class == x),]), nrow(y[which(y$celltype_class == x ),]))$conf.int[2]*100)))
+      tryCatch(prop.test(nrow(y[which(y$cons == T & y$celltype_class == x),]), nrow(y[which(y$celltype_class == x ),]))$conf.int[2]*100, error=function(e) 0))))
 
   }
 
@@ -192,7 +192,7 @@ for(ref in c("human", "mouse")){
        cons.dist, cons.dist.conf.low, cons.dist.conf.high,
        cons.nb.cell, cons.nb.cell.conf.low, cons.nb.cell.conf.high,
        cons.common.cell, cons.common.cell.conf.low, cons.common.cell.conf.high, cons.common.cell.pval,
-       file = paste(pathFigures, "RData/data.contact.conservation.", ref, ".Rdata", sep=""))
+       file = paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref, ".stats.Rdata", sep=""))
 
 }
 

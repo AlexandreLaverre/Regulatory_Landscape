@@ -76,5 +76,5 @@ minDistanceSyntenyRef=1e5 ## 100 kb
 maxDistanceSyntenyRef=1.5e6 ## 1.5 Mb
 maxDistanceSyntenyTarget=1.5e6 ## 1.5 Mb
 
-
+minSampleTarget = 1
 #######################################################################################
