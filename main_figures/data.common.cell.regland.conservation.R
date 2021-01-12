@@ -34,8 +34,8 @@ for(ref in c("human", "mouse")){
   for(enh in enhancer.datasets[[ref]]){
     print(enh)
     
-    obsobs=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_original.txt_test", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    simsim=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_simulated.txt_test", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    obsobs=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    simsim=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
     
     class(obsobs)="data.frame"
     class(simsim)="data.frame"
@@ -109,7 +109,7 @@ for(ref in c("human", "mouse")){
   }
   
   ## save data
-  save(genes.conservation.cells, file=paste(pathFigures, "RData/data.", ref, ".gene.regland.conservation.common.cells.RData",sep=""))
+  save(genes.conservation.cells, file=paste(pathFigures, "RData/data.", ref, ".common.cells.regland.conservation.RData",sep=""))
 
   }
 

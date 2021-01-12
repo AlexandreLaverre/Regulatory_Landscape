@@ -96,7 +96,7 @@ for(ref in c("human", "mouse")){
   }
   
   ## save data
-  save(genes.conservation, file=paste(pathFigures, "RData/data.", ref, ".gene.regland.conservation.0.8.RData",sep=""))
+  save(genes.conservation, file=paste(pathFigures, "RData/data.", ref, ".regland.conservation.RData",sep=""))
 }
 
 
