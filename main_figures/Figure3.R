@@ -204,7 +204,7 @@ par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
 
 par(mar=c(4.1, 4.5, 2, 1.5))
 
-nbclasses=length(levels( frag_align_obs$dist_class))
+nbclasses=length(levels(frag_align_obs$dist_class))
 xpos=1:nbclasses
 
 xlim=c(-0.5, max(xpos)+1)
