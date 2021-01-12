@@ -5,7 +5,7 @@ source("../main_figures/parameters.R") ## pathFinalData are defined based on the
 
 sp="human"
 
-load(paste(pathFigures, "RData/Fig6_", sp, "_common_cells.Rdata", sep=""))
+load(paste(pathFigures, "RData/", sp, ".cells.types.parallel.trends.Rdata", sep=""))
 
 cells <- c("Bcell", "ESC", "adipo")
 dataset.colors=c("firebrick1", "forestgreen", "navy")

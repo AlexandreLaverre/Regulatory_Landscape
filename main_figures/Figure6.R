@@ -17,11 +17,11 @@ if(load){
   sp="human"
   
   load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
-  load(paste(pathFigures, "RData/Fig6_", sp, "_SomaticOrgans_CardosoMoreira.Rdata", sep=""))
-  load(paste(pathFigures, "RData/data.", sp, ".gene.regland.conservation.RData", sep=""))
+  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
   
   load(paste(pathFigures, "RData/data.", sp, ".common.cells.expdiv.Rdata", sep=""))
-  load(paste(pathFigures, "RData/data.", sp, ".gene.regland.conservation.common.cells.RData", sep=""))
+  load(paste(pathFigures, "RData/data.", sp, ".common.cells.regland.conservation.RData", sep=""))
   
   if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
   
@@ -34,7 +34,7 @@ if(load){
 }
 
 ################################################################################################################################
-######################################### PART1 : Common cells types  ##########################################################
+##################################### PART1 : Common cells types plot function #################################################
 enh = "ENCODE"
 
 plot_cell <- function(class_conserv, distances, xlab, xnames){
@@ -96,7 +96,7 @@ plot_cell <- function(class_conserv, distances, xlab, xnames){
 }
 
 ################################################################################################################################
-############################## PART2 :  Cardoso-Moreira  #######################################################################
+############################## PART2 :  Cardoso-Moreira plot function ##########################################################
 
 plot_profiles <- function(class_conserv, distances, xlab, xnames){
   smallx=c(-0.15, -0.075, 0.075, 0.15)
@@ -154,16 +154,17 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
 }
 
 ################################################################################################################################
+################################################### Plot Figure 6 ##############################################################
 Measure = "corrected"
 distances =  "all"  # c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
 if (Measure == "corrected"){pdf_name="SupplementaryFigure33.pdf"}else{pdf_name="Figure6.pdf"}
 
-pdf(file=paste(pathFigures, pdf_name, sep=""), width = 8.5)
+#pdf(file=paste(pathFigures, pdf_name, sep=""), width = 8.5)
 
 par(mfrow=c(2,3))
 par(mai = c(0.5, 0.5, 0.5, 0.1)) # bottom, left, top, right
 
-# Gene expression levels
+######################## Gene expression levels ########################
 plot_cell("class_align_score", distances, "Alignement score quantile", 1:5)
 mtext("a", side=3, at=0.45, font=2, cex=1.2, line=0.5)
 legend("topleft", legend=rev(cells), pch=20,
@@ -172,7 +173,7 @@ legend("topleft", legend=rev(cells), pch=20,
 plot_cell("class_cons_synt", distances, "Synteny Conservation", c("<75%", "75-99%", ">99%"))
 plot_cell("class_cons_cont", distances, "Contact conservation", c("<1%", "25%", "50%", "75", ">75%"))
 
-## Gene expression profiles
+######################## Gene expression profiles ################
 expdiv <- plot_profiles("class_align_score", distances,  "Alignement score quantile", 1:5)
 mtext("b", side=3, at=0.45, font=2, cex=1.2, line=0.5)
 legend("topleft", legend=enhancer.datasets[[sp]], pch=20,
@@ -182,5 +183,5 @@ expdiv <- plot_profiles("class_cons_synt", distances,  "Synteny Conservation", c
 expdiv <- plot_profiles("class_cons_cont", distances,  "Contact conservation", c("<1%", "25%", "50%", "75%", ">75%"))
 
 
-dev.off()
+#dev.off()
 
