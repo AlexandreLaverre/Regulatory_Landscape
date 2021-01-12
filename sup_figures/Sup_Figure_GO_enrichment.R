@@ -1,4 +1,3 @@
-setwd("/home/laverre/Documents/Regulatory_Landscape/result/conservation/GOrilla/")
 
 sp = "human"
 #CAGE <- read.table(paste(sp, "/GO_", sp,"_gene_syntenie_sup85.xls", sep=""), header= T, sep="\t")
