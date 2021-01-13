@@ -31,7 +31,7 @@ for(ref_sp in c("human", "mouse")){
   frag.mediandist.obs <- tapply(frag.contacts.obs$distance, as.factor(frag.contacts.obs$id_frag), median)
   frag.mediandist.sim <- tapply(frag.contacts.sim$distance, as.factor(frag.contacts.sim$id_frag), median)
   
-  for(type in c("IdenticalSequence", "UngappedAlignment")){
+  for(type in c("UngappedAlignment", "IdenticalSequence")){
     
     print(ref_sp)
     
@@ -106,18 +106,21 @@ for(ref_sp in c("human", "mouse")){
       ## statistics for enhancers 
       enh_obs_stats <- enhancer.statistics[[ref_sp]][[enh]][["original"]]
       enh_simul_stats <- enhancer.statistics[[ref_sp]][[enh]][["simulated"]]
+      
 
       ## select previously filtered enhancers, in contact within acceptable distances
 
       enh_obs_stats=enh_obs_stats[which(enh_obs_stats$enh%in%enh.contacts.obs$enhancer),]
       enh_simul_stats=enh_simul_stats[which(enh_simul_stats$enh%in%enh.contacts.sim$enhancer),]
+      
 
       ## select species
       enh_align <- enh_align[, c("ID", species)]
       
       enh_align_obs <- enh_align[which(enh_align$ID %in% enh_obs_stats$enh),]
       enh_align_simul<- enh_align[which(enh_align$ID %in% enh_simul_stats$enh),]
-
+  
+      
       ## median distance computed from filtered contacts
       
       enh_align_obs$median_dist <- enh.mediandist.obs[enh_align_obs$ID]

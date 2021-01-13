@@ -65,9 +65,9 @@ for(ref in c("human", "mouse")){
 
         nb_total = unlist(with(selected_dist, tapply(origin_enh, factor(origin_gene, levels=all_genes), function(x) length(x))))
         align_score =  unlist(with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), median, na.rm=T)))
-        seq_conserv = unlist(with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), function(x) length(which(x>=0.8)))))
+        seq_conserv = unlist(with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), function(x) length(which(x>= minAlignScore)))))
         
-        selected_align = selected_dist[which(selected_dist$align_score >= 0.8),]
+        selected_align = selected_dist[which(selected_dist$align_score >= minAlignScore),]
         synt_conserv = with(selected_align, tapply(target_dist, factor(origin_gene, levels=all_genes), function(x) length(which(as.numeric(x) <= maxDistanceSyntenyTarget))))
         
         selected_gene = selected_align[which(selected_align$target_data == TRUE),] # ortologous genes present in PCHIC in target specie
