@@ -226,7 +226,7 @@ for(ref in c("human", "mouse")){
     mat.cons.sim=mat.cons.obs
     
     for(sr in samples.ref){
-      for(st in samples.tf){
+      for(st in samples.tg){
         mat.cons.obs[sr,st]=length(which(cc.obs.celltype.ref[,sr]>0 & cc.obs.celltype.tg[,st]>0))/length(which(cc.obs.celltype.ref[,sr]>0))
         mat.cons.sim[sr,st]=length(which(cc.sim.celltype.ref[,sr]>0 & cc.sim.celltype.tg[,st]>0))/length(which(cc.sim.celltype.ref[,sr]>0))
       }
@@ -237,7 +237,7 @@ for(ref in c("human", "mouse")){
     
   }
   
- ###################### output ######################
+###################### output ######################
   save(cons, cons.conf.low, cons.conf.high, cons.pval,
        cons.dist, cons.dist.conf.low, cons.dist.conf.high,
        cons.nb.cell, cons.nb.cell.conf.low, cons.nb.cell.conf.high,
