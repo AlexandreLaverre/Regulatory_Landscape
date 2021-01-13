@@ -24,7 +24,6 @@ for(ref_sp in c("human", "mouse")){
       simul <- fread(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_simulated_data.txt", sep="/"), h=T, sep="\t")
       class(simul)<-"data.frame"
       
-      boxplot(obs$SpearmanCorrelation, simul$SpearmanCorrelation, notch=T, outline=F, main=enh)
       # according to distance
     
       obs$dist_class <-cut(obs$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
