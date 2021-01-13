@@ -216,34 +216,25 @@ for(ref in c("human", "mouse")){
   ############# contact conservation matrix ##########################
     
     samples.ref=sampleinfo.ref$Sample.ID
-    celltypes.ref=sampleinfo.ref$Broad.cell.type.or.tissue
-    
     samples.tg=sampleinfo.tg$Sample.ID
-    celltypes.tg=sampleinfo.tg$Broad.cell.type.or.tissue
+           
+    mat.cons.obs=matrix(rep(NA, length(samples.ref)*length(samples.tg)), nrow=length(samples.ref), byrow=T)
     
-    cc.obs.celltype.ref=t(apply(cc.obs[, samples.ref], 1, function(x) tapply(as.numeric(x), as.factor(celltypes.ref), sum)))
-    cc.sim.celltype.ref=t(apply(cc.sim[, samples.ref], 1, function(x) tapply(as.numeric(x), as.factor(celltypes.ref), sum)))
-    
-    cc.obs.celltype.tg=t(apply(cc.obs[, samples.tg], 1, function(x) tapply(as.numeric(x), as.factor(celltypes.tg), sum)))
-    cc.sim.celltype.tg=t(apply(cc.sim[, samples.tg], 1, function(x) tapply(as.numeric(x), as.factor(celltypes.tg), sum)))
-    
-    mat.cons.obs=matrix(rep(NA, length(unique(celltypes.ref))*length(unique(celltypes.tg))), nrow=length(unique(celltypes.ref)), byrow=T)
-    
-    rownames(mat.cons.obs)=unique(celltypes.ref)
-    colnames(mat.cons.obs)=unique(celltypes.tg)
+    rownames(mat.cons.obs)=unique(samples.ref)
+    colnames(mat.cons.obs)=unique(samples.tg)
     
     mat.cons.sim=mat.cons.obs
     
-    for(cr in unique(celltypes.ref)){
-      for(ct in unique(celltypes.tg)){
-        mat.cons.obs[cr,ct]=length(which(cc.obs.celltype.ref[,cr]>0 & cc.obs.celltype.tg[,ct]>0))/length(which(cc.obs.celltype.ref[,cr]>0))
-        mat.cons.sim[cr,ct]=length(which(cc.sim.celltype.ref[,cr]>0 & cc.sim.celltype.tg[,ct]>0))/length(which(cc.sim.celltype.ref[,cr]>0))
+    for(sr in samples.ref){
+      for(st in samples.tf){
+        mat.cons.obs[sr,st]=length(which(cc.obs.celltype.ref[,sr]>0 & cc.obs.celltype.tg[,st]>0))/length(which(cc.obs.celltype.ref[,sr]>0))
+        mat.cons.sim[sr,st]=length(which(cc.sim.celltype.ref[,sr]>0 & cc.sim.celltype.tg[,st]>0))/length(which(cc.sim.celltype.ref[,sr]>0))
       }
     }
     
     matrix.cons.obs[[enh]] <- mat.cons.obs
     matrix.cons.sim[[enh]] <- mat.cons.sim
-  
+    
   }
   
  ###################### output ######################
