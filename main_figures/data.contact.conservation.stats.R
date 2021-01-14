@@ -227,8 +227,8 @@ for(ref in c("human", "mouse")){
     
     for(sr in samples.ref){
       for(st in samples.tg){
-        mat.cons.obs[sr,st]=length(which(cc.obs.celltype.ref[,sr]>0 & cc.obs.celltype.tg[,st]>0))/length(which(cc.obs.celltype.ref[,sr]>0))
-        mat.cons.sim[sr,st]=length(which(cc.sim.celltype.ref[,sr]>0 & cc.sim.celltype.tg[,st]>0))/length(which(cc.sim.celltype.ref[,sr]>0))
+        mat.cons.obs[sr,st]=length(which(cc.obs[,sr]>0 & cc.obs[,st]>0))/length(which(cc.obs[,sr]>0))
+        mat.cons.sim[sr,st]=length(which(cc.sim[,sr]>0 & cc.sim[,st]>0))/length(which(cc.sim[,sr]>0))
       }
     }
     
