@@ -77,7 +77,7 @@ for(ref_sp in c("human", "mouse")){
 
   ## save data 
   
-  #save(conserv_synteny, file = paste(pathFigures, "/RData/data.synteny.conservation.", ref_sp, ".RData", sep=""))
+  save(conserv_synteny, file = paste(pathFigures, "/RData/data.synteny.conservation.", ref_sp, ".RData", sep=""))
   
   ## all done!
 }
