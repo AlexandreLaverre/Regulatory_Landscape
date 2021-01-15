@@ -52,7 +52,7 @@ segments(x0=gene_dnds[rev(cells),"Conf_low"], x1=gene_dnds[rev(cells),"Conf_high
 segments(x0=gene_dnds[rev(cells),"Conf_low"], x1=gene_dnds[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 segments(x0=gene_dnds[rev(cells),"Conf_high"], x1=gene_dnds[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 
-mtext("1- dN/dS \nof top expressed", side=1, line=3.5, cex=0.7)
+mtext("1- dN/dS \nof top expressed genes", side=1, line=3.5, cex=0.7)
 mtext("d", side=3, at=0.855, font=2, cex=1.1, line=1.5)
 
 #  Enhancer Alignment
@@ -92,7 +92,7 @@ segments(x0=contact_conserv[rev(cells),"Conf_low"], x1=contact_conserv[rev(cells
 segments(x0=contact_conserv[rev(cells),"Conf_low"], x1=contact_conserv[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 segments(x0=contact_conserv[rev(cells),"Conf_high"], x1=contact_conserv[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
 
-mtext("Ratio of enhancers\nmainted in contact", side=1, line=3.5, cex=0.7)
+mtext("Ratio of enhancers\nmaintened in contact", side=1, line=3.5, cex=0.7)
 mtext("h", side=3, at=0.12, font=2, cex=1.1, line=1.5)
 
 
