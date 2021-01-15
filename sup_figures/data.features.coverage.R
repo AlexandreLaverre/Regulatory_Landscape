@@ -20,8 +20,8 @@ for(ref_sp in c("human", "mouse")){
   class(obs) <- "data.frame"
   class(simul) <- "data.frame"
   
-  obs <- obs[which(obs$baited == "unbaited" & obs$BLAT_match < 2),]
-  simul <- simul[which(simul$baited == "unbaited" & simul$BLAT_match < 2),]
+  obs <- obs[which(obs$baited == "unbaited" & obs$BLAT_match == 1 ),]
+  simul <- simul[which(simul$baited == "unbaited" & simul$BLAT_match == 1),]
   
   ## compute percentage of length covered by other features
   obs$all_exon_pclen=obs$all_exon_bp*100/obs$length
@@ -61,8 +61,8 @@ for(ref_sp in c("human", "mouse")){
     obs <- fread(paste(pathFinalData, "SupplementaryDataset4/", ref_sp, "/", enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
     simul <- fread(paste(pathFinalData, "SupplementaryDataset4/", ref_sp,"/", enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
     
-    obs <- obs[which(obs$BLAT_match < 2),]
-    simul <- simul[which(simul$BLAT_match < 2),]
+    obs <- obs[which(obs$BLAT_match == 1),]
+    simul <- simul[which(simul$BLAT_match == 1),]
     
     class(obs) <- "data.frame"
     class(simul) <- "data.frame"
