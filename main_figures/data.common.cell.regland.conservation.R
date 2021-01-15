@@ -69,7 +69,7 @@ for(ref in c("human", "mouse")){
         all_genes = levels(factor(data$origin_gene))
         
         # Calculate conservation for each distance class
-        for (dist in c(levels(data$class_dist), "all")){
+        for (dist in c("all")){ #levels(data$class_dist),
           
           if (dist == "all"){selected_dist = data}else{selected_dist = data[which(data$class_dist == dist),]}
   
@@ -77,11 +77,11 @@ for(ref in c("human", "mouse")){
           align_score =  with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), median, na.rm=T))
           seq_conserv = with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), function(x) length(which(x>=0.4))))
           
-          selected_align = selected_dist[which(selected_dist$align_score >=0.4),]
-          synt_conserv = with(selected_align, tapply(target_dist, factor(origin_gene, levels=all_genes), function(x) length(which(x <= maxDistanceSyntenyTarget))))
+          selected_align = selected_dist[which(selected_dist$align_score >= 0.4),]
+          synt_conserv = with(selected_align, tapply(target_dist, factor(origin_gene, levels=all_genes), function(x) length(which(as.numeric(x) <= maxDistanceSyntenyTarget))))
           
-          selected_gene = selected_align[which(selected_align$target_data == TRUE),] # ortologous genes present in PCHIC in target specie
-          contact_conserv = with(selected_gene, tapply(cons, factor(origin_gene, levels=all_genes), function(x) length(which(as.numeric(x) == TRUE))))
+          selected_gene = selected_align[which(selected_align$target_data == TRUE),] # ortologous gene is present in PCHIC data in target specie
+          contact_conserv = with(selected_gene, tapply(cons, factor(origin_gene, levels=all_genes), function(x) length(which(x == TRUE))))
           
           genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]] <- data.frame("nb_total"=nb_total, "align_score"=align_score, "seq_conserv"=seq_conserv, 
                                                                        "synt_conserv"=synt_conserv, "contact_conserv"=contact_conserv)
@@ -102,7 +102,7 @@ for(ref in c("human", "mouse")){
           
         }
         
-        names(genes.conservation.cells[[enh]][[cell]][[data.name]]) = c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
+        names(genes.conservation.cells[[enh]][[cell]][[data.name]]) = c("all") #"25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", 
       
       }
     }
