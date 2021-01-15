@@ -1,7 +1,6 @@
 library(Hmisc)
 options(stringsAsFactors = FALSE)
 
-#setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
 source("parameters.R") ## pathFinalDataFinalDatas are defined based on the user name
 
 path_exp <- paste(pathFinalData, "SupplementaryDataset6/", sep="")
@@ -37,3 +36,4 @@ for (sp in c("human", "mouse")){
        file = paste(pathFigures, "/RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
 }
 
+####################################################################################################
