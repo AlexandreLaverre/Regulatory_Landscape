@@ -24,39 +24,31 @@ if(load){
 
 ##########################################################################
 
-if(prepare){
-
-  fignb=c(7, 8)
-  names(fignb)=c("human", "mouse")
-
-  prepare=FALSE
-}
-
-##########################################################################
-
 ## 1 column width 85 mm = 3.34 in
 ## 1.5 column width 114 mm = 4.49 in 
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
+pdf(paste(pathFigures, "ExtendedFigure1.pdf", sep=""), width=6.85, height=5.5)
+
+## layout
+m=matrix(rep(NA,20*40), nrow=20)
+for(i in 1:9){
+  m[i,]=c(rep(1,3), rep(2, 20), rep(3, 17))
+}
+m[10,]=c(rep(1,3), rep(2, 20), rep(4, 17))
+
+for(i in 11:19){
+  m[i,]=c(rep(5,3), rep(6, 20), rep(7, 17))
+}
+m[20,]=c(rep(5,3), rep(6, 20), rep(8, 17))
+
+layout(m)
+
 ##########################################################################
+fig = 1
 
 for(sp in c("human", "mouse")){
-  pdf(paste(pathFigures, "SupplementaryFigure",fignb[sp], ".pdf", sep=""), width=6.85, height=2.75)
-
-  ## layout
-  
-  m=matrix(rep(NA,10*40), nrow=10)
-  for(i in 1:9){
-    m[i,]=c(rep(1,3), rep(2, 20), rep(3, 17))
-  }
-
-  for(i in 10){
-    m[i,]=c(rep(1,3), rep(2, 20), rep(4, 17))
-  }
-  
-  layout(m)
-
   ## get data for this species
   info=sampleinfo[[sp]]
   rownames(info)=info$Sample.ID
@@ -76,8 +68,9 @@ for(sp in c("human", "mouse")){
   par(mar=c(0.75,1,1.35,0.1))
   plot(tree, direction="rightwards", show.tip.label=FALSE)
 
-  mtext("a", side=3, at=0, font=2, line=0, cex=0.85)
-
+  mtext(letters[fig], side=3, at=0, font=2, line=0, cex=0.85)
+  fig = fig+1
+  
   ## matrix obs-sim
 
   par(mar=c(1,0,1.75,8.25))
@@ -116,8 +109,9 @@ for(sp in c("human", "mouse")){
   mtext(paste("PC1 (", explained[1],"% explained variance)",sep=""), side=1, line=1.75, cex=0.6)
   mtext(paste("PC2 (", explained[2],"% explained variance)",sep=""), side=2, line=1.75, cex=0.6)
 
-  mtext("b", side=3, at=xlim[1]-diff(xlim)/5.5, font=2, line=0.5, cex=0.85)
-
+  mtext(letters[fig], side=3, at=xlim[1]-diff(xlim)/5.5, font=2, line=0.5, cex=0.85)
+  fig = fig+1
+  
   ## legend for the heatmap
 
   par(mar=c(1.35,1.1,0.0,13.1))
@@ -132,8 +126,10 @@ for(sp in c("human", "mouse")){
 
   mtext("% shared interactions", side=4, las=2, at=1.15, cex=0.6, line=1)
   mtext("(observed-simulated)", side=4, las=2, at=-1.25, cex=0.6, line=1)
-  
-  dev.off()
+  par(tck=NA)
+
 }
 
 ##########################################################################
+
+dev.off()
