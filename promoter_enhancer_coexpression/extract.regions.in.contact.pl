@@ -358,7 +358,7 @@ print "Writing output...\n";
 
 open(my $output, ">".$parameters{"pathOutput"});
 
-print $output "IDBait\tIDContactedFragment\tDistance\tIDPromoter\tIDEnhancer\n";
+print $output "IDBait\tIDContactedFragment\tDistance\tIDPromoter\tChrPromoter\tStartPromoter\tEndPromoter\tIDEnhancer\tChrEnhancer\tStartEnhancer\tEndEnhancer\n";
 
 foreach my $idbait (keys %overlapbaitpromoters){
     my @sb=split(",",$idbait);
@@ -377,7 +377,7 @@ foreach my $idbait (keys %overlapbaitpromoters){
 	    
 	    foreach my $idprom (keys %{$overlapbaitpromoters{$idbait}}){
 		foreach my $idenh (keys %{$overlapfragmentenhancers{$idfrag}}){
-		    print $output $idbait."\t".$idfrag."\t".$dist."\t".$idprom."\t".$idenh."\n";
+		    print $output $idbait."\t".$idfrag."\t".$dist."\t".$idprom."\t".$hashpromoters{$idprom}{"chr"}."\t".$hashpromoters{$idprom}{"start"}."\t".$hashpromoters{$idprom}{"end"}."\t".$idenh."\t".$hashenhancers{$idenh}{"chr"}."\t".$hashenhancers{$idenh}{"start"}."\t".$hashenhancers{$idenh}{"end"}."\n";
 		}
 	    }
 	}

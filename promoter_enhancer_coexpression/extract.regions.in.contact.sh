@@ -5,13 +5,13 @@ export dataset=$2
 
 ###################################################################################
 
-export pathAnouk=/beegfs/data/necsulea/RegulatoryLandscapes
-export pathAlex=/beegfs/data/alaverre/Regulatory_landscape
-export pathFOCS=${pathAnouk}/data/FOCS/${sp}/${dataset}/
-export pathOriginalInteractions=${pathAlex}/result/Supplementary_dataset1_original_interactions/${sp}
-export pathSimulatedInteractions=${pathAlex}/result/Supplementary_dataset2_simulated_interactions/${sp}
-export pathResults=${pathAnouk}/results/co_expression_analysis/${sp}/${dataset}
-export pathScripts=${pathAnouk}/scripts/promoter_enhancer_coexpression
+export path=/beegfs/data/necsulea/RegulatoryLandscapes
+export pathManuscript=/beegfs/data/necsulea/RegulatoryLandscapesManuscript
+export pathFOCS=${path}/data/FOCS/${sp}/${dataset}/
+export pathSimulatedInteractions=${pathManuscript}/SupplementaryDataset1/${sp}
+export pathSimulatedInteractions=${pathManuscript}/SupplementaryDataset2/${sp}
+export pathResults=${path}/results/co_expression_analysis/${sp}/${dataset}
+export pathScripts=${path}/scripts/promoter_enhancer_coexpression
 
 ###################################################################################
 
