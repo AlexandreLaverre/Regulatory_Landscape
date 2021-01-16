@@ -4,6 +4,7 @@ path="/beegfs/data/necsulea/RegulatoryLandscapes/"
 pathFOCS=paste(path, "data/FOCS/", sep="")
 
 options(stringsAsFactors=F)
+options(digits=2) ## to make files lighter
 
 ########################################################################
 
