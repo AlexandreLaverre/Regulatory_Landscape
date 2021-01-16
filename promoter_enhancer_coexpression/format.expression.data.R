@@ -10,7 +10,7 @@ options(digits=2) ## to make files lighter
 
 datasets=list()
 datasets[["human"]]=c("ENCODE", "FANTOM5", "GRO-seq", "RoadmapEpigenomics")
-datasets[["mouse"]]=c("ENCODE", "FANTOM5")
+datasets[["mouse"]]=c("FANTOM5")
 
 genomes=list()
 genomes[["human"]]="hg38"
