@@ -35,6 +35,9 @@ for(sp in c("human", "mouse")){
     rownames(prom.coords)=prom.coords$id
     rownames(enh.coords)=enh.coords$id
 
+    prom.exp=prom.exp[which(rownames(prom.exp)%in%rownames(prom.coords)),]
+    enh.exp=enh.exp[which(rownames(enh.exp)%in%rownames(enh.coords)),]
+
     prom.exp=cbind(prom.coords[rownames(prom.exp),], prom.exp)
     enh.exp=cbind(enh.coords[rownames(enh.exp),], enh.exp)
 

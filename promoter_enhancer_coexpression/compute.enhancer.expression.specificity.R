@@ -44,11 +44,11 @@ for(sp in c("human", "mouse")){
 
     maxexp=apply(exp[,samples], 1, max)
    
-    nbsamplesexp=apply(exp[,sampls], 1, function(x) length(which(x>0)))
+    nbsamplesexp=apply(exp[,samples], 1, function(x) length(which(x>0)))
     
     results=data.frame("id"=exp$id, "chr"=exp$chr, "start"=exp$start, "end"=exp$end, "Tau"=tau.tpm, "TauLog"=tau.logtpm, "MaxExp"=maxexp, "AverageExp"=overall.avg, "NbSamplesExp"=nbsamplesexp, stringsAsFactors=F)
   
-    write.table(results, file=paste(pathFOCS, sp, "/", dataset, "/enhancer_activity_statistics..txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+    write.table(results, file=paste(pathFOCS, sp, "/", dataset, "/enhancer_activity_statistics.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
   }
 }
 
