@@ -170,13 +170,13 @@ for(set in c("AllOrgans", "SomaticOrgans")){
   results$MeanRPKM=(results$Human_MeanRPKM+results$Mouse_MeanRPKM)/2
   
   lm1=lm(1-results$EuclideanDistance~log2(results$MeanRPKM+1))
-  results$ResidualEuclideanSimilarity=lm1$residuals
+  results$ResidualExpEuclideanSimilarity=lm1$residuals
   
   lm2=lm(results$CorrelationSpearman~log2(results$MeanRPKM+1))
-  results$ResidualSpearman=lm2$residuals
+  results$ResidualExpSpearman=lm2$residuals
   
   lm3=lm(results$CorrelationPearson~log2(results$MeanRPKM+1))
-  results$ResidualPearson=lm3$residuals
+  results$ResidualExpPearson=lm3$residuals
   
   ## correct for specificity
   # calcul Specificity Tau
@@ -196,14 +196,25 @@ for(set in c("AllOrgans", "SomaticOrgans")){
   results$TauHuman=apply(avgexp.human, 1, function(x) compute.tau(as.numeric(x)))
   results$TauMouse=apply(avgexp.mouse, 1, function(x) compute.tau(as.numeric(x)))
   
-  lm1=lm(results$ResidualEuclideanSimilarity~results$TauHuman)
+  lm1=lm(1-results$EuclideanDistance~results$TauHuman)
+  results$ResidualTauEuclideanSimilarity=lm1$residuals
+  
+  lm2=lm(results$CorrelationSpearman~results$TauHuman)
+  results$ResidualTauSpearman=lm2$residuals
+  
+  lm3=lm(results$CorrelationPearson~results$TauHuman)
+  results$ResidualTauPearson=lm3$residuals
+  
+  ## correct for specifity AND expression
+  lm1=lm(1-results$EuclideanDistance~results$TauHuman+log2(results$MeanRPKM+1))
   results$CorrectedEuclideanSimilarity=lm1$residuals
   
-  lm2=lm(results$ResidualSpearman~results$TauHuman)
+  lm2=lm(results$CorrelationSpearman~results$TauHuman+log2(results$MeanRPKM+1))
   results$CorrectedSpearman=lm2$residuals
   
-  lm3=lm(results$ResidualPearson~results$TauHuman)
-  results$CorrectedPearson=lm3$residuals
+  lm3=lm(results$CorrelationPearson~results$TauHuman+log2(results$MeanRPKM+1))
+  results$CorrelationPearson=lm3$residuals
+  
   
   ######################################################################################
   
