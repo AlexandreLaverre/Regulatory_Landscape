@@ -13,10 +13,8 @@ source("parameters.R") ## paths are defined based on the user name
 #################################################################################################################
 
 if(load){
-  ref_sp = "human"
-  
-  load(paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp, ".Rdata", sep=""))
-  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.", ref_sp, ".Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.enhancer.coverage.human.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.human.Rdata", sep=""))
   
   enhancers = enhancer.datasets[[ref_sp]]
 }
@@ -29,8 +27,7 @@ if(load){
 ## max height: 11 in
 
 #################################################################################################################
-if (ref_sp == "human"){pdf_name = "Figure2.pdf"}else{pdf_name = "SupplementaryFigure12.pdf"}
-pdf(paste(pathFigures, pdf_name, sep=""), width=6.85, height=5)
+pdf(paste(pathFigures, "Figure2.pdf", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 
@@ -54,7 +51,7 @@ barcenter <- barplot(m.prop, beside=T,  border=dataset.colors, col=dataset.color
 xposlab=apply(barcenter, 2, mean)
 allxpos=as.numeric(barcenter)
 
-if (ref_sp == "human"){lab=enh.syn.narrow}else{lab = enhancers}
+lab=enh.syn.narrow
 
 mtext(lab, line=c(rep(0.5,length(enhancers)/2), rep(1.3,length(enhancers)/2)), side=1, at=xposlab, cex=0.75)
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=7)
@@ -71,15 +68,15 @@ for (x in seq(1,length(allxpos)-1, by=2)){
    text("***", x=(allxpos[x]+allxpos[x+1])/2, y=enh_prop$data[x]+1.5, cex=1.2)
  }
 
-if(ref_sp=='human'){at=-1.3}else{at=-0.1}
-mtext("a", side=3, line=1.45, at=at, font=2, cex=1.2)
+
+mtext("a", side=3, line=1.45, at=-1.3, font=2, cex=1.2)
 
 ###########################################################################################################################
 ##########################  Fig2-B - Enhancer proportion according to distance ############################################
 
 ## only one enhancers datasets
 
-if (ref_sp == "human"){enh="ENCODE"}else{enh="FANTOM5"}
+enh="ENCODE"
 
 ymax=max(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
 ymin=min(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
@@ -137,8 +134,7 @@ axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=sum(ylim)*0.9/2)
 mtext("number of cell types", side=1, line=2, cex=0.85)
 
-if(ref_sp=='human'){at=-2.1}else{at=-0.5}
-mtext("c", side=3, line=1.25, at=at, font=2, cex=1.2)
+mtext("c", side=3, line=1.25, at=-2.1, font=2, cex=1.2)
 
 ############################################################################################################################
 ############################################## correlation gene expression and enhancers activity ##########################
