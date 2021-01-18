@@ -2,6 +2,7 @@
 
 path="/beegfs/data/necsulea/RegulatoryLandscapes/"
 pathFOCS=paste(path, "data/FOCS/", sep="")
+pathResults=paste(path, "results/co_expression_analysis/", sep="")
 
 options(stringsAsFactors=F)
 options(digits=2) ## to make files lighter
@@ -49,7 +50,7 @@ for(sp in c("human", "mouse")){
     
     results=data.frame("id"=exp$id, "chr"=exp$chr, "start"=exp$start, "end"=exp$end, "Tau"=tau.tpm, "TauLog"=tau.logtpm, "MaxExp"=maxexp, "AverageExp"=overall.avg, "NbSamplesExp"=nbsamplesexp, "NbSamplesHighExp"=nbsampleshighexp, stringsAsFactors=F)
   
-    write.table(results, file=paste(pathFOCS, sp, "/", dataset, "/enhancer_activity_statistics.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+    write.table(results, file=paste(pathResults, sp, "/", dataset, "/enhancer_activity_statistics.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
   }
 }
 
