@@ -98,7 +98,7 @@ if(prepare){
 ## max height: 11 in
 
 #########################################################################################################################
-if (ref_sp == "human"){pdf_name="SupplementaryFigure20.pdf"; height=7}else{pdf_name="SupplementaryFigure21.pdf"; height=4.5}
+if (ref_sp == "human"){pdf_name="SupplementaryFigure19.pdf"; height=7}else{pdf_name="SupplementaryFigure20.pdf"; height=4.5}
 
 pdf(paste(pathFigures, pdf_name, sep=""), height=height)
 

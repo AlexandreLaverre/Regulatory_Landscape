@@ -1,5 +1,4 @@
-#########################################################################
-
+#################################################################################################################
 ## if it's the first time we run this figure, we load and prepare data
 
 objects=ls()
@@ -7,153 +6,171 @@ objects=ls()
 if(!"pathScripts"%in%objects){
   load=T
   prepare=T
-  source("../main_figures/parameters.R")
 }
 
-##########################################################################
+source("parameters.R") ## paths are defined based on the user name
+
+#################################################################################################################
 
 if(load){
- 
-  load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
-  load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-  load(paste(pathFigures, "RData/data.bait.annotation.RData", sep=""))
-  load(paste(pathFigures, "RData/data.gene.expression.RData", sep=""))
-
-  minRPKM=1
-
-  maxval=c(7, 5)
-  names(maxval)=c("human", "mouse")
-
-  labels=c("a", "b")
-  names(labels)=c("human", "mouse")
+  load(paste(pathFigures, "RData/data.enhancer.coverage.mouse.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.mouse.Rdata", sep=""))
   
-  load=FALSE
+  enhancers = enhancer.datasets[[ref_sp]]
 }
 
-##########################################################################
-
-if(prepare){
-  ## determine number of cell types in which contacts were observed
-
-  all.data=list()
-
-  for(sp in c("human","mouse")){
-    obs=observed.contacts[[sp]]
-    sim=simulated.contacts[[sp]]
-    
-    info=sampleinfo[[sp]]
-    rownames(info)=info$Sample.ID
-    
-    samples=info$Sample.ID 
-    celltypes=info$Broad.cell.type.or.tissue
-    names(celltypes)=samples
-
-    M=maxval[sp]
-    
-    obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-    sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-    
-    ## bait annotation
-
-    bait.annot=bait.info[[sp]]
-    obs$geneID=bait.annot[obs$id_bait, "gene_ID"]
-    sim$geneID=bait.annot[sim$id_bait, "gene_ID"]
-    
-    ## expression
-
-    exp=avgexp.cm2019[[sp]]
-   
-    nbsamples.exp=apply(exp, 1, function(x) length(which(x>=minRPKM)))
-    names(nbsamples.exp)=rownames(exp)
-
-    ## select baits associated with a single gene, in expression data
-
-    obs=obs[which(obs$geneID%in%rownames(exp)),]
-    sim=sim[which(sim$geneID%in%rownames(exp)),]
-
-    ## we compute the maximum number of samples in which a gene has chromatin contacts
-
-    nb.celltypes.bygene.obs=tapply(obs$nb_celltypes, as.factor(obs$geneID), max)
-    nb.celltypes.bygene.sim=tapply(sim$nb_celltypes, as.factor(sim$geneID), max)
-
-    fac.celltypes.bygene.obs=cut(nb.celltypes.bygene.obs, breaks=c(0:M, max(obs$nb_celltypes)), include.lowest=T)
-    levels(fac.celltypes.bygene.obs)=c(as.character(1:M), paste0(">",M))
-
-    fac.celltypes.bygene.sim=cut(nb.celltypes.bygene.sim, breaks=c(0:M, max(sim$nb_celltypes)), include.lowest=T)
-    levels(fac.celltypes.bygene.sim)=c(as.character(1:M), paste0(">",M))
-
-    res.obs=data.frame("gene"=names(nb.celltypes.bygene.obs), "nbcontact"= nb.celltypes.bygene.obs, "classcontact"=fac.celltypes.bygene.obs, "nbexp"=nbsamples.exp[names(nb.celltypes.bygene.obs)])
-    res.sim=data.frame("gene"=names(nb.celltypes.bygene.sim), "nbcontact"= nb.celltypes.bygene.sim, "classcontact"=fac.celltypes.bygene.sim, "nbexp"=nbsamples.exp[names(nb.celltypes.bygene.sim)])
-   
-    all.data[[sp]]=list("obs"=res.obs, "sim"=res.sim)
-  }
-  
-  prepare=FALSE
-}
-
-##########################################################################
+#################################################################################################################
 
 ## 1 column width 85 mm = 3.34 in
 ## 1.5 column width 114 mm = 4.49 in 
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-##########################################################################
+#################################################################################################################
+pdf(paste(pathFigures, "SupplementaryFigure10.pdf", sep=""), width=6.85, height=5)
 
-pdf(paste(pathFigures, "SupplementaryFigure10.pdf", sep=""), width=6.85, height=3.5)
+par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 
-m=matrix(c(rep(1, 7), rep(2, 7)), nrow=1)
-
+m=matrix(rep(NA, 2*10), nrow=2)
+m[1,]=c(rep(1,5), rep(2,5))
+m[2,]=c(rep(3,5), rep(4,5))
 layout(m)
 
-##########################################################################
+##################################################################################################################
+############################################  % length covered by enhancers  #####################################
 
-for(sp in c("human", "mouse")){
-  exp=avgexp.cm2019[[sp]]
-  nbsamples.tot=dim(exp)[2]
-  
-  obs=all.data[[sp]][["obs"]]
-  sim=all.data[[sp]][["sim"]]
+m.prop=t(matrix(enh_prop$data, nrow=length(enhancers), byrow=T))
 
-  classes=levels(obs$classcontact)
-  nbclass=length(classes)
-  
-  xpos=1:nbclass
-  smallx=c(-0.25, 0.25)
+par(mar=c(2.1, 4.5, 2.75, 1))
 
-  xlim=c(0.5, 9.5)
-  ylim=c(0, 100)
+barcenter <- barplot(m.prop, beside=T,  border=dataset.colors, col=dataset.colors, 
+                     lwd=1.5, cex.names=0.8,
+                     ylim=c(0,15), ylab="", xlab="", axisnames = F, main="", space=c(0.1, 1), las=2)
 
-  par(mar=c(3.5, 3.5, 1.5, 0.5))
-      
-  plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim)
-  
-  for(i in 1:nbclass){
-    wobs=which(obs$classcontact==classes[i])
-    boxplot(100*obs$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[1], col=dataset.colors["Original"], notch=T, pch=20)
-    
-    wsim=which(sim$classcontact==classes[i])
-    boxplot(100*sim$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[2], col=dataset.colors["Simulated"], notch=T, pch=20)
-    
-  }
 
-  mtext(sp, side=3, cex=0.75)
+xposlab=apply(barcenter, 2, mean)
+allxpos=as.numeric(barcenter)
 
-  axis(side=1, at=1:nbclass, labels=classes, cex.axis=0.9, mgp=c(3, 0.5, 0))
-  mtext("number of cell types w. chromatin contacts", side=1, line=2, cex=0.7, at=(nbclass+1)/2)
-  
-  axis(side=2, cex.axis=0.9, mgp=c(3, 0.75, 0))
-  mtext("percentage of samples w. detectable expression", side=2, line=2, cex=0.7)
+lab = enhancers
 
-  mtext(labels[sp], side=3, at=xlim[1]-diff(xlim)/6.5, line=0, font=2)
-  
-  if (sp == "mouse"){
-    legend("topright", legend=c("PCHi-C data", "simulated data"), fill=dataset.colors[c("Original", "Simulated")], bty='n', inset=c(-0.02, -0.01), xpd=NA)
-  }
+mtext(lab, line=c(rep(0.5,length(enhancers)/2), rep(1.3,length(enhancers)/2)), side=1, at=xposlab, cex=0.75)
+mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=7)
+
+at="topright"
+legend(at, legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors,  bty='n', cex=1.1, inset=c(0, -0.1), xpd=NA)
+
+par(lwd=1)
+segments(allxpos, enh_prop$conf_up, allxpos, enh_prop$conf_low, lwd = 3)
+arrows(allxpos, enh_prop$conf_up, allxpos, enh_prop$conf_low, lwd = 1.5, angle = 90, code = 3, length = 0.05)
+
+for (x in seq(1,length(allxpos)-1, by=2)){
+  segments(allxpos[x], enh_prop$data[x]+1, allxpos[x+1], enh_prop$data[x]+1) 
+  text("***", x=(allxpos[x]+allxpos[x+1])/2, y=enh_prop$data[x]+1.5, cex=1.2)
 }
 
-##########################################################################
+at=-0.1
+mtext("a", side=3, line=1.45, at=at, font=2, cex=1.2)
+
+###########################################################################################################################
+##########################  Fig2-B - Enhancer proportion according to distance ############################################
+
+## only one enhancers datasets
+
+enh="FANTOM5"
+
+ymax=max(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
+ymin=min(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
+
+ymax=ymax*1.1
+
+par(mar=c(3.1, 4.5, 2.75, 1))
+
+plot(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"], main="", type="n", xlab="",ylab="",  axes=F, ylim=c(ymin,ymax))
+
+lines(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"])
+lines(enh_prop_dist[["simul"]][[enh]], col=dataset.colors["Simulated"])
+
+
+xpos=1:length(enh_prop_dist[["obs"]][[enh]])
+
+segments(xpos, enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], xpos, enh_prop_dist[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
+segments(xpos, enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], xpos, enh_prop_dist[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simulated"])
+
+
+class_leg <- c("0", "0.5", "1", "1.5", "2")
+axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
+axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
+
+legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
+
+mtext("% length covered by enhancers", side=2, cex=0.85, line=2.25, at=(ymin+ymax)*0.9/2)
+mtext("distance to promoters (Mb)", side=1, line=2.25, cex=0.85)
+
+mtext("b", side=3, line=1.45, at=-5.75, font=2, cex=1.2)
+
+#############################################################################################################################
+##################################  Fig2-C - Enhancer proportion according to nb of cell types ##############################
+
+ymax=max(c(enh_prop_nb_cell[["obs"]][[paste0(enh,"_conflow")]], enh_prop_nb_cell[["obs"]][[paste0(enh,"_confup")]],  enh_prop_nb_cell[["simul"]][[paste0(enh,"_conflow")]], enh_prop_nb_cell[["simul"]][[paste0(enh,"_confup")]]))
+
+ylim=c(0, ymax)
+
+par(mar=c(3.1, 4.5, 3, 1))
+
+plot(enh_prop_nb_cell[["obs"]][[enh]], type="n", ylim=ylim,  axes=F, xlab="", ylab="")
+
+lines(enh_prop_nb_cell[["obs"]][[enh]], col=dataset.colors["Original"])
+lines(enh_prop_nb_cell[["simul"]][[enh]], col=dataset.colors["Simulated"])
+
+xpos=1:length(enh_prop_nb_cell[["obs"]][[enh]])
+
+segments(xpos, enh_prop_nb_cell[["obs"]][[paste0(enh,"_conflow")]], xpos, enh_prop_nb_cell[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
+segments(xpos, enh_prop_nb_cell[["simul"]][[paste0(enh,"_conflow")]], xpos, enh_prop_nb_cell[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simulated"])
+
+axis(side=1, mgp=c(3, 0.65, 0), cex.axis=1.1, at=seq(from=1, to=max(xpos), by=2))
+axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
+
+
+mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=sum(ylim)*0.9/2)
+mtext("number of cell types", side=1, line=2, cex=0.85)
+
+at=-0.5
+mtext("c", side=3, line=1.25, at=at, font=2, cex=1.2)
+
+############################################################################################################################
+############################################## correlation gene expression and enhancers activity ##########################
+
+ymin=min(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
+ymax=max(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
+
+ylim=c(ymin, ymax)
+
+par(mar=c(3.1, 4.5, 3, 1))
+
+plot(correl_activity[["obs"]][[enh]], type="n", ylab="", main="", las=2, ylim=ylim, axes=F)
+
+lines(correl_activity[["obs"]][[enh]], col=dataset.colors["Original"])
+lines(correl_activity[["simul"]][[enh]], col=dataset.colors["Simulated"])
+
+xpos=1:length(correl_activity[["obs"]][[enh]])
+
+segments(xpos, correl_activity[["obs"]][[paste0(enh,"_conflow")]], xpos, correl_activity[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
+segments(xpos, correl_activity[["simul"]][[paste0(enh,"_conflow")]], xpos, correl_activity[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simulated"])
+
+
+
+class_leg <- c("0", "0.5", "1", "1.5", "2")
+axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
+axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
+
+mtext("Spearman's rho", side=2, cex=0.85, line=3, at=(ymin+ymax)*0.9/2)
+mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
+
+mtext("d", side=3, line=1.25, at=-5.5, font=2, cex=1.2)
+
+##################################################################################################################################
 
 dev.off()
 
-##########################################################################
+
+##################################################################################################################################

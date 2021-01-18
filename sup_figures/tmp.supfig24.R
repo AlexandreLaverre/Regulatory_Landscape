@@ -97,7 +97,7 @@ if(prepare){
 
 ##############################################################################
 
-pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=2.5)
+#pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=2.5)
 
 m=matrix(rep(NA, 1*13), nrow=1)
 m[1,]=c(rep(1,4), rep(2,3), rep(3,6))
@@ -177,6 +177,6 @@ mtext("c", side=3, line=1.25, at=-9.1, font=2, cex=1.05)
 
 #########################################################################################
 
-dev.off()
+#dev.off()
 
 ####################################################################################

@@ -99,7 +99,7 @@ if(prepare){
 ## max height: 11 in
 
 #########################################################################################################################
-if (ref_sp == "human"){pdf_name="SupplementaryFigure22.pdf"}else{pdf_name="SupplementaryFigure23.pdf"}
+if (ref_sp == "human"){pdf_name="SupplementaryFigure21.pdf"}else{pdf_name="SupplementaryFigure22.pdf"}
 pdf(paste(pathFigures, pdf_name, sep=""))
 
 par(mfrow=c(3,3))

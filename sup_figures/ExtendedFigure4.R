@@ -1,101 +1,124 @@
 ######################################################################################################################
-library(Hmisc)
-
+options(stringsAsFactors = FALSE)
 source("../main_figures/parameters.R") ## pathFinalData are defined based on the user name
 
 sp="human"
 
-load(paste(pathFigures, "RData/", sp, ".cells.types.parallel.trends.Rdata", sep=""))
+load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
+load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
+load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
+
+load(paste(pathFigures, "RData/data.", sp, ".common.cells.expdiv.Rdata", sep=""))
+load(paste(pathFigures, "RData/data.", sp, ".common.cells.regland.conservation.RData", sep=""))
+
+if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
 
 cells <- c("Bcell", "ESC", "adipo")
 dataset.colors=c("firebrick1", "forestgreen", "navy")
 names(dataset.colors) = cells
 
-pdf(file=paste(pathFigures, "/ExtendedFigure4.pdf", sep=""), width=7, height=6)
-
-m=matrix(rep(NA, 2*13), nrow=2)
-m[1,]=c(rep(1,4),  rep(2,3),  rep(3,3), rep(4,3))
-m[2,]=c(rep(5,4), rep(6,3),  rep(7,3), rep(8,3))
-layout(m)
+clearboxplot <- function(measure, divergence, ylim, ylab){
+  
+  if (measure == "classTau"){labels=c("generalist", "", "", "specialist"); xlab="Expression Specificity"
+  }else{labels=c("low", "", "", "high"); xlab="Mean Expression Level"}
+  
+  xlim=c(0.5, length(levels(expdiv[[measure]]))+0.5)
+  
+  xpos=seq(1, length(levels(expdiv[[measure]])), 1)
+  names(xpos) = levels(expdiv[[measure]])
+  smallx=c(-0.15, -0.075, 0.075, 0.15)
+  names(smallx)=enhancer.datasets[[sp]]
+  
+  par(mar=c(4.5, 3.75, 3, 1.1))
+  plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
+  
+  for(class in levels(expdiv[[measure]])){
+    x=xpos[class]
+    boxplot(expdiv[which(expdiv[[measure]] == class), divergence], at=x, axes=F, add=T, notch=T, outline=F)
+  }
+  
+  abline(v=xpos[1:length(levels(expdiv[[measure]]))-1]+0.5, lty=3, col="gray40")
+  axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(expdiv[[measure]]))), cex.axis=0.8)
+  mtext(labels, at=xpos, side=1, line=1, cex=CEXLAB)
+  mtext(xlab, side=1, line=2.5, cex=CEXLAB)
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
+  mtext(ylab, side=2, line=2.5, cex=CEXLAB)
+  
+}
 
 ######################################################################################################################
-####################################### Parallel trends among cell types #############################################
-#  Legend
-par(mai = c(0.7, 0.1, 0.5, 0.1)) # bottom, left, top, right
+#pdf(file=paste(pathFigures, "ExtendedFigure4.pdf", sep=""), width = 8.5)
 
-#  Correlation of expression level
-dotchart(correl_expression[rev(cells),"Pearson"], col=dataset.colors[rev(cells)], labels=c("Pre-\nadipocyte", "ESC", "Bcell"), pch="|", pt.cex=0.7,
-         xlim=c(min(correl_expression)-0.02, max(correl_expression)+0.02))
-mtext("Spearman's Rho\n of genes expression level", side=1, line=3.5, cex=0.7)
-mtext("a", side=3, at=0.72, font=2, cex=1.1, line=1.5)
+par(mfrow=c(3,3))
 
-#  Conserved Expression
-dotchart(conserv_expression[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels="", pt.cex=0.5,
-         xlim=c(min(conserv_expression[,"Conf_low"])-0.01, max(conserv_expression[,"Conf_high"])+0.01))
-segments(x0=conserv_expression[rev(cells),"Conf_low"], x1=conserv_expression[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)], lwd=1)
-segments(x0=conserv_expression[rev(cells),"Conf_low"], x1=conserv_expression[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
-segments(x0=conserv_expression[rev(cells),"Conf_high"], x1=conserv_expression[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+######################################################################################################################
+############################################ Gene expression level  ##################################################
+#### Divergence (Common cells types)
+CEXLAB = 0.9
+CEXstats = 0.8
 
-mtext("Corrected Measure\n of expression conservation", side=1, line=3.5, cex=0.7)
-mtext("b", side=3, at=-0.11, font=2, cex=1.1, line=1.5)
+for (cell in cells){
+  expdiv_cells[[paste0(cell, "_log2Expression")]] = log2(expdiv_cells[[paste(cell, sp, "MeanRPKM", sep="_")]]+1)
+  expdiv_cells[[paste0(cell ,"_classRPKM")]]=cut2(expdiv_cells[[paste0(cell, "_log2Expression")]], g=4, include.lowest=T)
+  
+  smoothScatter(expdiv_cells[[paste0(cell, "_log2Expression")]], expdiv_cells[[paste0(cell, "_ExpressionConservation")]], xlab="", ylab="")
 
-#  Correlattion of complexity zscore 
-dotchart(correl_complexity[rev(cells),"Pearson"], col=dataset.colors[rev(cells)], labels='', pch="|", pt.cex=0.7, 
-         xlim=c(min(correl_complexity), max(correl_complexity)+0.01))
-mtext("Spearman's Rho\n of genes contact's number", side=1, line=3.5, cex=0.7)
-mtext("c", side=3, at=0.22, font=2, cex=1.1, line=1.5)
+  R=cor(expdiv_cells[[paste0(cell, "_log2Expression")]], expdiv_cells[[paste0(cell, "_ExpressionConservation")]],method="pearson")
+  rho=cor(expdiv_cells[[paste0(cell, "_log2Expression")]], expdiv_cells[[paste0(cell, "_ExpressionConservation")]], method="spearman")
+  x=expdiv_cells[[paste0(cell, "_log2Expression")]]
+  y=expdiv_cells[[paste0(cell, "_ExpressionConservation")]]
+  abline(lm(y~x), col="red")
+  mtext(paste("R2 = ", round(summary(lm(y~x))$r.squared, digits=2), ", Pearson R = ", round(R, digits=2), ", rho = ",round(rho, digits=2),sep=""),
+        side=3, line=0.5, cex=CEXstats)
 
-# #  dN / dS
-dotchart(gene_dnds[rev(cells),"Mean"], col=dataset.colors[rev(cells)], labels='', pch="|", pt.cex=0.5,
-         xlim=c(min(gene_dnds[,"Conf_low"])-0.02, max(gene_dnds[,"Conf_high"])+0.02))
-segments(x0=gene_dnds[rev(cells),"Conf_low"], x1=gene_dnds[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)])
-segments(x0=gene_dnds[rev(cells),"Conf_low"], x1=gene_dnds[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
-segments(x0=gene_dnds[rev(cells),"Conf_high"], x1=gene_dnds[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+  if (cell == "Bcell"){mtext("Gene Expression conservation", side=2, line=2.5, cex=CEXLAB)}
+  mtext(paste0("Mean Expression Level in ", cell), side=1, line=2.5, cex=CEXLAB)
+  
+}
 
-mtext("1- dN/dS \nof top expressed genes", side=1, line=3.5, cex=0.7)
-mtext("d", side=3, at=0.855, font=2, cex=1.1, line=1.5)
+#### Spearman's rho (Cardoso-Moreira)
+expdiv$classRPKM <- cut2(expdiv$Human_MeanRPKM, g=4, include.lowest=T) 
+clearboxplot("classRPKM", "CorrelationSpearman", c(-0.5, 1),  "Spearman's rho")
 
-#  Enhancer Alignment
-dotchart(enh_evol[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels=c("Pre-\nadipocyte", "ESC", "Bcell"), pt.cex=0.5,
-         xlim=c(min(enh_evol[,"Conf_low"])-0.02, max(enh_evol[,"Conf_high"])+0.02))
-segments(x0=enh_evol[rev(cells),"Conf_low"], x1=enh_evol[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)])
-segments(x0=enh_evol[rev(cells),"Conf_low"], x1=enh_evol[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
-segments(x0=enh_evol[rev(cells),"Conf_high"], x1=enh_evol[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+#### Euclidean Similarity (Cardoso-Moreira)
+expdiv$EuclideanSimilarity <- 1-expdiv$EuclideanDistance
+clearboxplot("classRPKM", "EuclideanSimilarity", c(0.6, 1),  "Euclidean Similarity")
 
-mtext("Alignment score\n of contacted enhancers", side=1, line=3.5, cex=0.7)
-mtext("e", side=3, at=0.475, font=2, cex=1.1, line=1.5)
+### Correlation between Spearman and Euclidean 
+smoothScatter(expdiv$ResidualExpEuclideanSimilarity, expdiv$ResidualExpSpearman, xlab="", ylab="")
 
-# Conserved sequence
-dotchart(seq_conserv[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels='', pt.cex=0.5,
-         xlim=c(min(seq_conserv[,"Conf_low"])-0.02, max(seq_conserv[,"Conf_high"])+0.02))
-segments(x0=seq_conserv[rev(cells),"Conf_low"], x1=seq_conserv[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)])
-segments(x0=seq_conserv[rev(cells),"Conf_low"], x1=seq_conserv[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
-segments(x0=seq_conserv[rev(cells),"Conf_high"], x1=seq_conserv[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+R=cor(expdiv$ResidualExpEuclideanSimilarity, expdiv$ResidualExpSpearman,method="pearson")
+rho=cor(expdiv$ResidualExpEuclideanSimilarity, expdiv$ResidualExpSpearman, method="spearman")
+x=expdiv$ResidualExpEuclideanSimilarity
+y=expdiv$ResidualExpSpearman
+abline(lm(y~x), col="red")
 
-mtext("Ratio of conserved\n enhancers by gene", side=1, line=3.5, cex=0.7)
-mtext("f", side=3, at=0.48, font=2, cex=1.1, line=1.5)
+mtext(paste("R2 = ", round(summary(lm(y~x))$r.squared, digits=2), ", Pearson R = ", round(R, digits=2), ", rho = ",round(rho, digits=2),sep=""),
+      side=3, line=0.5, cex=CEXstats)
 
-#  Conserved synteny
-dotchart(synteny_conserv[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels='', pt.cex=0.5,
-         xlim=c(min(synteny_conserv[,"Conf_low"])-0.04, max(synteny_conserv[,"Conf_high"])+0.04))
-segments(x0=synteny_conserv[rev(cells),"Conf_low"], x1=synteny_conserv[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)], lwd=1)
-segments(x0=synteny_conserv[rev(cells),"Conf_low"], x1=synteny_conserv[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
-segments(x0=synteny_conserv[rev(cells),"Conf_high"], x1=synteny_conserv[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+mtext("Residual Euclidean Similarity", side=1, line=2.5, cex=CEXLAB)
+mtext("Residual Spearman's rho", side=2, line=2.5, cex=CEXLAB)
 
-mtext("Ratio of enhancers\nmaintened in synteny", side=1, line=3.5, cex=0.7)
-mtext("g", side=3, at=0.85, font=2, cex=1.1, line=1.5)
+######################################################################################################################
+############################################ Specificity  # ##########################################################
+### Spearman
+clearboxplot("classTau", "ResidualExpSpearman", c(-1, 0.6),  "Residual Spearman's rho")
 
-#  Conserved contacts
-dotchart(contact_conserv[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels='', pt.cex=0.5,
-         xlim=c(min(contact_conserv[,"Conf_low"])-0.04, max(contact_conserv[,"Conf_high"])+0.04))
-segments(x0=contact_conserv[rev(cells),"Conf_low"], x1=contact_conserv[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)], lwd=1)
-segments(x0=contact_conserv[rev(cells),"Conf_low"], x1=contact_conserv[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
-segments(x0=contact_conserv[rev(cells),"Conf_high"], x1=contact_conserv[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+### Euclidean 
+clearboxplot("classTau", "ResidualExpEuclideanSimilarity", c(-0.3, 0.15),  "Residual Euclidean Similarity")
 
-mtext("Ratio of enhancers\nmaintened in contact", side=1, line=3.5, cex=0.7)
-mtext("h", side=3, at=0.12, font=2, cex=1.1, line=1.5)
+### Correlation between measures
+smoothScatter(expdiv$CorrectedExpTauEuclideanSimilarity, expdiv$CorrectedExpTauSpearman, xlab="", ylab="")
+R=cor(expdiv$CorrectedExpTauEuclideanSimilarity, expdiv$CorrectedExpTauSpearman,method="pearson")
+rho=cor(expdiv$CorrectedExpTauEuclideanSimilarity, expdiv$CorrectedExpTauSpearman, method="spearman")
+x=expdiv$CorrectedExpTauEuclideanSimilarity
+y=expdiv$CorrectedExpTauSpearman
+abline(lm(y~x), col="red")
 
+mtext(paste("R2 = ", round(summary(lm(y~x))$r.squared, digits=2), ", Pearson R = ", round(R, digits=2), ", rho = ",round(rho, digits=2),sep=""),
+      side=3, line=0.5, cex=CEXstats)
 
+mtext("Corrected Euclidean Similarity", side=1, line=2.5, cex=CEXLAB)
+mtext("Corrected Spearman's rho", side=2, line=2.5, cex=CEXLAB)
 
-#########
-dev.off()
+#dev.off()

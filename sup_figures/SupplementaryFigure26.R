@@ -15,8 +15,8 @@ if(!"pathScripts"%in%objects){
 if(load){
   sp="human"
   load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
-  load(paste(pathFigures, "RData/Fig6_", sp, "_SomaticOrgans_CardosoMoreira.Rdata", sep=""))
-  load(paste(pathFigures, "RData/data.", sp, ".gene.regland.conservation.RData", sep=""))
+  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
   if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
 
   load=FALSE
@@ -31,7 +31,7 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
   smallx=c(-0.15, -0.075, 0.075, 0.15)
   names(smallx)=enhancer.datasets[[sp]]
   
-  if (Measure == "corrected"){DivergenceMeasure = "CorrectedEuclideanSimilarity"; ylab="Residual Euclidean Similarity"; ylim=c(0, 0.02)
+  if (Measure == "corrected"){DivergenceMeasure = "CorrectedTauExpEuclideanSimilarity"; ylab="Residual Euclidean Similarity"; ylim=c(0, 0.02)
   }else{DivergenceMeasure = "EuclideanSimilarity"; ylab="Euclidean Similarity"; ylim=c(0.89, 0.94)}
   
   if (class_conserv == "class_cons_synt"){xmax=3}else{xmax=5}
@@ -85,7 +85,7 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
 ################################################################################################################################
 distances =  "all"  # c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
 
-pdf(file=paste(pathFigures, "SupplementaryFigure34_bis.pdf", sep=""), width = 8.5)
+#pdf(file=paste(pathFigures, "SupplementaryFigure28.pdf", sep=""), width = 8.5)
 
 par(mfrow=c(2,3))
 par(mai = c(0.5, 0.5, 0.5, 0.1)) # bottom, left, top, right
@@ -109,5 +109,5 @@ expdiv <- plot_profiles("class_cons_synt", distances,  "Synteny Conservation", c
 expdiv <- plot_profiles("class_cons_cont", distances,  "Contact conservation", c("<1%", "25%", "50%", "75%", ">75%"))
 
 
-dev.off()
+#dev.off()
 

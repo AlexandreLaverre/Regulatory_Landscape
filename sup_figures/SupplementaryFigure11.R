@@ -4,63 +4,76 @@
 objects=ls()
 
 if(!"pathScripts"%in%objects){
+  load=T
   prepare=T
 }
 
 source("../main_figures/parameters.R") ## paths are defined based on the user name
 
+#################################################################################################################
 
-###########################################################################################################################
-##########################  Enhancer proportion according to distance ############################################
-
-pdf(paste(pathFigures, "SupplementaryFigure11.pdf", sep=""), width=6.85, height=5.5)
-
-par(mai = c(0.5, 0.5, 0.1, 0.2)) # bottom, left, top, right
-
-par(mfrow=c(3,2))
-
-nb=1
-for (sp in c("human", "mouse")){
-  load(paste(pathFigures, "RData/data.enhancer.coverage.", sp, ".Rdata", sep=""))
-  for (enh in enhancer.datasets[[sp]]){
-    ymax=max(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
-    ymin=min(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
-    
-    ymax=ymax*1.1
-    
-    par(mar=c(3.1, 4.5, 2.75, 1))
-    
-    plot(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"], main="", type="n", xlab="",ylab="",  axes=F, ylim=c(ymin,ymax))
-    
-    lines(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"])
-    lines(enh_prop_dist[["simul"]][[enh]], col=dataset.colors["Simulated"])
-    
-    
-    xpos=1:length(enh_prop_dist[["obs"]][[enh]])
-    
-    segments(xpos, enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], xpos, enh_prop_dist[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
-    segments(xpos, enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], xpos, enh_prop_dist[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simulated"])
-    
-    
-    class_leg <- c("0", "0.5", "1", "1.5", "2")
-    axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
-    axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
-    
-    if (nb == 1){
-      legend("topright", legend=c("PCHi-C data", "simulated data"), 
-             col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=0.9, inset=c(0.05, 0.05), xpd=NA)}
-    
-    if (nb %in% c(1,3,5)){
-      mtext("% length covered\n by enhancers", side=2, cex=0.85, line=2, at=(ymin+ymax)*0.9/2)
-      mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
-    }
-
-    
-    mtext(letters[nb], side=3, line=1.45, at=-5.75, font=2, cex=1.2)
-    mtext(paste(sp, enh, sep=" "), side=3, cex=0.8, line=0)
-    nb = nb+1
-  }
+if(load){
+  ref_sp = "human"
+  
+  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.", ref_sp, ".Rdata", sep=""))
+  
+  enhancers = enhancer.datasets[[ref_sp]]
 }
+
+#################################################################################################################
+
+## 1 column width 85 mm = 3.34 in
+## 1.5 column width 114 mm = 4.49 in 
+## 2 columns width 174 mm = 6.85 in
+## max height: 11 in
+
+#################################################################################################################
+
+pdf(paste(pathFigures, "SupplementaryFigure11.pdf", sep=""), width=6.85, height=6)
+
+############################################################################################################################
+############################################## correlation gene expression and enhancers activity ##########################
+par(mfrow=c(2,2))
+
+for (enh in enhancers){
+  ymin=min(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
+  ymax=max(c(correl_activity[["obs"]][[paste0(enh,"_conflow")]], correl_activity[["obs"]][[paste0(enh,"_confup")]],  correl_activity[["simul"]][[paste0(enh,"_conflow")]], correl_activity[["simul"]][[paste0(enh,"_confup")]]))
+  
+  ylim=c(ymin, ymax+0.01)
+  
+  par(mar=c(3.1, 4.5, 3, 1))
+  
+  plot(correl_activity[["obs"]][[enh]], type="n", ylab="", main="", las=2, ylim=ylim, axes=F)
+  
+  lines(correl_activity[["obs"]][[enh]], col=dataset.colors["Original"])
+  lines(correl_activity[["simul"]][[enh]], col=dataset.colors["Simulated"])
+  
+  xpos=1:length(correl_activity[["obs"]][[enh]])
+  
+  segments(xpos, correl_activity[["obs"]][[paste0(enh,"_conflow")]], xpos, correl_activity[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
+  segments(xpos, correl_activity[["simul"]][[paste0(enh,"_conflow")]], xpos, correl_activity[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simulated"])
+  
+  
+  
+  class_leg <- c("0", "0.5", "1", "1.5", "2")
+  axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
+  axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
+  
+  mtext("Spearman's rho", side=2, line=3, cex=1.2)
+  mtext("distance to promoters (Mb)", side=1, line=2, cex=1.2)
+  
+  mtext(enh.syn[[enh]], side=3, line=0, cex=1.2)
+  
+  if (enh == "FANTOM5"){
+    legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, 0.1), xpd=NA)
+    
+  }
+  
+}
+
+##################################################################################################################################
 
 dev.off()
 
+
+##################################################################################################################################
