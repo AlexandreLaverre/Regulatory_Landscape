@@ -5,7 +5,7 @@ import os
 import re
 import argparse
 parser = argparse.ArgumentParser()
-#parser.add_argument("specie", help="reference specie")
+parser.add_argument("specie", help="reference specie")
 parser.add_argument("reference_file", help="list of genomic coordinates")
 parser.add_argument("interest_file", help="list of interest genomic coordinates to be overlap")
 parser.add_argument("output_file", help="name of output file")
@@ -18,10 +18,10 @@ parser.add_argument("--reference_ID", action="store_true", help="reference outpu
 parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
 args = parser.parse_args()
 
-#path = "/home/laverre/Documents/Regulatory_Landscape/data/" + args.specie + "/"
-reference_file = args.reference_file #path +
-interest_file = args.interest_file #path + 
-output_file = args.output_file # path +
+path = "/home/laverre/Documents/Regulatory_Landscape/data/" + args.specie + "/"
+reference_file = path + args.reference_file
+interest_file = path + args.interest_file
+output_file = path + args.output_file
 
 
 ### Create dictionary of infiles : {chr = [(start, end, ID),...]}

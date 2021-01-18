@@ -28,12 +28,19 @@ def HiC_stats(origin_sp, enh):
                 i = i.strip("\n")
                 i = i.split("\t")
                 frag = (str(i[1]) + ':' + str(i[2]) + ':' + str(i[3]))
-                elem_pb[frag] = 0 if i[4] == "NA" else int(i[6])    #len(i[4].split(",")) #
+                if file == exon:
+                    elem_pb[frag] = 0 if i[4] == "NA" else int(i[6])    #len(i[4].split(",")) #
+                else:
+                    elem_pb[frag] = int(i[4])
 
         return elem_pb
 
-    all = "_overlap_all_exons.txt"
-    all_exon = dic_pb(all)
+    exon = "_overlap_all_exons.txt"
+    all_exon = dic_pb(exon)
+    enh_50kb = dic_pb("_overlap_" + enh + "_50kb.txt")
+    enh_100kb = dic_pb("_overlap_" + enh + "_100kb.txt")
+    exons_50kb = dic_pb("_overlap_all_exons_50kb.txt")
+    exons_100kb = dic_pb("_overlap_all_exons_100kb.txt")
 
     ############################################## Duplication score ##############################################
     frag_dupli = {}
@@ -121,7 +128,7 @@ def HiC_stats(origin_sp, enh):
         if os.stat(path_gene_enhancer + origin_sp + "/" + enh + "/statistics_contacted_enhancers" + data + ".txt2").st_size == 0:
             output.write("chr\tstart\tend\tlength\t")
             output.write("bait_contacted\tgenes_contacted\tmean_genes_contacts\tmedian_score\tmedian_dist\tnb_sample\t"
-                         "nb_cell\tBLAT_match\tall_exon_bp\trepeat_bp\tGC_bp\t")
+                         "nb_cell\tBLAT_match\tall_exon_bp\trepeat_bp\tGC_bp\tenh50kb\tenh100kb\texons50kb\texons100kb\t")
 
             output.write('\t'.join(sample_names) + "\n")
 
@@ -143,15 +150,17 @@ def HiC_stats(origin_sp, enh):
             output.write(str(nb_sample) + '\t' + str(nb_cell) + '\t')
             output.write(str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t')
             output.write(str(repeat_pb[PIR]) + '\t' + str(GC_pb[PIR]) + '\t')
+            output.write(str(enh_50kb[PIR]) + '\t' + str(enh_100kb[PIR]) + '\t')
+            output.write(str(exons_50kb[PIR]) + '\t' + str(exons_100kb[PIR]) + '\t')
             output.write(str('\t'.join(str(x) for x in PIR_infos[PIR][3])) + '\n')  # nb contacted gene per cell
 
         output.close()
 
 
 origin_sp = "human"
-enhancers = ["FANTOM5", "ENCODE"]
-if origin_sp == "human":
-    enhancers.extend(["RoadmapEpigenomics", "FOCS_GRO_seq"])
+enhancers = ["ENCODE"]
+# if origin_sp == "human":
+#     enhancers.extend(["RoadmapEpigenomics", "FOCS_GRO_seq"])
 
 for enh in enhancers:
     print("Running", enh)

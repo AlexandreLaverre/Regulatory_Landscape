@@ -35,8 +35,8 @@ def dic_pb(file):
 
 all = "_overlap_all_exons.txt"
 all_exon = dic_pb(all)
-all_250 = "_overlap_repeat_no_exon.txt"
-all_exon250 = dic_pb(all_250)
+repeat_no_exon = "_overlap_repeat_no_exon.txt"
+all_exon250 = dic_pb(repeat_no_exon)
 coding = "_overlap_coding_exons.txt"
 coding_exon = dic_pb(coding)
 nocoding = "_overlap_nocoding_exons.txt"
@@ -237,7 +237,7 @@ def HiC_stats(origin_sp, data):
     output.close()
 
 
-datas = ["_observed", "_simulated"]
+datas = ["_simulated"]
 
 for data in datas:
     HiC_stats(origin_sp, data)
