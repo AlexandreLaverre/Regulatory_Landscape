@@ -204,6 +204,7 @@ legend("topleft", col=dataset.colors, legend = c("PCHi-C data", "simulated data"
 mtext("b", side=3, line=0.5, at=-0.7, font=2, cex=1)
 
 ##############################################################################
+## conservation as distance between gene and promoters
 
 YLIM=c(-1,30)
 

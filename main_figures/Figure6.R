@@ -36,10 +36,9 @@ CMPlot <- function(var, plot.nb){
   if (var == "CorrelationSpearman"){ylim=c(0.55, 0.65)
   }else if (var == paste0("Tau", sp_name)){ylim=c(0.60, 0.8)
   }else if (var == "MeanRPKM"){ylim=c(7, 11)
-  }else if (var == "CorrectedTauExpSpearman"){ylim=c(0.02, 0.1)}
+  }else if (var == "CorrectedSpearman"){ylim=c(0.02, 0.1)}
   
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-  
   
   for(enh in enhancer.datasets[[sp]]){
     regland = genes.conservation[[enh]][["obs"]][["all"]]
@@ -123,13 +122,11 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
     }
     
   }
-  return(expdiv)
 }
 
 ################################################################################################################################
 ################################################### Plot Figure 6 ##############################################################
 Measure = "corrected"
-distances =  "all"  # c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
 
 pdf(file=paste(pathFigures, "Figure6.pdf", sep=""), width = 8.5)
 
@@ -137,7 +134,7 @@ par(mfrow=c(2,3))
 par(mai = c(0.5, 0.5, 0.5, 0.1))
 
 ######################## Part 1 : Complexity ######################## 
-MeasuresCM <- c(paste0("Tau", sp_name), "MeanRPKM", "CorrectedTauExpSpearman")
+MeasuresCM <- c(paste0("Tau", sp_name), "MeanRPKM", "CorrectedSpearman")
 names_MeasuresCM <- c("Specificity", "Mean Expression level (RPKM)", "Corrected Spearman's rho")
 
 for (measure in 1:length(MeasuresCM)){
@@ -145,11 +142,11 @@ for (measure in 1:length(MeasuresCM)){
 }
 
 ######################## Part 2 : Gene expression profiles evolution ################
-expdiv <- plot_profiles("class_align_score", distances,  "Alignement score quantile", 1:5)
+plot_profiles("class_align_score", "all",  "Alignement score quantile", 1:5)
 mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
 
-expdiv <- plot_profiles("class_cons_synt", distances,  "Synteny Conservation", c("<75%", "75-99%", ">99%"))
-expdiv <- plot_profiles("class_cons_cont", distances,  "Contact conservation", c("<1%", "25%", "50%", "75%", ">75%"))
+plot_profiles("class_cons_synt", "all",  "Synteny Conservation", c("<75%", "75-99%", ">99%"))
+plot_profiles("class_cons_cont", "all",  "Contact conservation", c("<1%", "25%", "50%", "75%", ">75%"))
 
 
 dev.off()
