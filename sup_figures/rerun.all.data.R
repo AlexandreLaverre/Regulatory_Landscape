@@ -1,15 +1,16 @@
+############################################################################
 
-## all scripts that generate figures
+## all scripts that generate .RData objects for the figures
 
 all.files=system("ls", intern=T)
-fig.scripts=c(grep("SupplementaryFigure", all.files, value=T), grep("ExtendedFigure", all.files, value=T))
+data.scripts=grep("^data", all.files, value=T)
 
 ############################################################################
 
-for(file in fig.scripts){
+for(file in data.scripts){
   ## cleanup
   objects=ls()
-  objects=setdiff(objects, c("fig.scripts", "file"))
+  objects=setdiff(objects, c("data.scripts", "file"))
   rm(list=objects)
 
   ## run the script
