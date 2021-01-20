@@ -213,7 +213,7 @@ for(set in c("AllOrgans", "SomaticOrgans")){
   results$CorrectedSpearman=lm2$residuals
   
   lm3=lm(results$CorrelationPearson~results$TauHuman+log2(results$MeanRPKM+1))
-  results$CorrelationPearson=lm3$residuals
+  results$CorrectedPearson=lm3$residuals
   
   
   ######################################################################################
