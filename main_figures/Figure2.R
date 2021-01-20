@@ -13,8 +13,10 @@ source("parameters.R") ## paths are defined based on the user name
 #################################################################################################################
 
 if(load){
-  load(paste(pathFigures, "RData/data.enhancer.coverage.human.Rdata", sep=""))
-  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.human.Rdata", sep=""))
+  ref_sp="human"
+  
+  load(paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp,".Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.",ref_sp,".Rdata", sep=""))
   
   enhancers = enhancer.datasets[[ref_sp]]
 }
@@ -27,6 +29,7 @@ if(load){
 ## max height: 11 in
 
 #################################################################################################################
+
 pdf(paste(pathFigures, "Figure2.pdf", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
