@@ -2,7 +2,7 @@
 
 options(stringsAsFactors = FALSE)
 
-source("parameters.R") ## pathFinalData are defined based on the user name
+source("../main_figures/parameters.R") ## pathFinalData are defined based on the user name
 
 path_evol <- paste(pathFinalData, "SupplementaryDataset7/", sep="")
 
@@ -96,7 +96,7 @@ for(sp in c("human", "mouse")){
   }
   
   ### Output
-  save(gene_dnds, enh_evol, contact_conserv, synteny_conserv, correl_expression, correl_complexity, conserv_expression,align_score,
+  save(gene_dnds, enh_evol, seq_conserv, contact_conserv, synteny_conserv, correl_expression, correl_complexity, conserv_expression,
        file = paste(pathFigures, "/RData/", sp, ".cells.types.parallel.trends.Rdata", sep=""))
   
 }

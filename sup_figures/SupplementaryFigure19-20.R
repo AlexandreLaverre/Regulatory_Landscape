@@ -1,12 +1,13 @@
 #########################################################################################################################
 
-objects=ls()
+source("../main_figures/parameters.R")
 
-if(!"pathFigures"%in%objects){
+#########################################################################################################################
+
+for (ref_sp in c("human", "mouse")){
+  print(paste0('loading... ', ref_sp))
   
-  source("../main_figures/parameters.R")
-  
-  ref_sp <- "mouse"
+  load(paste(pathFigures, "RData/data.synteny.conservation.",ref_sp,".RData", sep=""))
   target_sp = setdiff(c("human", "mouse"), ref_sp)
   
   if(ref_sp == "human"){
@@ -17,23 +18,6 @@ if(!"pathFigures"%in%objects){
     species <-c("rat", "rabbit", "macaque", "human", "dog", "cow", "elephant", "opossum", "chicken")
   } 
   
-  load=T
-  prepare=T
-}
-
-#########################################################################################################################
-
-if(load){
-  print("loading data")
-  
-  load(paste(pathFigures, "RData/data.synteny.conservation.",ref_sp,".RData", sep=""))
-  
-  load=FALSE
-}
-
-#########################################################################################################################
-
-if(prepare){
   prop.obs.alldist <- list()
   prop.sim.alldist <- list()
   ci.low.obs.alldist <- list()
@@ -84,92 +68,85 @@ if(prepare){
     names(ci.high.sim.alldist[[enh]]) <- species
     
     names(pvalues.alldist[[enh]]) <- species
-    
   }
   
-  prepare=FALSE
-}
-
-#########################################################################################################################
-
-## 1 column width 85 mm = 3.34 in
-## 1.5 column width 114 mm = 4.49 in
-## 2 columns width 174 mm = 6.85 in
-## max height: 11 in
-
-#########################################################################################################################
-if (ref_sp == "human"){pdf_name="SupplementaryFigure19.pdf"; height=7}else{pdf_name="SupplementaryFigure20.pdf"; height=4.5}
-
-pdf(paste(pathFigures, pdf_name, sep=""), height=height)
-
-if (ref_sp == "human"){par(mfrow=c(4,1))}else{par(mfrow=c(2,1))}
-
-#########################################################################################################################
-
-## global synteny conservation, ENCODE
-
-for (enh in enhancer.datasets[[ref_sp]]){
-  m <- matrix(c(prop.obs.alldist[[enh]], prop.sim.alldist[[enh]]), nrow=2, byrow=T)
+  #########################################################################################################################
+  ## 1 column width 85 mm = 3.34 in
+  ## 1.5 column width 114 mm = 4.49 in
+  ## 2 columns width 174 mm = 6.85 in
+  ## max height: 11 in
   
-  par(mar=c(3.1, 4.1, 2.1, 1.1))
+  if (ref_sp == "human"){pdf_name="SupplementaryFigure19.pdf"; height=7}else{pdf_name="SupplementaryFigure20.pdf"; height=4.5}
+  pdf(paste(pathFigures, pdf_name, sep=""), height=height)
   
-  if (enh == "FANTOM5"){ylim=c(50,105)}else{ylim = c(65,105)}
-  if (ref_sp == "mouse"){ylim=c(65,100)}
+  if (ref_sp == "human"){par(mfrow=c(4,1))}else{par(mfrow=c(2,1))}
   
-  bar <-barplot(m, beside=T, space=c(0.25, 1.2), col=dataset.colors, border=dataset.colors, axes=F,  ylim = ylim, xpd=F)
-  colnames(bar)<-species
+  #########################################################################################################################
+  ## global synteny conservation, ENCODE
   
-  axis(side=2, las=2,  mgp=c(3, 0.75, 0), cex.axis=0.9)
-  if (ref_sp == "mouse"){cex=0.85}else{cex=0.7}
-  mtext("% pairs in \n conserved synteny", side=2, line=2, cex=cex)
-  
-  xax=apply(bar, 2, mean)
-  axis(side=1, at=xax, mgp=c(3, 0.65, 0), labels=rep("", length(species)))
-  mtext(species, side=1, at=xax, line=0.5, cex=0.75)
-  
-  mtext(paste(ref_sp, "vs."), side=1, line=0.5, at=min(xax)-diff(xax)[1]*1, cex=0.75)
-  
-  segments(bar[1,], ci.low.obs.alldist[[enh]], bar[1,], ci.high.obs.alldist[[enh]], col="black", lwd=1.1)
-  
-  segments(bar[2,], ci.low.sim.alldist[[enh]], bar[2,], ci.high.sim.alldist[[enh]], col="black", lwd=1.1)
-  
-  
-  smallx=(bar[2,2]-bar[1,2])/10
-  
-  for (sp in species){
-    this.pval=pvalues.alldist[[enh]][sp]
+  for (enh in enhancer.datasets[[ref_sp]]){
+    m <- matrix(c(prop.obs.alldist[[enh]], prop.sim.alldist[[enh]]), nrow=2, byrow=T)
     
-    if(this.pval < 0.0001){
-      text="***"
-    } else{
-      if(this.pval < 0.001){
-        text="**"
+    par(mar=c(3.1, 4.1, 2.1, 1.1))
+    
+    if (enh == "FANTOM5"){ylim=c(50,105)}else{ylim = c(65,105)}
+    if (ref_sp == "mouse"){ylim=c(65,100)}
+    
+    bar <-barplot(m, beside=T, space=c(0.25, 1.2), col=dataset.colors, border=dataset.colors, axes=F,  ylim = ylim, xpd=F)
+    colnames(bar)<-species
+    
+    axis(side=2, las=2,  mgp=c(3, 0.75, 0), cex.axis=0.9)
+    if (ref_sp == "mouse"){cex=0.85}else{cex=0.7}
+    mtext("% pairs in \n conserved synteny", side=2, line=2, cex=cex)
+    
+    xax=apply(bar, 2, mean)
+    axis(side=1, at=xax, mgp=c(3, 0.65, 0), labels=rep("", length(species)))
+    mtext(species, side=1, at=xax, line=0.5, cex=0.75)
+    
+    mtext(paste(ref_sp, "vs."), side=1, line=0.5, at=min(xax)-diff(xax)[1]*1, cex=0.75)
+    
+    segments(bar[1,], ci.low.obs.alldist[[enh]], bar[1,], ci.high.obs.alldist[[enh]], col="black", lwd=1.1)
+    
+    segments(bar[2,], ci.low.sim.alldist[[enh]], bar[2,], ci.high.sim.alldist[[enh]], col="black", lwd=1.1)
+    
+    
+    smallx=(bar[2,2]-bar[1,2])/10
+    
+    for (sp in species){
+      this.pval=pvalues.alldist[[enh]][sp]
+      
+      if(this.pval < 0.0001){
+        text="***"
       } else{
-        if(this.pval < 0.01){
-          text="*"
+        if(this.pval < 0.001){
+          text="**"
         } else{
-          text="NS"
+          if(this.pval < 0.01){
+            text="*"
+          } else{
+            text="NS"
+          }
         }
       }
+      
+      ypos=max(prop.obs.alldist[[enh]][sp], prop.sim.alldist[[enh]][sp])+2
+      
+      segments(bar[1,sp]+smallx, ypos, bar[2,sp]-smallx, ypos)
+      text(text, x=mean(as.numeric(bar[,sp])), y=ypos+2.5, xpd=NA, cex=1)
     }
     
-    ypos=max(prop.obs.alldist[[enh]][sp], prop.sim.alldist[[enh]][sp])+2
+    ## legend
+    if (ref_sp == "mouse"){cexleg=0.85}else{cexleg=1}
     
-    segments(bar[1,sp]+smallx, ypos, bar[2,sp]-smallx, ypos)
-    text(text, x=mean(as.numeric(bar[,sp])), y=ypos+2.5, xpd=NA, cex=1)
+    if (enh == "ENCODE"){
+      legend("topright", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors, inset=c(0,-0.08), cex=cexleg, bty='n')}
+    
+    mtext(enh, side=3, cex=0.8, line=0.5)
   }
   
-  ## legend
-  if (ref_sp == "mouse"){cexleg=0.85}else{cexleg=1}
+  dev.off()
   
-  if (enh == "ENCODE"){
-    legend("topright", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors, inset=c(0,-0.08), cex=cexleg, bty='n')}
-  
-  mtext(enh, side=3, cex=0.8, line=0.5)
 }
 
-#####################################################################################
+#########################################################################################################################
 
-dev.off()
-
-#######################################################################################

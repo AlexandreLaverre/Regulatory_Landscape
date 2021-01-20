@@ -6,16 +6,17 @@ objects=ls()
 if(!"pathScripts"%in%objects){
   load=T
   prepare=T
+  source("../main_figures/parameters.R")
+  
 }
 
-source("parameters.R") ## paths are defined based on the user name
 
 #################################################################################################################
 
 if(load){
   load(paste(pathFigures, "RData/data.enhancer.coverage.mouse.Rdata", sep=""))
   load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.mouse.Rdata", sep=""))
-  
+  ref_sp = "mouse"
   enhancers = enhancer.datasets[[ref_sp]]
 }
 

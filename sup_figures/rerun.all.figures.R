@@ -1,10 +1,12 @@
 
 ## all scripts that generate figures
 
-fig.scripts=system("ls", intern=T)
-fig.scripts=grep("SupplementaryFigure", fig.scripts, value=T)
+list=system("ls", intern=T)
+fig.scripts=grep("SupplementaryFigure", list, value=T)
 fig.scripts=grep("SupplementaryFigureX", fig.scripts, value=T, invert=T)
+extended.fig.scripts=grep("Extended", list, value=T)
 
+fig.scripts = append(extended.fig.scripts, fig.scripts)
 ############################################################################
 
 for(file in fig.scripts){

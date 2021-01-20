@@ -4,8 +4,7 @@
 objects=ls()
 
 if(!"pathScripts"%in%objects){
-  source("parameters.R") ## paths are defined based on the user name
-
+  source("../main_figures/parameters.R") ## paths are defined based on the user name
   load=T
 }
 

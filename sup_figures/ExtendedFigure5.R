@@ -9,8 +9,6 @@ load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
 load(paste(pathFigures, "RData/data.", sp, ".common.cells.expdiv.Rdata", sep=""))
 load(paste(pathFigures, "RData/data.", sp, ".common.cells.regland.conservation.RData", sep=""))
 
-expdiv$EuclideanSimilarity <- 1-expdiv$EuclideanDistance
-
 if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
 
 cells <- c("Bcell", "ESC", "adipo")
