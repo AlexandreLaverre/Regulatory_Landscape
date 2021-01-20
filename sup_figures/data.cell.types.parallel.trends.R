@@ -2,7 +2,7 @@
 
 options(stringsAsFactors = FALSE)
 
-source("parameters.R") ## pathFinalData are defined based on the user name
+source("../main_figures/parameters.R") ## pathFinalData are defined based on the user name
 
 path_evol <- paste(pathFinalData, "SupplementaryDataset7/", sep="")
 

@@ -4,7 +4,7 @@ library(data.table)
 
 options(stringsAsFactors = FALSE)
 
-source("parameters.R") 
+source("../main_figures/parameters.R") 
 
 #########################################################################################################################
 
