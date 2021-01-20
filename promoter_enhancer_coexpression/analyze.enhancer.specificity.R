@@ -44,11 +44,11 @@ for(sp in c("human", "mouse")){
 
     ## sequence conservation
 
-    cons=read.table(paste(pathConservation, sp, "/sequence_conservation/enhancers/",dataset, "/AlignmentStatistics_Excluding_Exons_", sp, "2", tg, ".txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    rownames(cons)=cons[,paste("ID.",sp, sep="")]
+    ## cons=read.table(paste(pathConservation, sp, "/sequence_conservation/enhancers/",dataset, "/AlignmentStatistics_Excluding_Exons_", sp, "2", tg, ".txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    ## rownames(cons)=cons[,paste("ID.",sp, sep="")]
 
-    cons$PCUngapped=cons$FilteredUngappedLength/cons$FilteredAlignmentLength
-    cons=cons[which(cons$FilteredAlignmentLength>=20),]
+    ## cons$PCUngapped=cons$FilteredUngappedLength/cons$FilteredAlignmentLength
+    ## cons=cons[which(cons$FilteredAlignmentLength>=20),]
    
     ## median distance for enhancers
 
@@ -112,19 +112,19 @@ for(sp in c("human", "mouse")){
     dev.off()
 
 
-    pdf(file=paste("tmp_figures/FrUngapped_",sp, "_Tau_", dataset,".pdf", sep=""), width=8, height=5)
+    ## pdf(file=paste("tmp_figures/FrUngapped_",sp, "_Tau_", dataset,".pdf", sep=""), width=8, height=5)
 
-    rho=round(cor(exp$Tau, cons$PCUngapped, method="spearman", use="complete.obs"), digits=2)
-    plot(exp$Tau, cons$PCUngapped,  main=paste("rho =",rho),xlab="tau", ylab="fr ungapped", pch=20)
+    ## rho=round(cor(exp$Tau, cons$PCUngapped, method="spearman", use="complete.obs"), digits=2)
+    ## plot(exp$Tau, cons$PCUngapped,  main=paste("rho =",rho),xlab="tau", ylab="fr ungapped", pch=20)
 
-    dev.off()
+    ## dev.off()
 
-     pdf(file=paste("tmp_figures/FrUngapped_",sp, "_NbSamplesExp_", dataset,".pdf", sep=""), width=8, height=5)
+    ##  pdf(file=paste("tmp_figures/FrUngapped_",sp, "_NbSamplesExp_", dataset,".pdf", sep=""), width=8, height=5)
 
-    rho=round(cor(exp$NbSamplesExp, cons$PCUngapped, method="spearman", use="complete.obs"), digits=2)
-    plot(exp$NbSamplesExp, cons$PCUngapped,  xlab="tau", ylab="fr ungapped", pch=20)
+    ## rho=round(cor(exp$NbSamplesExp, cons$PCUngapped, method="spearman", use="complete.obs"), digits=2)
+    ## plot(exp$NbSamplesExp, cons$PCUngapped,  xlab="tau", ylab="fr ungapped", pch=20)
 
-    dev.off()
+    ## dev.off()
 
     
   }
