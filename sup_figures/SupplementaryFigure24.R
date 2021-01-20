@@ -1,19 +1,22 @@
 ##############################################################################
-setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
 
+source("../main_figures/parameters.R")
 
-source("parameters.R")
+##############################################################################
 
-class_leg <- c("0",  "0.5",  "1", "1.5", "2")
-par(lwd = 0.7)
+load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
+
+##############################################################################
+
 
 pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=6)
 
+par(lwd = 0.7)
 par(mai = c(0.65, 0.8, 0.5, 0.2)) # bottom, left, top, right
 par(mfrow=c(2,2))
 
 ############### Supplementary Fig 25.A-B - Contact conservation by distance from TSS ##############
-load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
+
 
 ############################################# 
 ontologies = c("dvpt", "immune", "other")
@@ -96,6 +99,8 @@ for (onto in ontologies){
 }
 
 ## axis, legend & plot label
+
+class_leg <- c("0",  "0.5",  "1", "1.5", "2") ## legend for the X axis
 axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0))
 mtext("Distance from TSS (Mb)", side=1, line=2)
 
