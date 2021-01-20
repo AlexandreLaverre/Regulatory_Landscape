@@ -39,10 +39,10 @@ pdf(paste(pathFigures, "SupplementaryFigure12.pdf", sep=""), width=5.5, height=4
 
 par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right
 
-m=matrix(rep(NA, 3*6), nrow=3)
+m=matrix(rep(NA, 3*8), nrow=3)
 
 for(i in 1:3){
-  m[i,]=c(1,1,2,2,3,3)
+  m[i,]=c(1,1,2,2,3,3, 4, 4)
 }
 
 layout(m)
@@ -61,14 +61,12 @@ plot(tree, cex=1.1, y.lim=c(0.5,10.5), x.lim=c(0,1.07), label.offset = 0.01, sho
 tiplabels(species_names[tree$tip.label], bg = NA, adj = -0.1, frame="none", cex=1.1)
 
  # legend for the plot
-
 legend("bottomleft", fill=dataset.colors, border=dataset.colors, legend = c("PCHi-C data", "simulated data"), bty='n', cex=1.1, xpd=T, inset=c(-0.01, -0.15), horiz=FALSE)
 
 # label
 mtext("a", side=3, line=0.5, at=-0.05, font=2, cex=1.2)
 
-######################## b - enhancer sequence conservation ########################
-
+######################## b - Restriction fragments sequence conservation ########################
 species <-c("human", "macaque", "rat", "rabbit", "cow", "dog", "elephant", "opossum", "chicken")
 
 ylim=c(0, 40.5)
@@ -77,8 +75,28 @@ xlim=c(0, 100)
 ypos.sim=2+c(0, 4, 12,16,20,24,28,32,36)-0.27
 ypos.obs=2+c(1, 5, 13,17,21,25,29,33,37)+0.27
 
+plot(1, type="n", xlab="", ylab="", axes=F, ylim=ylim, xlim=xlim, main="", bty="n")
 
-labels=letters[2:4]
+# Simulated
+par(bty="n")
+vioplot(100*frag_align_simul[,species], at=ypos.sim, add=T, border=dataset.colors["Simulated"], col=rgb(t(col2rgb(dataset.colors["Simulated"])/255), alpha = 0.6), plotCentre="line", axes=F, xaxt="n", yaxt="n", horizontal = T, las=1, cex.main = 1.2, main="", bty="n")
+
+# Original
+vioplot(100*frag_align_obs[,species], at=ypos.obs, add=T, axes=F, xaxt="n", yaxt="n", horizontal = T, border=dataset.colors["Original"], col=rgb(t(col2rgb(dataset.colors["Original"])/255), alpha = 0.6), plotCentre="line")
+
+## add mean point
+points(x=100*apply(frag_align_simul[,species], 2, mean), y = ypos.sim, col = "white", pch=20, cex=0.8)
+points(x=100*apply(frag_align_obs[,species], 2, mean), y = ypos.obs, col = "white", pch=20, cex=0.8)
+
+## axis and legend
+axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1.2)
+mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.8, line=0.5)
+mtext("restriction fragments", side=3, line=-1, cex=0.8)
+mtext("b", side=3, line=0.5, at=-8, font=2, cex=1.2)
+
+######################## c - enhancer sequence conservation ########################
+
+labels=letters[3:4]
 names(labels)=c("ENCODE", "FANTOM5")
 
 for(enh in c("ENCODE", "FANTOM5")){
@@ -101,9 +119,7 @@ for(enh in c("ENCODE", "FANTOM5")){
   axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1)
   
   mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.75, line=1)
-  
   mtext(enh.syn[enh], side=3, line=-1, cex=0.7)
-  
   mtext(labels[enh], side=3, line=0.5, at=-8, font=2, cex=1.2)
 
 }
