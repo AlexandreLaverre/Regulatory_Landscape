@@ -29,7 +29,7 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
   smallx=c(-0.15, -0.075, 0.075, 0.15)
   names(smallx)=enhancer.datasets[[sp]]
   
-  if (Measure == "corrected"){DivergenceMeasure = "CorrectedEuclideanSimilarityTauExp"; ylab="Corrected\nEuclidean Similarity"; ylim=c(0.002, 0.02)
+  if (Measure == "corrected"){DivergenceMeasure = "CorrectedEuclideanSimilarity"; ylab="Corrected\nEuclidean Similarity"; ylim=c(0.002, 0.02)
   }else{DivergenceMeasure = "EuclideanSimilarity"; ylab="Euclidean Similarity"; ylim=c(0.89, 0.94)}
   
   if (class_conserv == "class_cons_synt"){xmax=3}else{xmax=5}
@@ -77,7 +77,7 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
 distances =  "all"  # c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
 
 
-pdf(file=paste(pathFigures, "SupplementaryFigure26.pdf", sep=""), width=6.85, height=9)
+pdf(file=paste(pathFigures, "SupplementaryFigure28.pdf", sep=""), width=6.85, height=9)
 m=matrix(rep(NA, 4*2), nrow=4)
 
 m[,1]=c(1:4)

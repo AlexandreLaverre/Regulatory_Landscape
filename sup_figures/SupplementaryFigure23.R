@@ -129,6 +129,8 @@ for(c in unique(sampleinfo.tg$Broad.cell.type.or.tissue)){
   segments(min(this.x)-tinyx, -0.07,  max(this.x)+tinyx,  -0.07, xpd=NA)
 }
 
+par(xpd = FALSE)
+
 for(c in c("pre-adipocytes", "embryonic stem cells", "B lymphocytes")){
   sr=sampleinfo.ref$Sample.ID[which(sampleinfo.ref$Broad.cell.type.or.tissue==c)]
   this.y=ypos[sr]
