@@ -4,7 +4,7 @@
 objects=ls()
 
 if(!"pathScripts"%in%objects){
-  source("parameters.R") ## paths are defined based on the user name
+  source("../main_figures/parameters.R") ## paths are defined based on the user name
 
   load=T
 }
@@ -16,12 +16,17 @@ sequences <- c("fragment", "ENCODE")
 ylab = c("% length covered\n by repeated elements", "GC rate", "% length covered\n by exons")
 
 ###########################################################################################################################
-##########################  featancer proportion according to distance ############################################
+##########################  enhancer proportion according to distance ############################################
 
 for (sp in c("human", "mouse")){
   load(paste(pathFigures, "RData/data.features.coverage.", sp, ".Rdata", sep=""))
   
-  if (sp == "human"){pdf.name="ExtendedFigure2.pdf"}else{pdf.name="SupplementaryFigure18.pdf"}
+  if (sp == "human"){
+    pdf.name="ExtendedFigure2.pdf"
+  } else{
+    pdf.name="SupplementaryFigure18.pdf"
+  }
+  
   pdf(paste(pathFigures, pdf.name, sep=""), width=6.85, height=5.5)
   
   par(mai = c(0.5, 0.5, 0.5, 0.2)) # bottom, left, top, right
@@ -77,3 +82,4 @@ for (sp in c("human", "mouse")){
   
 }
 
+###########################################################################################################################
