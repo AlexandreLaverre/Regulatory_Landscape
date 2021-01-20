@@ -14,9 +14,11 @@ if(!"pathScripts"%in%objects){
 #################################################################################################################
 
 if(load){
-  load(paste(pathFigures, "RData/data.enhancer.coverage.mouse.Rdata", sep=""))
-  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.mouse.Rdata", sep=""))
-  ref_sp = "mouse"
+  ref_sp="mouse"
+  
+  load(paste(pathFigures, "RData/data.enhancer.coverage.",ref_sp,".Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.",ref_sp,".Rdata", sep=""))
+  
   enhancers = enhancer.datasets[[ref_sp]]
 }
 

@@ -30,6 +30,7 @@ compute.tau <- function(exp){
 
 ############################################################################
 
+
 for(sp in c("human", "mouse")){
   for(dataset in datasets[[sp]]){
     print(paste(sp, dataset))
@@ -46,11 +47,17 @@ for(sp in c("human", "mouse")){
     maxexp=apply(exp[,samples], 1, max)
    
     nbsamplesexp=apply(exp[,samples], 1, function(x) length(which(x>0)))
-    nbsampleshighexp=apply(exp[,samples], 1, function(x) length(which(x>=1)))
+
+     results=data.frame("id"=exp$id, "chr"=exp$chr, "start"=exp$start, "end"=exp$end, "Tau"=tau.tpm, "TauLog"=tau.logtpm, "MaxExp"=maxexp, "AverageExp"=overall.avg, "NbSamplesExp"=nbsamplesexp,stringsAsFactors=F)
+
+    for(minTPM in c(0.1, 0.5, 1)){
+      nbsampleshighexp=apply(exp[,samples], 1, function(x) length(which(x>=minTPM)))
+      
+      results[,paste("NbSamplesTPM",minTPM, sep="")]=nbsampleshighexp
+    }
     
-    results=data.frame("id"=exp$id, "chr"=exp$chr, "start"=exp$start, "end"=exp$end, "Tau"=tau.tpm, "TauLog"=tau.logtpm, "MaxExp"=maxexp, "AverageExp"=overall.avg, "NbSamplesExp"=nbsamplesexp, "NbSamplesHighExp"=nbsampleshighexp, stringsAsFactors=F)
-  
     write.table(results, file=paste(pathResults, sp, "/", dataset, "/enhancer_activity_statistics.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+    
   }
 }
 

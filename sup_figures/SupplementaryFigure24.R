@@ -28,6 +28,10 @@ if(load){
 
 ##############################################################################
 
+load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
+
+##############################################################################
+
 #pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=6)
 
 par(mai = c(0.65, 0.8, 0.5, 0.2)) # bottom, left, top, right
@@ -76,5 +80,4 @@ for (ref_sp in c("human", "mouse")){
 
 }
 
-
-#dev.off()
+dev.off()
