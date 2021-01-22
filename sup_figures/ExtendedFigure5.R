@@ -1,149 +1,101 @@
-###########################################################################################################
+######################################################################################################################
+library(Hmisc)
 
 source("../main_figures/parameters.R") ## pathFinalData are defined based on the user name
 
 sp="human"
-sp_name="Human"
 
-load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
-load(paste(pathFigures, "RData/data.", sp, ".common.cells.expdiv.Rdata", sep=""))
-load(paste(pathFigures, "RData/data.", sp, ".common.cells.regland.conservation.RData", sep=""))
-
-if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
+load(paste(pathFigures, "RData/", sp, ".cells.types.parallel.trends.Rdata", sep=""))
 
 cells <- c("Bcell", "ESC", "adipo")
-col.cells = c("navy", "forestgreen", "darkorange")
-names(col.cells) = cells
-enh = "ENCODE"
+dataset.colors=c("firebrick1", "forestgreen", "navy")
+names(dataset.colors) = cells
 
-#############################################################################################################
-######################## Gene expression level in Common cell types #########################################
-xpos=seq(1, 5, 1)
-smallx=c(-0.15, 0, 0.15)
-names(smallx)=cells
-xlim=c(0.5, 5.5)
+pdf(file=paste(pathFigures, "/ExtendedFigure5.pdf", sep=""), width=7, height=6)
 
-CellTypesPlot <- function(var, plot.nb){
-  if (var == "ExpressionConservation"){ylim=c(0.2, 0.6)}
-  else if (var == paste0(sp, "_MeanRPKM")){ylim=c(0, 22)}
-  else if (var == "ResidualExpressionConservation"){ylim=c(-0.11, 0.03)}
-  
-  
-    plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-    for (cell in cells){
-      regland = genes.conservation.cells[[enh]][[cell]][["obs"]][["all"]]
-      genes = intersect(rownames(regland), rownames(expdiv_cells))
-      regland = regland[genes,]
-      
-      for(class in levels(regland$class_nb_contact)){
-        this.genes=rownames(regland[which(regland$class_nb_contact == class),])
-        
-        xpos=seq(1, length(levels(regland$class_nb_contact)), 1)
-        names(xpos) = levels(regland$class_nb_contact)
-        x=xpos[class]+smallx[cell]
-        
-        b=boxplot(expdiv_cells[this.genes, paste(cell, var, sep="_")], plot=FALSE)
-        med=median(expdiv_cells[this.genes, paste(cell, var, sep="_")])
-        ci=as.numeric(b$conf)
-        
-        points(x, med, pch=20, col=col.cells[cell], cex=1.1)
-        segments(x, ci[1], x, ci[2],  col=col.cells[cell])
-        
-      }
-    }
-    
-    abline(v=xpos[1:4]+0.5, lty=3, col="gray40") # verticale lines between quantile
+m=matrix(rep(NA, 2*13), nrow=2)
+m[1,]=c(rep(1,4),  rep(2,3),  rep(3,3), rep(4,3))
+m[2,]=c(rep(5,4), rep(6,3),  rep(7,3), rep(8,3))
+layout(m)
 
-    axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1) # Yaxis labels in first column
-    mtext(names_MeasuresCellTypes[plot.nb], side=2, line=2.5, cex=0.9)
-    mtext(letters[plot.nb], side=3, line=1, at=0.1, font=2, cex=1.2)
-    
-    axis(side=1, cex.axis=1.2) # X axis labels in last row
-    mtext("Quantile of Complexity", side=1, line=2, cex=0.9)
-    
-    if (plot.nb == 1){legend("topleft", legend=c("Pre-Adipocytes", "ESC", "Bcell"), pch=20, col=rev(col.cells), cex=1.1, bty="o", 
-                             box.col="white", bg="white",  inset=c(0.01, 0.01))}
-  }
+######################################################################################################################
+####################################### Parallel trends among cell types #############################################
+#  Legend
+par(mai = c(0.7, 0.1, 0.5, 0.1)) # bottom, left, top, right
+
+#  Correlation of expression level
+dotchart(correl_expression[rev(cells),"Pearson"], col=dataset.colors[rev(cells)], labels=c("Pre-\nadipocyte", "ESC", "Bcell"), pch="|", pt.cex=0.7,
+         xlim=c(min(correl_expression)-0.02, max(correl_expression)+0.02))
+mtext("Spearman's Rho\n of genes expression level", side=1, line=3.5, cex=0.7)
+mtext("a", side=3, at=0.72, font=2, cex=1.1, line=1.5)
+
+#  Conserved Expression
+dotchart(conserv_expression[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels="", pt.cex=0.5,
+         xlim=c(min(conserv_expression[,"Conf_low"])-0.01, max(conserv_expression[,"Conf_high"])+0.01))
+segments(x0=conserv_expression[rev(cells),"Conf_low"], x1=conserv_expression[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)], lwd=1)
+segments(x0=conserv_expression[rev(cells),"Conf_low"], x1=conserv_expression[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+segments(x0=conserv_expression[rev(cells),"Conf_high"], x1=conserv_expression[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+
+mtext("Corrected Measure\n of expression conservation", side=1, line=3.5, cex=0.7)
+mtext("b", side=3, at=-0.11, font=2, cex=1.1, line=1.5)
+
+#  Correlattion of complexity zscore 
+dotchart(correl_complexity[rev(cells),"Pearson"], col=dataset.colors[rev(cells)], labels='', pch="|", pt.cex=0.7, 
+         xlim=c(min(correl_complexity), max(correl_complexity)+0.01))
+mtext("Spearman's Rho\n of genes contact's number", side=1, line=3.5, cex=0.7)
+mtext("c", side=3, at=0.22, font=2, cex=1.1, line=1.5)
+
+# #  dN / dS
+dotchart(gene_dnds[rev(cells),"Mean"], col=dataset.colors[rev(cells)], labels='', pch="|", pt.cex=0.5,
+         xlim=c(min(gene_dnds[,"Conf_low"])-0.02, max(gene_dnds[,"Conf_high"])+0.02))
+segments(x0=gene_dnds[rev(cells),"Conf_low"], x1=gene_dnds[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)])
+segments(x0=gene_dnds[rev(cells),"Conf_low"], x1=gene_dnds[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+segments(x0=gene_dnds[rev(cells),"Conf_high"], x1=gene_dnds[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+
+mtext("1- dN/dS \nof top expressed genes", side=1, line=3.5, cex=0.7)
+mtext("d", side=3, at=0.855, font=2, cex=1.1, line=1.5)
+
+#  Enhancer Alignment
+dotchart(enh_evol[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels=c("Pre-\nadipocyte", "ESC", "Bcell"), pt.cex=0.5,
+         xlim=c(min(enh_evol[,"Conf_low"])-0.02, max(enh_evol[,"Conf_high"])+0.02))
+segments(x0=enh_evol[rev(cells),"Conf_low"], x1=enh_evol[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)])
+segments(x0=enh_evol[rev(cells),"Conf_low"], x1=enh_evol[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+segments(x0=enh_evol[rev(cells),"Conf_high"], x1=enh_evol[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+
+mtext("Alignment score\n of contacted enhancers", side=1, line=3.5, cex=0.7)
+mtext("e", side=3, at=0.475, font=2, cex=1.1, line=1.5)
+
+# Conserved sequence
+dotchart(seq_conserv[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels='', pt.cex=0.5,
+         xlim=c(min(seq_conserv[,"Conf_low"])-0.02, max(seq_conserv[,"Conf_high"])+0.02))
+segments(x0=seq_conserv[rev(cells),"Conf_low"], x1=seq_conserv[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)])
+segments(x0=seq_conserv[rev(cells),"Conf_low"], x1=seq_conserv[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+segments(x0=seq_conserv[rev(cells),"Conf_high"], x1=seq_conserv[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+
+mtext("Ratio of conserved\n enhancers by gene", side=1, line=3.5, cex=0.7)
+mtext("f", side=3, at=0.48, font=2, cex=1.1, line=1.5)
+
+#  Conserved synteny
+dotchart(synteny_conserv[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels='', pt.cex=0.5,
+         xlim=c(min(synteny_conserv[,"Conf_low"])-0.04, max(synteny_conserv[,"Conf_high"])+0.04))
+segments(x0=synteny_conserv[rev(cells),"Conf_low"], x1=synteny_conserv[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)], lwd=1)
+segments(x0=synteny_conserv[rev(cells),"Conf_low"], x1=synteny_conserv[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+segments(x0=synteny_conserv[rev(cells),"Conf_high"], x1=synteny_conserv[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+
+mtext("Ratio of enhancers\nmaintened in synteny", side=1, line=3.5, cex=0.7)
+mtext("g", side=3, at=0.85, font=2, cex=1.1, line=1.5)
+
+#  Conserved contacts
+dotchart(contact_conserv[rev(cells),"Mean"], col=dataset.colors[rev(cells)], pch="|", labels='', pt.cex=0.5,
+         xlim=c(min(contact_conserv[,"Conf_low"])-0.04, max(contact_conserv[,"Conf_high"])+0.04))
+segments(x0=contact_conserv[rev(cells),"Conf_low"], x1=contact_conserv[rev(cells),"Conf_high"], y0=1:3, y1=1:3, col=dataset.colors[rev(cells)], lwd=1)
+segments(x0=contact_conserv[rev(cells),"Conf_low"], x1=contact_conserv[rev(cells),"Conf_low"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+segments(x0=contact_conserv[rev(cells),"Conf_high"], x1=contact_conserv[rev(cells),"Conf_high"], y0=(1:3)-0.02, y1=(1:3)+0.02, col=dataset.colors[rev(cells)], lwd=1)
+
+mtext("Ratio of enhancers\nmaintened in contact", side=1, line=3.5, cex=0.7)
+mtext("h", side=3, at=0.12, font=2, cex=1.1, line=1.5)
 
 
-################################################################################################################################
-################### Gene expression evolution to Regulatory Landscape Evolution ################################################
-n = 1
 
-plot_cell <- function(class_conserv, Measure, distances, xlab, xnames){
-  smallx=c(-0.15, 0, 0.15)
-  names(smallx)=cells
-  
-  if (Measure == "corrected"){DivergenceMeasure = "ResidualExpressionConservation"; ylab="Residual Expression Conservation";YLIM=c(-0.15, 0.11)
-  }else{DivergenceMeasure = "ExpressionConservation"; ylab="Expression Conservation"; YLIM=c(0.1,0.75)} 
-  
-  if (class_conserv == "class_cons_synt"){xmax=3}else{xmax=5}
-  xlim=c(0.5, xmax+0.5)
-  
-  plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
-  
-  for (cell in cells){
-    regland = genes.conservation.cells[[enh]][[cell]][["obs"]][["all"]]
-    genes = intersect(rownames(regland), rownames(expdiv_cells))
-    regland = regland[genes,]
-    
-    for (class in levels(regland[[class_conserv]])){
-      this.genes=rownames(regland[which(regland[[class_conserv]] == class),])
-      
-      b=boxplot(expdiv_cells[this.genes, paste(cell, "_", DivergenceMeasure, sep="")], plot=F)
-      med=median(expdiv_cells[this.genes, paste(cell, "_", DivergenceMeasure, sep="")])
-      ci=as.numeric(b$conf)
-      
-      xpos=seq(1,  length(levels(regland[[class_conserv]])), 1)
-      names(xpos) = levels(regland[[class_conserv]])
-      
-      x=xpos[class]+smallx[cell]
-      
-      points(x, med, pch=20, col=col.cells[cell], cex=1.1)
-      segments(x, ci[1], x, ci[2], col=col.cells[cell])
-    }
-  }
-  
-  abline(v=xpos[1:xmax-1]+0.5, lty=3, col="gray40")
-  axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(regland[[class_conserv]]))), cex.axis=0.8)
-  
-  mtext(xnames, at=xpos, side=1, line=1, cex=0.8)
-  mtext(xlab, side=1, line=2.5, cex=0.9)
-  
-  if (class_conserv == "class_align_score"){
-    axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
-    mtext(ylab, side=2, line=2.5, cex=0.9)
-    
-    mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
-  }
-
-}
-
-################################################################################################################################
-################################################### Output #####################################################################
-# Relation with complexity
-MeasuresCellTypes <- c(paste0(sp, "_MeanRPKM"), "ExpressionConservation", "ResidualExpressionConservation") 
-names_MeasuresCellTypes <- c("Expression level (RPKM)", "Expression Conservation", "Residual Expression Conservation")
-
-pdf(paste(pathFigures, "/ExtendedFigure5.pdf", sep=""), width=6.85, height=5.5)
-
-par(mfrow=c(2,3))
-par(mai = c(0.5, 0.5, 0.5, 0.1)) # bottom, left, top, right
-
-for (measure in 1:length(MeasuresCellTypes)){
-  CellTypesPlot(MeasuresCellTypes[measure], measure)
-}
-
-# Relation with Regulatory Landscape Evolution
-distances =  "all"  # c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
-
-for (measure in c("corrected")){
-  plot_cell("class_align_score", measure, distances, "Alignement score quantile", 1:5)
-  plot_cell("class_cons_synt",  measure, distances, "Synteny Conservation", c("<75%", "75-99%", ">99%"))
-  plot_cell("class_cons_cont",  measure, distances, "Contact conservation", c("<1%", "25%", "50%", "75", ">75%"))
-} 
-
+#########
 dev.off()
-
-
-

@@ -10,9 +10,11 @@ if(!"pathScripts"%in%objects){
 
 ###########################################################################################################################
 
-features = c("GC", "all_exon", "repeat")
+features = c("repeat", "GC", "all_exon")
 sequences <- c("fragment", "ENCODE")
-ylab = c("% length covered\n by repeated elements", "GC rate", "% length covered\n by exons")
+
+ylab = c("% length covered\n by repeated elements", "GC rate","% length covered\n by exons")
+names(ylab) = features
 
 ###########################################################################################################################
 ##########################  enhancer proportion according to distance ############################################
@@ -60,7 +62,7 @@ for (sp in c("human", "mouse")){
         legend("topright", legend=c("PCHi-C data", "simulated data"), 
                col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, xpd=NA)}
       
-      mtext(ylab[nb%%3+1], side=2, cex=0.85, line=2)
+      mtext(ylab[feat], side=2, cex=0.85, line=2)
       
       mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
       
