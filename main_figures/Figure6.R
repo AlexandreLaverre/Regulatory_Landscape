@@ -1,6 +1,4 @@
 ######################################################################################################################
-library(Hmisc)
-setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
 
 objects=ls()
 
@@ -19,7 +17,11 @@ if(load){
   load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
   load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
   
-  if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
+  if(sp == "human"){
+    sp_name="Human"
+  } else{
+    sp_name="Mouse"
+  }
   
   load=FALSE
   
@@ -27,6 +29,7 @@ if(load){
 
 #############################################################################################################
 ######################## Part 1 : Complexity and gene expression structure ##################################
+
 xpos=seq(1, 5, 1)
 smallx=c(-0.15, -0.075, 0.075, 0.15)
 names(smallx)=enhancer.datasets[[sp]]
