@@ -11,6 +11,7 @@ if(!"pathScripts"%in%objects){
 
 ##############################################################################
 if(load){
+  
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
   load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
   
@@ -19,16 +20,10 @@ if(load){
   names(col.ontologies) = ontologies
   
   class_leg <- c("0",  "0.5",  "1", "1.5", "2")
-  par(lwd = 0.7)
-  
+   
   enh="ENCODE"
   load=FALSE
 }
-
-
-##############################################################################
-
-load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 
 ##############################################################################
 
@@ -36,6 +31,7 @@ pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=
 
 par(mai = c(0.65, 0.8, 0.5, 0.2)) # bottom, left, top, right
 par(mfrow=c(1,2))
+ par(lwd = 0.7)
 
 ############################################################################## 
 
@@ -45,19 +41,28 @@ for (ref_sp in c("human", "mouse")){
   
   enhancers=enhancer.datasets[[ref_sp]]
   label.enhancers=enhancers
+  
   load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref_sp, ".stats.Rdata", sep=""))
   
   if (ref_sp == "human"){YLIM=c(-1,80); lab="a"}else{YLIM=c(-1, 80); lab="b"}
-
+  
   xlim=c(0.5, length(cons.dist[["all"]][[enh]]["obs",])+0.5)
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
   
   for (data in c("obs", "sim")){
-    if (data == "obs"){data.name = "Original"}else{data.name = "Simulated"}
+    
+    if (data == "obs"){
+      data.name = "Original"
+    }else{
+      data.name = "Simulated"
+    }
     
     for (onto in ontologies){
-      if (data == "obs"){points(cons.dist[[onto]][[enh]][data,], pch=20, col=col.ontologies[onto], cex=0.7)
-        }else{points(cons.dist[[onto]][[enh]][data,], type="l", col=col.ontologies[onto], cex=0.7)}
+      if (data == "obs"){
+        points(cons.dist[[onto]][[enh]][data,], pch=20, col=col.ontologies[onto], cex=0.7)
+      } else{
+        points(cons.dist[[onto]][[enh]][data,], type="l", col=col.ontologies[onto], cex=0.7)
+      }
       
       # Confidence intervals
       segments(x0=1:length(cons.dist.conf.low[[onto]][[enh]]),y0=cons.dist.conf.low[[onto]][[enh]][data,],
@@ -88,3 +93,5 @@ for (ref_sp in c("human", "mouse")){
 }
 
 dev.off()
+
+############################################################################## 
