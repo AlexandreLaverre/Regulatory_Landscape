@@ -13,7 +13,7 @@ if(!"pathScripts"%in%objects){
 ##############################################################################
 
 if(load){
-  sp="human"
+  sp="mouse"
   
   load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
   load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
@@ -35,8 +35,8 @@ cex.mtext = 0.8
 
 CMPlot <- function(var, plot.nb){
   if (var == "CorrelationSpearman"){ylim=c(0.55, 0.65)
-  }else if (var == paste0("Tau", sp_name)){ylim=c(0.60, 0.8)
-  }else if (var == "MeanRPKM"){ylim=c(7, 11)
+  }else if (var == paste0("Tau", sp_name)){ylim=c(0.58, 0.72)
+  }else if (var == "MeanRPKM"){ylim=c(7, 12)
   }else if (var == "CorrectedSpearman"){ylim=c(0.02, 0.1)}
   
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
@@ -68,10 +68,9 @@ CMPlot <- function(var, plot.nb){
   mtext(names_MeasuresCM[plot.nb], side=2, line=2.5, cex=cex.mtext)
   mtext(letters[plot.nb], side=3, line=1, at=0.1, font=2, cex=1.2)
   
-
   axis(side=1, cex.axis=1.2); mtext("Number of contacts (quantile)", side=1, line=2.5, cex=cex.mtext)
-  if (plot.nb == "1"){legend("topleft", col=col.enhancers, legend = label.enhancers, box.col="white", bg="white",
-                             pch=20, cex=0.9, inset=c(0.01, -0.18), xpd=T)}
+  if (plot.nb == "1"){legend("topleft", col=col.enhancers[1:2], legend = label.enhancers[1:2],
+                             box.col="white", bg="white", pch=20, cex=1, inset=c(0.01, -0.05))}
 }
 
 ################################################################################################################################
@@ -81,14 +80,14 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
   smallx=c(-0.15, -0.075, 0.075, 0.15)
   names(smallx)=enhancer.datasets[[sp]]
   
-  if (Measure == "corrected"){DivergenceMeasure = "CorrectedSpearman"; ylab="Corrected Spearman's rho"; ylim=c(0, 0.13)
+  if (Measure == "corrected"){DivergenceMeasure = "CorrectedSpearman"; ylab="Corrected Spearman's rho"; ylim=c(0, 0.12)
   }else{DivergenceMeasure = "CorrelationSpearman"; ylab="Spearman's rho"; ylim=c(0.5, 0.7)}
   
   if (class_conserv == "class_cons_synt"){xmax=3}else{xmax=5}
   xlim=c(0.5, xmax+0.5)
   
   for (dist in distances){
-
+    
     plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
     
     for (enh in enhancer.datasets[[sp]]){
@@ -99,7 +98,7 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
       
       for (class in levels(regland[[class_conserv]])){
         this.genes=rownames(regland[which(regland[[class_conserv]] == class),])
-
+        
         b=boxplot(expdiv[this.genes, DivergenceMeasure], plot=F)
         med=median(expdiv[this.genes, DivergenceMeasure])
         ci=as.numeric(b$conf)
@@ -115,7 +114,7 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
     }
     
     abline(v=xpos[1:xmax-1]+0.5, lty=3, col="gray40")
-    axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(regland[[class_conserv]]))), cex.axis=cex.mtext)
+    axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(regland[[class_conserv]]))), cex.axis=0.8)
     mtext(xnames, at=xpos, side=1, line=1, cex=cex.mtext)
     mtext(xlab, side=1, line=2.5, cex=cex.mtext)
     
@@ -131,21 +130,21 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
 ################################################### Plot Figure 6 ##############################################################
 Measure = "corrected"
 
-pdf(file=paste(pathFigures, "Figure6.pdf", sep=""), width = 6.85,  heigh=5.5)
+pdf(file=paste(pathFigures, "SupplementaryFigure28.pdf", sep=""), width = 6.85, heigh=5)
 
 par(mfrow=c(2,3))
 par(mai = c(0.5, 0.5, 0.5, 0.1))
 
 ######################## Part 1 : Complexity ######################## 
-MeasuresCM <- c("MeanRPKM", paste0("Tau", sp_name),  "CorrectedSpearman")
-names_MeasuresCM <- c("Mean Expression level (RPKM)", "Specificity", "Corrected Spearman's rho")
+MeasuresCM <- c("MeanRPKM", paste0("Tau", sp_name), "CorrectedSpearman")
+names_MeasuresCM <- c("Mean Expression level (RPKM)", "Specificity","Corrected Spearman's rho")
 
 for (measure in 1:length(MeasuresCM)){
   CMPlot(MeasuresCM[measure], measure)
 }
 
 ######################## Part 2 : Gene expression profiles evolution ################
-plot_profiles("class_align_score", "all",  "Mean Alignement score (quantile)", 1:5)
+plot_profiles("class_align_score", "all",  "Alignement score (quantile)", 1:5)
 mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
 
 plot_profiles("class_cons_synt", "all",  "Synteny Conservation", c("<75%", "75-99%", ">99%"))

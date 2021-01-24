@@ -166,44 +166,9 @@ text("(observed-simulated)", x=mean(c(startx,endx)), y=starty-4.6*sy, xpd=NA, ce
 
 mtext("a", side=3, font=2, line=0.75, at=-0.85, cex=1)
 
-##############################################################################
-
-## conservation as a number of cell types
-
-max.nb.cell = 8
-
-ylim=c(0, 55)
-xlim=c(0.5, max.nb.cell+0.5)
-xpos=seq(1, max.nb.cell, 1)
-names(xpos) = 1:max.nb.cell
-
-par(mar=c(3.5, 4.5, 2, 2.1))
-plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-
-for(nb_cell in 1:max.nb.cell){
-  x=xpos[nb_cell]
-
-  points(x, cons.nb.cell[[enh]]["obs",nb_cell], pch=20, col=dataset.colors["Original"])
-  segments(x, cons.nb.cell.conf.low[[enh]]["obs", nb_cell], x, cons.nb.cell.conf.high[[enh]]["obs", nb_cell], col=dataset.colors["Original"])
-
-  points(x, cons.nb.cell[[enh]]["sim",nb_cell], pch=20, col=dataset.colors["Simulated"])
-  segments(x, cons.nb.cell.conf.low[[enh]]["sim", nb_cell], x, cons.nb.cell.conf.high[[enh]]["sim", nb_cell], col=dataset.colors["Simulated"])
-}
-
-abline(v=xpos[1:max.nb.cell-1]+0.5, lty=3, col="gray40")
-
-axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", max.nb.cell), mgp=c(3, 0.5, 0))
-mtext(colnames(cons.nb.cell[[enh]]), at=xpos, side=1, line=0.5, cex=mtext.CEX)
-mtext("number of cell types", side=1, line=2, cex=mtext.CEX)
-
-axis(side=2, mgp=c(3, 0.75, 0), las=2)
-mtext("% conserved contacts", side=2, line=2.5, cex=mtext.CEX)
-
-legend("topleft", col=dataset.colors, legend = c("PCHi-C data", "simulated data"), box.col="white", bg="white", pch=20, inset=c(0.01, -0.05))
-
-mtext("b", side=3, line=0.5, at=-0.7, font=2, cex=1)
 
 ##############################################################################
+## conservation as distance between gene and promoters
 
 YLIM=c(-1,30)
 
@@ -230,7 +195,44 @@ mtext("distance from promoter region (Mb)", side=1, line=2, cex=mtext.CEX)
 axis(side=2, mgp=c(3, 0.75, 0), las=2)
 mtext("% conserved contacts", side=2, line=2.5,  cex=mtext.CEX)
 
-mtext("c", side=3, line=1.75, at=-7.5, font=2, cex=1.05)
+mtext("b", side=3, line=1.75, at=-7.5, font=2, cex=1.05)
+
+##############################################################################
+
+## conservation as a number of cell types
+
+max.nb.cell = 8
+
+ylim=c(0, 55)
+xlim=c(0.5, max.nb.cell+0.5)
+xpos=seq(1, max.nb.cell, 1)
+names(xpos) = 1:max.nb.cell
+
+par(mar=c(3.5, 4.5, 2, 2.1))
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
+
+for(nb_cell in 1:max.nb.cell){
+  x=xpos[nb_cell]
+  
+  points(x, cons.nb.cell[[enh]]["obs",nb_cell], pch=20, col=dataset.colors["Original"])
+  segments(x, cons.nb.cell.conf.low[[enh]]["obs", nb_cell], x, cons.nb.cell.conf.high[[enh]]["obs", nb_cell], col=dataset.colors["Original"])
+  
+  points(x, cons.nb.cell[[enh]]["sim",nb_cell], pch=20, col=dataset.colors["Simulated"])
+  segments(x, cons.nb.cell.conf.low[[enh]]["sim", nb_cell], x, cons.nb.cell.conf.high[[enh]]["sim", nb_cell], col=dataset.colors["Simulated"])
+}
+
+abline(v=xpos[1:max.nb.cell-1]+0.5, lty=3, col="gray40")
+
+axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", max.nb.cell), mgp=c(3, 0.5, 0))
+mtext(colnames(cons.nb.cell[[enh]]), at=xpos, side=1, line=0.5, cex=mtext.CEX)
+mtext("number of cell types", side=1, line=2, cex=mtext.CEX)
+
+axis(side=2, mgp=c(3, 0.75, 0), las=2)
+mtext("% conserved contacts", side=2, line=2.5, cex=mtext.CEX)
+
+legend("topleft", col=dataset.colors, legend = c("PCHi-C data", "simulated data"), box.col="white", bg="white", pch=20, inset=c(0.01, -0.05))
+
+mtext("c", side=3, line=0.5, at=-0.7, font=2, cex=1)
 
 ##############################################################################
 

@@ -32,7 +32,7 @@ load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 
 ##############################################################################
 
-#pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=6)
+pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=3.5)
 
 par(mai = c(0.65, 0.8, 0.5, 0.2)) # bottom, left, top, right
 par(mfrow=c(1,2))
@@ -56,8 +56,8 @@ for (ref_sp in c("human", "mouse")){
     if (data == "obs"){data.name = "Original"}else{data.name = "Simulated"}
     
     for (onto in ontologies){
-      if (data == "obs"){points(cons.dist[[onto]][[enh]][data,], type="l", col=col.ontologies[onto], cex=0.7)
-        }else{points(cons.dist[[onto]][[enh]][data,], pch=20, col=col.ontologies[onto], cex=0.7)}
+      if (data == "obs"){points(cons.dist[[onto]][[enh]][data,], pch=20, col=col.ontologies[onto], cex=0.7)
+        }else{points(cons.dist[[onto]][[enh]][data,], type="l", col=col.ontologies[onto], cex=0.7)}
       
       # Confidence intervals
       segments(x0=1:length(cons.dist.conf.low[[onto]][[enh]]),y0=cons.dist.conf.low[[onto]][[enh]][data,],
@@ -75,7 +75,14 @@ for (ref_sp in c("human", "mouse")){
   
   mtext(paste(ref_sp, "vs.", tg), side=3, line=0.5)
   
-  legend("topleft", col=col.ontologies, legend = c("developmental", "immune", "other"), bty='n', lty=1)
+  if (ref_sp == "human"){
+    legend("topleft", col=col.ontologies, legend = c("developmental", "immune", "other"), bty='n', pch=20, cex=0.7)
+    
+    legend("topright", legend=c("PCHi-C data", "simulated data"), lty=c(NA,1), pch=c(20,NA),
+           bty='n', inset=c(-0.1, 0), xpd=NA, cex=0.6)
+  }
+  
+ 
   mtext(lab, side=3, line=1, at=0.1, font=2)
 
 }
