@@ -5,7 +5,7 @@ objects=ls()
 if(!"pathScripts"%in%objects){
   load=T
   prepare=T
-  source("parameters.R")
+  source("../main_figures/parameters.R")
 }
 
 ##############################################################################
