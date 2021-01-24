@@ -7,7 +7,7 @@ data.scripts=c("data.sample.info.R", "data.fragment.statistics.R", "data.enhance
                "data.enhancer.coverage.R", "data.sequence.conservation.R", "data.synteny.conservation.R", "data.gene.annotations.R",
                "data.gene.expression.R", "data.promoter.enhancer.correlation.R", "data.synteny.conservation.R", "data.contact.conservation.enhancers.R",
                "data.contact.conservation.stats.R", "data.AFC.R", "data.common.cell.regland.conservation.R", "data.common.cell.expression.divergence.R",
-               "data.regland.conservation.R", "data.CM2019.SomaticOrgans.expression.divergence.R", "data.cell.types.parrallel.trends.R")
+               "data.regland.conservation.R", "data.CM2019.SomaticOrgans.expression.divergence.R")
 
 ############################################################################
 
