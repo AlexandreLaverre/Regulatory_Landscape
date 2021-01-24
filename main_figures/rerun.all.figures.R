@@ -1,7 +1,7 @@
 
 ## all scripts that generate figures
 
-fig.scripts=c("Figure1.R", "Figure2.R", "Figure3.R", "Figure4.R", "Figure5.R") ## "Figure6.R")
+fig.scripts=c("Figure1.R", "Figure2.R", "Figure3.R", "Figure4.R", "Figure5.R", "Figure6.R")
 
 ############################################################################
 
