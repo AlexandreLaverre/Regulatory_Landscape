@@ -1,7 +1,7 @@
 ############################################################################
 
 ## all scripts that generate .RData objects for the figures
-
+## we need a certain order
 data.scripts=c("data.sample.info.R", "data.fragment.statistics.R", "data.enhancer.statistics.R", "data.bait.annotation.R",
                "data.gene.enhancer.contacts.R",  "data.fragment.contacts.R",  "data.Shh.figure.R",  "data.sample.clustering.R",
                "data.enhancer.coverage.R", "data.sequence.conservation.R", "data.synteny.conservation.R", "data.gene.annotations.R",
