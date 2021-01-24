@@ -39,10 +39,10 @@ for (data in c("real", "simulated")){
   
   gene.stat <- data.frame("nb_total"=nb_total, "median_dist"=median_dist)
   
-  write.table(rownames(gene.stat[order(-gene.stat$nb_total),]), file =paste(pathFigures,"ranked.list.genes/ordered.genes.", data.name, ".total.contacts.txt", sep=""),
+  write.table(rownames(gene.stat[order(-gene.stat$nb_total),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.", data.name, ".total.contacts.txt", sep=""),
               row.names=FALSE, col.names=FALSE, quote=F)
   
-  write.table(rownames(gene.stat[order(-gene.stat$median_dist),]), file =paste(pathFigures,"ranked.list.genes/ordered.genes.", data.name, ".median.enhancers.distance.txt", sep=""),
+  write.table(rownames(gene.stat[order(-gene.stat$median_dist),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.", data.name, ".median.enhancers.distance.txt", sep=""),
               row.names=FALSE, col.names=FALSE, quote=F)
 }
 
@@ -58,7 +58,7 @@ for (data in c("obs", "sim")){
   if (data == "obs"){data.name="original"}else{data.name="simulated"}
   
   for (var in names(ranked.var)){
-    write.table(rownames(regland[order(-regland[[var]]),]), file =paste(pathFigures,"ranked.list.genes/ordered.genes.", data.name, ranked.var[var], ".txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
+    write.table(rownames(regland[order(-regland[[var]]),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.", data.name, ranked.var[var], ".txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
   }
 
 }
@@ -67,11 +67,11 @@ for (data in c("obs", "sim")){
 #######################################################################################
 # Gene expression pattern Conservation 
 
-write.table(rownames(expdiv[order(-expdiv$CorrelationSpearman),]), file =paste(pathFigures,"ranked.list.genes/ordered.genes.spearman.correlation.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
-write.table(rownames(expdiv[order(-expdiv$CorrectedSpearman),]), file =paste(pathFigures,"ranked.list.genes/ordered.genes.corrected.spearman.correlation.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
+write.table(rownames(expdiv[order(-expdiv$CorrelationSpearman),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.spearman.correlation.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
+write.table(rownames(expdiv[order(-expdiv$CorrectedSpearman),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.corrected.spearman.correlation.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
 
-write.table(rownames(expdiv[order(expdiv$EuclideanDistance),]), file =paste(pathFigures,"ranked.list.genes/ordered.genes.euclidean.distance.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
-write.table(rownames(expdiv[order(-expdiv$CorrectedEuclideanSimilarity),]), file =paste(pathFigures,"ranked.list.genes/ordered.genes.corrected.euclidean.distance.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
+write.table(rownames(expdiv[order(expdiv$EuclideanDistance),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.euclidean.distance.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
+write.table(rownames(expdiv[order(-expdiv$CorrectedEuclideanSimilarity),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.corrected.euclidean.distance.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
 
 
 ###########
