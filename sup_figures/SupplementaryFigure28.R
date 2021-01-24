@@ -1,6 +1,4 @@
 ######################################################################################################################
-library(Hmisc)
-setwd("/home/laverre/Data/Regulatory_landscape/scripts/main_figures")
 
 objects=ls()
 
@@ -80,10 +78,21 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
   smallx=c(-0.15, -0.075, 0.075, 0.15)
   names(smallx)=enhancer.datasets[[sp]]
   
-  if (Measure == "corrected"){DivergenceMeasure = "CorrectedSpearman"; ylab="Corrected Spearman's rho"; ylim=c(0, 0.12)
-  }else{DivergenceMeasure = "CorrelationSpearman"; ylab="Spearman's rho"; ylim=c(0.5, 0.7)}
+  if (Measure == "corrected"){
+    DivergenceMeasure = "CorrectedSpearman"; ylab="Corrected Spearman's rho"
+    ylim=c(0, 0.12)
+  }else{
+    DivergenceMeasure = "CorrelationSpearman"
+    ylab="Spearman's rho"
+    ylim=c(0.5, 0.7)
+  }
   
-  if (class_conserv == "class_cons_synt"){xmax=3}else{xmax=5}
+  if (class_conserv == "class_cons_synt"){
+    xmax=3
+  } else{
+    xmax=5
+  }
+  
   xlim=c(0.5, xmax+0.5)
   
   for (dist in distances){
@@ -94,8 +103,7 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
       regland = genes.conservation[[enh]][["obs"]][[dist]]
       genes = intersect(rownames(regland), rownames(expdiv))
       regland = regland[genes,]
-      
-      
+            
       for (class in levels(regland[[class_conserv]])){
         this.genes=rownames(regland[which(regland[[class_conserv]] == class),])
         
@@ -153,3 +161,5 @@ plot_profiles("class_cons_cont", "all",  "Contact conservation", c("<1%", "25%",
 
 dev.off()
 
+
+################################################################################################################################
