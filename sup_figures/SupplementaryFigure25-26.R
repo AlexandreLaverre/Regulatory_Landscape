@@ -1,6 +1,7 @@
 ##########################################################################
-library(data.table)
+
 library(Hmisc)
+
 options(stringsAsFactors = FALSE)
 
 #########################################################################
@@ -35,7 +36,11 @@ for(sp in c("human", "mouse")){
   load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", sp, ".Rdata", sep=""))
   load(paste(pathFigures, "RData/data.synteny.conservation.", sp,".RData", sep=""))
   
-  if (sp == "human"){pdf.name = "SupplementaryFigure25.pdf"}else{pdf.name = "SupplementaryFigure26.pdf"}
+  if (sp == "human"){
+    pdf.name = "SupplementaryFigure25.pdf"
+  }else{
+    pdf.name = "SupplementaryFigure26.pdf"
+  }
   
   print(pdf.name)
   
@@ -120,7 +125,8 @@ for(sp in c("human", "mouse")){
     
   }
   
-  ########################################################################################
+########################################################################################
+  
   pdf(paste(pathFigures, pdf.name, sep=""), width=6.85, height=5.5)
   
   par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
@@ -131,8 +137,13 @@ for(sp in c("human", "mouse")){
   m[2,]=c(rep(3,5), rep(4,5))
   layout(m)
   
-  ############################## CHICAGO according to dist ###############################
-  if (sp == "human"){ylim=c(6, 10)}else{ylim=c(6, 9)}
+############################## CHICAGO according to dist ###############################
+  
+  if (sp == "human"){
+    ylim=c(6, 10)
+  }else{
+    ylim=c(6, 9)
+  }
   
   plot(1, type="n", xlim=c(0.5, 25.5), ylim=ylim, xlab="", ylab="", axes=F)
   xpos=1:25
