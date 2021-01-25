@@ -35,7 +35,7 @@ if(load){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "SupplementaryFigure12.pdf", sep=""), width=5.5, height=4)
+pdf(paste(pathFigures, "SupplementaryFigure12.pdf", sep=""), width=6.85, height=4)
 
 par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right
 
@@ -64,7 +64,7 @@ tiplabels(species_names[tree$tip.label], bg = NA, adj = -0.1, frame="none", cex=
 legend("bottomleft", fill=dataset.colors, border=dataset.colors, legend = c("PCHi-C data", "simulated data"), bty='n', cex=1.1, xpd=T, inset=c(-0.01, -0.15), horiz=FALSE)
 
 # label
-mtext("a", side=3, line=0.5, at=-0.05, font=2, cex=1.2)
+mtext("a", side=3, line=0.5, at=-0.05, font=2, cex=1.1)
 
 ######################## b - Restriction fragments sequence conservation ########################
 species <-c("human", "macaque", "rat", "rabbit", "cow", "dog", "elephant", "opossum", "chicken")
@@ -89,10 +89,10 @@ points(x=100*apply(frag_align_simul[,species], 2, mean), y = ypos.sim, col = "wh
 points(x=100*apply(frag_align_obs[,species], 2, mean), y = ypos.obs, col = "white", pch=20, cex=0.8)
 
 ## axis and legend
-axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1.2)
-mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.8, line=0.5)
-mtext("restriction fragments", side=3, line=-1, cex=0.8)
-mtext("b", side=3, line=0.5, at=-8, font=2, cex=1.2)
+axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1)
+mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.7, line=1)
+mtext("restriction fragments", side=3, line=-1, cex=0.7)
+mtext("b", side=3, line=0.5, at=-8, font=2, cex=1.1)
 
 ######################## c - enhancer sequence conservation ########################
 
@@ -120,7 +120,7 @@ for(enh in c("ENCODE", "FANTOM5")){
   
   mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.75, line=1)
   mtext(enh.syn[enh], side=3, line=-1, cex=0.7)
-  mtext(labels[enh], side=3, line=0.5, at=-8, font=2, cex=1.2)
+  mtext(labels[enh], side=3, line=0.5, at=-8, font=2, cex=1.1)
 
 }
 
