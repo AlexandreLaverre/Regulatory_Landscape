@@ -58,13 +58,13 @@ names(species_names) <- c("Homo_sapiens", "Macaca_mulatta", "Mus_musculus", "Rat
   
 par(mar=c(4.1,1.1, 2.1, 1))
 plot(tree, cex=1.1, y.lim=c(0.5,10.5), x.lim=c(0,1.07), label.offset = 0.01, show.tip.label = F, main="")
-tiplabels(species_names[tree$tip.label], bg = NA, adj = -0.1, frame="none", cex=1.1)
+tiplabels(species_names[tree$tip.label], bg = NA, adj = -0.1, frame="none", cex=1.05, xpd=NA)
 
  # legend for the plot
 legend("bottomleft", fill=dataset.colors, border=dataset.colors, legend = c("PCHi-C data", "simulated data"), bty='n', cex=1.1, xpd=T, inset=c(-0.01, -0.15), horiz=FALSE)
 
 # label
-mtext("a", side=3, line=0.5, at=-0.05, font=2, cex=1.1)
+mtext("a", side=3, line=0.5, at=-0.05, font=2, cex=1.05)
 
 ######################## b - Restriction fragments sequence conservation ########################
 species <-c("human", "macaque", "rat", "rabbit", "cow", "dog", "elephant", "opossum", "chicken")
@@ -90,9 +90,9 @@ points(x=100*apply(frag_align_obs[,species], 2, mean), y = ypos.obs, col = "whit
 
 ## axis and legend
 axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1)
-mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.7, line=1)
-mtext("restriction fragments", side=3, line=-1, cex=0.7)
-mtext("b", side=3, line=0.5, at=-8, font=2, cex=1.1)
+mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.75, line=1)
+mtext("restriction fragments", side=3, line=-0.5, cex=0.7)
+mtext("b", side=3, line=0.5, at=-8, font=2, cex=1.05)
 
 ######################## c - enhancer sequence conservation ########################
 
@@ -119,8 +119,10 @@ for(enh in c("ENCODE", "FANTOM5")){
   axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1)
   
   mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.75, line=1)
-  mtext(enh.syn[enh], side=3, line=-1, cex=0.7)
-  mtext(labels[enh], side=3, line=0.5, at=-8, font=2, cex=1.1)
+  mtext(paste(enh.syn[enh], "enhancers"), side=3, line=-0.5, cex=0.7)
+
+  ## plot label
+  mtext(labels[enh], side=3, line=0.5, at=-8, font=2, cex=1.05)
 
 }
 
