@@ -137,8 +137,6 @@ for(sp in c("human", "mouse")){
     
   }
 
-  mtext(sp, side=3, cex=0.75)
-
   axis(side=1, at=1:nbclass, labels=classes, cex.axis=0.9, mgp=c(3, 0.5, 0))
   mtext("number of cell types w. chromatin contacts", side=1, line=2, cex=0.7, at=(nbclass+1)/2)
   
@@ -148,7 +146,10 @@ for(sp in c("human", "mouse")){
   mtext(labels[sp], side=3, at=xlim[1]-diff(xlim)/6.5, line=0, font=2)
   
   if (sp == "mouse"){
+    mtext(sp, side=3, cex=0.75, at=3.5)
     legend("topright", legend=c("PCHi-C data", "simulated data"), fill=dataset.colors[c("Original", "Simulated")], bty='n', inset=c(-0.02, -0.01), xpd=NA)
+  } else{
+    mtext(sp, side=3, cex=0.75, at=4.5)
   }
 }
 
