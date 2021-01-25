@@ -77,9 +77,9 @@ mtext("a", side=3, line=1.45, at=at, font=2, cex=1.2)
 ###########################################################################################################################
 ##########################  Fig2-B - Enhancer proportion according to distance ############################################
 
-## only one enhancers datasets
+## only one enhancer dataset
 
-enh="FANTOM5"
+enh="FANTOM5" ## for this dataset we have promoter-enhancer correlations
 
 ymax=max(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
 ymin=min(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
@@ -117,10 +117,11 @@ mtext("b", side=3, line=1.45, at=-5.75, font=2, cex=1.2)
 ymax=max(c(enh_prop_nb_cell[["obs"]][[paste0(enh,"_conflow")]], enh_prop_nb_cell[["obs"]][[paste0(enh,"_confup")]],  enh_prop_nb_cell[["simul"]][[paste0(enh,"_conflow")]], enh_prop_nb_cell[["simul"]][[paste0(enh,"_confup")]]))
 
 ylim=c(0, ymax)
+xlim=c(0.5, length(enh_prop_nb_cell[["obs"]][[paste0(enh,"_conflow")]])+0.5)
 
 par(mar=c(3.1, 4.5, 3, 1))
 
-plot(enh_prop_nb_cell[["obs"]][[enh]], type="n", ylim=ylim,  axes=F, xlab="", ylab="")
+plot(enh_prop_nb_cell[["obs"]][[enh]], type="n", ylim=ylim,  xlim=xlim, axes=F, xlab="", ylab="", xaxs="i")
 
 lines(enh_prop_nb_cell[["obs"]][[enh]], col=dataset.colors["Original"])
 lines(enh_prop_nb_cell[["simul"]][[enh]], col=dataset.colors["Simulated"])
@@ -130,14 +131,14 @@ xpos=1:length(enh_prop_nb_cell[["obs"]][[enh]])
 segments(xpos, enh_prop_nb_cell[["obs"]][[paste0(enh,"_conflow")]], xpos, enh_prop_nb_cell[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
 segments(xpos, enh_prop_nb_cell[["simul"]][[paste0(enh,"_conflow")]], xpos, enh_prop_nb_cell[["simul"]][[paste0(enh,"_confup")]], col=dataset.colors["Simulated"])
 
-axis(side=1, mgp=c(3, 0.65, 0), cex.axis=1.1, at=seq(from=1, to=max(xpos), by=2))
+axis(side=1, mgp=c(3, 0.65, 0), cex.axis=1.1, at=seq(from=1, to=max(xpos), by=1))
 axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 
 
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=sum(ylim)*0.9/2)
 mtext("number of cell types", side=1, line=2, cex=0.85)
 
-at=-0.5
+at=-0.75
 mtext("c", side=3, line=1.25, at=at, font=2, cex=1.2)
 
 ############################################################################################################################
