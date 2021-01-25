@@ -85,7 +85,7 @@ for(other_sp in target_species){
   
   mtext(paste(ref_sp, " vs. ", other_sp,sep=""), side=3, cex=0.8)
   
-  mtext(labels[other_sp], side=3, line=0.9, at=-7.5, font=2, cex=1.2)
+  mtext(labels[other_sp], side=3, line=0.8, at=-7.5, font=2, cex=1.2)
 }
 
 ###########################################################################
