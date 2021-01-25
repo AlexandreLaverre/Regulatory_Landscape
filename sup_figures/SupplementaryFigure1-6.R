@@ -139,7 +139,7 @@ for(i in 1:nbfigures){
     b=barplot(m, beside=T, col=dataset.colors, border=NA, axes=F, xlab="", ylab="")
     xpos=apply(b,2,mean)
     axis(side=1, at=xpos, labels=c(as.character(1:19), ""), cex=0.95, mgp=c(3, 0.5, 0))
-    mtext("20+", at=xpos[length(xpos)]+diff(xpos)[1]/2, side=1, line=0.5, cex=0.6)
+    mtext("20+", at=xpos[length(xpos)]+diff(xpos)[1]/2, side=1, line=0.5, cex=0.65)
     
     axis(side=2, cex=0.95, mgp=c(3, 0.5, 0))
     mtext("nb. baits", side=2, line=1.5, cex=0.7)
