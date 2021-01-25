@@ -43,14 +43,18 @@ for (cell in cells){
   samples = grep(cell, colnames(exp_human), value=T)
   expdiv_cells[[paste0(cell, "_human_MeanRPKM")]] <- apply(exp_human[expdiv_cells[,"IDHuman"], samples], 1, function(x) mean(x))
 
-  if (cell == "Bcell"){cell_name="B"}else{cell_name = cell} # Because Bcell in mouse are intitulate B1, B2...
+  if (cell == "Bcell"){
+    cell_name="B"
+  } else{
+    cell_name = cell # Because Bcell in mouse are intitulate B1, B2...
+  }
+  
   samples = grep(cell_name, colnames(exp_mouse), value=T)
 
   expdiv_cells[[paste0(cell, "_mouse_MeanRPKM")]] <- apply(exp_mouse[expdiv_cells[,"IDMouse"], samples], 1, function(x) mean(x))
 
   global.mean <- (expdiv_cells[[paste0(cell, "_human_MeanRPKM")]] + expdiv_cells[[paste0(cell, "_mouse_MeanRPKM")]])/2
   expdiv_cells[[paste0(cell, "_globalMeanRPKM")]] <- global.mean
-
 
   lm1 = lm(1-expdiv_cells[,cell]~log2(expdiv_cells[[paste0(cell, "_globalMeanRPKM")]]+1))
 
@@ -59,3 +63,5 @@ for (cell in cells){
 }
 
 save(expdiv_cells, file = paste(pathFigures, "/RData/data.common.cells.expdiv.Rdata", sep=""))
+
+############################################################################################
