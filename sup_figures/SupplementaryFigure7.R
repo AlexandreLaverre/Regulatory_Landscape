@@ -159,10 +159,10 @@ mtext("b", side=3, line=1, at=-2.5e5, font=2, cex=1.2)
 #################### C - Cumulative number of interactions #######
 
 for (sp in c("human", "mouse")){
-  plot(apply(cumul_int[[sp]][["simulated"]], 2, mean)/max(cumul_int[[sp]][["simulated"]]), pch=19, col=dataset.colors["Simulated"],
+  plot(apply(cumul_int[[sp]][["simulated"]], 1, mean)/max(cumul_int[[sp]][["simulated"]]), pch=19, col=dataset.colors["Simulated"],
        xlab="", ylab="", main=sp, cex=0.5, mgp=c(2,1,0), axes=F)
   
-  points(apply(cumul_int[[sp]][["observed"]], 2, mean)/max(cumul_int[[sp]][["observed"]]),  pch=19, col=dataset.colors["Original"], cex=0.5)
+  points(apply(cumul_int[[sp]][["observed"]], 1, mean)/max(cumul_int[[sp]][["observed"]]),  pch=19, col=dataset.colors["Original"], cex=0.5)
   
   axis(side=1, mgp=c(3, 0.65, 0), cex.axis=1.1)
   axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1, las=2)
