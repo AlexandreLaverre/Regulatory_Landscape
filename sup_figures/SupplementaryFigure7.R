@@ -12,7 +12,7 @@ if(!"pathScripts"%in%objects){
 ## load all necessary data, scripts and libraries for the figure
 
 if(load){
-  sp="mouse"
+  ref_sp="mouse"
   
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
@@ -28,10 +28,10 @@ if(load){
 
 if(prepare){
   ## observed and simulated contacts - already bait-other, in the right distance range
-  obs=observed.contacts[[sp]]
-  sim=simulated.contacts[[sp]]
+  obs=observed.contacts[[ref_sp]]
+  sim=simulated.contacts[[ref_sp]]
 
-  info=sampleinfo[[sp]]
+  info=sampleinfo[[ref_sp]]
   rownames(info)=info$Sample.ID
   
   samples=info$Sample.ID 
@@ -97,34 +97,39 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "SupplementaryFigure7.pdf", sep=""), width=6.85, height=5)
+pdf(paste(pathFigures, "SupplementaryFigure7.pdf", sep=""), width=6.85, height=5.5)
 
 par(mfrow=c(2,2))
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
 par(mar = c(3.5, 4.5, 3.1, 1)) # external margins
 
-#################### A - Histogram with number of cell types in which an interaction is observed #####################
+#################### a - Histogram with number of cell types in which an interaction is observed #####################
 
 b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='',
           names=rep("", dim(pc_nb_celltypes_matrix)[2]), ylim=c(0,80), space=c(0.4,1),
           ylab="", border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
-          lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1.1)
+  lwd=1.5,  mgp=c(3, 0.75, 0), axes=F)
 
-mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.75)
+axis(side=1, cex.axis=1, at=apply(b, 2, mean), labels=rep("", 6))
+axis(side=2, cex.axis=1, las=2)
+
+mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.85)
 
 ## axis labels
-mtext("number of cell types", side=1, line=2.25, cex=0.8)
+mtext("number of cell types", side=1, line=2.15, cex=0.8)
 mtext("% of interactions", side=2, line=2.5, cex=0.8)
 
-## legend & plot label
-legend("topright", legend=c("original PCHiC data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
+## legend 
+legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
        fill=dataset.colors[c("Original", "Simulated")], bty='n',
-       cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("a", side=3, line=1, at=-2, font=2, cex=1.2)
+       cex=1.1, inset=c(0.05, -0.2), xpd=NA, title=ref_sp)
+
+##plot label
+mtext("a", side=3, line=1.5, at=-3.9, font=2, cex=1.2)
 
 ################################################################################################
 
-#################### B - Distribution of number of cell types according to distance ############
+#################### b - Distribution of number of cell types according to distance ############
 
 ylim=c(0.5, max(c(as.numeric(mean_nb_celltypes_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Simulated",]))))
 ylim[2]=ylim[2]+0.5
@@ -135,12 +140,12 @@ lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_celltypes_dist["Si
 ## X axis
 xax=pretty(range(as.numeric(mean_dist)))
 labels=xax/1e6
-axis(side=1, at=xax, labels=labels, mgp=c(3, 0.65, 0), cex.axis=1.1)
 
-axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
+axis(side=1, at=xax, labels=labels, mgp=c(3, 0.65, 0), cex.axis=1)
+axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1, las=2)
 
 ## axis labels
-mtext("distance between interacting fragments (Mb)", side=1, line=2.25, cex=0.8)
+mtext("distance between interacting fragments (Mb)", side=1, line=2.15, cex=0.8)
 mtext("mean number of cell types", side=2, line=2.5, cex=0.8)
 
 ## confidence intervals
@@ -149,32 +154,49 @@ for(dataset in rownames(mean_dist)){
   segments(as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_low_celltypes[dataset,]),  as.numeric(mean_dist[dataset,]), as.numeric(dist_conf_high_celltypes[dataset,]), col=dataset.colors[dataset])
 }
 
-## legend & plot label
+## legend 
 
-legend("topright", legend=c("original PCHiC data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("b", side=3, line=1, at=-2.5e5, font=2, cex=1.2)
+legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.2), xpd=NA, title=ref_sp)
+
+## plot label
+
+mtext("b", side=3, line=1.5, at=-4.2e5, font=2, cex=1.2)
 
 ################################################################################################
 
 #################### C - Cumulative number of interactions #######
 
+labels=c("c", "d")
+
+names(labels)=c("human", "mouse")
+
 for (sp in c("human", "mouse")){
-  plot(apply(cumul_int[[sp]][["simulated"]], 1, mean)/max(cumul_int[[sp]][["simulated"]]), pch=19, col=dataset.colors["Simulated"],
-       xlab="", ylab="", main=sp, cex=0.5, mgp=c(2,1,0), axes=F)
+
+  nbmax=dim(cumul_int[[sp]][["observed"]])[1]
+  xlim=c(0.5, nbmax+0.5)
+  ylim=c(0, 100)
   
-  points(apply(cumul_int[[sp]][["observed"]], 1, mean)/max(cumul_int[[sp]][["observed"]]),  pch=19, col=dataset.colors["Original"], cex=0.5)
+  plot(100*apply(cumul_int[[sp]][["simulated"]], 1, mean)/max(cumul_int[[sp]][["simulated"]]), pch=19, col=dataset.colors["Simulated"],
+       xlab="", ylab="", main="", cex=0.5, mgp=c(2,1,0), axes=F, xlim=xlim, ylim=ylim)
+
+  mtext(sp, side=3, cex=0.95)
   
-  axis(side=1, mgp=c(3, 0.65, 0), cex.axis=1.1)
-  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1, las=2)
+  points(100*apply(cumul_int[[sp]][["observed"]], 1, mean)/max(cumul_int[[sp]][["observed"]]),  pch=19, col=dataset.colors["Original"], cex=0.5)
   
-  mtext("number of sample", side=1, line=2.25, cex=0.8)
+  axis(side=1, mgp=c(3, 0.65, 0), cex.axis=1)
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1, las=2)
   
-  if (sp == "human"){
+  mtext("number of samples", side=1, line=2.25, cex=0.8)
+  
+  if(sp=="human"){
     legend("bottomright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")], pch=20, bty='n', xpd=NA)
-    mtext("cumulative proportion \n of interactions", side=2, line=2.5, cex=0.8)
-    mtext("c", side=3, line=1, at=-3, font=2, cex=1.2)
   }
   
+  mtext("cumulative % of interactions", side=2, line=2.5, cex=0.8)
+
+  pos.xlab=xlim[1]-diff(xlim)/4
+  
+  mtext(labels[sp], side=3, line=1, at=pos.xlab, font=2, cex=1.2)
 }
 
 ###########################################################################################
