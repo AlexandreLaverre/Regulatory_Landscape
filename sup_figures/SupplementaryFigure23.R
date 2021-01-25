@@ -164,7 +164,7 @@ text(round(zlim[2], digits=0), x=max(endx), y=starty-1.75*sy, xpd=NA, cex=0.95)
 text("0.0", x=mean(c(startx,endx)), y=starty-1.75*sy, xpd=NA, cex=0.95)
 
 text("% contact conservation", x=mean(c(startx,endx)), y=starty-3.2*sy, xpd=NA, cex=1.07)
-text("(observed-simulated)", x=mean(c(startx,endx)), y=starty-4.6*sy, xpd=NA, cex=1.07)
+text("(observed-simulated)", x=mean(c(startx,endx)), y=starty-4.7*sy, xpd=NA, cex=1.07)
 
 mtext("a", side=3, font=2, line=0.75, at=-0.3, cex=1)
 

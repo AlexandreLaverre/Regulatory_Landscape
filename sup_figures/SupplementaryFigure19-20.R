@@ -13,7 +13,6 @@ if(!"pathFigures"%in%objects){
  load=T
 }
 
-
 #########################################################################################################################
 
 if(load){
@@ -29,8 +28,7 @@ if(load){
     print(paste0('loading... ', ref_sp))
     
     load(paste(pathFigures, "RData/data.synteny.conservation.",ref_sp,".RData", sep=""))
-    target_sp = setdiff(c("human", "mouse"), ref_sp)
-
+  
     species=species.list[[sp]]
     
     prop.obs.alldist[[ref_sp]] <- list()
