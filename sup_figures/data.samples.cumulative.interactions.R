@@ -14,8 +14,11 @@ for (sp in c("human", "mouse")){
   for (data in c("observed", "simulated")){
     print(paste("loading...", sp, "in", data, "data", sep=" "))
     
-    if (data == "observed"){setwd(paste(pathFinalData, "SupplementaryDataset1", sp, "interactions_samples", sep="/"))
-    }else{setwd(paste(pathFinalData, "SupplementaryDataset2", sp, "interactions_samples", sep="/"))}
+    if (data == "observed"){
+      setwd(paste(pathFinalData, "SupplementaryDataset1", sp, "interactions_samples", sep="/"))
+    } else{
+      setwd(paste(pathFinalData, "SupplementaryDataset2", sp, "interactions_samples", sep="/"))
+    }
     
     # Load all interactions
     all.files=system("ls", intern=T)
