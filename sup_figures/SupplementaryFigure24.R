@@ -20,9 +20,10 @@ if(load){
   col.ontologies = c("forestgreen", "orange", "red")
   names(col.ontologies) = ontologies
   
-  class_leg <- c("0",  "0.5",  "1", "1.5", "2")
+  class_leg <- c("0.05",  "0.5",  "1", "1.5", "2")
    
   enh="ENCODE"
+  
   load=FALSE
 }
 
@@ -30,9 +31,9 @@ if(load){
 
 pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=3.5)
 
-par(mai = c(0.65, 0.8, 0.5, 0.2)) # bottom, left, top, right
+par(mar=c(3.5, 3.25, 2.1, 1.1))
 par(mfrow=c(1,2))
- par(lwd = 0.7)
+par(lwd = 0.7)
 
 ############################################################################## 
 
@@ -45,9 +46,15 @@ for (ref_sp in c("human", "mouse")){
   
   load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref_sp, ".stats.Rdata", sep=""))
   
-  if (ref_sp == "human"){YLIM=c(-1,80); lab="a"}else{YLIM=c(-1, 80); lab="b"}
+  if (ref_sp == "human"){
+    YLIM=c(-1,80)
+    lab="a"
+  }else{
+    YLIM=c(-1, 80)
+    lab="b"
+  }
   
-  xlim=c(0.5, length(cons.dist[["all"]][[enh]]["obs",])+0.5)
+  xlim=c(-0.5, length(cons.dist[["all"]][[enh]]["obs",])+1)
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
   
   for (data in c("obs", "sim")){
@@ -60,9 +67,9 @@ for (ref_sp in c("human", "mouse")){
     
     for (onto in ontologies){
       if (data == "obs"){
-        points(cons.dist[[onto]][[enh]][data,], pch=20, col=col.ontologies[onto], cex=0.7)
+        points(cons.dist[[onto]][[enh]][data,], pch=21, bg=col.ontologies[onto], col=col.ontologies[onto], cex=0.7)
       } else{
-        points(cons.dist[[onto]][[enh]][data,], type="l", col=col.ontologies[onto], cex=0.7)
+        points(cons.dist[[onto]][[enh]][data,], pch=21, bg="white",  col=col.ontologies[onto], cex=0.7)
       }
       
       # Confidence intervals
@@ -73,23 +80,23 @@ for (ref_sp in c("human", "mouse")){
   }
   
   ## axis, legend & plot label
-  axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0))
-  mtext("Distance from TSS (Mb)", side=1, line=2)
+  axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=0.8)
+  mtext("distance from promoter region (Mb)", side=1, line=2, cex=0.8)
   
-  axis(side=2, mgp=c(3, 0.75, 0), las=2)
-  mtext("% of conserved contacts", side=2, line=2.5)
+  axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=0.8)
+  mtext("% conserved contacts", side=2, line=2.25, cex=0.8)
   
-  mtext(paste(ref_sp, "vs.", tg), side=3, line=0.5)
+  mtext(paste(ref_sp, "vs.", tg), side=3, line=0.5, cex=0.8)
   
   if (ref_sp == "human"){
-    legend("topleft", col=col.ontologies, legend = c("developmental", "immune", "other"), bty='n', pch=20, cex=0.7)
-    
-    legend("topright", legend=c("PCHi-C data", "simulated data"), lty=c(NA,1), pch=c(20,NA),
-           bty='n', inset=c(-0.1, 0), xpd=NA, cex=0.6)
+    legend("topleft", col=col.ontologies, legend = c("developmental genes", "immune genes", "other genes"), bty='n', pch=20, cex=0.75)
+
+  } else{
+    legend("topleft", legend=c("PCHi-C data", "simulated data"),  pch=c(21,21), pt.bg=c("black", "white"),
+           bty='n', xpd=NA, cex=0.75)
   }
   
- 
-  mtext(lab, side=3, line=1, at=0.1, font=2)
+  mtext(lab, side=3, line=1, at=-9, font=2, cex=1.1)
 
 }
 
