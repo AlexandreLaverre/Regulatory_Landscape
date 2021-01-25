@@ -32,7 +32,7 @@ for(ref_sp in c("human", "mouse")){
   
   obs$GC_pclen=obs$GC_bp*100/(obs$length-obs$repeat_bp)
   simul$GC_pclen=simul$GC_bp*100/(simul$length-simul$repeat_bp)
-  
+
   ############################### features coverage according to distance from promoters #################
   
   obs$dist_class <-cut(obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
