@@ -163,6 +163,9 @@ for(sp in c("human", "mouse")){
   
   legend("topleft", legend=label.enhancers[enhancer.datasets[[sp]]], lty=1, 
          col=col.enhancers[enhancer.datasets[[sp]]], bty="n", cex=1, seg.len=1)
+
+  ## plot label
+  mtext("a", side=3, font=2, at=-5)
   
   
   ############################## Sequence conservation ###############################
@@ -171,7 +174,11 @@ for(sp in c("human", "mouse")){
   smallx=c(-0.15, -0.075, 0.075, 0.15)
   names(smallx)=enhancer.datasets[[sp]]
   
-  if (sp == "human"){ylim=c(40, 65)}else{ylim=c(50, 66)}
+  if (sp == "human"){
+    ylim=c(40, 65)
+  }else{
+    ylim=c(50, 66)
+  }
   
   xlim=c(0.5, nb_chicago_class+0.5)
   
@@ -189,13 +196,20 @@ for(sp in c("human", "mouse")){
   abline(v=xpos[1:nb_chicago_class-1]+0.5, lty=3, col="gray40")
   axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", nb_chicago_class))
   mtext(1:nb_chicago_class, at=xpos, side=1, line=1, cex=mtext.CEX)
-  mtext("CHICAGO Score decile", side=1, line=2.5, cex=mtext.CEX)
+  mtext("CHICAGO score decile", side=1, line=2.5, cex=mtext.CEX)
   
   axis(side=2, mgp=c(3, 0.75, 0))
   mtext(paste0("% aligned sequence in ", tg), side=2, line=2.5, cex=mtext.CEX)
+
+  ## plot label
+  mtext("b", side=3, font=2, at=-3)
   
   ############################## Synteny conservation ###############################
-  if (sp == "human"){ylim=c(85, 95)}else{ylim=c(80, 100)}
+  if (sp == "human"){
+    ylim=c(93, 100)
+  }else{
+    ylim=c(80, 100)
+  }
   
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
   
@@ -211,15 +225,21 @@ for(sp in c("human", "mouse")){
   abline(v=xpos[1:nb_chicago_class-1]+0.5, lty=3, col="gray40")
   axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", nb_chicago_class))
   mtext(1:nb_chicago_class, at=xpos, side=1, line=1, cex=mtext.CEX)
-  mtext("CHICAGO Score decile", side=1, line=2.5, cex=mtext.CEX)
+  mtext("CHICAGO score decile", side=1, line=2.5, cex=mtext.CEX)
   
   axis(side=2, mgp=c(3, 0.75, 0))
   mtext(paste0("% pairs in conserved synteny in ", tg), side=2, line=2.5, cex=mtext.CEX)
   
+  ## plot label
+  mtext("c", side=3, font=2, at=-3)
+  
   ############################## Contact conservation ###############################
-  if (sp == "human"){ylim=c(10, 60)}else{ylim=c(20, 55)}
-  
-  
+  if (sp == "human"){
+    ylim=c(10, 60)
+  }else{
+    ylim=c(20, 55)
+  }
+    
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
   
   for(enh in enhancer.datasets[[sp]]){
@@ -238,6 +258,10 @@ for(sp in c("human", "mouse")){
   
   axis(side=2, mgp=c(3, 0.75, 0))
   mtext(paste0("% pairs in conserved contact in ", tg), side=2, line=2.5, cex=mtext.CEX)
+
+  
+  ## plot label
+  mtext("d", side=3, font=2, at=-3)
   
   #####################################################################################
   
