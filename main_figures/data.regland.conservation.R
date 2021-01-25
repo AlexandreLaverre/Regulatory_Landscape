@@ -7,7 +7,6 @@ source("parameters.R")
 
 pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 
-
 #######################################################################################
 
 load(paste(pathFigures,"RData/data.enhancer.statistics.RData", sep=""))
@@ -75,8 +74,13 @@ for(ref in c("human", "mouse")){
       
         genes.conservation[[enh]][[data.name]][[dist]] <- data.frame("nb_total"=nb_total, "align_score"=align_score, "seq_conserv"=seq_conserv, 
                                                                      "synt_conserv"=synt_conserv, "contact_conserv"=contact_conserv)
-        # Calculate ratio with constraints on minimum number
-        if (enh == "FANTOM5"){nb_min = 2}else{nb_min=5}
+        ## Calculate ratio with constraints on minimum number of contacted enhancers per gene
+        
+        if (enh == "FANTOM5"){
+          nb_min = 2
+        }else{
+          nb_min=5
+        }
         
         genes.conservation[[enh]][[data.name]][[dist]]$seq_conserv <- with(genes.conservation[[enh]][[data.name]][[dist]], ifelse(nb_total >= nb_min | nb_total <= 100,  seq_conserv, NA))
         genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_seq <- with(genes.conservation[[enh]][[data.name]][[dist]], ifelse(nb_total >= nb_min & nb_total <= 100, seq_conserv/nb_total, NA))
