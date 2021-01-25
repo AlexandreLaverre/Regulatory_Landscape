@@ -1,13 +1,14 @@
-## same as Figure 1 for mouse
+
+###########################################################################################
 objects=ls()
 
 if(!"pathScripts"%in%objects){
   source("../main_figures/parameters.R") ## paths are defined based on the user name
-  `%notin%` <- Negate(`%in%`)
   nb_draw = 100
   cumul_int = list()
 }
 
+###########################################################################################
 
 for (sp in c("human", "mouse")){
   for (data in c("observed", "simulated")){
@@ -36,7 +37,7 @@ for (sp in c("human", "mouse")){
       n_sample = 1
       
       for (sample in sampled.files){
-        interactions = c(interactions, all.int[[sample]][which(all.int[[sample]] %notin% interactions)])
+        interactions = c(interactions, all.int[[sample]][which(!all.int[[sample]] %in% interactions)])
         
         cumul_int[[sp]][[data]][n_sample,i] = length(interactions)
         
@@ -46,8 +47,9 @@ for (sp in c("human", "mouse")){
   }
 }
 
+###########################################################################################
 
 ### Output
 save(cumul_int, file = paste(pathFigures, "RData/data.samples.cumulative.interactions.Rdata", sep=""))
 
-#
+###########################################################################################
