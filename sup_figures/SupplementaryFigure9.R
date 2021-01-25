@@ -9,11 +9,10 @@ if(!"pathScripts"%in%objects){
 
 source("../main_figures/parameters.R") ## paths are defined based on the user name
 
-
 ###########################################################################################################################
 ##########################  Enhancer proportion according to distance ############################################
 
-pdf(paste(pathFigures, "SupplementaryFigure9.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "SupplementaryFigure9.pdf", sep=""), width=6.85, height=6.5)
 
 par(mai = c(0.5, 0.5, 0.1, 0.2)) # bottom, left, top, right
 
@@ -21,6 +20,7 @@ par(mfrow=c(3,2))
 
 nb=1
 for (sp in c("human", "mouse")){
+  
   load(paste(pathFigures, "RData/data.enhancer.coverage.", sp, ".Rdata", sep=""))
   for (enh in enhancer.datasets[[sp]]){
     ymax=max(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
@@ -28,7 +28,7 @@ for (sp in c("human", "mouse")){
     
     ymax=ymax*1.1
     
-    par(mar=c(3.1, 4.5, 2.75, 1))
+    par(mar=c(3.1, 4.5, 2.75, 1.5))
     
     plot(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"], main="", type="n", xlab="",ylab="",  axes=F, ylim=c(ymin,ymax))
     
@@ -48,13 +48,11 @@ for (sp in c("human", "mouse")){
     
     if (nb == 1){
       legend("topright", legend=c("PCHi-C data", "simulated data"), 
-             col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=0.9, inset=c(0.05, 0.05), xpd=NA)}
+             col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=0.95, inset=c(0.05, 0.05), xpd=NA)}
     
-    if (nb %in% c(1,3,5)){
-      mtext("% length covered\n by enhancers", side=2, cex=0.85, line=2, at=(ymin+ymax)*0.9/2)
-      mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
-    }
-
+    
+    mtext("% length covered\n by enhancers", side=2, cex=0.85, line=2, at=(ymin+ymax)*0.9/2)
+    mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
     
     mtext(letters[nb], side=3, line=1.45, at=-5.75, font=2, cex=1.2)
     mtext(paste(sp, enh, sep=" "), side=3, cex=0.8, line=0)
@@ -64,3 +62,5 @@ for (sp in c("human", "mouse")){
 
 dev.off()
 
+
+############################################################################################################
