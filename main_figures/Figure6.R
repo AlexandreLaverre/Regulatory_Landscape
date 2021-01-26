@@ -74,11 +74,12 @@ CMPlot <- function(var, plot.nb){
   
   axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
   mtext(names_MeasuresCM[plot.nb], side=2, line=2.5, cex=cex.mtext)
-  
+
+  ## plot label
   mtext(letters[plot.nb], side=3, line=1.5, at=-0.65, font=2, cex=1.2)
   
   axis(side=1, cex.axis=1.2, mgp=c(3, 0.75, 0))
-  mtext("number of contacts", side=1, line=2.5, cex=cex.mtext)
+  mtext("number of contacts class", side=1, line=2.5, cex=cex.mtext)
   
   if (plot.nb == 2){
     legend("topright", col=col.enhancers, legend = label.enhancers, box.col="white", bg="white",
@@ -175,7 +176,7 @@ for (measure in 1:length(MeasuresCM)){
 plot_profiles("class_align_score", "all",  "enhancer sequence conservation", 1:5)
 mtext("d", side=3, at=-0.6, font=2, cex=1.2, line=1)
 
-plot_profiles("class_cons_synt", "all",  "synteny conservation", c("<75%", "75-99%", ">99%"))
+plot_profiles("class_cons_synt", "all",  "% conserved synteny", c("<75%", "75-99%", ">99%"))
 mtext("e", side=3, at=-0.15, font=2, cex=1.2, line=1)
 
 plot_profiles("class_cons_cont", "all",  "% conserved contacts", c("<1%", "25%", "50%", "75%", ">75%"))

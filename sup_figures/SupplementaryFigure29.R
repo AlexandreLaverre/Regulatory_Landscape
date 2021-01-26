@@ -12,10 +12,19 @@ if(!"pathScripts"%in%objects){
 ##############################################################################
 if(load){
   sp="human"
+  
   load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
   load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
   load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
-  if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
+
+  if (sp == "human"){
+    sp_name="Human"
+  } else{
+    sp_name="Mouse"
+  }
+
+  expdiv$EuclideanSimilarity = 1-expdiv$EuclideanDistance
+  distances =  "all" 
 
   load=FALSE
 }
@@ -23,19 +32,32 @@ if(load){
 
 ################################################################################################################################
 ############################## Cardoso-Moreira  - Euclidean Similarity ##########################################################
-expdiv$EuclideanSimilarity = 1-expdiv$EuclideanDistance
 
-plot_profiles <- function(class_conserv, distances, xlab, xnames){
+plot_profiles <- function(class_conserv, distances, xlab, xnames, plot.labels){
   smallx=c(-0.15, -0.075, 0.075, 0.15)
   names(smallx)=enhancer.datasets[[sp]]
   
-  if (Measure == "corrected"){DivergenceMeasure = "CorrectedEuclideanSimilarity"; ylab="Corrected\nEuclidean Similarity"; ylim=c(0.002, 0.02)
-  }else{DivergenceMeasure = "EuclideanSimilarity"; ylab="Euclidean Similarity"; ylim=c(0.89, 0.94)}
+  if (Measure == "corrected"){
+    DivergenceMeasure = "CorrectedEuclideanSimilarity"
+    ylab="1-Euclidean distance\n(corrected)"
+    ylim=c(0.002, 0.02)
+  }else{
+    DivergenceMeasure = "EuclideanSimilarity"
+    ylab="1-Euclidean distance"
+    ylim=c(0.89, 0.94)
+  }
   
-  if (class_conserv == "class_cons_synt"){xmax=3}else{xmax=5}
+  if (class_conserv == "class_cons_synt"){
+    xmax=3
+  }else{
+    xmax=5
+  }
+  
   xlim=c(0.5, xmax+0.5)
   
-  for (dist in distances){
+  for(i in 1:length(distances)){
+
+    dist=distances[i]
     
     plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
     
@@ -68,16 +90,22 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
     
     axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
     mtext(ylab, side=2, line=2.5, cex=0.9)
+
+     if (Measure == "corrected"){
+       labelpos=xlim[1]-diff(xlim)/6
+     } else{
+       labelpos=xlim[1]-diff(xlim)/7
+     }
+    
+    mtext(plot.labels[i], side=3, at=labelpos, line=1, font=2, cex=1.25)
     
   }
-  return(expdiv)
+  
 }
 
 ################################################################################################################################
-distances =  "all"  # c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
 
-
-pdf(file=paste(pathFigures, "SupplementaryFigure29.pdf", sep=""), width=6.85, height=9)
+pdf(file=paste(pathFigures, "SupplementaryFigure29.pdf", sep=""), width=6.85, height=10)
 m=matrix(rep(NA, 4*2), nrow=4)
 
 m[,1]=c(1:4)
@@ -85,30 +113,30 @@ m[,2]=c(5:8)
 
 layout(m)
 
-par(mai = c(0.3, 0.6, 0.3, 0.1)) # bottom, left, top, right
+par(mar=c(4.1, 4.1, 2.1, 1)) # bottom, left, top, right
+
+################################################################################################################################
 
 ## Gene expression profiles uncorrected
 Measure = "uncorrected"
 
-expdiv <- plot_profiles("class_nb_contact", distances,  "Number of contacts quantile", 1:5)
+plot_profiles("class_nb_contact", distances,  "number of contacts class", 1:5, "a")
 
-mtext("a", side=3, at=0.45, font=2, cex=1.2, line=0.5)
 legend("bottomright", legend=enhancer.datasets[[sp]], pch=20,
        col=col.enhancers, cex=1, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
 
-expdiv <- plot_profiles("class_align_score", distances,  "Alignement score quantile", 1:5)
-expdiv <- plot_profiles("class_cons_synt", distances,  "Synteny Conservation", c("<75%", "75-99%", ">99%"))
-expdiv <- plot_profiles("class_cons_cont", distances,  "Contact conservation", c("<1%", "25%", "50%", "75%", ">75%"))
+plot_profiles("class_align_score", distances,  "enhancer sequence conservation", 1:5, "b")
+plot_profiles("class_cons_synt", distances,  "% conserved synteny", c("<75%", "75-99%", ">99%"), "c")
+plot_profiles("class_cons_cont", distances,  "% conserved contacts", c("<1%", "25%", "50%", "75%", ">75%"), "d")
 
 ## Gene expression profiles corrected
 Measure = "corrected"
-expdiv <- plot_profiles("class_nb_contact", distances,  "Number of contacts quantile", 1:5)
-mtext("b", side=3, at=0.45, font=2, cex=1.2, line=0.5)
+plot_profiles("class_nb_contact", distances,  "number of contacts class", 1:5, "e")
 
-expdiv <- plot_profiles("class_align_score", distances,  "Alignement score quantile", 1:5)
-expdiv <- plot_profiles("class_cons_synt", distances,  "Synteny Conservation", c("<75%", "75-99%", ">99%"))
-expdiv <- plot_profiles("class_cons_cont", distances,  "Contact conservation", c("<1%", "25%", "50%", "75%", ">75%"))
-
+plot_profiles("class_align_score", distances,  "enhancer sequence conservation", 1:5, "f")
+plot_profiles("class_cons_synt", distances,  "% conserved synteny", c("<75%", "75-99%", ">99%"), "g")
+plot_profiles("class_cons_cont", distances,  "% conserved contacts", c("<1%", "25%", "50%", "75%", ">75%"), "h")
 
 dev.off()
 
+################################################################################################################################
