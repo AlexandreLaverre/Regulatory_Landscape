@@ -9,7 +9,11 @@ load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
 load(paste(pathFigures, "RData/data.common.cells.expdiv.Rdata", sep=""))
 load(paste(pathFigures, "RData/data.", sp, ".common.cells.regland.conservation.RData", sep=""))
 
-if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
+if (sp == "human"){
+  sp_name="Human"
+}else{
+  sp_name="Mouse"
+}
 
 cells <- c("Bcell", "ESC", "adipo")
 col.cells = c("navy", "forestgreen", "darkorange")
@@ -17,21 +21,28 @@ names(col.cells) = cells
 enh = "ENCODE"
 
 #############################################################################################################
-######################## Gene expression level in Common cell types #########################################
+######################## Gene expression level in common cell types #########################################
+
 xpos=seq(1, 5, 1)
 smallx=c(-0.15, 0, 0.15)
 names(smallx)=cells
 xlim=c(0.5, 5.5)
 
 CellTypesPlot <- function(var, plot.nb){
-  if (var == "ExpressionConservation"){ylim=c(0.2, 0.6)}
-  else if (var == paste0(sp, "_MeanRPKM")){ylim=c(0, 22)}
-  else if (var == "ResidualExpressionConservation"){ylim=c(-0.11, 0.03)}
+  if (var == "ExpressionConservation"){
+    ylim=c(0.2, 0.6)
+  }
+  else if (var == paste0(sp, "_MeanRPKM")){
+    ylim=c(0, 22)
+  }
+  else if (var == "ResidualExpressionConservation"){
+    ylim=c(-0.11, 0.03)
+  }
   
-  
-    plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-    for (cell in cells){
-      regland = genes.conservation.cells[[enh]][[cell]][["obs"]][["all"]]
+  plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
+
+  for (cell in cells){
+    regland = genes.conservation.cells[[enh]][[cell]][["obs"]][["all"]]
       genes = intersect(rownames(regland), rownames(expdiv_cells))
       regland = regland[genes,]
       
@@ -51,19 +62,24 @@ CellTypesPlot <- function(var, plot.nb){
         
       }
     }
-    
-    abline(v=xpos[1:4]+0.5, lty=3, col="gray40") # verticale lines between quantile
-
-    axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1) # Yaxis labels in first column
-    mtext(names_MeasuresCellTypes[plot.nb], side=2, line=2.5, cex=0.9)
-    mtext(letters[plot.nb], side=3, line=1, at=0.1, font=2, cex=1.2)
-    
-    axis(side=1, cex.axis=1.2) # X axis labels in last row
-    mtext("Quantile of Complexity", side=1, line=2, cex=0.9)
-    
-    if (plot.nb == 1){legend("topleft", legend=c("Pre-Adipocytes", "ESC", "Bcell"), pch=20, col=rev(col.cells), cex=1.1, bty="o", 
-                             box.col="white", bg="white",  inset=c(0.01, 0.01))}
+  
+  abline(v=xpos[1:4]+0.5, lty=3, col="gray40") # verticale lines between quantile
+  
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1) # Yaxis labels in first column
+  mtext(names_MeasuresCellTypes[plot.nb], side=2, line=2.5, cex=0.75)
+  
+  ## plot labels
+  mtext(letters[plot.nb], side=3, line=1, at=-0.8, font=2, cex=1.1)
+  
+  axis(side=1, cex.axis=1.1, mgp=c(3, 0.75, 0), at=1:5, labels=rep("",5)) # X axis labels in last row
+  mtext(c("low", "medium", "high"), at=xpos[c(1,3,5)], side=1, line=0.75, cex=0.75)
+  mtext("number of contacts", side=1, line=2, cex=0.75)
+  
+  if (plot.nb == 1){
+    legend("topleft", legend=c("pre-adipocytes", "ESC", "B cells"), pch=20, col=rev(col.cells), cex=1.1, bty="o", 
+           box.col="white", bg="white",  inset=c(0.01, -0.1), xpd=NA)
   }
+}
 
 
 ################################################################################################################################
@@ -74,10 +90,22 @@ plot_cell <- function(class_conserv, Measure, distances, xlab, xnames){
   smallx=c(-0.15, 0, 0.15)
   names(smallx)=cells
   
-  if (Measure == "corrected"){DivergenceMeasure = "ResidualExpressionConservation"; ylab="Residual Expression Conservation";YLIM=c(-0.15, 0.11)
-  }else{DivergenceMeasure = "ExpressionConservation"; ylab="Expression Conservation"; YLIM=c(0.1,0.75)} 
+  if (Measure == "corrected"){
+    DivergenceMeasure = "ResidualExpressionConservation"
+    ylab="expression conservation\n(corrected)"
+    YLIM=c(-0.15, 0.11)
+  } else{
+    DivergenceMeasure = "ExpressionConservation"
+    ylab="expression conservation"
+    YLIM=c(0.1,0.75)
+  } 
   
-  if (class_conserv == "class_cons_synt"){xmax=3}else{xmax=5}
+  if (class_conserv == "class_cons_synt"){
+    xmax=3
+  }else{
+    xmax=5
+  }
+  
   xlim=c(0.5, xmax+0.5)
   
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM, xaxs="i", yaxs="i")
@@ -106,29 +134,29 @@ plot_cell <- function(class_conserv, Measure, distances, xlab, xnames){
   
   abline(v=xpos[1:xmax-1]+0.5, lty=3, col="gray40")
   axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(regland[[class_conserv]]))), cex.axis=0.8)
-  
-  mtext(xnames, at=xpos, side=1, line=1, cex=0.8)
-  mtext(xlab, side=1, line=2.5, cex=0.9)
-  
-  if (class_conserv == "class_align_score"){
-    axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
-    mtext(ylab, side=2, line=2.5, cex=0.9)
-    
-    mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
-  }
 
+  if(class_conserv=="class_align_score"){
+    mtext(c("low", "medium", "high"), at=xpos[c(1,3,5)], side=1, line=0.75, cex=0.75)
+  } else{
+    mtext(xnames, at=xpos, side=1, line=0.75, cex=0.75)
+  }
+  mtext(xlab, side=1, line=2.25, cex=0.75)
+  
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1)
+  mtext(ylab, side=2, line=2.5, cex=0.75)
+  
 }
 
 ################################################################################################################################
 ################################################### Output #####################################################################
 # Relation with complexity
 MeasuresCellTypes <- c(paste0(sp, "_MeanRPKM"), "ExpressionConservation", "ResidualExpressionConservation") 
-names_MeasuresCellTypes <- c("Expression level (RPKM)", "Expression Conservation", "Residual Expression Conservation")
+names_MeasuresCellTypes <- c("expression level (TPM)", "expression conservation", "expression conservation\n(corrected)")
 
 pdf(paste(pathFigures, "/ExtendedFigure3.pdf", sep=""), width=6.85, height=5.5)
 
 par(mfrow=c(2,3))
-par(mai = c(0.5, 0.5, 0.5, 0.1)) # bottom, left, top, right
+par(mar = c(3.5, 4.65, 2.5, 1.1)) # bottom, left, top, right
 
 for (measure in 1:length(MeasuresCellTypes)){
   CellTypesPlot(MeasuresCellTypes[measure], measure)
@@ -138,12 +166,16 @@ for (measure in 1:length(MeasuresCellTypes)){
 distances =  "all"  # c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
 
 for (measure in c("corrected")){
-  plot_cell("class_align_score", measure, distances, "Alignement score quantile", 1:5)
-  plot_cell("class_cons_synt",  measure, distances, "Synteny Conservation", c("<75%", "75-99%", ">99%"))
-  plot_cell("class_cons_cont",  measure, distances, "Contact conservation", c("<1%", "25%", "50%", "75", ">75%"))
+  plot_cell("class_align_score", measure, distances, "enhancer sequence conservation", 1:5)
+  mtext("d", side=3, at=-0.65, font=2, cex=1.1, line=1)
+
+  plot_cell("class_cons_synt",  measure, distances, "% conserved synteny", c("<75%", "75-99%", ">99%"))
+  mtext("e", side=3, at=-0.2, font=2, cex=1.1, line=1)
+  
+  plot_cell("class_cons_cont",  measure, distances, "% conserved contacts", c("<1%", "25%", "50%", "75", ">75%"))
+  mtext("f", side=3, at=-0.65, font=2, cex=1.1, line=1)
 } 
 
 dev.off()
 
-
-
+################################################################################################################################
