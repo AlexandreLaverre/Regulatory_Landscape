@@ -55,17 +55,17 @@ for (sp in c("human", "mouse")){
       
       
       class_leg <- c("0.05", "0.5", "1", "1.5", "2")
-      axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1.1)
-      axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
+      axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1)
+      axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1, las=2)
       
       if (nb == 1){
         legend("topleft", legend=c("PCHi-C data", "simulated data"), 
-               col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, xpd=NA, inset=c(0.01, -0.15))
+               col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1, xpd=NA, inset=c(0.01, -0.15))
       }
       
-      mtext(ylab[feat], side=2, cex=0.85, line=2.25)
+      mtext(ylab[feat], side=2, cex=0.75, line=2.25)
       
-      mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
+      mtext("distance to promoters (Mb)", side=1, line=2, cex=0.75)
       
       
       if (nb %in% c(2,5,8,11,14)){
@@ -74,10 +74,10 @@ for (sp in c("human", "mouse")){
         }else{
           seq.lab=paste(seq, "enhancers")
         }
-        mtext(seq.lab, side=3, cex=0.8, line=1)
+        mtext(seq.lab, side=3, cex=0.75, line=1)
       }
       
-      mtext(letters[nb], side=3, line=1.45, at=-9.75, font=2, cex=1.2)
+      mtext(letters[nb], side=3, line=1.45, at=-9.75, font=2, cex=1)
       
       nb = nb+1
     }
