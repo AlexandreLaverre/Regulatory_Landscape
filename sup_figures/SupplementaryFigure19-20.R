@@ -29,7 +29,7 @@ if(load){
     
     load(paste(pathFigures, "RData/data.synteny.conservation.",ref_sp,".RData", sep=""))
   
-    species=species.list[[sp]]
+    species=species.list[[ref_sp]]
     
     prop.obs.alldist[[ref_sp]] <- list()
     prop.sim.alldist[[ref_sp]] <- list()
