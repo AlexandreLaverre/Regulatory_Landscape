@@ -17,7 +17,11 @@ if(load){
   load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
   load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
   
-  if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
+  if (sp == "human"){
+    sp_name="Human"
+  } else{
+    sp_name="Mouse"
+  }
   
   load=FALSE
   
@@ -32,10 +36,15 @@ xlim=c(0.5, 5.5)
 cex.mtext = 0.8
 
 CMPlot <- function(var, plot.nb){
-  if (var == "CorrelationSpearman"){ylim=c(0.55, 0.65)
-  }else if (var == paste0("Tau", sp_name)){ylim=c(0.58, 0.72)
-  }else if (var == "MeanRPKM"){ylim=c(7, 12)
-  }else if (var == "CorrectedSpearman"){ylim=c(0.02, 0.1)}
+  if (var == "CorrelationSpearman"){
+    ylim=c(0.55, 0.65)
+  } else if (var == paste0("Tau", sp_name)){
+    ylim=c(0.58, 0.72)
+  } else if (var == "MeanRPKM"){
+    ylim=c(7, 12)
+  } else if (var == "CorrectedSpearman"){
+    ylim=c(0.02, 0.1)
+  }
   
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
   
@@ -64,11 +73,17 @@ CMPlot <- function(var, plot.nb){
   
   axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
   mtext(names_MeasuresCM[plot.nb], side=2, line=2.5, cex=cex.mtext)
-  mtext(letters[plot.nb], side=3, line=1, at=0.1, font=2, cex=1.2)
+
+  ## plot label
+  mtext(letters[plot.nb], side=3, line=2, at=-0.65, font=2, cex=1.2)
   
-  axis(side=1, cex.axis=1.2); mtext("Number of contacts (quantile)", side=1, line=2.5, cex=cex.mtext)
-  if (plot.nb == "1"){legend("topleft", col=col.enhancers[1:2], legend = label.enhancers[1:2],
-                             box.col="white", bg="white", pch=20, cex=1, inset=c(0.01, -0.05))}
+  axis(side=1, cex.axis=1.2)
+  mtext("number of contacts class", side=1, line=2.5, cex=cex.mtext)
+
+  if (plot.nb == "1"){
+    legend("topleft", col=col.enhancers[1:2], legend = label.enhancers[1:2],
+           box.col="white", bg="white", pch=20, cex=1, inset=c(0.01, -0.05))
+  }
 }
 
 ################################################################################################################################
@@ -79,11 +94,12 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
   names(smallx)=enhancer.datasets[[sp]]
   
   if (Measure == "corrected"){
-    DivergenceMeasure = "CorrectedSpearman"; ylab="Corrected Spearman's rho"
+    DivergenceMeasure = "CorrectedSpearman"
+    ylab="expression conservation"
     ylim=c(0, 0.12)
   }else{
     DivergenceMeasure = "CorrelationSpearman"
-    ylab="Spearman's rho"
+    ylab="expression conservation"
     ylim=c(0.5, 0.7)
   }
   
@@ -143,23 +159,26 @@ pdf(file=paste(pathFigures, "SupplementaryFigure28.pdf", sep=""), width = 6.85, 
 par(mfrow=c(2,3))
 par(mai = c(0.5, 0.5, 0.5, 0.1))
 
-######################## Part 1 : Complexity ######################## 
+######################## Part 1 : Complexity ########################################
 MeasuresCM <- c("MeanRPKM", paste0("Tau", sp_name), "CorrectedSpearman")
-names_MeasuresCM <- c("Mean Expression level (RPKM)", "Specificity","Corrected Spearman's rho")
+names_MeasuresCM <- c("mean expression level (RPKM)", "expression pecificity","expression conservation")
 
 for (measure in 1:length(MeasuresCM)){
   CMPlot(MeasuresCM[measure], measure)
 }
 
-######################## Part 2 : Gene expression profiles evolution ################
-plot_profiles("class_align_score", "all",  "Alignement score (quantile)", 1:5)
-mtext("d", side=3, at=0.45, font=2, cex=1.2, line=0.5)
+######################## Part 2 : Gene expression profile evolution ################
+plot_profiles("class_align_score", "all",  "enhancer sequence conservation", 1:5)
+mtext("d", side=3, at=-0.65, font=2, cex=1.2, line=1.5)
 
-plot_profiles("class_cons_synt", "all",  "Synteny Conservation", c("<75%", "75-99%", ">99%"))
-plot_profiles("class_cons_cont", "all",  "Contact conservation", c("<1%", "25%", "50%", "75%", ">75%"))
+plot_profiles("class_cons_synt", "all",  "% conserved synteny", c("<75%", "75-99%", ">99%"))
+mtext("e", side=3, at=-0.17, font=2, cex=1.2, line=1.5)
 
+plot_profiles("class_cons_cont", "all",  "% conserved contacts", c("<1%", "25%", "50%", "75%", ">75%"))
+mtext("f", side=3, at=-0.65, font=2, cex=1.2, line=1.5)
+
+################################################################################################################################
 
 dev.off()
-
 
 ################################################################################################################################
