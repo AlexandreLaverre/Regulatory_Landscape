@@ -30,8 +30,8 @@ for(ref_sp in c("human", "mouse")){
   obs$repeat_pclen=obs$repet_noexon_bp*100/obs$length
   simul$repeat_pclen=simul$repet_noexon_bp*100/simul$length
   
-  obs$GC_pclen=obs$GC_bp*100/(obs$length-obs$repeat_bp)
-  simul$GC_pclen=simul$GC_bp*100/(simul$length-simul$repeat_bp)
+  obs$GC_pclen=100*obs$GC_content
+  simul$GC_pclen=100*simul$GC_content
 
   ############################### features coverage according to distance from promoters #################
   
@@ -74,8 +74,8 @@ for(ref_sp in c("human", "mouse")){
     obs$repeat_pclen=obs$repeat_bp*100/obs$length
     simul$repeat_pclen=simul$repeat_bp*100/simul$length
     
-    obs$GC_pclen=obs$GC_bp*100/(obs$length-obs$repeat_bp)
-    simul$GC_pclen=simul$GC_bp*100/(simul$length-simul$repeat_bp)
+    obs$GC_pclen=100*obs$GC_content
+    simul$GC_pclen=100*simul$GC_content
     
     ############################### features coverage according to distance from promoters #################
     obs$dist_class <-cut(obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
