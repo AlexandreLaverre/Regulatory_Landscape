@@ -8,15 +8,15 @@ if(!"pathScripts"%in%objects){
   load=T
 }
 
-###########################################################################################################################
+##################################################################################################################
 
-features = c("repeat", "GC", "all_exon")
+features = c("repeat", "all_exon", "GC", "genes")
 sequences <- c("fragment", "ENCODE")
 
-ylab = c("% length covered by repeats", "GC content","% length covered by exons")
+ylab = c("% length covered by repeats", "% length covered by exons", "GC content", "number of genes within 500kb",)
 names(ylab) = features
 
-###########################################################################################################################
+##################################################################################################################
 ##########################  enhancer proportion according to distance ############################################
 
 for (sp in c("human", "mouse")){
@@ -28,10 +28,10 @@ for (sp in c("human", "mouse")){
     pdf.name="SupplementaryFigure18.pdf"
   }
   
-  pdf(paste(pathFigures, pdf.name, sep=""), width=6.85, height=5.5)
+  pdf(paste(pathFigures, pdf.name, sep=""), width=4.49, height=10)
   
   par(mai = c(0.5, 0.5, 0.5, 0.2)) # bottom, left, top, right
-  par(mfrow=c(length(sequences),3))
+  par(mfcol=c(length(sequences),2))
   
   nb=1
   
