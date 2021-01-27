@@ -13,7 +13,7 @@ if(!"pathScripts"%in%objects){
 features = c("repeat", "all_exon", "GC", "genes")
 sequences <- c("fragment", "ENCODE")
 
-ylab = c("% length covered by repeats", "% length covered by exons", "GC content", "number of genes within 500kb")
+ylab = c("% length covered by repeats", "% length covered by exons", "GC content", "nb. genes within 500kb")
 names(ylab) = features
 
 ##################################################################################################################
@@ -28,10 +28,10 @@ for (sp in c("human", "mouse")){
     pdf.name="SupplementaryFigure18.pdf"
   }
   
-  pdf(paste(pathFigures, pdf.name, sep=""), width=4.49, height=10)
+  pdf(paste(pathFigures, pdf.name, sep=""), width=6.85, height=4.5)
   
-  par(mai = c(0.5, 0.5, 0.5, 0.2)) # bottom, left, top, right
-  par(mfcol=c(length(sequences),2))
+  par(mar = c(3, 3.1, 1.5, 0.5)) # bottom, left, top, right
+  par(mfrow=c(length(sequences),4))
   
   nb=1
   
@@ -55,29 +55,19 @@ for (sp in c("human", "mouse")){
       
       
       class_leg <- c("0.05", "0.5", "1", "1.5", "2")
-      axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=1)
-      axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1, las=2)
+      axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=0.9)
+      axis(side=2, mgp=c(3, 0.65, 0), cex.axis=0.9, las=2)
       
-      if (nb == 1){
-        legend("topleft", legend=c("PCHi-C data", "simulated data"), 
-               col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1, xpd=NA, inset=c(0.01, -0.15))
+      if (nb == 4){
+        legend("topright", legend=c("PCHi-C data", "simulated data"), 
+               col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1, xpd=NA, inset=c(0.01, -0.05))
       }
       
-      mtext(ylab[feat], side=2, cex=0.75, line=2.25)
+      mtext(ylab[feat], side=2, cex=0.7, line=2)
       
-      mtext("distance to promoters (Mb)", side=1, line=2, cex=0.75)
-      
-      
-      if (nb %in% c(2,5,8,11,14)){
-        if (seq == "fragment"){
-          seq.lab="restriction fragments"
-        }else{
-          seq.lab=paste(seq, "enhancers")
-        }
-        mtext(seq.lab, side=3, cex=0.75, line=1)
-      }
-      
-      mtext(letters[nb], side=3, line=1.45, at=-9.75, font=2, cex=1)
+      mtext("distance to promoters (Mb)", side=1, line=1.75, cex=0.7)
+            
+      mtext(letters[nb], side=3, line=0, at=-10.75, font=2, cex=0.9)
       
       nb = nb+1
     }
