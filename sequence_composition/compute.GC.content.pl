@@ -188,13 +188,24 @@ open(my $output, ">".$parameters{"pathOutput"});
 
 my $line=<$input>; ## header
 chomp $line;
-print $output $line."\tGCcontent\n";
+
 my @s=split("\t", $line);
 my %header;
 
+my $lineout="";
+
 for(my $i=0; $i<@s; $i++){
+    if($s[$i] eq "GC_bp"){
+	$lineout.="GC_bp_norepeat\t";
+    } else{
+	$lineout.=$s[$i]."\t";
+    }
+    
     $header{$s[$i]}=$i;
 }
+
+$lineout.="GC_content"; ## we have a trailing \t
+print $output $lineout."\n";
 
 $line=<$input>;
 

@@ -25,7 +25,15 @@ fi
 
 perl ${pathScripts}/compute.GC.content.pl --pathGenomeSequence=${pathGenomeSequence} --pathCoordinates=${pathFragments}/statistics_contacted_sequence_original.txt --pathOutput=${pathFragments}/statistics_contacted_sequence_original_withGCcontent.txt
 
+mv ${pathFragments}/statistics_contacted_sequence_original.txt ${pathFragments}/backup_statistics_contacted_sequence_original.txt
+
+mv ${pathFragments}/statistics_contacted_sequence_original_withGCcontent.txt ${pathFragments}/statistics_contacted_sequence_original.txt
+  
 perl ${pathScripts}/compute.GC.content.pl --pathGenomeSequence=${pathGenomeSequence} --pathCoordinates=${pathFragments}/statistics_contacted_sequence_simulated.txt --pathOutput=${pathFragments}/statistics_contacted_sequence_simulated_withGCcontent.txt
+
+mv ${pathFragments}/statistics_contacted_sequence_simulated.txt ${pathFragments}/backup_statistics_contacted_sequence_simulated.txt
+
+mv ${pathFragments}/statistics_contacted_sequence_simulated_withGCcontent.txt ${pathFragments}/statistics_contacted_sequence_simulated.txt
 
 ########################################################################
 
@@ -36,7 +44,16 @@ do
     if [ -e ${pathEnhancers}/${enh}/statistics_contacted_enhancers_original.txt ]; then
 	perl ${pathScripts}/compute.GC.content.pl --pathGenomeSequence=${pathGenomeSequence} --pathCoordinates=${pathEnhancers}/${enh}/statistics_contacted_enhancers_original.txt --pathOutput=${pathEnhancers}/${enh}/statistics_contacted_enhancers_original_withGCcontent.txt
 
+	mv ${pathEnhancers}/${enh}/statistics_contacted_enhancers_original.txt ${pathEnhancers}/${enh}/backup_statistics_contacted_enhancers_original.txt
+
+	mv ${pathEnhancers}/${enh}/statistics_contacted_enhancers_original_withGCcontent.txt ${pathEnhancers}/${enh}/statistics_contacted_enhancers_original.txt
+
 	perl ${pathScripts}/compute.GC.content.pl --pathGenomeSequence=${pathGenomeSequence} --pathCoordinates=${pathEnhancers}/${enh}/statistics_contacted_enhancers_simulated.txt --pathOutput=${pathEnhancers}/${enh}/statistics_contacted_enhancers_simulated_withGCcontent.txt
+
+	mv ${pathEnhancers}/${enh}/statistics_contacted_enhancers_simulated.txt ${pathEnhancers}/${enh}/backup_statistics_contacted_enhancers_simulated.txt
+
+	mv ${pathEnhancers}/${enh}/statistics_contacted_enhancers_simulated_withGCcontent.txt ${pathEnhancers}/${enh}/statistics_contacted_enhancers_simulated.txt
+
     fi
 done
 
