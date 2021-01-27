@@ -13,7 +13,7 @@ if(!"pathScripts"%in%objects){
 features = c("repeat", "all_exon", "GC", "genes")
 sequences <- c("fragment", "ENCODE")
 
-ylab = c("% length covered by repeats", "% length covered by exons", "GC content", "number of genes within 500kb",)
+ylab = c("% length covered by repeats", "% length covered by exons", "GC content", "number of genes within 500kb")
 names(ylab) = features
 
 ##################################################################################################################
