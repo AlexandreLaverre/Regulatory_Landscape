@@ -12,7 +12,7 @@ for(ref_sp in c("human", "mouse")){
   feat_prop_dist <- list()
   
   enhancers = enhancer.datasets[[ref_sp]]
-  features = c("all_exon", "repeat", "GC")
+  features = c("all_exon", "repeat", "GC", "genes")
   
   obs <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
   simul <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
@@ -32,6 +32,9 @@ for(ref_sp in c("human", "mouse")){
   
   obs$GC_pclen=100*obs$GC_content
   simul$GC_pclen=100*simul$GC_content
+  
+  obs$genes_pclen=obs$nb_genes_500kb
+  simul$genes_pclen=simul$nb_genes_500kb
 
   ############################### features coverage according to distance from promoters #################
   
@@ -76,7 +79,10 @@ for(ref_sp in c("human", "mouse")){
     
     obs$GC_pclen=100*obs$GC_content
     simul$GC_pclen=100*simul$GC_content
-    
+
+    obs$genes_pclen=obs$nb_genes_500kb
+    simul$genes_pclen=simul$nb_genes_500kb
+        
     ############################### features coverage according to distance from promoters #################
     obs$dist_class <-cut(obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
     simul$dist_class <- cut(simul$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
