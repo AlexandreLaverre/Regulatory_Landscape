@@ -59,10 +59,7 @@ for(ref_sp in c("human", "mouse")){
     frag_align <- fread(paste(path_evol, ref_sp, "/sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
     class(frag_align) <- "data.frame"
     
-    ## replace NA values with 0
-    for(sp in species){
-      frag_align[which(is.na(frag_align[,sp])),sp]=0
-    }
+    ## we keep  NA values 
     
     frag_align_obs <- frag_align[which(frag_align$ID %in% obs$ID), c("ID", species)]
     frag_align_simul <- frag_align[which(frag_align$ID %in% simul$ID), c("ID", species) ]
@@ -97,12 +94,8 @@ for(ref_sp in c("human", "mouse")){
       enh_align <- fread(paste(path_evol, ref_sp, "/sequence_conservation/enhancers/", enh, "/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
       class(enh_align) <- "data.frame"
       
-      ## replace NA values with 0
-      
-      for(sp in species){
-        enh_align[which(is.na(enh_align[,sp])),sp]=0
-      }
-
+      ## we keep  NA values 
+        
       ## statistics for enhancers 
       enh_obs_stats <- enhancer.statistics[[ref_sp]][[enh]][["original"]]
       enh_simul_stats <- enhancer.statistics[[ref_sp]][[enh]][["simulated"]]
