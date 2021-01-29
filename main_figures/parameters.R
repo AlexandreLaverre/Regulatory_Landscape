@@ -79,4 +79,7 @@ maxDistanceSyntenyTarget=2e6 ## 2 Mb
 
 minSampleTarget = 1
 minAlignScore = 0.4
+
+`%notin%` <- Negate(`%in%`)
+
 #######################################################################################

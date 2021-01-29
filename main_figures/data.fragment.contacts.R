@@ -38,12 +38,15 @@ for(sp in c("human", "mouse")){
   sim=sim[which(sim$bait_length>=250 & sim$bait_length<=20000 & sim$contacted_length>=250 & sim$contacted_length<=20000),]
     
   ## bait and fragment id
-
   obs$id_bait=paste(obs$chr_bait, obs$start_bait, obs$end_bait, sep=":")
   obs$id_frag=paste(obs$chr, obs$start, obs$end, sep=":")
   
   sim$id_bait=paste(sim$chr_bait, sim$start_bait, sim$end_bait, sep=":")
   sim$id_frag=paste(sim$chr, sim$start, sim$end, sep=":")
+  
+  ## discard abberant fragments
+  aberant_frags <- read.table(paste(pathFinalData, "SupplementaryDataset1/", sp, "/aberants.fragments.txt",sep=""), h=T)
+  obs=obs[which(obs$id_frag %notin% aberant_frags$fragment),]
   
   observed.contacts[[sp]]=obs
   simulated.contacts[[sp]]=sim
