@@ -32,6 +32,7 @@ for(sp in c("human", "mouse")){
     } else{
       exp$id=paste(exp$chr, exp$start, exp$end, sep=":")
     }
+    
     rownames(exp)=exp$id
 
     contacts.real=read.table(paste(pathContacts, sp, "/", synonyms[dataset], "/gene_enhancer_contacts_original_interactions.txt", sep=""), h=T)
@@ -44,88 +45,63 @@ for(sp in c("human", "mouse")){
 
     ## sequence conservation
 
-    ## cons=read.table(paste(pathConservation, sp, "/sequence_conservation/enhancers/",dataset, "/AlignmentStatistics_Excluding_Exons_", sp, "2", tg, ".txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    ## rownames(cons)=cons[,paste("ID.",sp, sep="")]
+    cons=read.table(paste(pathConservation, sp, "/sequence_conservation/enhancers/",synonyms[dataset], "/AlignmentStatistics_Excluding_Exons_", sp, "2", tg, ".txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    rownames(cons)=cons[,paste("ID.",sp, sep="")]
 
-    ## cons$PCUngapped=cons$FilteredUngappedLength/cons$FilteredAlignmentLength
-    ## cons=cons[which(cons$FilteredAlignmentLength>=20),]
+    cons$PCUngapped=cons$FilteredUngappedLength/cons$FilteredAlignmentLength
+    cons=cons[which(cons$FilteredAlignmentLength>=20),]
    
     ## median distance for enhancers
 
     median.dist=tapply(contacts.real$dist, as.factor(contacts.real$enhancer), median)
     mean.dist=tapply(contacts.real$dist, as.factor(contacts.real$enhancer), mean)
 
-    exp=exp[names(median.dist),]
-    cons=cons[names(median.dist),]
-    cons$PCUngapped[which(is.na(cons$PCUngapped))]=0
-    
     mediandist.class=cut(median.dist, breaks=seq(from=25e3, to=2e6, by=5e4), include.lowest=T)
     meandist.class=cut(mean.dist, breaks=seq(from=25e3, to=2e6, by=5e4), include.lowest=T)
 
-    pdf(file=paste("tmp_figures/MedianContactDistance_NbSamplesExp_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
+    exp=exp[names(median.dist),]
 
-    plot(tapply(exp$NbSamplesExp, as.factor(mediandist.class), mean), xlab="distance class", ylab="nb samples w. enhancer activity", pch=20)
+    ## pc ungapped
+    pcungap=rep(NA, dim(exp)[1])
+    names(pcungap)=rownames(exp)
 
-    dev.off()
+    pcungap[intersect(rownames(exp), rownames(cons))]=cons[intersect(rownames(exp), rownames(cons)), "PCUngapped"]
 
-    pdf(file=paste("tmp_figures/MedianContactDistance_NbSamplesHighExp_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
+    tauclass=cut(exp$Tau, breaks=quantile(exp$Tau, p=seq(from=0, to=1, length=11), na.rm=T), include.lowest=T)
 
-    plot(tapply(exp$NbSamplesHighExp, as.factor(mediandist.class), mean), xlab="distance class", ylab="nb samples w. high enhancer activity", pch=20)
-
-    dev.off()
-
-    pdf(file=paste("tmp_figures/MeanContactDistance_NbSamplesExp_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
-
-    plot(tapply(exp$NbSamplesExp, as.factor(meandist.class), mean), xlab="distance class", ylab="nb samples w. enhancer activity", pch=20)
-
-    dev.off()
-
-    pdf(file=paste("tmp_figures/MeanContactDistance_NbSamplesHighExp_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
-
-    plot(tapply(exp$NbSamplesHighExp, as.factor(meandist.class), mean), xlab="distance class", ylab="nb samples w. high enhancer activity", pch=20)
-
-    dev.off()
-
-     pdf(file=paste("tmp_figures/MeanContactDistance_Tau_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
-
-    plot(tapply(exp$Tau, as.factor(meandist.class), mean), xlab="mean distance class", ylab="mean tau", pch=20)
-
-    dev.off()
-
-     pdf(file=paste("tmp_figures/MeanContactDistance_TauLog_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
-
-    plot(tapply(exp$TauLog, as.factor(meandist.class), mean), xlab="mean distance class", ylab="mean tau log", pch=20)
-
-    dev.off()
-
+    ## tau vs distance & sequence conservation
     
-     pdf(file=paste("tmp_figures/MedianContactDistance_Tau_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
+    ## pc ungapped as a function of tau
 
-    plot(tapply(exp$Tau, as.factor(mediandist.class), median), xlab="median distance class", ylab="median tau", pch=20)
+    pdf(file=paste("tmp_figures/TauClass_PCUngapped_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
+
+    plot(tapply(pcungap, tauclass, mean, na.rm=T), xlab="Tau class", ylab="mean fraction ungapped sequence", pch=20)
+
+    dev.off()
+  
+   
+    pdf(file=paste("tmp_figures/MedianContactDistance_Tau_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
+
+    plot(tapply(exp$Tau, as.factor(mediandist.class), mean), xlab="median distance class", ylab="mean tau", pch=20)
 
     dev.off()
 
-     pdf(file=paste("tmp_figures/MedianContactDistance_TauLog_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
+    ## nb samples with high exp
 
-    plot(tapply(exp$TauLog, as.factor(mediandist.class), median), xlab="median distance class", ylab="median tau log", pch=20)
+    nbsamplesclass=cut(exp$NbSamplesTPM1, breaks=quantile(exp$NbSamplesTPM1, p=seq(from=0, to=1, length=11), na.rm=T), include.lowest=T)
+
+     pdf(file=paste("tmp_figures/NbSamplesExp_PCUngapped_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
+
+    plot(tapply(pcungap, nbsamplesclass, mean, na.rm=T), xlab="nbsamples class", ylab="mean fraction ungapped sequence", pch=20)
 
     dev.off()
+  
+   
+    pdf(file=paste("tmp_figures/MedianContactDistance_NbSamplesExpTPM1_",sp, "_", dataset,".pdf", sep=""), width=8, height=5)
 
+    plot(tapply(exp$NbSamplesTPM1, as.factor(mediandist.class), mean), xlab="median distance class", ylab="mean nb samples TPM 1", pch=20)
 
-    ## pdf(file=paste("tmp_figures/FrUngapped_",sp, "_Tau_", dataset,".pdf", sep=""), width=8, height=5)
-
-    ## rho=round(cor(exp$Tau, cons$PCUngapped, method="spearman", use="complete.obs"), digits=2)
-    ## plot(exp$Tau, cons$PCUngapped,  main=paste("rho =",rho),xlab="tau", ylab="fr ungapped", pch=20)
-
-    ## dev.off()
-
-    ##  pdf(file=paste("tmp_figures/FrUngapped_",sp, "_NbSamplesExp_", dataset,".pdf", sep=""), width=8, height=5)
-
-    ## rho=round(cor(exp$NbSamplesExp, cons$PCUngapped, method="spearman", use="complete.obs"), digits=2)
-    ## plot(exp$NbSamplesExp, cons$PCUngapped,  xlab="tau", ylab="fr ungapped", pch=20)
-
-    ## dev.off()
-
+    dev.off()
     
   }
 
