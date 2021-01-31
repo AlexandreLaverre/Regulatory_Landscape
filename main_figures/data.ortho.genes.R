@@ -3,6 +3,15 @@
 source("parameters.R")
 
 pathEvolution=paste(pathFinalData, "SupplementaryDataset7/", sep="")
+pathGenes=paste(pathFinalData, "SupplementaryDataset3/genes/", sep="")
+
+###########################################################################
+
+genes.human=read.table(paste(pathGenes, "human_genes_Ensembl94.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+genes.mouse=read.table(paste(pathGenes, "mouse_genes_Ensembl94.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+
+pc.human=genes.human$GeneID[which(genes.human$GeneBiotype=="protein_coding" & genes.human$Chr%in%c(as.character(1:22), "X", "Y"))]
+pc.mouse=genes.mouse$GeneID[which(genes.mouse$GeneBiotype=="protein_coding" & genes.mouse$Chr%in%c(as.character(1:19), "X", "Y"))]
 
 ###########################################################################
 
@@ -17,7 +26,7 @@ all.ortho$dNdS=all.ortho$dN/all.ortho$dS
 
 ###########################################################################
 
-ortho=all.ortho[which(all.ortho$HomologyType=="ortholog_one2one" & all.ortho$dNdS<1), c("IDHuman", "IDMouse")]
+ortho=all.ortho[which(all.ortho$HomologyType=="ortholog_one2one" & all.ortho$IDHuman%in%pc.human & all.ortho$IDMouse%in%pc.mouse), c("IDHuman", "IDMouse")]
 colnames(ortho)=c("human", "mouse")
 
 ###########################################################################
