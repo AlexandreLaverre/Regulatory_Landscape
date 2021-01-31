@@ -28,11 +28,19 @@ for (data in c("real", "simulated")){
   contact.data = gene.enhancer.contacts[["human"]][["ENCODE"]][[data]]
   
   # Filters on enhancers
-  if (data == "real"){data.stats="original"}else{data.stats=data}
+  if (data == "real"){
+    data.stats="original"
+  }else{
+    data.stats=data
+  }
   enh.stat.data = enhancer.statistics[["human"]][["ENCODE"]][[data.stats]]
   contact.data = contact.data[which(contact.data$enhancer%in%enh.stat.data$enh),]
   
-  if (data == "real"){data.name="original"}else{data.name=data}
+  if (data == "real"){
+    data.name="original"
+  }else{
+    data.name=data
+  }
   
   nb_total = unlist(with(contact.data, tapply(enhancer, factor(gene), function(x) length(x))))
   median_dist = unlist(with(contact.data, tapply(dist, factor(gene), median, na.rm=T)))
@@ -55,7 +63,11 @@ names(ranked.var) = c("align_score", "ratio_cons_seq", "ratio_cons_synt", "ratio
 for (data in c("obs", "sim")){
   regland = genes.conservation[["ENCODE"]][[data]][["all"]]
   
-  if (data == "obs"){data.name="original"}else{data.name="simulated"}
+  if (data == "obs"){
+    data.name="original"
+  }else{
+    data.name="simulated"
+  }
   
   for (var in names(ranked.var)){
     write.table(rownames(regland[order(-regland[[var]]),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.", data.name, ranked.var[var], ".txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
