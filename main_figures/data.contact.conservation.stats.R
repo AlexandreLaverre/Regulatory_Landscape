@@ -49,8 +49,8 @@ for(ref in c("human", "mouse")){
   
   for(enh in enhancers){
     ################ contact conservation ####################
-    cc.obs <- contact.cons[[enh]][["obsobs"]]
-    cc.sim <- contact.cons[[enh]][["simsim"]]
+    cc.obs <- contact.cons[[enh]][["obs"]]
+    cc.sim <- contact.cons[[enh]][["sim"]]
     
     cc.obs$cons=apply(cc.obs[,sampleinfo.tg$Sample.ID], 1, function(x) sum(x>0) > 1)
     cc.sim$cons=apply(cc.sim[,sampleinfo.tg$Sample.ID], 1, function(x) sum(x>0) > 1)
