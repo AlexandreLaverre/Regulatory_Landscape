@@ -30,12 +30,12 @@ for(sp in c("human", "mouse")){
   med_dist <- tapply(obs$dist, as.factor(obs$id_frag), function(x) median(x))
   
   frag_stats = data.frame("nb.bait"=nb_bait, "mean.CHICAGO.score"=mean_score, "median.distance"=med_dist)
-  aberant_frags = frag_stats[which(frag_stats$nb.bait > 15 & frag_stats$mean.CHICAGO.score>10 & frag_stats$median.distance>1000000),]
-  aberant_frags = data.frame("fragment"=rownames(aberant_frags), aberant_frags)
+  aberrant_frags = frag_stats[which(frag_stats$nb.bait > 15 & frag_stats$mean.CHICAGO.score>10 & frag_stats$median.distance>1000000),]
+  aberrant_frags = data.frame("fragment"=rownames(aberrant_frags), aberrant_frags)
   
   #################################################################################
   
-  write.table(aberant_frags, file=paste(pathFinalData, "SupplementaryDataset1/", sp, "/aberants.fragments.txt",sep=""), row.names=F, col.names=T, quote=F, sep="\t")
+  write.table(aberrant_frags, file=paste(pathFinalData, "SupplementaryDataset1/", sp, "/aberrant.fragments.txt",sep=""), row.names=F, col.names=T, quote=F, sep="\t")
   
   #################################################################################
   
