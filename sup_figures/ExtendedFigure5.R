@@ -9,7 +9,11 @@ load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
 load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
 load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
 
-if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
+if (sp == "human"){
+  sp_name="Human"
+}else{
+  sp_name="Mouse"
+}
 
 bord.measure = c("#AF46B4", "#4BB446")
 names(bord.measure) = c("Spearman's rho", "1-Euclidean distance")
@@ -76,7 +80,7 @@ clearboxplot <- function(measure, divergences, plotlabel){
 
 ######################################################################################################################
 
-pdf(file=paste(pathFigures, "ExtendedFigure4.pdf", sep=""), width = 6.85)
+pdf(file=paste(pathFigures, "ExtendedFigure5.pdf", sep=""), width = 6.85)
 
 m=matrix(rep(NA, 10*2), nrow=10)
 for(i in 1:3){

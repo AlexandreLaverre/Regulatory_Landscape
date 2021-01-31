@@ -23,7 +23,7 @@ for (sp in c("human", "mouse")){
   load(paste(pathFigures, "RData/data.features.coverage.", sp, ".RData", sep=""))
   
   if (sp == "human"){
-    pdf.name="ExtendedFigure2.pdf"
+    pdf.name="ExtendedFigure3.pdf"
   } else{
     pdf.name="SupplementaryFigure18.pdf"
   }

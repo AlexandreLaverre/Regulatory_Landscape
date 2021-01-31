@@ -29,7 +29,7 @@ if(load){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "ExtendedFigure1.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "ExtendedFigure2.pdf", sep=""), width=6.85, height=5.5)
 
 ## layout
 m=matrix(rep(NA,20*40), nrow=20)
