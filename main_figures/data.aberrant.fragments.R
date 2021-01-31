@@ -35,7 +35,7 @@ for(sp in c("human", "mouse")){
   
   #################################################################################
   
-  write.table(aberrant_frags, file=paste(pathFinalData, "SupplementaryDataset1/", sp, "/aberrant.fragments.txt",sep=""), row.names=F, col.names=T, quote=F, sep="\t")
+  write.table(aberrant_frags, file=paste(pathFinalData, "SupplementaryDataset1/", sp, "/aberrant_fragments.txt",sep=""), row.names=F, col.names=T, quote=F, sep="\t")
   
   #################################################################################
   
