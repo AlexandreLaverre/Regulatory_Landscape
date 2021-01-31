@@ -33,8 +33,8 @@ for(ref_sp in c("human", "mouse")){
       class(obs)<-"data.frame"
 
       ## keep only previously filtered bait-fragment contacts
-      obs$IDBait=unlist(lapply(obs$IDBait, function(x) paste(unlist(strsplit(x, split=",")), sep=":")))
-      obs$IDContactedFragment=unlist(lapply(obs$IDContactedFragment, function(x) paste(unlist(strsplit(x, split=",")), sep=":")))
+      obs$IDBait=unlist(lapply(obs$IDBait, function(x) paste(unlist(strsplit(x, split=",")), collapse=":")))
+      obs$IDContactedFragment=unlist(lapply(obs$IDContactedFragment, function(x) paste(unlist(strsplit(x, split=",")),collapse=":")))
       obs$IDContact=paste(obs$IDBait, obs$IDContactedFragment, sep="-")
 
       obs=obs[which(obs$IDContact%in%frag.contact.obs$idcontact),]
@@ -43,8 +43,8 @@ for(ref_sp in c("human", "mouse")){
       class(simul)<-"data.frame"
 
       ## keep only previously filtered bait-fragment contacts
-      simul$IDBait=unlist(lapply(simul$IDBait, function(x) paste(unlist(strsplit(x, split=",")), sep=":")))
-      simul$IDContactedFragment=unlist(lapply(simul$IDContactedFragment, function(x) paste(unlist(strsplit(x, split=",")), sep=":")))
+      simul$IDBait=unlist(lapply(simul$IDBait, function(x) paste(unlist(strsplit(x, split=",")), collapse=":")))
+      simul$IDContactedFragment=unlist(lapply(simul$IDContactedFragment, function(x) paste(unlist(strsplit(x, split=",")), collapse=":")))
       simul$IDContact=paste(simul$IDBait, simul$IDContactedFragment, sep="-")
 
       simul=simul[which(simul$IDContact%in%frag.contact.sim$idcontact),]
