@@ -10,7 +10,9 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 #######################################################################################
 
 load(paste(pathFigures,"RData/data.enhancer.statistics.RData", sep=""))
+load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData",sep=""))
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
+load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
 
 #######################################################################################
 
@@ -26,41 +28,39 @@ for(ref in c("human", "mouse")){
   for(enh in enhancer.datasets[[ref]]){
     print(enh)
     
-    obsobs=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    simsim=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    
-    class(obsobs)="data.frame"
-    class(simsim)="data.frame"
-    
-    ## gene with orthologue one2one in target specie
-    obsobs = obsobs[which(!is.na(obsobs$target_gene)),]
-    simsim = simsim[which(!is.na(simsim$target_gene)),]
-    
-    ## filtered enhancers
-    obsobs=obsobs[which(obsobs$BLAT_match == 1 & obsobs$origin_dist >= minDistance),]
-    simsim=simsim[which(simsim$BLAT_match == 1 & simsim$origin_dist >= minDistance),]
-    
-    # Class of distances
-    obsobs$class_dist = cut(obsobs$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
-    simsim$class_dist = cut(simsim$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
+    obs=contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["obs"]]
+    sim=contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["sim"]]
 
-    # Conservation of contact
-    obsobs$cons=apply(obsobs[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
-    simsim$cons=apply(simsim[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
+    ## select previously filtered ortho genes
+
+    obs=obs[which(obs$origin_gene%in%ortho[,ref] & obs$target_gene%in%ortho[,tg]),]
+    sim=sim[which(sim$origin_gene%in%ortho[,ref] & sim$target_gene%in%ortho[,tg]),]
     
-    datas <- list("obs"=obsobs, "sim"=simsim)
+    ## Class of distances
+    obs$class_dist = cut(obs$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
+    sim$class_dist = cut(sim$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
+
+    ## Conservation of contact
+    obs$cons=apply(obs[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
+    sim$cons=apply(sim[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
+    
+    data.list <- list("obs"=obs, "sim"=sim)
     
     for (data.name in c("obs", "sim")){
       print(data.name)
       
-      data = datas[[data.name]]
-      all_genes = levels(factor(data$origin_gene))
+      data = data.list[[data.name]]
+      all_genes = unique(data$origin_gene)
   
       # Calculate conservation for each distance class
       for (dist in c(levels(data$class_dist), "all")){
         
         print(dist)
-        if (dist == "all"){selected_dist = data}else{selected_dist = data[which(data$class_dist == dist),]}
+        if (dist == "all"){
+          selected_dist = data
+        } else{
+          selected_dist = data[which(data$class_dist == dist),]
+        }
 
         nb_total = unlist(with(selected_dist, tapply(origin_enh, factor(origin_gene, levels=all_genes), function(x) length(x))))
         align_score =  unlist(with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), median, na.rm=T)))
@@ -103,4 +103,4 @@ for(ref in c("human", "mouse")){
   save(genes.conservation, file=paste(pathFigures, "RData/data.", ref, ".regland.conservation.RData",sep=""))
 }
 
-
+###########################################################################
