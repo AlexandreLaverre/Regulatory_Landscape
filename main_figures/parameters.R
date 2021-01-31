@@ -62,7 +62,7 @@ col.Shh=dataset.colors["Original"]
 
 #######################################################################################
 
-col.celltypes=c("gray40", "navy", "blue", "steelblue", "deepskyblue1", "slateblue", "purple", "red", "brown", "indianred", "orange", "darkgoldenrod", "darkorange", "forestgreen", "aquamarine3", "black", "indianred", "steelblue", "purple", "darkred", "darkorange")
+col.celltypes=c("gray40", "navy", "blue", "steelblue", "deepskyblue1", "slateblue", "purple", "red", "brown", "indianred", "orange", "darkgoldenrod", "darkorange", "forestgreen", "aquamarine3", "black", "darkblue", "steelblue", "purple", "darkred", "darkorange")
 names(col.celltypes)=c("B lymphocytes", "cardiomyocytes", "embryonic stem cells", "endothelial precursors", "erythroblasts", "fetal thymus", "hematopoietic progenitors", "keratinocytes", "lymphoblastoid cell line", "macrophages", "megakaryocytes","monocytes", "neuroepithelial cells", "neutrophils", "pre-adipocytes", "T lymphocytes", "embryonic stem cells, Nanog KO",  "epiblast stem cells", "ES-derived  hematopoietic progenitors", "fetal liver", "trophoblast stem cells")
 
 syn.celltypes=c("B lymphocytes", "cardiomyocytes", "embryonic stem cells", "endothelial precursors", "erythroblasts", "fetal thymus", "hematopoietic progenitors", "keratinocytes", "lymphoblastoid cells", "macrophages", "megakaryocytes","monocytes", "neuroepithelial cells", "neutrophils", "pre-adipocytes", "T lymphocytes", "ESC Nanog KO",  "epiblast stem cells", "ES-derived\nhematopoietic progenitors", "fetal liver", "trophoblast stem cells")
