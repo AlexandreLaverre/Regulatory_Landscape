@@ -15,8 +15,8 @@ for(ref_sp in c("human", "mouse")){
 
   ## fragment contacts
   
-  frag.contact.obs=observed.contacts[[sp]]
-  frag.contact.sim=simulated.contacts[[sp]]
+  frag.contact.obs=observed.contacts[[ref_sp]]
+  frag.contact.sim=simulated.contacts[[ref_sp]]
 
   frag.contact.obs$idcontact=paste(frag.contact.obs$id_bait, frag.contact.obs$id_frag, sep="-")
   frag.contact.sim$idcontact=paste(frag.contact.sim$id_bait, frag.contact.sim$id_frag, sep="-")
