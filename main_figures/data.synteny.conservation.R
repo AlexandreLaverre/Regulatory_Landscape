@@ -8,9 +8,12 @@ source("parameters.R")
 
 all.species <- c("human", "macaque", "dog", "cow", "elephant", "rabbit", "mouse", "rat", "opossum", "chicken")
 
+load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
+
 ####################################################################################################
 
 for(ref_sp in c("human", "mouse")){
+ 
   target_sp = setdiff(c("human", "mouse"), ref_sp)
 
   species <- setdiff(all.species, ref_sp)
@@ -29,9 +32,17 @@ for(ref_sp in c("human", "mouse")){
   conserv_synteny <- list()
 
   for (enh in enhancers){
-    conserv_synteny[[enh]] <- list()
-
     message("Running conserv synteny with ", enh)
+    
+    ## filtered gene enhancer contacts
+
+    filtered.contacts.obs=gene.enhancer.contacts[[ref_sp]][[enh]][["real"]]
+    filtered.contacts.sim=gene.enhancer.contacts[[ref_sp]][[enh]][["simulated"]]
+
+    filtered.contacts.obs$id=paste(filtered.contacts.obs$gene, filtered.contacts.obs$enhancer, sep="-")
+    filtered.contacts.sim$id=paste(filtered.contacts.sim$gene, filtered.contacts.sim$enhancer, sep="-")
+    
+    conserv_synteny[[enh]] <- list()
     
     for (sp in species){
       conserv_synteny[[enh]][[sp]]<-list()
@@ -41,7 +52,21 @@ for(ref_sp in c("human", "mouse")){
 
       class(synt_obs)<-"data.frame"
       class(synt_simul)<-"data.frame"
+
+      print(paste(nrow(synt_obs)," observed contacts before filtering"))
+      print(paste(nrow(synt_simul)," simulated contacts before filtering"))
       
+      ## select only previously filtered gene - enhancer pairs
+
+      synt_obs$id=paste(synt_obs$origin_gene, synt_obs$origin_enh, sep="-")
+      synt_simul$id=paste(synt_simul$origin_gene, synt_simul$origin_enh, sep="-")
+
+      synt_obs=synt_obs[which(synt_obs$id%in%filtered.contacts.obs$id),]
+      synt_simul=synt_simul[which(synt_simul$id%in%filtered.contacts.sim$id),]
+
+      print(paste(nrow(synt_obs)," observed contacts after filtering"))
+      print(paste(nrow(synt_simul)," simulated contacts after filtering"))
+            
       ## sequences have to be aligned
       synt_obs <- synt_obs[which(synt_obs$align_score>0),]
       synt_simul <- synt_simul[which(synt_simul$align_score>0),]
