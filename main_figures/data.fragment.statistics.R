@@ -32,8 +32,8 @@ for(sp in c("human", "mouse")){
 
   outlier.frag <- read.table(paste(pathFragments, sp, "/aberrant_fragments.txt", sep=""), h=T, stringsAsFactors=F)
  
-  print(paste(length(which(outlier.frag$ID%in%obs$fragment)), "outlier fragments in observed data"))
-  print(paste(length(which(outlier.frag$ID%in%sim$fragment)), "outlier fragments in simulated data"))
+  print(paste(length(which(outlier.frag$fragment%in%obs$ID)), "outlier fragments in observed data"))
+  print(paste(length(which(outlier.frag$fragment%in%sim$ID)), "outlier fragments in simulated data"))
   
   obs <- obs[which(!obs$ID%in%outlier.frag$fragment),]
   sim <- sim[which(!sim$ID%in%outlier.frag$fragment),]
