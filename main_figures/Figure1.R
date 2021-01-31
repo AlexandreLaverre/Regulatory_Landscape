@@ -259,15 +259,15 @@ for(ed in names(shhenhancers)){
 mtext("predicted", side=2, las=2, cex=0.7, line=0.75, at=0.75)
 mtext("enhancers", side=2, las=2, cex=0.7, line=0.75, at=0.4)
 
-## Zrs enhancer
+## ## Zrs enhancer
 
-## ZRS coordinates from Vista database: chr7:156,791,088-156,791,875 (after liftOver transformation to hg38)
+## ## ZRS coordinates from Vista database: chr7:156,791,088-156,791,875 (after liftOver transformation to hg38)
 
-zrspos=(156791088+156791875)/2
+## zrspos=(156791088+156791875)/2
 
-segments(zrspos, 0,  zrspos, 1,col="deepskyblue")
+## segments(zrspos, 0,  zrspos, 1,col="deepskyblue")
 
-mtext("ZRS", font=1, cex=0.7, side=3, at=zrspos, line=0.15)
+## mtext("ZRS", font=1, cex=0.7, side=3, at=zrspos, line=0.15)
 
 ###############################################################################################
 
