@@ -1,10 +1,8 @@
 
 ## all scripts that generate figures
 
-
 all.files=system("ls", intern=T)
 fig.scripts=c(grep("SupplementaryFigure", all.files, value=T), grep("ExtendedFigure", all.files, value=T))
-fig.scripts=grep("SupplementaryFigureX", fig.scripts, value=T, invert=T)
 
 ############################################################################
 
