@@ -24,8 +24,8 @@ for(ref in c("human", "mouse")){
     
     ## filtered gene enhancer contacts
 
-    filtered.contacts.obs=gene.enhancer.contacts[[ref_sp]][[enh]][["real"]]
-    filtered.contacts.sim=gene.enhancer.contacts[[ref_sp]][[enh]][["simulated"]]
+    filtered.contacts.obs=gene.enhancer.contacts[[ref]][[enh]][["real"]]
+    filtered.contacts.sim=gene.enhancer.contacts[[ref]][[enh]][["simulated"]]
 
     filtered.contacts.obs$id=paste(filtered.contacts.obs$gene, filtered.contacts.obs$enhancer, sep="-")
     filtered.contacts.sim$id=paste(filtered.contacts.sim$gene, filtered.contacts.sim$enhancer, sep="-")
