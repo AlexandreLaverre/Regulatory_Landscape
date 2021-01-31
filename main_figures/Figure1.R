@@ -115,7 +115,7 @@ pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=8.5)
 
 ## layout
 
-m=matrix(rep(NA, 51*10), nrow=51)
+m=matrix(rep(NA, 52*10), nrow=52)
 
 
 for(i in 1:19){
@@ -138,6 +138,9 @@ for(i in c(27:48)){
 
 for(i in 49:51){
   m[i,]=c(rep(7, 1), rep(8,9))
+}
+for(i in 52){
+  m[i,]=c(rep(11, 10))
 }
 
 layout(m)
@@ -273,9 +276,9 @@ mtext("enhancers", side=2, las=2, cex=0.7, line=0.75, at=0.4)
 
 ###############################################################################################
 
-par(mar = c(5.5, 3.75, 2.5, 1)) # external margins
+par(mar = c(5.75, 3.75, 2.5, 1)) # external margins
 
-#################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
+#################### Histogram with number of samples in which an interaction is observed #####################
 
 b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='',
           names=rep("", dim(pc_nb_celltypes_matrix)[2]), ylim=c(0,80), space=c(0.4,1),
@@ -296,7 +299,7 @@ mtext("a", side=3, line=1, at=-3.9, font=2, cex=1.2)
 
 ################################################################################################
 
-#################### Fig 1.C - Distribution of number of cell types according to distance #####################
+#################### Distribution of number of cell types according to distance #####################
 
 ylim=c(0, max(c(as.numeric(mean_nb_celltypes_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Simulated",]))))
 ylim[2]=ylim[2]+1
@@ -328,6 +331,11 @@ mtext("b", side=3, line=1, at=-3.15e5, font=2, cex=1.2)
 
 ###########################################################################################
 
+## empty plot
+par(mar=c(0, 0.1, 0, 0.3)) 
+plot.new()
+
+############################################################################################
 dev.off()
 
 ###########################################################################################
