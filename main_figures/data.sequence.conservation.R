@@ -16,7 +16,7 @@ names(outnames)=c("IdenticalSequence", "UngappedAlignment")
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep="")) 
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
-load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep="")) ## enhancers are already filtered for duplication levels, repeat proprtion etc
+load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep="")) ## enhancers are already filtered for duplication levels, repeat proportion etc
 load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep="")) ## fragments are already filtered for duplication levels, repeat proprtion etc
 
 #######################################################################################
@@ -94,7 +94,7 @@ for(ref_sp in c("human", "mouse")){
       enh_align <- fread(paste(path_evol, ref_sp, "/sequence_conservation/enhancers/", enh, "/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
       class(enh_align) <- "data.frame"
       
-      ## we keep  NA values 
+      ## we keep  NA values, they represent cases where there may be full overlap with exons
         
       ## statistics for enhancers 
       enh_obs_stats <- enhancer.statistics[[ref_sp]][[enh]][["original"]]
