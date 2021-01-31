@@ -11,6 +11,7 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 #######################################################################################
 
 load(paste(pathFigures,"RData/data.enhancer.statistics.RData", sep=""))
+load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData",sep=""))
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 
 #######################################################################################
@@ -34,35 +35,30 @@ for(ref in c("human", "mouse")){
   for(enh in enhancer.datasets[[ref]]){
     print(enh)
     
-    obsobs=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_original2", tg,"_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    simsim=fread(paste(pathEvolution, "/", ref, "/contact_conservation/", enh, "/", ref, "_simulated2", tg,"_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    
-    class(obsobs)="data.frame"
-    class(simsim)="data.frame"
-    
-    ## gene with orthologue one2one in target specie
-    obsobs = obsobs[which(!is.na(obsobs$target_gene)),]
-    simsim = simsim[which(!is.na(simsim$target_gene)),]
-    
-    ## filtered enhancers
-    obsobs=obsobs[which(obsobs$BLAT_match == 1 & obsobs$origin_dist >= minDistance),]
-    simsim=simsim[which(simsim$BLAT_match == 1 & simsim$origin_dist >= minDistance),]
+  
+    obs=contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["obs"]]
+    sim=contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["sim"]]
+
+    ## select previously filtered ortho genes
+
+    obs=obs[which(obs$origin_gene%in%ortho[,ref] & obs$target_gene%in%ortho[,tg]),]
+    sim=sim[which(sim$origin_gene%in%ortho[,ref] & sim$target_gene%in%ortho[,tg]),]
     
     # Class of distances
-    obsobs$class_dist = cut(obsobs$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
-    simsim$class_dist = cut(simsim$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
+    obs$class_dist = cut(obs$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
+    sim$class_dist = cut(sim$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
   
     for (cell in cells){
       print(cell)
       # Take only contacts in reference cell
-      obsobs.cell <- obsobs[which(apply(obsobs[common.cell[[cell]][[ref]]], 1, function(x) any(x>0))),]
-      simsim.cell <- simsim[which(apply(simsim[common.cell[[cell]][[ref]]], 1, function(x) any(x>0))),]
+      obs.cell <- obs[which(apply(obs[common.cell[[cell]][[ref]]], 1, function(x) any(x>0))),]
+      sim.cell <- sim[which(apply(sim[common.cell[[cell]][[ref]]], 1, function(x) any(x>0))),]
       
       # Conservation of contact in target similar cell
-      obsobs.cell$cons=apply(obsobs.cell[common.cell[[cell]][[tg]]], 1, function(x) any(x>0))
-      simsim.cell$cons=apply(simsim.cell[common.cell[[cell]][[tg]]], 1, function(x) any(x>0))
+      obs.cell$cons=apply(obs.cell[common.cell[[cell]][[tg]]], 1, function(x) any(x>0))
+      sim.cell$cons=apply(sim.cell[common.cell[[cell]][[tg]]], 1, function(x) any(x>0))
       
-      datas <- list("obs"=obsobs.cell, "sim"=simsim.cell)
+      datas <- list("obs"=obs.cell, "sim"=sim.cell)
       
       for (data.name in c("obs", "sim")){
         data = datas[[data.name]]
@@ -86,7 +82,11 @@ for(ref in c("human", "mouse")){
           genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]] <- data.frame("nb_total"=nb_total, "align_score"=align_score, "seq_conserv"=seq_conserv, 
                                                                        "synt_conserv"=synt_conserv, "contact_conserv"=contact_conserv)
           # Calculate ratio with constraints on minimum number
-          if (enh == "FANTOM5"){nb_min = 2}else{nb_min=5}
+          if (enh == "FANTOM5"){
+            nb_min = 2
+          }else{
+            nb_min=5
+          }
           
           genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$seq_conserv <- with(genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]], ifelse(nb_total >= nb_min | nb_total <= 100,  seq_conserv, NA))
           genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]]$ratio_cons_seq <- with(genes.conservation.cells[[enh]][[cell]][[data.name]][[dist]], ifelse(nb_total >= nb_min & nb_total <= 100, seq_conserv/nb_total, NA))
@@ -114,3 +114,4 @@ for(ref in c("human", "mouse")){
   }
 
 
+####################################################################################################################

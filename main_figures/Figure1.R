@@ -111,7 +111,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=7.5)
+pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=8.5)
 
 ## layout
 
@@ -273,8 +273,7 @@ mtext("enhancers", side=2, las=2, cex=0.7, line=0.75, at=0.4)
 
 ###############################################################################################
 
-par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
-par(mar = c(3.5, 3.75, 3.1, 1)) # external margins
+par(mar = c(5.5, 3.75, 2.5, 1)) # external margins
 
 #################### Fig 1.B - Histogram with number of samples in which an interaction is observed #####################
 

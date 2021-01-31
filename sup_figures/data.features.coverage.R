@@ -4,7 +4,10 @@ library(data.table)
 
 options(stringsAsFactors = FALSE)
 
-source("../main_figures/parameters.R") 
+source("../main_figures/parameters.R")
+
+load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
+load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
 
 #########################################################################################################################
 
@@ -13,15 +16,10 @@ for(ref_sp in c("human", "mouse")){
   
   enhancers = enhancer.datasets[[ref_sp]]
   features = c("all_exon", "repeat", "GC", "genes")
-  
-  obs <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
-  simul <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
-  
-  class(obs) <- "data.frame"
-  class(simul) <- "data.frame"
-  
-  obs <- obs[which(obs$baited == "unbaited" & obs$BLAT_match == 1 ),]
-  simul <- simul[which(simul$baited == "unbaited" & simul$BLAT_match == 1),]
+
+  ## read fragment statistics, already filtered
+  obs=fragment.statistics[[ref_sp]][["original"]]
+  simul=fragment.statistics[[ref_sp]][["simulated"]]
   
   ## compute percentage of length covered by other features
   obs$all_exon_pclen=obs$all_exon_bp*100/obs$length
@@ -58,18 +56,13 @@ for(ref_sp in c("human", "mouse")){
   
   #########################################################################################################################
   #########################################################################################################################
-  ############################### features coverage in enhancers according to distance from promoters #################
+############################### features coverage in enhancers according to distance from promoters #################
+  
   for (enh in enhancers){
-    
-    obs <- fread(paste(pathFinalData, "SupplementaryDataset4/", ref_sp, "/", enh, "/statistics_contacted_enhancers_original.txt", sep=""), header=T)
-    simul <- fread(paste(pathFinalData, "SupplementaryDataset4/", ref_sp,"/", enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), header=T)
-    
-    obs <- obs[which(obs$BLAT_match == 1),]
-    simul <- simul[which(simul$BLAT_match == 1),]
-    
-    class(obs) <- "data.frame"
-    class(simul) <- "data.frame"
-    
+
+    obs=enhancer.statistics[[ref_sp]][[enh]][["original"]]
+    simul=enhancer.statistics[[ref_sp]][[enh]][["simulated"]]
+   
     ## compute percentage of length covered by other features
     obs$all_exon_pclen=obs$all_exon_bp*100/obs$length
     simul$all_exon_pclen=simul$all_exon_bp*100/simul$length

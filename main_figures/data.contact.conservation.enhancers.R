@@ -49,11 +49,7 @@ for(ref in c("human", "mouse")){
 
     print(paste(nrow(obs)," observed contacts after filtering"))
     print(paste(nrow(sim)," simulated contacts after filtering"))
-                
-  
-    ## filtered enhancers - single BLAT match, within accepted distance range
-    obs=obs[which(obs$BLAT_match == 1 & obs$origin_dist >= minDistance & obs$origin_dist <= maxDistance),]
-    sim=sim[which(sim$BLAT_match == 1 & sim$origin_dist >= minDistance & sim$origin_dist <= maxDistance),]
+    
 
     ## take only well conserved enhancers
     align.threshold <- 0.4 

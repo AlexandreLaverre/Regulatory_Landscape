@@ -66,20 +66,16 @@ for(ref_sp in c("human", "mouse")){
 
       print(paste(nrow(synt_obs)," observed contacts after filtering"))
       print(paste(nrow(synt_simul)," simulated contacts after filtering"))
-            
-      ## sequences have to be aligned
-      synt_obs <- synt_obs[which(synt_obs$align_score>0),]
-      synt_simul <- synt_simul[which(synt_simul$align_score>0),]
-      
+               
       ## threshold alignment score: 5% quantile, observed values
 
       align.threshold=quantile(synt_obs$align, p=0.1)
 
       print(paste("alignment score threshold", align.threshold))
       
-      ## enhancer have to be unduplicated and aligned at least at align.threshold in target genome
-      synt_obs <- synt_obs[which(synt_obs$BLAT_match == 1 & synt_obs$align_score >= align.threshold),]
-      synt_simul <- synt_simul[which(synt_simul$BLAT_match == 1 & synt_simul$align_score >=align.threshold),]
+      ## enhancers aligned at least at align.threshold in target genome
+      synt_obs <- synt_obs[which(synt_obs$align_score >= align.threshold),]
+      synt_simul <- synt_simul[which(synt_simul$align_score >=align.threshold),]
 
       ## compute distance classes for original pairs
 

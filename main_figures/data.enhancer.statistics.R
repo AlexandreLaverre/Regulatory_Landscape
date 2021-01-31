@@ -31,10 +31,11 @@ for(sp in c("human", "mouse")){
     rownames(obs) <- obs[,"enh"]
     rownames(sim) <- sim[,"enh"]
     
-    ## select enhancers that have sufficient unique sequence (blat match)
+    ## select enhancers that are not duplicated
+    ## BLAT match can be 0 if there are repetitive sequences, we allow that
     
-    obs <- obs[which(obs$BLAT_match == 1),]
-    sim <- sim[which(sim$BLAT_match == 1),]
+    obs <- obs[which(obs$BLAT_match < 2),]
+    sim <- sim[which(sim$BLAT_match < 2),]
     
     ## save results
     
