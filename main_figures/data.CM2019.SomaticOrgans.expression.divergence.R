@@ -27,12 +27,10 @@ for (sp in c("human", "mouse")){
   
   samples.human=setdiff(grep("^Human_", colnames(expdiv), value=T), "Human_MeanRPKM")
   samples.mouse=setdiff(grep("^Mouse_", colnames(expdiv), value=T), "Mouse_MeanRPKM")
-  shh.human=as.numeric(expdiv["ENSG00000164690", samples.human])
-  shh.mouse=as.numeric(expdiv["ENSG00000164690", samples.mouse])
-  
+ 
   ####################################################################################################
   # Output
-  save(expdiv, samples.human, samples.mouse, shh.human, shh.mouse,
+  save(expdiv, samples.human, samples.mouse,
        file = paste(pathFigures, "/RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
 }
 
