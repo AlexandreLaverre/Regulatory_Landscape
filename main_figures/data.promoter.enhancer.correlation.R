@@ -7,9 +7,20 @@ options(stringsAsFactors = FALSE)
 
 source("parameters.R") ##  are defined based on the user name
 
+load(paste(pathFigures,  "RData/data.fragment.contacts.RData",sep=""))
+
 ##################################  Correlation gene expression & enhancers activity ####################################
 
 for(ref_sp in c("human", "mouse")){
+
+  ## fragment contacts
+  
+  frag.contact.obs=observed.contacts[[sp]]
+  frag.contact.sim=simulated.contacts[[sp]]
+
+  frag.contact.obs$idcontact=paste(frag.contact.obs$id_bait, frag.contact.obs$id_frag, sep="-")
+  frag.contact.sim$idcontact=paste(frag.contact.sim$id_bait, frag.contact.sim$id_frag, sep="-")
+  
   enhancers = enhancer.datasets[[ref_sp]]
   
   obs_correl_activity_dist <- list()
@@ -20,10 +31,24 @@ for(ref_sp in c("human", "mouse")){
       
       obs <- fread(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_real_data.txt", sep="/"), h=T, sep="\t")
       class(obs)<-"data.frame"
+
+      ## keep only previously filtered bait-fragment contacts
+      obs$IDBait=unlist(lapply(obs$IDBait, function(x) paste(unlist(strsplit(x, split=",")), sep=":")))
+      obs$IDContactedFragment=unlist(lapply(obs$IDContactedFragment, function(x) paste(unlist(strsplit(x, split=",")), sep=":")))
+      obs$IDContact=paste(obs$IDBait, obs$IDContactedFragment, sep="-")
+
+      obs=obs[which(obs$IDContact%in%frag.contact.obs$idcontact),]
       
       simul <- fread(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_simulated_data.txt", sep="/"), h=T, sep="\t")
       class(simul)<-"data.frame"
-      
+
+      ## keep only previously filtered bait-fragment contacts
+      simul$IDBait=unlist(lapply(simul$IDBait, function(x) paste(unlist(strsplit(x, split=",")), sep=":")))
+      simul$IDContactedFragment=unlist(lapply(simul$IDContactedFragment, function(x) paste(unlist(strsplit(x, split=",")), sep=":")))
+      simul$IDContact=paste(simul$IDBait, simul$IDContactedFragment, sep="-")
+
+      simul=simul[which(simul$IDContact%in%frag.contact.sim$idcontact),]
+            
       # according to distance
     
       obs$dist_class <-cut(obs$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
