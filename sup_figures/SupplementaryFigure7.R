@@ -16,7 +16,7 @@ if(load){
   
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-  load(paste(pathFigures, "RData/data.samples.cumulative.interactions.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.samples.cumulative.interactions.RData", sep=""))
  
   nb_cell_max = 5
   load=FALSE ## we only do this once

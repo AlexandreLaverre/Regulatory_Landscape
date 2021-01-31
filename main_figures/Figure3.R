@@ -24,7 +24,7 @@ if(load){
 
  selenh="ENCODE"
 
- load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".Rdata", sep=""))
+ load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".RData", sep=""))
 
  load=F
 }

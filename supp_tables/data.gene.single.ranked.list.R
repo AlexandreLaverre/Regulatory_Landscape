@@ -16,7 +16,7 @@ if(load){
   load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep="")) ## enhancers are already filtered for duplication levels, repeat proprtion etc
   load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData",sep=""))
-  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
   load=FALSE
   
 }

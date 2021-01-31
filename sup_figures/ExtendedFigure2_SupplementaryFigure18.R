@@ -20,7 +20,7 @@ names(ylab) = features
 ##########################  enhancer proportion according to distance ############################################
 
 for (sp in c("human", "mouse")){
-  load(paste(pathFigures, "RData/data.features.coverage.", sp, ".Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.features.coverage.", sp, ".RData", sep=""))
   
   if (sp == "human"){
     pdf.name="ExtendedFigure2.pdf"

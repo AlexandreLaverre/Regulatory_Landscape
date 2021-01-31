@@ -243,7 +243,7 @@ for(ref in c("human", "mouse")){
        cons.nb.cell, cons.nb.cell.conf.low, cons.nb.cell.conf.high,
        cons.common.cell, cons.common.cell.conf.low, cons.common.cell.conf.high, cons.common.cell.pval,
        matrix.cons.obs, matrix.cons.sim,
-       file = paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref, ".stats.Rdata", sep=""))
+       file = paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref, ".stats.RData", sep=""))
   
 }
 

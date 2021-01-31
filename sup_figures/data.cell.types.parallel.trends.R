@@ -10,7 +10,7 @@ path_evol <- paste(pathFinalData, "SupplementaryDataset7/", sep="")
 
 load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
 load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
-load(paste(pathFigures, "RData/data.common.cells.expdiv.Rdata", sep=""))
+load(paste(pathFigures, "RData/data.common.cells.expdiv.RData", sep=""))
 
 ortho <- read.table(paste(path_evol, "human/gene_orthology/human2mouse_orthologue_dNdS.txt", sep="/"), h=T, sep="\t")
 
@@ -97,6 +97,6 @@ for(sp in c("human", "mouse")){
   
   ### Output
   save(gene_dnds, enh_evol, seq_conserv, contact_conserv, synteny_conserv, correl_expression, correl_complexity, conserv_expression,
-       file = paste(pathFigures, "/RData/", sp, ".cells.types.parallel.trends.Rdata", sep=""))
+       file = paste(pathFigures, "/RData/", sp, ".cells.types.parallel.trends.RData", sep=""))
   
 }

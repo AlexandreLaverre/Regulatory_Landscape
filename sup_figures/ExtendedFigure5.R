@@ -8,7 +8,7 @@ source("../main_figures/parameters.R")
 
 sp="human"
 
-load(paste(pathFigures, "RData/", sp, ".cells.types.parallel.trends.Rdata", sep=""))
+load(paste(pathFigures, "RData/", sp, ".cells.types.parallel.trends.RData", sep=""))
 
 cells <- c("Bcell", "ESC", "adipo")
 dataset.colors=c("firebrick1", "forestgreen", "navy")

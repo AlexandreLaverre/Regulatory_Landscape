@@ -6,7 +6,7 @@ sp="human"
 sp_name="Human"
 
 load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
-load(paste(pathFigures, "RData/data.common.cells.expdiv.Rdata", sep=""))
+load(paste(pathFigures, "RData/data.common.cells.expdiv.RData", sep=""))
 load(paste(pathFigures, "RData/data.", sp, ".common.cells.regland.conservation.RData", sep=""))
 
 if (sp == "human"){

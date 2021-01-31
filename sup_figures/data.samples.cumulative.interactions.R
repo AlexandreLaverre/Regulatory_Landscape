@@ -53,6 +53,6 @@ for (sp in c("human", "mouse")){
 ###########################################################################################
 
 ### Output
-save(cumul_int, file = paste(pathFigures, "RData/data.samples.cumulative.interactions.Rdata", sep=""))
+save(cumul_int, file = paste(pathFigures, "RData/data.samples.cumulative.interactions.RData", sep=""))
 
 ###########################################################################################

@@ -17,7 +17,7 @@ if(load){
 
  target_species=c("rat", "rabbit", "human", "macaque", "dog", "cow", "elephant", "opossum", "chicken") 
  
- load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".Rdata", sep=""))
+ load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".RData", sep=""))
 
  selenh="ENCODE"
 

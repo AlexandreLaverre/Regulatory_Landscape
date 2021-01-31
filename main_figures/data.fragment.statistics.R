@@ -5,6 +5,7 @@ library(data.table)
 source("parameters.R")
 
 pathStats=paste(pathFinalData, "SupplementaryDataset5/", sep="")
+pathFragments=paste(pathFinalData, "SupplementaryDataset1/", sep="")
 
 ###########################################################################
 
@@ -17,7 +18,7 @@ for(sp in c("human", "mouse")){
   
   class(obs)<-"data.frame"
   class(sim)<-"data.frame"
-  
+
   ## create fragment identifier
   
   obs$ID <-  do.call(paste,c(obs[c("chr","start","end")],sep=":"))
@@ -27,14 +28,30 @@ for(sp in c("human", "mouse")){
   rownames(obs) <- obs$ID
   rownames(sim) <- sim$ID
 
-   ## unbaited only
+  ## remove outlier fragments
+
+  outlier.frag <- read.table(paste(pathFragments, sp, "/aberrant_fragments.txt", sep=""), h=T, stringsAsFactors=F)
+ 
+  print(length(which(outlier.frag$ID%in%obs$fragment)), "outlier fragments in observed data")
+  print(length(which(outlier.frag$ID%in%sim$fragment)), "outlier fragments in simulated data")
+  
+  obs <- obs[which(!obs$ID%in%outlier.frag$fragment),]
+  sim <- sim[which(!sim$ID%in%outlier.frag$fragment),]
+                   
+  ## unbaited only
+  
   obs <- obs[which(obs$baited == "unbaited"),]
   sim <- sim[which(sim$baited == "unbaited"),]
 
+  ## size selection
+ 
+  obs <- obs[which(obs$length>=minFragmentSize & obs$length<=maxFragmentSize),]
+  sim <- sim[which(sim$length>=minFragmentSize & sim$length<=maxFragmentSize),]
+  
   ## select fragments that are not duplicated 
   
-  obs <- obs[which(obs$BLAT_match < 2),] 
-  sim <- sim[which(sim$BLAT_match < 2),]
+  obs <- obs[which(obs$BLAT_match==1),] 
+  sim <- sim[which(sim$BLAT_match==1),]
   
   ## save results
   

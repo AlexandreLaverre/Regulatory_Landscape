@@ -6,7 +6,7 @@ source("../main_figures/parameters.R") ## pathFinalData are defined based on the
 sp="human"
 
 load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
-load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
+load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
 load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
 
 if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}

@@ -18,7 +18,7 @@ if(load){
   
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
   load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
-  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref, ".stats.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref, ".stats.RData", sep=""))
   
   enh="ENCODE"
   

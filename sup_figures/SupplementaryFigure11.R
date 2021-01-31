@@ -15,7 +15,7 @@ source("../main_figures/parameters.R") ## paths are defined based on the user na
 if(load){
   ref_sp = "human"
   
-  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.", ref_sp, ".Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.", ref_sp, ".RData", sep=""))
   
   enhancers = setdiff(enhancer.datasets[[ref_sp]], "ENCODE") ## ENCODE shown in main figure
 }

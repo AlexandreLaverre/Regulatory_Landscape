@@ -22,7 +22,7 @@ nb=1
 
 for (sp in c("human", "mouse")){
   
-  load(paste(pathFigures, "RData/data.enhancer.coverage.", sp, ".Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.enhancer.coverage.", sp, ".RData", sep=""))
   
   for (enh in enhancer.datasets[[sp]]){
     ymax=max(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))

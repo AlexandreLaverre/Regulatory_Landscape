@@ -44,7 +44,7 @@ for (ref_sp in c("human", "mouse")){
   enhancers=enhancer.datasets[[ref_sp]]
   label.enhancers=enhancers
   
-  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref_sp, ".stats.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref_sp, ".stats.RData", sep=""))
   
   if (ref_sp == "human"){
     YLIM=c(-1,80)

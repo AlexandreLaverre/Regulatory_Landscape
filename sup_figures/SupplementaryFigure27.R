@@ -12,7 +12,7 @@ nb = 1
 mtext.CEX=0.8
 
 for (ref in c("human", "mouse")){
-  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref, ".stats.Rdata", sep=""))
+  load(paste(pathFigures, "RData/data.contact.conservation.enhancers.", ref, ".stats.RData", sep=""))
   tg=setdiff(c("human", "mouse"), ref)
   
   ## conservation by distance

@@ -33,7 +33,7 @@ for (sp in c("human", "mouse")){
   ####################################################################################################
   # Output
   save(expdiv, samples.human, samples.mouse, shh.human, shh.mouse,
-       file = paste(pathFigures, "/RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.Rdata", sep=""))
+       file = paste(pathFigures, "/RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
 }
 
 ####################################################################################################

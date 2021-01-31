@@ -62,6 +62,6 @@ for (cell in cells){
   expdiv_cells[[paste0(cell, "_ResidualExpressionConservation")]] = lm1$residuals
 }
 
-save(expdiv_cells, file = paste(pathFigures, "/RData/data.common.cells.expdiv.Rdata", sep=""))
+save(expdiv_cells, file = paste(pathFigures, "/RData/data.common.cells.expdiv.RData", sep=""))
 
 ############################################################################################

@@ -77,9 +77,10 @@ minDistanceSyntenyRef=1e5 ## 100 kb
 maxDistanceSyntenyRef=1.5e6 ## 1.5 Mb
 maxDistanceSyntenyTarget=2e6 ## 2 Mb
 
+minFragmentSize=250
+maxFragmentSize=20000
+
 minSampleTarget = 1
 minAlignScore = 0.4
-
-`%notin%` <- Negate(`%in%`)
 
 #######################################################################################

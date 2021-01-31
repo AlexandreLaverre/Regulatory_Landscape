@@ -110,7 +110,7 @@ for(ref_sp in c("human", "mouse")){
   
   ################################################# Save RData ################################################# 
   
-  save(feat_prop_dist, file = paste(pathFigures, "RData/data.features.coverage.", ref_sp, ".Rdata", sep=""))
+  save(feat_prop_dist, file = paste(pathFigures, "RData/data.features.coverage.", ref_sp, ".RData", sep=""))
   
   ############################################################################################################## 
   

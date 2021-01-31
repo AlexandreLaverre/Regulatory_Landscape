@@ -43,7 +43,7 @@ for(ref_sp in c("human", "mouse")){
   
 ################################################# Save RData ################################################# 
   
-  save(correl_activity, file = paste(pathFigures, "RData/data.promoter.enhancer.correlation.", ref_sp, ".Rdata", sep=""))
+  save(correl_activity, file = paste(pathFigures, "RData/data.promoter.enhancer.correlation.", ref_sp, ".RData", sep=""))
  
  #########################################################################################################################
 }

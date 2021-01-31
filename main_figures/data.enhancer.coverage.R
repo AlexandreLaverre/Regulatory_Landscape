@@ -97,7 +97,7 @@ for(ref_sp in c("human", "mouse")){
   
   ################################################# Save RData ################################################# 
   
-  save(enh_prop, enh_prop_nb_cell, enh_prop_dist, file = paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp, ".Rdata", sep=""))
+  save(enh_prop, enh_prop_nb_cell, enh_prop_dist, file = paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp, ".RData", sep=""))
 
   ############################################################################################################## 
 
