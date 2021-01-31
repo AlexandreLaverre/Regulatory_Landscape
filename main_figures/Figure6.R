@@ -35,6 +35,8 @@ smallx=c(-0.15, -0.075, 0.075, 0.15)
 names(smallx)=enhancer.datasets[[sp]]
 xlim=c(0.5, 5.5)
 cex.mtext = 0.8
+syn.datasets=c("Original", "Simulated")
+names(syn.datasts)=c("obs", "sim")
 
 CMPlot <- function(var, plot.nb){
   if (var == "CorrelationSpearman"){
@@ -48,25 +50,29 @@ CMPlot <- function(var, plot.nb){
   }
   
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-  
-  for(enh in enhancer.datasets[[sp]]){
-    regland = genes.conservation[[enh]][["obs"]][["all"]]
-    genes = intersect(rownames(regland), rownames(expdiv))
-    regland = regland[genes,]
-    
-    for(class in levels(regland$class_nb_contact)){
-      this.genes=rownames(regland[which(regland$class_nb_contact == class),])
+
+  for(type in c("obs", "sim")){
+    ## for(enh in enhancer.datasets[[sp]]){
+    for(enh in c("ENCODE")){
+      regland = genes.conservation[[enh]][[type]][["all"]]
+      genes = intersect(rownames(regland), rownames(expdiv))
+      regland = regland[genes,]
       
-      xpos=seq(1, length(levels(regland$class_nb_contact)), 1)
-      names(xpos) = levels(regland$class_nb_contact)
-      x=xpos[class]+smallx[enh]
-      
-      b=boxplot(expdiv[this.genes, var], plot=FALSE)
-      med=median(expdiv[this.genes, var])
-      ci=as.numeric(b$conf)
-      
-      points(x, med, pch=20, col=col.enhancers[enh], cex=1.1)
-      segments(x, ci[1], x, ci[2],  col=col.enhancers[enh])
+      for(class in levels(regland$class_nb_contact)){
+        this.genes=rownames(regland[which(regland$class_nb_contact == class),])
+        
+        xpos=seq(1, length(levels(regland$class_nb_contact)), 1)
+        names(xpos) = levels(regland$class_nb_contact)
+        x=xpos[class]+smallx[enh]
+        
+        b=boxplot(expdiv[this.genes, var], plot=FALSE)
+        med=median(expdiv[this.genes, var])
+        ci=as.numeric(b$conf)
+        
+        ## points(x, med, pch=20, col=col.enhancers[enh], cex=1.1)
+        points(x, med, pch=20, col=dataset.colors[[syn.datasets[type]]], cex=1.1)
+        segments(x, ci[1], x, ci[2],  col=col.enhancers[enh])
+      }
     }
   }
   
@@ -115,26 +121,30 @@ plot_profiles <- function(class_conserv, distances, xlab, xnames){
   for (dist in distances){
 
     plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-    
-    for (enh in enhancer.datasets[[sp]]){
-      regland = genes.conservation[[enh]][["obs"]][[dist]]
-      genes = intersect(rownames(regland), rownames(expdiv))
-      regland = regland[genes,]
-            
-      for (class in levels(regland[[class_conserv]])){
-        this.genes=rownames(regland[which(regland[[class_conserv]] == class),])
 
-        b=boxplot(expdiv[this.genes, DivergenceMeasure], plot=F)
-        med=median(expdiv[this.genes, DivergenceMeasure])
-        ci=as.numeric(b$conf)
+    for(type in c("obs", "sim")){
+      ## for(enh in enhancer.datasets[[sp]]){
+      for(enh in c("ENCODE")){
+        regland = genes.conservation[[enh]][["obs"]][[dist]]
+        genes = intersect(rownames(regland), rownames(expdiv))
+        regland = regland[genes,]
         
-        xpos=seq(1,  length(levels(regland[[class_conserv]])), 1)
-        names(xpos) = levels(regland[[class_conserv]])
-        
-        x=xpos[class]+smallx[enh]
-        
-        points(x, med, pch=20, col=col.enhancers[enh], cex=1.1)
-        segments(x, ci[1], x, ci[2], col=col.enhancers[enh])
+        for (class in levels(regland[[class_conserv]])){
+          this.genes=rownames(regland[which(regland[[class_conserv]] == class),])
+          
+          b=boxplot(expdiv[this.genes, DivergenceMeasure], plot=F)
+          med=median(expdiv[this.genes, DivergenceMeasure])
+          ci=as.numeric(b$conf)
+          
+          xpos=seq(1,  length(levels(regland[[class_conserv]])), 1)
+          names(xpos) = levels(regland[[class_conserv]])
+          
+          x=xpos[class]+smallx[enh]
+          
+          ##points(x, med, pch=20, col=col.enhancers[enh], cex=1.1)
+          points(x, med, pch=20, col=dataset.colors[[syn.datasets[type]]], cex=1.1)
+          segments(x, ci[1], x, ci[2], col=col.enhancers[enh])
+        }
       }
     }
     
