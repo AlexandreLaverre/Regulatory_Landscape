@@ -27,6 +27,22 @@ minsamples=3
 
 ######################################################################################
 
+## calcul Specificity Tau
+compute.tau <- function(exp){
+  if(max(exp)==0){
+    return(NA)
+  }
+  
+  n=length(exp)
+  newexp=exp/max(exp)
+  
+  tau=sum(1-newexp)/(n-1)
+  
+  return(tau)
+}
+
+######################################################################################
+
 for(set in c("AllOrgans", "SomaticOrgans")){
   
   ## correspondence between developmental stages
@@ -172,26 +188,14 @@ for(set in c("AllOrgans", "SomaticOrgans")){
   lm1=lm(1-results$EuclideanDistance~log2(results$MeanRPKM+1))
   results$ResidualExpEuclideanSimilarity=lm1$residuals
   
-  lm2=lm(results$CorrelationSpearman~log2(results$MeanRPKM+1))
+  lm2=lm(results$CorrelationSpearman~log2(results$MeanRPKM1+1))
   results$ResidualExpSpearman=lm2$residuals
   
   lm3=lm(results$CorrelationPearson~log2(results$MeanRPKM+1))
   results$ResidualExpPearson=lm3$residuals
   
   ## correct for specificity
-  # calcul Specificity Tau
-  compute.tau <- function(exp){
-    if(max(exp)==0){
-      return(NA)
-    }
-    
-    n=length(exp)
-    newexp=exp/max(exp)
-    
-    tau=sum(1-newexp)/(n-1)
-    
-    return(tau)
-  }
+  
   
   results$TauHuman=apply(avgexp.human, 1, function(x) compute.tau(as.numeric(x)))
   results$TauMouse=apply(avgexp.mouse, 1, function(x) compute.tau(as.numeric(x)))

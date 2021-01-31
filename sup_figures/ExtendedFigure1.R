@@ -119,7 +119,7 @@ b=barplot(pc.degree.frag, beside=T, xlab='', ylim=ylim, space=c(0.4,1), names=re
 mtext("number of contacting baits", side=1, line=1.75, cex=0.95)
 mtext("% fragments", side=2, line=2.5, cex=0.95)
 
-mtext(colnames(pc.degree.frag), at=apply(b, 2, mean), line=0.25, cex=0.75, side=1, las=1)
+mtext(colnames(pc.degree.frag), at=apply(b, 2, mean), line=0.25, cex=0.8, side=1, las=1)
 
 ## plot label
   
