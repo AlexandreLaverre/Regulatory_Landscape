@@ -88,9 +88,15 @@ for(sp in c("human", "mouse")){
 
   for(c in unique(this.cells)){
     all.ypos=ypos[which(this.cells==c)]
-    segments(1+ywidth*0.75, min(all.ypos)-ywidth/3, 1+ywidth*0.75, max(all.ypos)+ywidth/3, xpd=NA)
-    
-    mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.6, at=mean(all.ypos), col=col.celltypes[c])
+
+    if(diff(range(which(this.cells==c)))==(length(all.ypos)-1)){
+      ## perfect clustering
+      segments(1+ywidth*0.75, min(all.ypos)-ywidth/3, 1+ywidth*0.75, max(all.ypos)+ywidth/3, xpd=NA)
+      mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.6, at=mean(all.ypos), col=col.celltypes[c])
+    } else{
+      segments(1+ywidth*0.75, all.ypos-ywidth/3, 1+ywidth*0.75, all.ypos+ywidth/3, xpd=NA)
+      mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.6, at=all.ypos, col=col.celltypes[c])
+    }
   }
 
   ## AFC plot
@@ -107,11 +113,11 @@ for(sp in c("human", "mouse")){
   axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.85)
   axis(side=2, mgp=c(3, 0.5, 0), cex.axis=0.85)
 
-  mtext(paste("PC1 (", explained[1],"% explained variance)",sep=""), side=1, line=1.75, cex=0.7)
-  mtext(paste("PC2 (", explained[2],"% explained variance)",sep=""), side=2, line=1.75, cex=0.7)
+  mtext(paste("axis 1 (", explained[1],"% explained variance)",sep=""), side=1, line=1.75, cex=0.7)
+  mtext(paste("axis 2 (", explained[2],"% explained variance)",sep=""), side=2, line=1.75, cex=0.7)
 
   ## plot labels
-  mtext(letters[fig], side=3, at=xlim[1]-diff(xlim)/5.45, font=2, line=0.5, cex=0.95)
+  mtext(letters[fig], side=3, at=xlim[1]-diff(xlim)/5.3, font=2, line=0.5, cex=0.95)
   fig = fig+1
   
   ## legend for the heatmap
@@ -122,13 +128,13 @@ for(sp in c("human", "mouse")){
     zlim=c(0,100)
     xax=c(0, 25, 50, 75, 100)
     xax=xax[which(xax>=min(z) & xax<=max(z))]
-    image(x=z, z = matrix(z, ncol = 1), col = terrain.colors(50), zlim=zlim, xlim=range(xax), xaxt="n" ,yaxt="n")
+    image(x=z, z = matrix(z, ncol = 1), col = terrain.colors(50), zlim=zlim, xlim=range(xax)+c(-2,2), xaxt="n" ,yaxt="n")
     
     par(tck=-0.75)
     axis(side=1, at = xax, labels = xax, cex.axis=0.85, mgp=c(3,0.4,0))
     
     mtext("% shared interactions", side=4, las=2, at=1.15, cex=0.65, line=1)
-    mtext("(observed-simulated)", side=4, las=2, at=-1.45, cex=0.65, line=1)
+    mtext("(observed-simulated)", side=4, las=2, at=-1.55, cex=0.65, line=1)
     par(tck=NA)
   } else{
     ## empty plot
