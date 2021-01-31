@@ -4,7 +4,9 @@ library(data.table)
 
 options(stringsAsFactors = FALSE)
 
-source("parameters.R") 
+source("parameters.R")
+
+load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
 
 #########################################################################################################################
 
@@ -12,14 +14,8 @@ for(ref_sp in c("human", "mouse")){
   
   enhancers = enhancer.datasets[[ref_sp]]
   
-  obs <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp, "/statistics_contacted_sequence_original.txt", sep=""), header=T)
-  simul <- fread(paste(pathFinalData, "SupplementaryDataset5/", ref_sp,"/statistics_contacted_sequence_simulated.txt", sep=""), header=T)
-
-  class(obs) <- "data.frame"
-  class(simul) <- "data.frame"
-  
-  obs <- obs[which(obs$baited == "unbaited" & obs$BLAT_match < 2),]
-  simul <- simul[which(simul$baited == "unbaited" & simul$BLAT_match < 2),]
+  obs <- fragment.statistics[[ref_sp]][["original"]]
+  simul <- fragment.statistics[[ref_sp]][["simulated"]]
 
   ## compute percentage of length covered by enhancers
   
