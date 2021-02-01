@@ -13,6 +13,7 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 load(paste(pathFigures,"RData/data.enhancer.statistics.RData", sep=""))
 load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData",sep=""))
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
+load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
 
 #######################################################################################
 
