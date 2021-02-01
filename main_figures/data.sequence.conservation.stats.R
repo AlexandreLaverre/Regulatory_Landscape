@@ -10,7 +10,7 @@ path_evol <- paste(pathFinalData, "SupplementaryDataset7/", sep="")
 
 #######################################################################################
 
-types=c("pcidentical", "pcungapped")
+types=c("pcungapped")
 
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep="")) 
