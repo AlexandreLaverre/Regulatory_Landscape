@@ -68,7 +68,11 @@ for(ref in c("human", "mouse")){
         # Calculate conservation for each distance class
         for (dist in c("all")){ #levels(data$class_dist),
           
-          if (dist == "all"){selected_dist = data}else{selected_dist = data[which(data$class_dist == dist),]}
+          if (dist == "all"){
+            selected_dist = data
+          }else{
+            selected_dist = data[which(data$class_dist == dist),]
+          }
   
           nb_total = with(selected_dist, tapply(origin_enh, factor(origin_gene, levels=all_genes), function(x) length(x)))
           align_score =  with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), median, na.rm=T))

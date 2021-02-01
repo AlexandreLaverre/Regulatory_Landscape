@@ -4,8 +4,6 @@ options(stringsAsFactors = FALSE)
 
 source("../main_figures/parameters.R") ## pathFinalData are defined based on the user name
 
-path_evol <- paste(pathFinalData, "SupplementaryDataset7/", sep="")
-
 ###########################################################################################
 
 load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
@@ -86,8 +84,8 @@ for(sp in c("human", "mouse")){
     
     regland_target$zscore <- (regland_target$nb_total-mean(regland_target$nb_total, na.rm=T)) / sd(regland_target$nb_total, na.rm=T)
     
-    if (target_sp == "human"){targetID="GenestableID"}else{targetID="GenestableIDMouse"}
-    regland_target=regland_target[ortho_cell[[targetID]],]
+   
+    regland_target=regland_target[ortho_cell[[target_sp]],]
     
     ## Correlation between regulatory landscapes complexity
     correl_complexity[cell,] = c(cor(regland_cell$zscore, regland_target$zscore, method="pearson", use="complete.obs"),
@@ -99,3 +97,5 @@ for(sp in c("human", "mouse")){
        file = paste(pathFigures, "/RData/", sp, ".cells.types.parallel.trends.RData", sep=""))
   
 }
+
+##################################################################################################################################
