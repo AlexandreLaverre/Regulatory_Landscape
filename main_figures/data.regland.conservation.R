@@ -35,6 +35,11 @@ for(ref in c("human", "mouse")){
 
     obs=obs[which(obs$origin_gene%in%ortho[,ref] & obs$target_gene%in%ortho[,tg]),]
     sim=sim[which(sim$origin_gene%in%ortho[,ref] & sim$target_gene%in%ortho[,tg]),]
+
+    ## gene must have bait in other species
+
+    obs=obs[which(obs$target_data),]
+    sim=sim[which(sim$target_data),]
     
     ## Class of distances
     obs$class_dist = cut(obs$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
