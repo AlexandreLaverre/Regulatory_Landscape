@@ -37,8 +37,8 @@ for(ref in c("human", "mouse")){
     sim=sim[which(sim$origin_gene%in%ortho[,ref] & sim$target_gene%in%ortho[,tg]),]
 
     ## gene must have bait in other species
-
-     obs=obs[which(obs$target_data == "TRUE"),]
+    
+    obs=obs[which(obs$target_data == "TRUE"),]
     sim=sim[which(sim$target_data == "TRUE"),]
         
     
