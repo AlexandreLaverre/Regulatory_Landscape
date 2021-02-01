@@ -9,8 +9,11 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
 
+align.threshold <- 0.4 
+
 #######################################################################################
 
+unfiltered.contact.conservation=list()
 contact.conservation=list()
 
 for(ref in c("human", "mouse")){
@@ -47,17 +50,10 @@ for(ref in c("human", "mouse")){
     obs=obs[which(obs$id%in%filtered.contacts.obs$id),]
     sim=sim[which(sim$id%in%filtered.contacts.sim$id),]
 
-    print(paste(nrow(obs)," observed contacts after filtering"))
-    print(paste(nrow(sim)," simulated contacts after filtering"))
+    print(paste(nrow(obs)," observed contacts after basic filtering"))
+    print(paste(nrow(sim)," simulated contacts after basic filtering"))
     
-
-    ## take only well conserved enhancers
-    align.threshold <- 0.4 
-
-    obs=obs[which(obs$align_score>=align.threshold),]
-    sim=sim[which(sim$align_score>=align.threshold),]
-
-    ## take only orthologous genes presents in both species datasets
+    ## take only orthologous genes present in both species datasets
     
     obs=obs[which(obs$target_data == "TRUE"),]
     sim=sim[which(sim$target_data == "TRUE"),]
@@ -66,8 +62,17 @@ for(ref in c("human", "mouse")){
     
     obs=obs[which(obs$origin_gene%in%ortho[,ref] & obs$target_gene%in%ortho[,tg]),]
     sim=sim[which(sim$origin_gene%in%ortho[,ref] & sim$target_gene%in%ortho[,tg]),]
+
+    ## save data after the first filtering steps
+
+    unfiltered.contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]]=list("obs"=obs, "sim"=sim) 
+    
+    ## here we take only well-conserved enhancers!
+    
+    obs=obs[which(obs$align_score>=align.threshold),]
+    sim=sim[which(sim$align_score>=align.threshold),]
      
-    ## save data
+    ## save final data
     
     contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]]=list("obs"=obs, "sim"=sim) 
     
@@ -76,7 +81,7 @@ for(ref in c("human", "mouse")){
 
 #######################################################################################
 
-save(list=c("contact.conservation"), file=paste(pathFigures, "RData/data.contact.conservation.enhancers.RData",sep=""))
+save(list=c("unfiltered.contact.conservation", "contact.conservation"), file=paste(pathFigures, "RData/data.contact.conservation.enhancers.RData",sep=""))
 
 #######################################################################################
 

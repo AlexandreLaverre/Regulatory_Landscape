@@ -9,8 +9,8 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 
 #######################################################################################
 
-load(paste(pathFigures,"RData/data.enhancer.statistics.RData", sep=""))
-load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData",sep=""))
+load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
+load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
 
@@ -24,23 +24,16 @@ for(ref in c("human", "mouse")){
 
   sampleinfo.ref=sampleinfo[[ref]]
   sampleinfo.tg=sampleinfo[[tg]]
-  
+    
   for(enh in enhancer.datasets[[ref]]){
     print(enh)
+       
+    ## contact conservation data is already filtered - ortho genes, baited in both species
     
-    obs=contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["obs"]]
-    sim=contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["sim"]]
+    obs=unfiltered.contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["obs"]]
+    sim=unfiltered.contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["sim"]]
 
-    ## select previously filtered ortho genes
-
-    obs=obs[which(obs$origin_gene%in%ortho[,ref] & obs$target_gene%in%ortho[,tg]),]
-    sim=sim[which(sim$origin_gene%in%ortho[,ref] & sim$target_gene%in%ortho[,tg]),]
-
-    ## gene must have bait in other species
-    
-    obs=obs[which(obs$target_data == "TRUE"),]
-    sim=sim[which(sim$target_data == "TRUE"),]
-        
+    print(paste(length(unique(obs$origin_gene)), "genes"))
     
     ## Class of distances
     obs$class_dist = cut(obs$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
