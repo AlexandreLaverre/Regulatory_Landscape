@@ -30,7 +30,7 @@ for(sp in c("human", "mouse")){
   
   target_sp=setdiff(c("human", "mouse"), sp)
   
-  rownams(ortho)=ortho[,sp]
+  rownames(ortho)=ortho[,sp]
   
   gene_dnds <- matrix(ncol=3, nrow=3, dimnames=list(cells, c("Mean","Conf_low", "Conf_high")))
   enh_evol <- matrix(ncol=3, nrow=3, dimnames=list(cells, c("Mean","Conf_low", "Conf_high")))
