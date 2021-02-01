@@ -36,7 +36,7 @@ names(smallx)=enhancer.datasets[[sp]]
 xlim=c(0.5, 5.5)
 cex.mtext = 0.8
 syn.datasets=c("Original", "Simulated")
-names(syn.datasts)=c("obs", "sim")
+names(syn.datasets)=c("obs", "sim")
 
 CMPlot <- function(var, plot.nb){
   if (var == "CorrelationSpearman"){

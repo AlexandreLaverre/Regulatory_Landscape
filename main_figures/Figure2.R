@@ -168,7 +168,7 @@ axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 mtext("Spearman's rho", side=2, cex=0.85, line=3, at=(ymin+ymax)*0.9/2)
 mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
 
-mtext("d", side=3, line=1.25, at=-5.5, font=2, cex=1.2)
+mtext("d", side=3, line=1.25, at=-7.5, font=2, cex=1.2)
 
 ##################################################################################################################################
 
