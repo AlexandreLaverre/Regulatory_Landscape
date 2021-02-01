@@ -24,7 +24,7 @@ if(load){
 
  selenh="ENCODE"
 
- load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".RData", sep=""))
+ load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
 
  load=F
 }
@@ -107,8 +107,8 @@ vioplot(100*frag_align_obs[,species], at=ypos.obs, add=T, axes=F, xaxt="n", yaxt
 
 ## add mean point
 
-points(x=100*apply(frag_align_simul[,species], 2, mean), y = ypos.sim, col = "white", pch=20, cex=0.8)
-points(x=100*apply(frag_align_obs[,species], 2, mean), y = ypos.obs, col = "white", pch=20, cex=0.8)
+points(x=100*apply(frag_align_simul[,species], 2, mean, na.rm=T), y = ypos.sim, col = "white", pch=20, cex=0.8)
+points(x=100*apply(frag_align_obs[,species], 2, mean, na.rm=T), y = ypos.obs, col = "white", pch=20, cex=0.8)
 
 ## axis and legend
 

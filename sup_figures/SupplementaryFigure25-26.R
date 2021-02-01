@@ -65,7 +65,7 @@ if(load){
     cons.synteny.conf.low[[sp]] <- list()
     cons.synteny.conf.high[[sp]] <- list()
     
-    load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", sp, ".RData", sep=""))
+    load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", sp, ".RData", sep=""))
     load(paste(pathFigures, "RData/data.synteny.conservation.", sp,".RData", sep=""))
 
     

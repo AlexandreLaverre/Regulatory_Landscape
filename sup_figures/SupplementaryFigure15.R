@@ -17,7 +17,7 @@ if(load){
 
  target_species=c("rat", "rabbit", "human", "macaque", "dog", "cow", "elephant", "opossum", "chicken") 
  
- load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".RData", sep=""))
+ load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
 
  load=F
 }

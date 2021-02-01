@@ -21,7 +21,7 @@ if(load){
  
  enhancers = enhancer.datasets[[ref_sp]]
 
- load(paste(pathFigures, "RData/data.sequence.conservation.pcungapped.", ref_sp, ".RData", sep=""))
+ load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
 
  load=F
 }

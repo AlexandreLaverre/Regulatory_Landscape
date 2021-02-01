@@ -10,8 +10,7 @@ path_evol <- paste(pathFinalData, "SupplementaryDataset7/", sep="")
 
 #######################################################################################
 
-outnames=c("pcidentity", "pcungapped")
-names(outnames)=c("IdenticalSequence", "UngappedAlignment")
+types=c("pcidentical", "pcungapped")
 
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep="")) 
@@ -31,7 +30,7 @@ for(ref_sp in c("human", "mouse")){
   frag.mediandist.obs <- tapply(frag.contacts.obs$distance, as.factor(frag.contacts.obs$id_frag), median)
   frag.mediandist.sim <- tapply(frag.contacts.sim$distance, as.factor(frag.contacts.sim$id_frag), median)
   
-  for(type in c("UngappedAlignment", "IdenticalSequence")){
+  for(type in types){
     
     print(ref_sp)
     
@@ -55,11 +54,21 @@ for(ref_sp in c("human", "mouse")){
     obs <- obs[which(obs$ID%in%frag.contacts.obs$id_frag),]
     simul <- simul[which(simul$ID%in%frag.contacts.sim$id_frag),]
     
-    ## alignment score vs all species, for restriction fragments 
-    frag_align <- fread(paste(path_evol, ref_sp, "/sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
-    class(frag_align) <- "data.frame"
-    
-    ## we keep  NA values 
+    ## load alignment score vs all species, for restriction fragments
+
+    frag_align=data.frame("ID"=unique(c(frag.contacts.obs$id_frag, frag.contacts.sim$id_frag)), stringsAsFactors=F)
+    rownames(frag_align)=frag_align$ID
+
+    for(tg in species){
+      print(tg)
+      load(paste(pathFigures, "RData/data.sequence.conservation.fragments.",ref_sp,"2", tg,".RData", sep=""))
+
+      this.cons=get(type)
+
+      frag_align[,tg]=this.cons[rownames(frag_align)]
+      
+      rm(list=c("pcidentical", "pcungapped"))
+    }
     
     frag_align_obs <- frag_align[which(frag_align$ID %in% obs$ID), c("ID", species)]
     frag_align_simul <- frag_align[which(frag_align$ID %in% simul$ID), c("ID", species) ]
@@ -90,17 +99,25 @@ for(ref_sp in c("human", "mouse")){
       
       enh.mediandist.obs <- tapply(enh.contacts.obs$dist, as.factor(enh.contacts.obs$enhancer), median)
       enh.mediandist.sim <- tapply(enh.contacts.sim$dist, as.factor(enh.contacts.sim$enhancer), median)
+
+      enh_align=data.frame("ID"=unique(c(enh.contacts.obs$enh, enh.contacts.sim$enh)), stringsAsFactors=F)
+      rownames(enh_align)=enh_align$ID
       
-      enh_align <- fread(paste(path_evol, ref_sp, "/sequence_conservation/enhancers/", enh, "/AlignmentStatistics_Excluding_Exons_",type,"_AllSpecies.txt", sep=""), header=T)
-      class(enh_align) <- "data.frame"
-      
-      ## we keep  NA values, they represent cases where there may be full overlap with exons
+      for(tg in species){
+        print(tg)
+        load(paste(pathFigures, "RData/data.sequence.conservation.enhancers.",enh,".",ref_sp,"2", tg,".RData", sep=""))
         
+        this.cons=get(type) ## ungapped or identical
+        
+        enh_align[,tg]=this.cons[rownames(enh_align)]
+        
+        rm(list=c("pcidentical", "pcungapped"))
+      }
+              
       ## statistics for enhancers 
       enh_obs_stats <- enhancer.statistics[[ref_sp]][[enh]][["original"]]
       enh_simul_stats <- enhancer.statistics[[ref_sp]][[enh]][["simulated"]]
       
-
       ## select previously filtered enhancers, in contact within acceptable distances
 
       enh_obs_stats=enh_obs_stats[which(enh_obs_stats$enh%in%enh.contacts.obs$enhancer),]
@@ -128,7 +145,7 @@ for(ref_sp in c("human", "mouse")){
 
     ## save results
 
-    save(list=c("frag_align_obs", "frag_align_simul", "list_align_enh"), file=paste(pathFigures, "RData/data.sequence.conservation.",outnames[type],".",ref_sp,".RData", sep=""))
+    save(list=c("frag_align_obs", "frag_align_simul", "list_align_enh"), file=paste(pathFigures, "RData/data.sequence.conservation.stats.",type,".",ref_sp,".RData", sep=""))
 
   }
 }
