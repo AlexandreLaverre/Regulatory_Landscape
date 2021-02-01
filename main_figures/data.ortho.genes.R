@@ -26,8 +26,8 @@ all.ortho$dNdS=all.ortho$dN/all.ortho$dS
 
 ###########################################################################
 
-ortho=all.ortho[which(all.ortho$HomologyType=="ortholog_one2one" & all.ortho$IDHuman%in%pc.human & all.ortho$IDMouse%in%pc.mouse), c("IDHuman", "IDMouse")]
-colnames(ortho)=c("human", "mouse")
+ortho=all.ortho[which(all.ortho$HomologyType=="ortholog_one2one" & all.ortho$IDHuman%in%pc.human & all.ortho$IDMouse%in%pc.mouse), c("IDHuman", "IDMouse", "dN", "dS", "dNdS")]
+colnames(ortho)=c("human", "mouse", "dN", "dS", "dNdS")
 
 ###########################################################################
 
