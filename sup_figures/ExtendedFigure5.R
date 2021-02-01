@@ -153,7 +153,7 @@ plot_cell <- function(class_conserv, Measure, distances, xlab, xnames){
 MeasuresCellTypes <- c(paste0(sp, "_MeanRPKM"), "ExpressionConservation", "ResidualExpressionConservation") 
 names_MeasuresCellTypes <- c("expression level (TPM)", "expression conservation", "expression conservation\n(corrected)")
 
-pdf(paste(pathFigures, "/ExtendedFigure4.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "/ExtendedFigure5.pdf", sep=""), width=6.85, height=5.5)
 
 par(mfrow=c(2,3))
 par(mar = c(3.5, 4.65, 2.5, 1.1)) # bottom, left, top, right

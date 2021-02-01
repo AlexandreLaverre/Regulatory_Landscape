@@ -80,7 +80,7 @@ clearboxplot <- function(measure, divergences, plotlabel){
 
 ######################################################################################################################
 
-pdf(file=paste(pathFigures, "ExtendedFigure5.pdf", sep=""), width = 6.85)
+pdf(file=paste(pathFigures, "ExtendedFigure6.pdf", sep=""), width = 6.85)
 
 m=matrix(rep(NA, 10*2), nrow=10)
 for(i in 1:3){

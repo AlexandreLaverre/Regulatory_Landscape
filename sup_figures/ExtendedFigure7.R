@@ -14,7 +14,7 @@ cells <- c("Bcell", "ESC", "adipo")
 dataset.colors=c("firebrick1", "forestgreen", "navy")
 names(dataset.colors) = cells
 
-pdf(file=paste(pathFigures, "/ExtendedFigure6.pdf", sep=""), width=7, height=6)
+pdf(file=paste(pathFigures, "/ExtendedFigure7.pdf", sep=""), width=7, height=6)
 
 m=matrix(rep(NA, 2*13), nrow=2)
 m[1,]=c(rep(1,4),  rep(2,3),  rep(3,3), rep(4,3))
