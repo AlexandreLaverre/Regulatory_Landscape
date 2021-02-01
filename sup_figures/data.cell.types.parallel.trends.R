@@ -27,6 +27,8 @@ enh = "ENCODE"
 for(sp in c("human", "mouse")){
   
   load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.",sp,".RData", sep=""))
+
+  enh_align= list_align_enh[[enh]][["enh_align_obs"]]
   
   target_sp=setdiff(c("human", "mouse"), sp)
   
