@@ -45,7 +45,14 @@ for(ref_sp in c("human", "mouse")){
     conserv_synteny[[enh]] <- list()
     
     for (sp in species){
+
+      ## prepare result 
       conserv_synteny[[enh]][[sp]]<-list()
+      
+      ## load sequence conservation 
+      load(paste(pathFigures, "RData/data.sequence.conservation.enhancers.",enh,".",ref_sp,"2", sp,".RData", sep=""))
+
+      ## read synteny conservation
       
       synt_obs <- fread(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_original_synteny.txt", sep=""), header=T)
       synt_simul <- fread(paste(path_evol,"/synteny_conservation/", enh, "/", ref_sp, "2", sp, "_simulated_synteny.txt", sep=""), header=T)
@@ -68,8 +75,11 @@ for(ref_sp in c("human", "mouse")){
       print(paste(nrow(synt_simul)," simulated contacts after filtering"))
                
       ## threshold alignment score: 5% quantile, observed values
-
-      align.threshold=quantile(synt_obs$align, p=0.1)
+            
+      synt_obs$align_score=pcungapped[synt_obs$origin_enh]
+      synt_sim$align_score=pcungapped[synt_sim$origin_enh]
+    
+      align.threshold=quantile(synt_obs$align_score, p=0.1)
 
       print(paste("alignment score threshold", align.threshold))
       

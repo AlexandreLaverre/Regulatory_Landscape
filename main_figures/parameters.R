@@ -83,4 +83,7 @@ maxFragmentSize=20000
 minSampleTarget = 1
 minAlignScore = 0.4
 
+minBLAT=-1
+maxBLAT=2
+
 #######################################################################################

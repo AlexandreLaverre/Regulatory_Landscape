@@ -48,11 +48,10 @@ for(sp in c("human", "mouse")){
   obs <- obs[which(obs$length>=minFragmentSize & obs$length<=maxFragmentSize),]
   sim <- sim[which(sim$length>=minFragmentSize & sim$length<=maxFragmentSize),]
   
-  ## select fragments that are not duplicated
-  ## BLAT match can be 0 if there are repetitive sequences, we allow that
-  
-  obs <- obs[which(obs$BLAT_match<2),] 
-  sim <- sim[which(sim$BLAT_match<2),]
+  ## select fragments depending on number of BLAT hits
+   
+  obs <- obs[which(obs$BLAT_match > minBLAT & obs$BLAT_match < maxBLAT),] 
+  sim <- sim[which(sim$BLAT_match > minBLAT & sim$BLAT_match < maxBLAT),]
   
   ## save results
   

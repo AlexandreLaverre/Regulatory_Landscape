@@ -32,8 +32,8 @@ for(ref in c("human", "mouse")){
 
     if(file.exists(path)){
 
-      pcungapped=rep(0, length(all.frag)) ## we assign 0 values to non-aligned elements
-      pcidentical=rep(0, length(all.frag))
+      pcungapped=rep(NA, length(all.frag)) ## we assign NA values to non-lifted elements
+      pcidentical=rep(NA, length(all.frag))
       
       names(pcungapped)=all.frag
       names(pcidentical)=all.frag
@@ -55,7 +55,7 @@ for(ref in c("human", "mouse")){
       pcungapped[intersect(names(pcungapped), names(this.pcungap))]=this.pcungap[intersect(names(pcungapped), names(this.pcungap))]
 
       ## identical sequence
-      this.pcid=cons$FilteredIdenticalLength/cons$FilteredAlignmentLength
+      this.pcid=cons$FilteredIdenticalLength/cons$FilteredUngappedLength
       this.pcid[which(cons$FilteredAlignmentLength < minAlnLength)]=NA
       names(this.pcid)=cons[,paste("ID", ref, sep=".")]
       

@@ -1,6 +1,8 @@
 #######################################################################################
+
 library(data.table)
 library(Hmisc)
+
 options(stringsAsFactors = FALSE)
 
 source("parameters.R")
@@ -9,6 +11,7 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 
 #######################################################################################
 
+load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
@@ -28,12 +31,12 @@ for(ref in c("human", "mouse")){
   for(enh in enhancer.datasets[[ref]]){
     print(enh)
        
-    ## contact conservation data is already filtered - ortho genes, baited in both species
+    ## this contact conservation data is already filtered
+    ## no aberrant fragments, ortho genes, baited in both species
+    ## but there is no filter on sequence conservation
     
     obs=unfiltered.contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["obs"]]
     sim=unfiltered.contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["sim"]]
-
-    print(paste(length(unique(obs$origin_gene)), "genes"))
     
     ## Class of distances
     obs$class_dist = cut(obs$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
