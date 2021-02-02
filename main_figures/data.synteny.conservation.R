@@ -77,7 +77,7 @@ for(ref_sp in c("human", "mouse")){
       ## threshold alignment score: 5% quantile, observed values
             
       synt_obs$align_score=pcungapped[synt_obs$origin_enh]
-      synt_sim$align_score=pcungapped[synt_sim$origin_enh]
+      synt_simul$align_score=pcungapped[synt_simul$origin_enh]
     
       align.threshold=quantile(synt_obs$align_score, p=0.1)
 
