@@ -8,6 +8,7 @@ pathContacts=paste(pathFinalData, "SupplementaryDataset4/", sep="")
 
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
+load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
 
 ###########################################################################
 
@@ -16,7 +17,8 @@ gene.enhancer.contacts=list()
 for(sp in c("human", "mouse")){
   print(sp)
 
-  ## fragment contacts
+  
+  ## previously fragment contacts
 
   frag.contact.real=observed.contacts[[sp]]
   frag.contact.sim=simulated.contacts[[sp]]
@@ -40,6 +42,13 @@ for(sp in c("human", "mouse")){
   for(enh in enhancer.datasets[[sp]]){
     print(enh)
     
+    ## previously filtered enhancers
+    
+    enhancers.real=enhancer.statistics[[sp]][[enh]][["original"]]
+    enhancers.sim=enhancer.statistics[[sp]][[enh]][["simulated"]]
+
+    ## read contact data
+    
     real <- fread(paste(pathContacts, sp, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
     class(real) <- "data.frame"
 
@@ -53,6 +62,11 @@ for(sp in c("human", "mouse")){
     sim$id=paste(sim$gene, sim$enhancer, sep="-")
     
     print(paste(nrow(sim), "contacts before filtering, simulated data"))
+
+    ## take only previously filtered enhancers
+
+    real=real[which(real$enhancer%in%enhancers.real$enh),]
+    sim=sim[which(sim$enhancer%in%enhancers.sim$enh),]
 
     ## expand tables and select interactions for which the bait and the contacted fragments are in the previously filtered contact list
     ## real data
