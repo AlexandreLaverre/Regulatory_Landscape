@@ -1,25 +1,35 @@
 #######################################################################################
 
 library(data.table)
-library(Hmisc)
 
 options(stringsAsFactors = FALSE)
 
 source("parameters.R")
 
-pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
-
 #######################################################################################
 
-load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
-load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
-load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
+load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
+load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
+
+## we load sequence and synteny conservation later
 
 #######################################################################################
 
-genes.conservation=list()
+## minDistance and maxDistance defined in parameters.R
+
+dist.classes=c("all", "shortrange", "longrange")
+min.distances=c(minDistance, minDistance, 100001)
+max.distances=c(maxDistance, 100000, maxDistance)
+
+## min number of enhancers for contacts and synteny conservation
+
+min.nb=5
+
+#######################################################################################
+
+regland.conservation=list()
 
 for(ref in c("human", "mouse")){
   
@@ -27,82 +37,114 @@ for(ref in c("human", "mouse")){
 
   sampleinfo.ref=sampleinfo[[ref]]
   sampleinfo.tg=sampleinfo[[tg]]
+
+  samples.ref=sampleinfo.ref[,"Sample.ID"]
+  samples.tg=sampleinfo.tg[,"Sample.ID"]
+
+  regland.conservation[[ref]]=list()
     
   for(enh in enhancer.datasets[[ref]]){
-    print(enh)
-       
-    ## this contact conservation data is already filtered
-    ## no aberrant fragments, ortho genes, baited in both species
-    ## but there is no filter on sequence conservation
-    
-    obs=unfiltered.contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["obs"]]
-    sim=unfiltered.contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["sim"]]
-    
-    ## Class of distances
-    obs$class_dist = cut(obs$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
-    sim$class_dist = cut(sim$origin_dist, breaks=c(minDistance, 100000, 500000, maxDistance), include.lowest = T)
+    print(paste(ref, enh))
 
-    ## Conservation of contact
-    obs$cons=apply(obs[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
-    sim$cons=apply(sim[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
-    
-    data.list <- list("obs"=obs, "sim"=sim)
-    
-    for (data.name in c("obs", "sim")){
-      print(data.name)
-      
-      data = data.list[[data.name]]
-      all_genes = unique(data$origin_gene)
-  
-      # Calculate conservation for each distance class
-      for (dist in c(levels(data$class_dist), "all")){
-        
-        print(dist)
-        if (dist == "all"){
-          selected_dist = data
-        } else{
-          selected_dist = data[which(data$class_dist == dist),]
-        }
+    ## we start from the gene-enhancer contact data
 
-        nb_total = unlist(with(selected_dist, tapply(origin_enh, factor(origin_gene, levels=all_genes), function(x) length(x))))
-        align_score =  unlist(with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), median, na.rm=T)))
-        seq_conserv = unlist(with(selected_dist, tapply(align_score, factor(origin_gene, levels=all_genes), function(x) length(which(x>= minAlignScore)))))
-        
-        selected_align = selected_dist[which(selected_dist$align_score >= minAlignScore),]
-        synt_conserv = with(selected_align, tapply(target_dist, factor(origin_gene, levels=all_genes), function(x) length(which(as.numeric(x) <= maxDistanceSyntenyTarget))))
-        
-        selected_gene = selected_align[which(selected_align$target_data == TRUE),] # ortologous genes present in PCHIC in target specie
-        contact_conserv = with(selected_gene, tapply(cons, factor(origin_gene, levels=all_genes), function(x) length(which(x == TRUE))))
+    contacts=gene.enhancer.contacts[[ref]][[enh]][["real"]]
+ 
+    ## we select only previously filtered orthologous genes
+
+    contacts=contacts[which(contacts$gene%in%ortho[,ref]),]
+
+    ## we add sequence conservation column
+
+    load(paste(pathFigures, "RData/data.sequence.conservation.enhancers.",enh,".",ref,"2", tg,".RData", sep=""))
+    contacts$align_score=pcungapped[contacts$enhancer]
+
+    ## we select enhancers that have an actual sequence conservation score, no NA values
+
+    contacts=contacts[which(!is.na(contacts$align_score)),]
+
+    ## we load synteny conservation - already filtered, min sequence conservation >= 10% threshold
+    
+    load(paste(pathFigures, "/RData/data.synteny.conservation.", ref, ".RData", sep=""))
+
+    synteny=conserv_synteny[[enh]][[tg]][["synt_obs"]]
+
+    ## we load contact conservation - already filtered, min sequence conservation 0.4
+
+    contact.cons=contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]][["obs"]]
+
+    contact.cons$is_conserved=apply(contact.cons[,samples.tg], 1, function(x) any(x>0))
+    
+    ## full gene list: ortho genes in contact dataset
+
+    all.genes=unique(contacts$gene)
+
+    ## prepare result list
+
+    results=list("gene"=all.genes)
+    
+    for(i in 1:length(dist.classes)){
+
+      ## select interactions in a given distance range
+
+      dist.class=dist.classes[i]
+      min.dist=min.distances[i]
+      max.dist=max.distances[i]
+
+      print(dist.class)
+
+      filtered.contacts=contacts[which(contacts$dist>=min.dist & contacts$dist<=max.dist),]
+
+      ## nb enhancers by gene
+
+      nb.contacts=as.numeric(table(factor(filtered.contacts$gene, levels=all.genes)))
+
+      results[[paste("nb.contacts",dist.class,sep=".")]]=nb.contacts
+
+      ## median conservation score by gene
+
+      median.aln.score=tapply(filtered.contacts$align_score, factor(filtered.contacts$gene, levels=all.genes), median, na.rm=T)
       
-        genes.conservation[[enh]][[data.name]][[dist]] <- data.frame("nb_total"=nb_total, "align_score"=align_score, "seq_conserv"=seq_conserv, 
-                                                                     "synt_conserv"=synt_conserv, "contact_conserv"=contact_conserv)
-        ## Calculate ratio with constraints on minimum number of contacted enhancers per gene
-        
-        if (enh == "FANTOM5"){
-          nb_min = 2
-        }else{
-          nb_min=5
-        }
-        
-        genes.conservation[[enh]][[data.name]][[dist]]$seq_conserv <- with(genes.conservation[[enh]][[data.name]][[dist]], ifelse(nb_total >= nb_min | nb_total <= 100,  seq_conserv, NA))
-        genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_seq <- with(genes.conservation[[enh]][[data.name]][[dist]], ifelse(nb_total >= nb_min & nb_total <= 100, seq_conserv/nb_total, NA))
-        genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_synt <- with(genes.conservation[[enh]][[data.name]][[dist]], ifelse(seq_conserv >= nb_min & seq_conserv <= 100,  synt_conserv/seq_conserv, NA))
-        genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_int <- with(genes.conservation[[enh]][[data.name]][[dist]], ifelse(seq_conserv >= nb_min & seq_conserv <= 100,  contact_conserv/seq_conserv, NA))
-        
-        # Class of conservation ratio
-        genes.conservation[[enh]][[data.name]][[dist]]$class_nb_contact = cut2(genes.conservation[[enh]][[data.name]][[dist]]$nb_total, g=5, include.lowest=T)
-        genes.conservation[[enh]][[data.name]][[dist]]$class_cons_seq = cut(genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_seq, breaks=c(0, 0.10, 0.25, 0.5, 0.75, 1), include.lowest=T)
-        genes.conservation[[enh]][[data.name]][[dist]]$class_cons_synt = cut(genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_synt, breaks=c(0, 0.99, 1), include.lowest=T)
-        genes.conservation[[enh]][[data.name]][[dist]]$class_cons_cont = cut(genes.conservation[[enh]][[data.name]][[dist]]$ratio_cons_int,  breaks=c(0,  0.5, 1), include.lowest=T)
-        genes.conservation[[enh]][[data.name]][[dist]]$class_align_score = cut2(genes.conservation[[enh]][[data.name]][[dist]]$align_score, g=5, include.lowest=T)
-        
-      }
-      names(genes.conservation[[enh]][[data.name]]) = c("25kb - 100kb", "100kb - 500kb", "500kb - 2Mb", "all")
+      results[[paste("median.aln.score",dist.class,sep=".")]]=median.aln.score
+
+      ## synteny conservation
+
+      filtered.synteny=synteny[which(synteny$id%in%filtered.contacts$id),]
+
+      fr.cons.synt=tapply(filtered.synteny$target_dist,  factor(filtered.synteny$origin_gene, levels=all.genes), function(x) length(which(x<maxDistanceSyntenyTarget))/length(x))
+
+      nb.enh.synt=as.numeric(table(factor(filtered.synteny$origin_gene, levels=all.genes)))
+
+      ## if fewer than min.nb enhancers, we assign NA values to synteny conservation
+
+      fr.cons.synt[which(nb.enh.synt<min.nb)]=NA
+
+      results[[paste("fr.synteny.cons",dist.class,sep=".")]]=fr.cons.synt
+
+      ## contact conservation
+
+      filtered.contact.cons=contact.cons[which(contact.cons$id%in%filtered.contacts$id),]
+
+      fr.cons.contact=tapply(filtered.contact.cons$is_conserved, factor(filtered.contact.cons$origin_gene, levels=all.genes), function(x) length(which(x))/length(x))
+      
+      nb.enh.contact=as.numeric(table(factor(filtered.contact.cons$origin_gene, levels=all.genes)))
+      
+      ## if fewer than min.nb enhancers, we assign NA values to synteny conservation
+
+      fr.cons.contact[which(nb.enh.contact<min.nb)]=NA
+      
+      results[[paste("fr.contact.cons",dist.class,sep=".")]]=fr.cons.contact
     }
+
+    results=as.data.frame(results)
+
+    regland.conservation[[ref]]=results
   }
-  
-  ## save data
-  save(genes.conservation, file=paste(pathFigures, "RData/data.", ref, ".regland.conservation.RData",sep=""))
 }
 
-###########################################################################
+#######################################################################################
+
+save(regland.conservation, file=paste(pathFigures, "RData/data.", ref, ".regland.conservation.RData",sep=""))
+
+#######################################################################################
+#######################################################################################
