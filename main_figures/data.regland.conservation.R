@@ -22,8 +22,8 @@ print("done")
 ## minDistance and maxDistance defined in parameters.R
 
 dist.classes=c("all", "shortrange", "longrange")
-min.distances=c(minDistance, minDistance, 100001)
-max.distances=c(maxDistance, 100000, maxDistance)
+min.distances=c(minDistance, minDistance, 250001)
+max.distances=c(maxDistance, 250000, maxDistance)
 
 ## min number of enhancers for contacts and synteny conservation
 

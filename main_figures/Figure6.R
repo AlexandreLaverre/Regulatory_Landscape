@@ -125,7 +125,7 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
 ################################################################################################################################
 ################################################################################################################################
 
-pdf(file=paste(pathFigures, "Figure6.pdf", sep=""), width = 6.85,  height=6)
+pdf(file=paste(pathFigures, "Figure6_defaultcons",as.character(default.cons),".pdf", sep=""), width = 6.85,  height=6)
 
 m=matrix(rep(NA,2*9), nrow=2)
 m[1,]=c(rep(c(1,2,3), each=3))
