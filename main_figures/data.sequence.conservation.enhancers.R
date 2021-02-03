@@ -32,9 +32,12 @@ for(ref in c("human", "mouse")){
       path=paste(pathSequenceConservation, ref, "/sequence_conservation/enhancers/",enh,"/AlignmentStatistics_Excluding_Exons_", ref,"2", tg,".txt", sep="")
       
       if(file.exists(path)){
+
+        ## we assign a default value to non-lifted elements
+        ## default.cons defined in parameters.R
         
-        pcungapped=rep(NA, length(all.enh)) ## we assign NA values to non-lifted elements
-        pcidentical=rep(NA, length(all.enh))
+        pcungapped=rep(default.cons, length(all.enh)) 
+        pcidentical=rep(default.cons, length(all.enh))
         
         names(pcungapped)=all.enh
         names(pcidentical)=all.enh

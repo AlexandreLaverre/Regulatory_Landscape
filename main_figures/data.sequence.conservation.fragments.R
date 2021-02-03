@@ -31,9 +31,12 @@ for(ref in c("human", "mouse")){
     path=paste(pathSequenceConservation, ref, "/sequence_conservation/restriction_fragments/AlignmentStatistics_Excluding_Exons_", ref,"2", tg,".txt", sep="")
 
     if(file.exists(path)){
-
-      pcungapped=rep(NA, length(all.frag)) ## we assign NA values to non-lifted elements
-      pcidentical=rep(NA, length(all.frag))
+      
+      ## we assign a default value to non-lifted elements
+      ## default.cons defined in parameters.R
+      
+      pcungapped=rep(default.cons, length(all.frag)) 
+      pcidentical=rep(default.cons, length(all.frag))
       
       names(pcungapped)=all.frag
       names(pcidentical)=all.frag

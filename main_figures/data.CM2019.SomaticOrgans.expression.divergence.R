@@ -11,7 +11,11 @@ load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
 #######################################################################################################
 
 for (sp in c("human", "mouse")){
-  if (sp == "human"){sp_name="Human"}else{sp_name="Mouse"}
+  if (sp == "human"){
+    sp_name="Human"
+  } else{
+    sp_name="Mouse"
+  }
   
   expdiv=read.table(paste0(pathFinalData, "SupplementaryDataset6/expression_divergence/ExpressionDivergence_CardosoMoreira2019_SomaticOrgans.txt"), h=T, stringsAsFactors=F, sep="\t")
   rownames(expdiv)=expdiv[[paste0("ID", sp_name)]]
@@ -30,8 +34,7 @@ for (sp in c("human", "mouse")){
  
   ####################################################################################################
   # Output
-  save(expdiv, samples.human, samples.mouse,
-       file = paste(pathFigures, "/RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
+  save(expdiv, samples.human, samples.mouse, file = paste(pathFigures, "/RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
 }
 
 ####################################################################################################
