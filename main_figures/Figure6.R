@@ -108,9 +108,7 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
   ## plot label
   if(length(xpos)==5){
     plot.lab.pos=xlim[1]-diff(xlim)/3.5
-  }
-
-  if(length(xpos)==2){
+  } else{
     plot.lab.pos=xlim[1]-diff(xlim)/2
   }
   
@@ -123,6 +121,11 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
 }
 
 ################################################################################################################################
+################################################################################################################################
+
+## selected.distances=c("all", "shortrange", "longrange")
+selected.distances=c("all")
+
 ################################################################################################################################
 
 pdf(file=paste(pathFigures, "Figure6_defaultcons",as.character(default.cons),".pdf", sep=""), width = 6.85,  height=6)
@@ -141,7 +144,7 @@ par(mar = c(5.1, 4.5, 2.75, 0.5))
 expdata=expdiv[,"MeanRPKM"]
 names(expdata)=rownames(expdiv)
 
-plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=c("all", "shortrange", "longrange"), ylab="mean expression level (RPKM)", plot.label="a", xlab="number of contacts", xax.labels=c("low", "", "medium", "", "high"))
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.distances, ylab="mean expression level (RPKM)", plot.label="a", xlab="number of contacts", xax.labels=c("low", "", "medium", "", "high"))
 
 ###########################################################################
 ## expression specificity as a function of number of contacts
@@ -149,7 +152,7 @@ plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=c("all", "sh
 expdata=expdiv[,paste0("Tau", sp_name)]
 names(expdata)=rownames(expdiv)
 
-plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=c("all", "shortrange", "longrange"), ylab="expression specificity", plot.label="b", xlab="number of contacts", xax.labels=c("low", "", "medium", "", "high"))
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.distances, ylab="expression specificity", plot.label="b", xlab="number of contacts", xax.labels=c("low", "", "medium", "", "high"))
 
 ###########################################################################
 
@@ -158,7 +161,7 @@ plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=c("all", "sh
 expdata=expdiv[,"CorrectedSpearman"]
 names(expdata)=rownames(expdiv)
 
-plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=c("all", "shortrange", "longrange"), ylab="expression conservation", plot.label="c", xlab="number of contacts", xax.labels=c("low", "", "medium", "", "high"))
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.distances, ylab="expression conservation", plot.label="c", xlab="number of contacts", xax.labels=c("low", "", "medium", "", "high"))
 
 
 ######################## gene expression profile evolution ################
@@ -167,14 +170,14 @@ expdata=expdiv[, "CorrectedSpearman"]
 names(expdata)=rownames(expdiv)
 
 ## expression conservation as a function of enhancer sequence conservation
-plot.expdiv.regdiv(regcons, "class.aln.score", expdata, distances=c("all", "shortrange", "longrange"), ylab = "expression conservation", plot.label="d", xlab="enhancer sequence conservation",  xax.labels=c("low", "", "medium", "", "high")) 
+plot.expdiv.regdiv(regcons, "class.aln.score", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="d", xlab="enhancer sequence conservation",  xax.labels=c("low", "", "medium", "", "high")) 
 
 
 ## expression conservation as a function of enhancer synteny conservation
-plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, distances=c("all", "shortrange", "longrange"), ylab = "expression conservation", plot.label="e", xlab="synteny conservation", xax.labels=c("<100%", "100%"))
+plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="e", xlab="synteny conservation", xax.labels=c("<100%", "100%"))
 
 ## expression conservation as a function of contact conservation
-plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, distances=c("all", "shortrange", "longrange"), ylab = "expression conservation", plot.label="f", xlab="contact conservation", xax.labels=c("0-50%", ">50%"))
+plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="f", xlab="contact conservation", xax.labels=c("0-50%", ">50%"))
 
 #########################################################################
 ## empty plot for the legend
