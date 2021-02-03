@@ -83,7 +83,11 @@ maxFragmentSize=20000
 minSampleTarget = 1
 minAlignScore = 0.4
 
+## filters on nb of BLAT hits for fragments and enhancers
 minBLAT=-1
 maxBLAT=2
+
+## default sequence conservation values, for fragments and enhancers that are not lifted
+default.cons = 0
 
 #######################################################################################
