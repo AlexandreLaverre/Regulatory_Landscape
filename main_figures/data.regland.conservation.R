@@ -33,11 +33,7 @@ min.nb=5
 
 regland.conservation=list()
 
-## test purposes only !!!
-
-for(ref in c("human")){
-
-## for(ref in c("human", "mouse")){
+for(ref in c("human", "mouse")){
   
   tg=setdiff(c("human", "mouse"), ref)
 
@@ -49,10 +45,7 @@ for(ref in c("human")){
 
   regland.conservation[[ref]]=list()
 
-  ## test purposes only !!!
-  ## for(enh in enhancer.datasets[[ref]]){
-
-  for(enh in c("ENCODE")){
+  for(enh in enhancer.datasets[[ref]]){
   
     print(paste(ref, enh))
     
