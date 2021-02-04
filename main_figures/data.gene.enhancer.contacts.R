@@ -9,6 +9,7 @@ pathContacts=paste(pathFinalData, "SupplementaryDataset4/", sep="")
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
+load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
 
 ###########################################################################
 
@@ -17,8 +18,12 @@ gene.enhancer.contacts=list()
 for(sp in c("human", "mouse")){
   print(sp)
 
+  ## gene annotations 
+
+  annot=gene.annot[[sp]]
+  pc.genes=annot$GeneID[which(annot$GeneBiotype=="protein_coding")]
   
-  ## previously fragment contacts
+  ## previously filtered fragment contacts
 
   frag.contact.real=observed.contacts[[sp]]
   frag.contact.sim=simulated.contacts[[sp]]
@@ -128,6 +133,11 @@ for(sp in c("human", "mouse")){
     ## select interactions in the accepted distance range
     real=real[which(real$dist>=minDistance & real$dist<=maxDistance),]
     sim=sim[which(sim$dist>=minDistance & sim$dist<=maxDistance),]
+
+    ## select protein-coding genes
+
+    real=real[which(real$gene%in%pc.genes),]
+    sim=sim[which(sim$gene%in%pc.genes),]
 
     ## save data
     
