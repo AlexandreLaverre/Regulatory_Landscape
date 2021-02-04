@@ -72,6 +72,11 @@ for(sp in c("human", "mouse")){
 
     real=real[which(real$enhancer%in%enhancers.real$enh),]
     sim=sim[which(sim$enhancer%in%enhancers.sim$enh),]
+    
+    ## select protein-coding genes
+
+    real=real[which(real$gene%in%pc.genes),]
+    sim=sim[which(sim$gene%in%pc.genes),]
 
     ## expand tables and select interactions for which the bait and the contacted fragments are in the previously filtered contact list
     ## real data
@@ -133,11 +138,6 @@ for(sp in c("human", "mouse")){
     ## select interactions in the accepted distance range
     real=real[which(real$dist>=minDistance & real$dist<=maxDistance),]
     sim=sim[which(sim$dist>=minDistance & sim$dist<=maxDistance),]
-
-    ## select protein-coding genes
-
-    real=real[which(real$gene%in%pc.genes),]
-    sim=sim[which(sim$gene%in%pc.genes),]
 
     ## save data
     

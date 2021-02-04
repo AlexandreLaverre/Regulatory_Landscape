@@ -20,11 +20,9 @@ if(user=="necsulea"){
   pathFinalData="/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
 }
 
-
 if(user=="ubuntu"){
   pathFinalData="/mnt/RegulatoryLandscapesManuscript/"
 }
-
 
 ## current directory - we run scripts from the scripts/main_figures folder
 
@@ -78,10 +76,10 @@ maxDistanceSyntenyRef=1.5e6 ## 1.5 Mb
 maxDistanceSyntenyTarget=2e6 ## 2 Mb
 
 minFragmentSize=250
-maxFragmentSize=20000
+maxFragmentSize=50000
 
 minSampleTarget = 1
-minAlignScore = 0.4
+minAlignScore = 0.4 ## for contact conservation
 
 ## filters on nb of BLAT hits for fragments and enhancers
 minBLAT=-1
