@@ -9,6 +9,7 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
+load(paste(pathFigures, "RData/data.bait.annotations.RData", sep=""))
 
 ## alignment score minAlignScore defined in parameters.R
 
@@ -22,6 +23,10 @@ for(ref in c("human", "mouse")){
   tg=setdiff(c("human", "mouse"), ref)
 
   contact.conservation[[paste(ref, "2", tg, sep="")]]=list()
+
+  ## baited genes in target species
+
+  baited.genes.tg=baited.genes[[tg]]
 
   for(enh in enhancer.datasets[[ref]]){
     message(enh)
@@ -78,10 +83,10 @@ for(ref in c("human", "mouse")){
 
     unfiltered.contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]]=list("obs"=obs, "sim"=sim) 
     
-    ## take only orthologous genes baited in both species datasets
+    ## take only  genes baited in both species datasets
     
-    obs=obs[which(obs$target_data == "TRUE"),]
-    sim=sim[which(sim$target_data == "TRUE"),]
+    obs=obs[which(obs$target_gene %in% baited.genes.tg),]
+    sim=sim[which(sim$target_gene %in% baited.genes.tg),]
 
     nbgenes.obs=length(unique(obs$origin_gene))
     nbgenes.sim=length(unique(sim$origin_gene))
