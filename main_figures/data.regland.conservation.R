@@ -69,10 +69,6 @@ for(ref in c("human")){
     load(paste(pathFigures, "RData/data.sequence.conservation.enhancers.",enh,".",ref,"2", tg,".RData", sep=""))
     contacts$align_score=pcungapped[contacts$enhancer]
 
-    ## we select enhancers that have an actual sequence conservation score, no NA values
-    
-    contacts=contacts[which(!is.na(contacts$align_score)),]
-    
     ## we load synteny conservation - already filtered, min sequence conservation >= 10% threshold
     
     load(paste(pathFigures, "/RData/data.synteny.conservation.", ref, ".RData", sep=""))
@@ -137,7 +133,7 @@ for(ref in c("human")){
       
       ## if fewer than min.nb enhancers, we assign NA values to synteny conservation
 
-      fr.cons.synt[which(nb.enh.synt<min.nb)]=NA
+      fr.cons.synt[which(nb.enh.synt < min.nb)]=NA
 
       results[[paste("fr.synteny.cons",dist.class,sep=".")]]=fr.cons.synt
       
