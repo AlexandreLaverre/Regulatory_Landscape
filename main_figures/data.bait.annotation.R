@@ -21,7 +21,7 @@ for(sp in c("human", "mouse")){
   rownames(baits)=baits$ID
   bait.info[[sp]]=baits
   
-  this.genes=unique(unlist(lapply(baits$geneID, function(x) unlist(strsplit(x, split=",")))))
+  this.genes=unique(unlist(lapply(baits$gene_ID, function(x) unlist(strsplit(x, split=",")))))
   baited.genes[[sp]]=this.genes
 }
 
