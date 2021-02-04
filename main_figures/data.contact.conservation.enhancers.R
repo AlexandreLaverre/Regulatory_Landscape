@@ -9,7 +9,7 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
-load(paste(pathFigures, "RData/data.bait.annotations.RData", sep=""))
+load(paste(pathFigures, "RData/data.bait.annotation.RData", sep=""))
 
 ## alignment score minAlignScore defined in parameters.R
 
