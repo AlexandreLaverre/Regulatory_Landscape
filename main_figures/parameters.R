@@ -86,6 +86,6 @@ minBLAT=-1
 maxBLAT=2
 
 ## default sequence conservation values, for fragments and enhancers that are not lifted
-default.cons = NA
+default.cons = 0
 
 #######################################################################################
