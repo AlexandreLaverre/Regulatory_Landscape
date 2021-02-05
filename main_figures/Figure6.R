@@ -21,7 +21,6 @@ if(load){
   
   enh="ENCODE"
   
-  load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
   load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
   load(paste(pathFigures, "RData/data.regland.conservation.RData", sep=""))
   
@@ -123,12 +122,12 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
 ################################################################################################################################
 ################################################################################################################################
 
-## selected.distances=c("all", "shortrange", "longrange")
-selected.distances=c("all")
+selected.distances=c("all", "shortrange", "longrange")
+## selected.distances=c("all")
 
 ################################################################################################################################
 
-pdf(file=paste(pathFigures, "Figure6_defaultcons",as.character(default.cons),".pdf", sep=""), width = 6.85,  height=6)
+pdf(file=paste(pathFigures, "Figure6.pdf", sep=""), width = 6.85,  height=6)
 
 m=matrix(rep(NA,2*9), nrow=2)
 m[1,]=c(rep(c(1,2,3), each=3))
