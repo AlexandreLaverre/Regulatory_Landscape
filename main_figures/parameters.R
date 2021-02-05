@@ -75,7 +75,7 @@ minDistanceSyntenyRef=1e5 ## 100 kb
 maxDistanceSyntenyRef=1.5e6 ## 1.5 Mb
 maxDistanceSyntenyTarget=2e6 ## 2 Mb
 
-minFragmentSize=250
+minFragmentSize=150
 maxFragmentSize=50000
 
 minSampleTarget = 1
