@@ -12,6 +12,8 @@ load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
 load(paste(pathFigures, "RData/data.contact.conservation.enhancers.RData", sep=""))
+load(paste(pathFigures, "RData/data.bait.annotation.RData", sep=""))
+load(paste(pathFigures, "RData/data.fragment.contacts.RData",sep=""))
 
 print("done")
 
@@ -22,12 +24,13 @@ print("done")
 ## minDistance and maxDistance defined in parameters.R
 
 dist.classes=c("all", "shortrange", "longrange")
-min.distances=c(minDistance, minDistance, 100001)
-max.distances=c(maxDistance, 100000, maxDistance)
+min.distances=c(minDistance, minDistance, 500001)
+max.distances=c(maxDistance, 500000, maxDistance)
 
 ## min number of enhancers for contacts and synteny conservation
 
 min.nb=5
+max.nb=100
 
 #######################################################################################
 
@@ -45,6 +48,18 @@ for(ref in c("human", "mouse")){
 
   regland.conservation[[ref]]=list()
 
+  ## full list of genes: filtered ortho genes, baited, baits have filtered contacts
+  
+  all.genes=ortho[,ref]
+
+  frag.contacts=observed.contacts[[ref]]
+  filtered.baits=unique(frag.contacts$id_bait)
+  this.bait.info=bait.info[[ref]]
+  this.bait.info=this.bait.info[which(this.bait.info$ID%in%filtered.baits),]
+  baited.genes=unique(unlist(lapply(this.bait.info$gene_ID, function(x) unlist(strsplit(x, split=",")))))
+  
+  all.genes=intersect(all.genes, baited.genes)
+
   for(enh in enhancer.datasets[[ref]]){
   
     print(paste(ref, enh))
@@ -56,7 +71,7 @@ for(ref in c("human", "mouse")){
     ## we select only previously filtered orthologous genes
     
     contacts=contacts[which(contacts$gene%in%ortho[,ref]),]
-    
+
     ## we add sequence conservation column
 
     load(paste(pathFigures, "RData/data.sequence.conservation.enhancers.",enh,".",ref,"2", tg,".RData", sep=""))
@@ -74,10 +89,6 @@ for(ref in c("human", "mouse")){
 
     contact.cons$is_conserved=apply(contact.cons[,samples.tg], 1, function(x) any(x>0))
     
-    ## full gene list: ortho genes in contact dataset
-
-    all.genes=unique(contacts$gene)
-
     ## prepare result list
 
     results=list("gene"=all.genes)
@@ -99,22 +110,16 @@ for(ref in c("human", "mouse")){
       nb.contacts=as.numeric(table(factor(filtered.contacts$gene, levels=all.genes)))
 
       ## divide nb of contacts into maximum 5 classes - ideally but not necessarily same size
-      nbc.breaks=unique(quantile(nb.contacts, p=seq(from=0, to=1, length=6), na.rm=T))
-
-      print(paste(length(nbc.breaks)-1, "classes for nb contacts for",dist.class))
-      
+     
       results[[paste("nb.contacts",dist.class,sep=".")]]=nb.contacts
-      results[[paste("class.nb.contacts",dist.class,sep=".")]]=cut(nb.contacts, breaks=nbc.breaks, include.lowest=T, labels=1:(length(nbc.breaks)-1))
+      results[[paste("class.nb.contacts",dist.class,sep=".")]]=cut(nb.contacts, breaks=c(-1, 0, 10, 20, 30, max(nb.contacts)), include.lowest=T, labels=c("0", "1-10", "11-20", "21-30", ">30"))
       
-      ## median conservation score by gene
+      ## mean conservation score by gene
       
-      median.aln.score=tapply(filtered.contacts$align_score, factor(filtered.contacts$gene, levels=all.genes), median, na.rm=T)
-      mas.breaks=unique(quantile(median.aln.score, p=seq(from=0, to=1, length=6), na.rm=T))
-
-      print(paste(length(mas.breaks)-1, "classes for alignment score for",dist.class))
+      mean.aln.score=tapply(filtered.contacts$align_score, factor(filtered.contacts$gene, levels=all.genes), mean, na.rm=T)
       
-      results[[paste("median.aln.score",dist.class,sep=".")]]=median.aln.score
-      results[[paste("class.aln.score", dist.class, sep=".")]]=cut(median.aln.score, breaks=mas.breaks, include.lowest=T, labels=1:(length(mas.breaks)-1))
+      results[[paste("mean.aln.score",dist.class,sep=".")]]=mean.aln.score
+      results[[paste("class.aln.score", dist.class, sep=".")]]=cut(mean.aln.score, breaks=seq(from=0, to=1, length=6), include.lowest=T)
 
       ## synteny conservation
 
@@ -126,7 +131,7 @@ for(ref in c("human", "mouse")){
       
       ## if fewer than min.nb enhancers, we assign NA values to synteny conservation
 
-      fr.cons.synt[which(nb.enh.synt < min.nb)]=NA
+      fr.cons.synt[which(nb.enh.synt < min.nb | nb.enh.synt > max.nb)]=NA
 
       results[[paste("fr.synteny.cons",dist.class,sep=".")]]=fr.cons.synt
       
@@ -142,11 +147,11 @@ for(ref in c("human", "mouse")){
       
       ## if fewer than min.nb enhancers, we assign NA values to synteny conservation
       
-      fr.cons.contact[which(nb.enh.contact<min.nb)]=NA
+      fr.cons.contact[which(nb.enh.contact < min.nb | nb.enh.contact > max.nb)]=NA
       
       results[[paste("fr.contact.cons",dist.class,sep=".")]]=fr.cons.contact
       
-      results[[paste("class.contact.cons",dist.class, sep=".")]]=cut(fr.cons.contact, breaks=c(0, 0.25, 0.5, 0.75, 1), include.lowest=T, labels=1:4)
+      results[[paste("class.contact.cons",dist.class, sep=".")]]=cut(fr.cons.contact, breaks=c(0, 0.1, 0.4, 1), include.lowest=T)
     }    
     
     results=as.data.frame(results)
