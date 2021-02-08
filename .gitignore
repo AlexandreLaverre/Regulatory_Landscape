@@ -7,6 +7,8 @@
 */*.png
 */*/*.png
 **/.DS_Store
+backup_scripts
+**/tmp_figures
 /main_figures/figures.png/
 synchronise.files.sh
 
