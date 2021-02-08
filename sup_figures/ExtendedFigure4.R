@@ -61,7 +61,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "ExtendedFigure4b.pdf", sep=""), width=4.49, height=4)
+pdf(paste(pathFigures, "ExtendedFigure4.pdf", sep=""), width=4.49, height=4)
 
 m=matrix(c(rep(1,2), rep(2, 4)), nrow=1)
 layout(m)
@@ -110,12 +110,3 @@ legend("topright", col=dataset.colors, legend = c("PCHi-C data", "simulated data
 dev.off()
 
 ###########################################################################
-
-## que se passe-t-il sur les rearrangements ?
-## Sequences au hasard au lieu des enhancers
-## prendre que enhancers avec 0 chevauchement exonique
-
-## activité des enhancers par rapport à l'activité du gène contacté
-## synténie : comment calculer la densité en gènes ? 
-
-## 
