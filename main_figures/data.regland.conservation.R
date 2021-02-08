@@ -27,7 +27,7 @@ dist.classes=c("all", "shortrange", "longrange")
 min.distances=c(minDistance, minDistance, 500001)
 max.distances=c(maxDistance, 500000, maxDistance)
 
-## min number of enhancers for contacts and synteny conservation
+## min and max number of enhancers for contacts and synteny conservation
 
 min.nb=5
 max.nb=100
@@ -109,7 +109,7 @@ for(ref in c("human", "mouse")){
 
       nb.contacts=as.numeric(table(factor(filtered.contacts$gene, levels=all.genes)))
 
-      ## divide nb of contacts into maximum 5 classes - ideally but not necessarily same size
+      ## divide nb of contacts into 5 classes
      
       results[[paste("nb.contacts",dist.class,sep=".")]]=nb.contacts
       results[[paste("class.nb.contacts",dist.class,sep=".")]]=cut(nb.contacts, breaks=c(-1, 0, 10, 20, 30, max(nb.contacts)), include.lowest=T, labels=c("0", "1-10", "11-20", "21-30", ">30"))
