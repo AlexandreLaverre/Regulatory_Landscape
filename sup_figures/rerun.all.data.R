@@ -2,8 +2,7 @@
 
 ## all scripts that generate .RData objects for the figures
 
-all.files=system("ls", intern=T)
-data.scripts=grep("^data", all.files, value=T)
+data.scripts=c("data.features.coverage.R", "data.samples.cumulative.interactions.R", "data.common.cell.expression.divergence.R", "data.common.cell.regland.conservation.R", "data.cell.types.parallel.trends.R")
 
 ############################################################################
 
