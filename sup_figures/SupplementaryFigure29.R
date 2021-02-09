@@ -10,132 +10,198 @@ if(!"pathScripts"%in%objects){
 }
 
 ##############################################################################
+
 if(load){
   sp="human"
   
-  load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
-  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
-  load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
-
   if (sp == "human"){
     sp_name="Human"
   } else{
     sp_name="Mouse"
   }
-
+  
+  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
   expdiv$EuclideanSimilarity = 1-expdiv$EuclideanDistance
-  distances =  "all" 
+
+  load(paste(pathFigures, "RData/data.regland.conservation.RData", sep=""))
+  
+  regcons=regland.conservation[[sp]]
 
   load=FALSE
 }
 
 
+#############################################################################################################
+
+if(prepare){
+  ## graphical parameters
+  enhancers=enhancer.datasets[[sp]]
+  
+  smallxenh=c(-0.15, -0.075, 0.075, 0.15)
+  names(smallxenh)=enhancers
+    
+  prepare=FALSE
+}
+
 ################################################################################################################################
 ############################## Cardoso-Moreira  - Euclidean Similarity ##########################################################
 
-plot_profiles <- function(class_conserv, distances, xlab, xnames, plot.labels){
-  smallx=c(-0.15, -0.075, 0.075, 0.15)
-  names(smallx)=enhancer.datasets[[sp]]
-  
-  if (Measure == "corrected"){
-    DivergenceMeasure = "CorrectedEuclideanSimilarity"
-    ylab="1-Euclidean distance\n(corrected)"
-    ylim=c(0.002, 0.02)
-  }else{
-    DivergenceMeasure = "EuclideanSimilarity"
-    ylab="1-Euclidean distance"
-    ylim=c(0.89, 0.94)
-  }
-  
-  if (class_conserv == "class_cons_synt"){
-    xmax=3
-  }else{
-    xmax=5
-  }
-  
-  xlim=c(0.5, xmax+0.5)
-  
-  for(i in 1:length(distances)){
+plot.expdiv.regdiv <- function(regland, feature, expdata, distance, enhancer.list, ylab, plot.label, xlab, xax.labels, xax.las){
+  ## go through all classes and enhancer datasets to compute median and ci
 
-    dist=distances[i]
-    
-    plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-    
-    for (enh in enhancer.datasets[[sp]]){
-      regland = genes.conservation[[enh]][["obs"]][[dist]]
-      genes = intersect(rownames(regland), rownames(expdiv))
-      regland = regland[genes,]
-      
-      for (class in levels(regland[[class_conserv]])){
-        this.genes=rownames(regland[which(regland[[class_conserv]] == class),])
-        
-        b=boxplot(expdiv[this.genes, DivergenceMeasure], plot=F)
-        med=median(expdiv[this.genes, DivergenceMeasure])
-        ci=as.numeric(b$conf)
-        
-        xpos=seq(1,  length(levels(regland[[class_conserv]])), 1)
-        names(xpos) = levels(regland[[class_conserv]])
-        
-        x=xpos[class]+smallx[enh]
-        
-        points(x, med, pch=20, col=col.enhancers[enh], cex=1.1)
-        segments(x, ci[1], x, ci[2], col=col.enhancers[enh])
-      }
+  enh1=enhancer.list[1]
+  contact.classes=levels(regland[[enh1]][,paste(feature, distance, sep=".")])
+  
+  median.matrix=matrix(rep(NA, length(enhancer.list)*length(contact.classes)), nrow=length(enhancer.list))
+  rownames(median.matrix)=enhancer.list
+  colnames(median.matrix)=contact.classes
+
+  ci.low.matrix=median.matrix
+  ci.high.matrix=median.matrix  
+  
+  for(enh in enhancer.list){
+    for(class in contact.classes){
+      this.regland=regland[[enh]]
+      this.genes=this.regland$gene[which(this.regland[,paste(feature, distance, sep=".")] == class)]
+      b=boxplot(expdata[this.genes], plot=FALSE)
+      ci=as.numeric(b$conf)
+
+      median.matrix[enh, class]=median(expdata[this.genes],na.rm=T)
+      ci.low.matrix[enh, class]=ci[1]
+      ci.high.matrix[enh, class]=ci[2]
     }
-    
-    abline(v=xpos[1:xmax-1]+0.5, lty=3, col="gray40")
-    axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(regland[[class_conserv]]))), cex.axis=0.8)
-    mtext(xnames, at=xpos, side=1, line=1, cex=0.8)
-    mtext(xlab, side=1, line=2.5, cex=0.9)
-    
-    axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
-    mtext(ylab, side=2, line=2.5, cex=0.9)
-
-     if (Measure == "corrected"){
-       labelpos=xlim[1]-diff(xlim)/6
-     } else{
-       labelpos=xlim[1]-diff(xlim)/7
-     }
-    
-    mtext(plot.labels[i], side=3, at=labelpos, line=1, font=2, cex=1.25)
-    
   }
   
+  ## compute ylim on all values
+  
+  ylim=range(c(as.numeric(ci.low.matrix), as.numeric(ci.high.matrix)))
+  addy=diff(ylim)/5
+  ylim=ylim+c(-addy, addy)
+
+  ## now do the actual plot
+  
+  xpos=1:length(contact.classes)
+  names(xpos)=contact.classes
+  xlim=c(0.5, length(contact.classes)+0.5)
+  
+  cex.mtext = 0.75
+  
+  plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
+  
+  for(enh in enhancers){
+    for(class in contact.classes){
+      x=xpos[class]+smallxenh[enh]
+      
+      med=median.matrix[enh, class]
+      ci.low=ci.low.matrix[enh, class]
+      ci.high=ci.high.matrix[enh, class]
+      
+      points(x, med, pch=20, col=col.enhancers[enh], cex=1.1)
+      segments(x, ci.low, x, ci.high,  col=col.enhancers[enh])
+    }
+  }
+  
+  abline(v=xpos[1:length(contact.classes)-1]+diff(xpos)[1]/2, lty=3, col="gray40")
+  
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1, las=2)
+  mtext(ylab, side=2, line=3.2, cex=cex.mtext)
+  
+  ## plot label
+  if(length(xpos)==5){
+    plot.lab.pos=xlim[1]-diff(xlim)/5.5
+  }
+
+  if(length(xpos)==2){
+    plot.lab.pos=xlim[1]-diff(xlim)/3.8
+  }
+
+  if(length(xpos)==3){
+    plot.lab.pos=xlim[1]-diff(xlim)/5.1
+  }
+
+  mtext(plot.label, side=3, line=0.5, at=plot.lab.pos, font=2, cex=1.2)
+  
+  axis(side=1, cex.axis=1, mgp=c(3, 0.75, 0), at=xpos, labels=rep("",length(xpos)))
+  mtext(xax.labels, at=xpos, side=1, line=0.75, cex=0.75, las=xax.las)
+
+  if(xax.las==2){
+    mtext(xlab, side=1, line=4.5, cex=cex.mtext)
+  }
+
+  if(xax.las==1){
+    mtext(xlab, side=1, line=2.5, cex=cex.mtext)
+  }
 }
 
 ################################################################################################################################
 
-pdf(file=paste(pathFigures, "SupplementaryFigure29.pdf", sep=""), width=6.85, height=10)
-m=matrix(rep(NA, 4*2), nrow=4)
+pdf(file=paste(pathFigures, "SupplementaryFigure29.pdf", sep=""), width=6.85, height=11)
+m=matrix(rep(NA, 4*8), nrow=4)
 
-m[,1]=c(1:4)
-m[,2]=c(5:8)
+m[1,]=c(rep(1, 4), rep(5, 4))
+m[2,]=c(rep(2, 4), rep(6, 4))
+m[3,]=c(rep(3, 3), rep(9, 1), rep(7, 3), rep(10, 1))
+m[4,]=c(rep(4, 4), rep(8, 4))
+
 
 layout(m)
 
-par(mar=c(4.1, 4.1, 2.1, 1)) # bottom, left, top, right
 
 ################################################################################################################################
 
-## Gene expression profiles uncorrected
-Measure = "uncorrected"
+par(mar=c(4.75, 5.25, 2.5, 1.5)) # bottom, left, top, right
 
-plot_profiles("class_nb_contact", distances,  "number of contacts class", 1:5, "a")
+## Euclidean similarity, uncorrected
 
-legend("bottomright", legend=enhancer.datasets[[sp]], pch=20,
-       col=col.enhancers, cex=1, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
+expdata=expdiv[,"EuclideanSimilarity"]
+names(expdata)=rownames(expdiv)
 
-plot_profiles("class_align_score", distances,  "enhancer sequence conservation", 1:5, "b")
-plot_profiles("class_cons_synt", distances,  "% conserved synteny", c("<75%", "75-99%", ">99%"), "c")
-plot_profiles("class_cons_cont", distances,  "% conserved contacts", c("<1%", "25%", "50%", "75%", ">75%"), "d")
+## number of contacts
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, "all", enhancers, ylab="1-Euclidean distance", plot.label="a", xlab="number of contacts", xax.labels=levels(regcons[[enhancers[1]]]$class.nb.contacts.all), xax.las=1)
 
-## Gene expression profiles corrected
-Measure = "corrected"
-plot_profiles("class_nb_contact", distances,  "number of contacts class", 1:5, "e")
+legend("bottomright", legend=enhancers, pch=20, col=col.enhancers, cex=1, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
 
-plot_profiles("class_align_score", distances,  "enhancer sequence conservation", 1:5, "f")
-plot_profiles("class_cons_synt", distances,  "% conserved synteny", c("<75%", "75-99%", ">99%"), "g")
-plot_profiles("class_cons_cont", distances,  "% conserved contacts", c("<1%", "25%", "50%", "75%", ">75%"), "h")
+## enhancer sequence conservation
+
+plot.expdiv.regdiv(regcons, "class.aln.score", expdata, "all", enhancers, ylab="1-Euclidean distance", plot.label="b", xlab="enhancer sequence conservation", xax.labels=levels(regcons[[enhancers[1]]]$class.aln.score.all), xax.las=1)
+
+## synteny conservation
+
+plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, "all", enhancers, ylab="1-Euclidean distance", plot.label="c", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=1)
+
+## contact conservation
+par(mar=c(4.75, 5.25, 2.5, 2.5)) # bottom, left, top, right
+
+plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, "all", enhancers, ylab="1-Euclidean distance", plot.label="d", xlab="contact conservation", xax.labels=c("<10%", "10-40%", ">40%"), xax.las=1)
+
+################################################################################################################################
+
+par(mar=c(4.75, 5.25, 2.5, 1.5)) # bottom, left, top, right
+
+## Euclidean similarity, corrected
+
+expdata=expdiv[,"CorrectedEuclideanSimilarity"]
+names(expdata)=rownames(expdiv)
+
+## number of contacts
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="e", xlab="number of contacts", xax.labels=levels(regcons[[enhancers[1]]]$class.nb.contacts.all), xax.las=1)
+
+## enhancer sequence conservation
+
+plot.expdiv.regdiv(regcons, "class.aln.score", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="f", xlab="enhancer sequence conservation", xax.labels=levels(regcons[[enhancers[1]]]$class.aln.score.all), xax.las=1)
+
+## synteny conservation
+
+plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="g", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=1)
+
+
+## contact conservation
+
+par(mar=c(4.75, 5.25, 2.5, 2.5)) # bottom, left, top, right
+
+plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="h", xlab="contact conservation", xax.labels=c("<10%", "10-40%", ">40%"), xax.las=1)
+
+################################################################################################################################
 
 dev.off()
 

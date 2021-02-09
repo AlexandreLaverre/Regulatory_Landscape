@@ -86,7 +86,7 @@ if(load){
       cons.seq.conf.high[[sp]][[enh]] <- tapply(100*enh_align[[tg]], as.factor(enh_align$class_score), function(x) t.test(x)[["conf.int"]][2])
       
       ## Calculate relation with distance to promoter
-      contact_obs <- contact.conservation[[paste0(sp, "2", tg)]][[enh]][["obsobs"]] 
+      contact_obs <- contact.conservation[[paste0(sp, "2", tg)]][[enh]][["obs"]] 
       
       contact_obs$class_dist <- cut(contact_obs$origin_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
       
