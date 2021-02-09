@@ -164,6 +164,9 @@ text("0.0", x=mean(c(startx,endx)), y=starty-1.75*sy, xpd=NA, cex=0.95)
 text("% contact conservation", x=mean(c(startx,endx)), y=starty-3.2*sy, xpd=NA, cex=1.07)
 text("(observed-simulated)", x=mean(c(startx,endx)), y=starty-4.6*sy, xpd=NA, cex=1.07)
 
+mtext("human", side=3, at=-0.35, line=-0.25, cex=0.65, font=2)
+mtext("mouse", side=1, at=0.5, line=11, cex=0.65, font=2)
+
 mtext("a", side=3, font=2, line=0.75, at=-0.85, cex=1)
 
 
@@ -195,7 +198,10 @@ mtext("distance from promoter region (Mb)", side=1, line=2, cex=mtext.CEX)
 axis(side=2, mgp=c(3, 0.75, 0), las=2)
 mtext("% conserved contacts", side=2, line=2.5,  cex=mtext.CEX)
 
-mtext("b", side=3, line=1.75, at=-7.5, font=2, cex=1.05)
+legend("topright", col=dataset.colors, legend = c("PCHi-C data", "simulated data"), box.col="white", bg="white", pch=20, inset=c(0.01, -0.05))
+
+
+mtext("b", side=3, line=0.65, at=-7.5, font=2, cex=1.05)
 
 ##############################################################################
 
@@ -229,8 +235,6 @@ mtext("number of cell types", side=1, line=2, cex=mtext.CEX)
 
 axis(side=2, mgp=c(3, 0.75, 0), las=2)
 mtext("% conserved contacts", side=2, line=2.5, cex=mtext.CEX)
-
-legend("topleft", col=dataset.colors, legend = c("PCHi-C data", "simulated data"), box.col="white", bg="white", pch=20, inset=c(0.01, -0.05))
 
 mtext("c", side=3, line=0.5, at=-0.7, font=2, cex=1)
 
