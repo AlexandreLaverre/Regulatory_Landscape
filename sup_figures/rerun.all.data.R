@@ -2,7 +2,7 @@
 
 ## all scripts that generate .RData objects for the figures
 
-data.scripts=c("data.features.coverage.R", "data.samples.cumulative.interactions.R", "data.common.cell.expression.divergence.R", "data.common.cell.regland.conservation.R", "data.cell.types.parallel.trends.R")
+data.scripts=c("data.features.coverage.R", "data.common.cell.expression.divergence.R", "data.common.cell.regland.conservation.R", "data.cell.types.parallel.trends.R", "data.samples.cumulative.interactions.R")
 
 ############################################################################
 
