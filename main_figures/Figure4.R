@@ -115,7 +115,7 @@ m <- matrix(c(prop.obs.alldist, prop.sim.alldist), nrow=2, byrow=T)
 
 par(mar=c(3.1, 4.1, 2.1, 1.1))
 
-bar <-barplot(m, beside=T, space=c(0.25, 1.2), col=dataset.colors, border=dataset.colors, axes=F,  ylim = c(65,105), xpd=F)
+bar <-barplot(m, beside=T, space=c(0.25, 1.2), col=dataset.colors, border=dataset.colors, axes=F,  ylim = c(55,105), xpd=F)
 colnames(bar)<-species
 
 axis(side=2, las=2,  mgp=c(3, 0.75, 0), cex.axis=0.9)
