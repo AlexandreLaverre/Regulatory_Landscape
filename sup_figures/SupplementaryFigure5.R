@@ -1,12 +1,4 @@
-######################################################################################################################
-
-library(Hmisc)
-
-options(stringsAsFactors = FALSE)
-
-#######################################################################################################################
-
-## if it's the first time we run this figure, we load and prepare data
+###############################################################################
 
 objects=ls()
 
@@ -16,154 +8,169 @@ if(!"pathScripts"%in%objects){
   source("../main_figures/parameters.R")
 }
 
-######################################################################################################################
+##############################################################################
 
 if(load){
   sp="human"
   
-  load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
-  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
-  
-  if (sp == "human"){
+  if(sp == "human"){
     sp_name="Human"
-  }else{
+  } else{
     sp_name="Mouse"
   }
   
-  bord.measure = c("#AF46B4", "#4BB446")
-  names(bord.measure) = c("Spearman's rho", "1-Euclidean distance")
-  col.measure = c("#AF46B41A", "#4BB4461A")
-  names(col.measure) = c("Spearman's rho", "1-Euclidean distance")
-  nb = 1
+  enh="ENCODE"
+  
+  cells <- c("Bcell", "ESC", "adipo")
+  col.cells = c("navy", "forestgreen", "darkorange")
+  names(col.cells) = cells
 
+  smallxcell=c(-0.2, 0, 0.2)
+  names(smallxcell)=cells
+  
+  load(paste(pathFigures, "RData/data.common.cells.expdiv.RData", sep=""))
+  load(paste(pathFigures, "RData/data.common.cells.regland.conservation.RData", sep=""))
+  
+  regcons=regland.conservation[[sp]][[enh]]
+  
   load=FALSE
 }
 
-######################################################################################################################
+###########################################################################################################
 
-clearboxplot <- function(measure, divergences, plotlabel){
+plot.expdiv.regdiv <- function(regland, featurecontact, cells,  expdata, featureexp, ylab, plot.label, xlab, xax.labels, xax.las){
+  ## go through all cells to compute median and ci
+  firstcell=cells[1]
+  contact.classes=levels(regland[[firstcell]][[featurecontact]])
   
-  if (measure == "classTau"){
-    labels=c("broad", "", "", "narrow")
-    xlab="expression breadth"
-  } else{
-    labels=c("low", "", "", "high")
-    xlab="mean expression level"
+  median.matrix=matrix(rep(NA, length(cells)*length(contact.classes)), nrow=length(cells))
+  rownames(median.matrix)=cells
+  colnames(median.matrix)=contact.classes
+
+  ci.low.matrix=median.matrix
+  ci.high.matrix=median.matrix  
+  
+  for(cell in cells){
+    this.regland=regland[[cell]]
+
+    for(class in contact.classes){
+      this.genes=this.regland$gene[which(this.regland[, featurecontact] == class)]
+      b=boxplot(expdata[this.genes, paste(cell, featureexp, sep="_")], plot=FALSE)
+      ci=as.numeric(b$conf)
+
+      median.matrix[cell, class]=median(expdata[this.genes, paste(cell, featureexp, sep="_")],na.rm=T)
+      ci.low.matrix[cell, class]=ci[1]
+      ci.high.matrix[cell, class]=ci[2]
+    }
   }
   
-  xlim=c(0.5, length(levels(expdiv[[measure]]))+0.5)
+  ## compute ylim on all values
   
-  xpos=seq(1, length(levels(expdiv[[measure]])), 1)
-  names(xpos) = levels(expdiv[[measure]])
-  smallx=c(-0.15, 0.15)
-  names(smallx)=c("Spearman's rho", "1-Euclidean distance")
+  ylim=range(c(as.numeric(ci.low.matrix), as.numeric(ci.high.matrix)))
+  addy=diff(ylim)/5
+  ylim=ylim+c(-addy, addy)
+
+  ## now do the actual plot
   
-  for (divergence in divergences){
-    if (any(grepl("Spearman", divergence))){
-      name="Spearman's rho"
-      ylim = c(-0.5, 1)
-    } else{
-      name="1-Euclidean distance"
-      ylim = c(0.55, 1)
-    }
-    
-    if (name=="Spearman's rho"){
-      par(mar=c(1.5, 3.75, 2.6, 1.1))
-    } else{
-      par(mar=c(4, 3.75, 0.6, 1.1))
-    }
-
-    plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-
-    for(class in levels(expdiv[[measure]])){
-      x=xpos[class]+smallx[name]
-    
-      boxplot(expdiv[which(expdiv[[measure]] == class), divergence], at=x, border=bord.measure[name], col=col.measure[name],
-             boxwex=0.5, axes=F, add=T, notch=T, outline=F)
-    }
-    
-    abline(v=xpos[1:length(levels(expdiv[[measure]]))-1]+0.5, lty=3, col="gray40")
-    axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
-    mtext(name, side=2, line=2.5, cex=CEXLAB)
-    
-    if (name=="Spearman's rho"){
-      mtext(plotlabel, side=3, line=1, at=-0.1, font=2, cex=1.2)
-    }else{
-      axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(expdiv[[measure]]))), cex.axis=0.8)
-      mtext(labels, at=xpos, side=1, line=1, cex=CEXLAB)
+  xpos=1:length(contact.classes)
+  names(xpos)=contact.classes
+  xlim=c(0.5, length(contact.classes)+0.5)
+  
+  cex.mtext = 0.75
+  
+  plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
+  
+  for(cell in cells){
+    for(class in contact.classes){
+      x=xpos[class]+smallxcell[cell]
       
-      mtext(xlab, side=1, line=2.5, cex=CEXLAB)
+      med=median.matrix[cell, class]
+      ci.low=ci.low.matrix[cell, class]
+      ci.high=ci.high.matrix[cell, class]
+      
+      points(x, med, pch=20, col=col.cells[cell], cex=1.1)
+      segments(x, ci.low, x, ci.high,  col=col.cells[cell])
     }
   }
+  
+  abline(v=xpos[1:length(contact.classes)-1]+diff(xpos)[1]/2, lty=3, col="gray40")
+  
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1, las=2)
+  mtext(ylab, side=2, line=2.95, cex=cex.mtext)
+  
+  ## plot label
+  if(length(xpos)==5){
+    plot.lab.pos=xlim[1]-diff(xlim)/3.5
+  } else{
+    plot.lab.pos=xlim[1]-diff(xlim)/2
+  }
+  
+  mtext(plot.label, side=3, line=1.15, at=plot.lab.pos, font=2, cex=1.2)
+  
+  axis(side=1, cex.axis=1, mgp=c(3, 0.75, 0), at=xpos, labels=rep("",length(xpos)))
+  mtext(xax.labels, at=xpos, side=1, line=0.75, cex=0.75, las=xax.las)
+  
+  mtext(xlab, side=1, line=4.5, cex=cex.mtext)
 }
 
-######################################################################################################################
-######################################################################################################################
+################################################################################################################################
+################################################################################################################################
 
-pdf(file=paste(pathFigures, "SupplementaryFigure5.pdf", sep=""), width = 6.85)
+pdf(paste(pathFigures, "/SupplementaryFigure3.pdf", sep=""), width=6.85, height=6)
 
-m=matrix(rep(NA, 10*2), nrow=10)
-for(i in 1:3){
-  m[i,]=c(1,3)
-}
-
-for(i in 4:6){
-  m[i,]=c(2,4)
-}
-for(i in 7:10){
-  m[i,]=c(5,6)
-}
+m=matrix(rep(NA,2*9), nrow=2)
+m[1,]=c(rep(c(1,2,3), each=3))
+m[2,]=c(rep(4,3), rep(5,2), rep(6,2), rep(7,2))
 
 layout(m)
 
-CEXLAB = 0.9
-CEXstats = 0.8
-expdiv$EuclideanSimilarity <- 1-expdiv$EuclideanDistance
+par(mar = c(6.5, 4.5, 2.5, 0.5))
 
-################ Cofounding factors ################ 
-# Gene expression level
-expdiv$classRPKM <- cut2(expdiv$Human_MeanRPKM, g=4, include.lowest=T) 
-clearboxplot("classRPKM", c("CorrelationSpearman","EuclideanSimilarity"), "a")
+################################################################################################################################
 
-# Specificity
-clearboxplot("classTau", c("CorrelationSpearman","EuclideanSimilarity"), "b")
+######################## nb of contacted enhancers and expression level  ########################
 
-################ Correlation between Spearman and Euclidean  ################ 
-par(mar=c(4.5, 5, 3, 5)) # bottom, left, top, right
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp=paste(sp, "MeanRPKM",sep="_"), cells=cells, ylab="mean expression level (RPKM)", plot.label="a", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
 
-smoothScatter(expdiv$EuclideanSimilarity, expdiv$CorrelationSpearman, xlab="", ylab="", cex.axis=1.1)
+################################################################################################################################
 
-R=cor(expdiv$EuclideanSimilarity, expdiv$CorrelationSpearman,method="pearson")
-rho=cor(expdiv$EuclideanSimilarity, expdiv$CorrelationSpearman, method="spearman")
-x=expdiv$EuclideanSimilarity
-y=expdiv$CorrelationSpearman
-abline(lm(y~x), col="red")
+######################## nb of contacted enhancers and expression conservation, before correction  ########################
 
-mtext(paste("Pearson's R = ", round(R, digits=2), ", rho = ",round(rho, digits=2),sep=""),
-      side=3, line=0.5, cex=CEXstats)
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp="ExpressionConservation", cells=cells, ylab="expression conservation", plot.label="b", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
 
-mtext("1-Euclidean distance", side=1, line=2.5, cex=CEXLAB)
-mtext("Spearman's rho", side=2, line=2.5, cex=CEXLAB)
-mtext("c", side=3, line=2, at=-0.01, font=2, cex=1.2)
 
-### Correlation between measures
-smoothScatter(expdiv$CorrectedEuclideanSimilarity, expdiv$CorrectedSpearman, xlab="", ylab="", cex.axis=1.1)
-R=cor(expdiv$CorrectedEuclideanSimilarity, expdiv$CorrectedSpearman,method="pearson")
-rho=cor(expdiv$CorrectedEuclideanSimilarity, expdiv$CorrectedSpearman, method="spearman")
-x=expdiv$CorrectedEuclideanSimilarity
-y=expdiv$CorrectedSpearman
-abline(lm(y~x), col="red")
+######################## nb of contacted enhancers and expression conservation, after correction  ########################
 
-mtext(paste("Pearson's R = ", round(R, digits=2), ", rho = ",round(rho, digits=2),sep=""),
-      side=3, line=0.5, cex=CEXstats)
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="c", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
 
-mtext("1-Euclidean distance (corrected)", side=1, line=2.5, cex=CEXLAB)
-mtext("Spearman's rho (corrected)", side=2, line=2.5, cex=CEXLAB)
-mtext("d", side=3, line=2, at=-0.8, font=2, cex=1.2)
+################################################################################################################################
 
-##############################################################################################
+######################## sequence conservation and expression conservation      ########################
+
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.aln.score", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="d", xlab="enhancer sequence conservation", xax.labels=levels(regcons[["ESC"]][,"class.aln.score"]), xax.las=2)
+
+################################################################################################################################
+
+######################## synteny conservation and expression conservation      ########################
+
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.synteny.cons", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="e", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=2)
+
+################################################################################################################################
+#######################  contact conservation and expression conservation        ########################
+
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.contact.cons", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="f", xlab="contact conservation", xax.labels=levels(regcons[["ESC"]][,"class.contact.cons"]), xax.las=2)
+
+################################################################################################################################
+# empty plot for the legend
+par(mar=c(0, 0.1, 0, 0.3)) 
+plot.new()
+
+
+legend("topleft", bg="white", box.col="white", legend=c("B lymphocytes", "", "embryonic stem cells","", "pre-adipocytes"), col=c(col.cells[1], "white", col.cells[2], "white", col.cells[3]), pch=20, inset=c(0.05, 0.15), xpd=NA)
+       
+################################################################################################################################
 
 dev.off()
 
-##############################################################################################
+################################################################################################################################
 

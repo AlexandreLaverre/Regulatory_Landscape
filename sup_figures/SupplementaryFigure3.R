@@ -1,176 +1,237 @@
-###############################################################################
+#########################################################################
+
+## if it's the first time we run this figure, we load and prepare data
 
 objects=ls()
 
 if(!"pathScripts"%in%objects){
   load=T
   prepare=T
-  source("../main_figures/parameters.R")
-}
-
-##############################################################################
-
-if(load){
-  sp="human"
   
-  if(sp == "human"){
-    sp_name="Human"
-  } else{
-    sp_name="Mouse"
-  }
+  source("../main_figures/parameters.R")
+
+  ref="human"
+  tg=setdiff(c("human", "mouse"), ref)
   
   enh="ENCODE"
-  
-  cells <- c("Bcell", "ESC", "adipo")
-  col.cells = c("navy", "forestgreen", "darkorange")
-  names(col.cells) = cells
+}
 
-  smallxcell=c(-0.2, 0, 0.2)
-  names(smallxcell)=cells
+##########################################################################
+
+if(load){
+
+  load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
+
+  enh.stats.obs=enhancer.statistics[[ref]][[enh]][["original"]]
+  enh.stats.sim=enhancer.statistics[[ref]][[enh]][["simulated"]]
+
+  load(paste(pathFigures, "RData/data.sequence.conservation.enhancers.",enh,".",ref,"2", tg,".RData", sep=""))
+
+  enh.stats.obs$pcungapped=pcungapped[rownames(enh.stats.obs)]
+  enh.stats.sim$pcungapped=pcungapped[rownames(enh.stats.sim)]
+
+  load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
+
+  frag.stats.obs=fragment.statistics[[ref]][["original"]]
+  frag.stats.sim=fragment.statistics[[ref]][["simulated"]]
   
-  load(paste(pathFigures, "RData/data.common.cells.expdiv.RData", sep=""))
-  load(paste(pathFigures, "RData/data.common.cells.regland.conservation.RData", sep=""))
-  
-  regcons=regland.conservation[[sp]][[enh]]
+  load(paste(pathFigures, "RData/data.sequence.conservation.fragments.",ref,"2", tg,".RData", sep=""))
+
+  frag.stats.obs$pcungapped=pcungapped[rownames(frag.stats.obs)]
+  frag.stats.sim$pcungapped=pcungapped[rownames(frag.stats.sim)]
   
   load=FALSE
 }
 
-###########################################################################################################
+##########################################################################
 
-plot.expdiv.regdiv <- function(regland, featurecontact, cells,  expdata, featureexp, ylab, plot.label, xlab, xax.labels, xax.las){
-  ## go through all cells to compute median and ci
-  firstcell=cells[1]
-  contact.classes=levels(regland[[firstcell]][[featurecontact]])
-  
-  median.matrix=matrix(rep(NA, length(cells)*length(contact.classes)), nrow=length(cells))
-  rownames(median.matrix)=cells
-  colnames(median.matrix)=contact.classes
+if(prepare){
 
-  ci.low.matrix=median.matrix
-  ci.high.matrix=median.matrix  
-  
-  for(cell in cells){
-    this.regland=regland[[cell]]
+  ## fragments
 
-    for(class in contact.classes){
-      this.genes=this.regland$gene[which(this.regland[, featurecontact] == class)]
-      b=boxplot(expdata[this.genes, paste(cell, featureexp, sep="_")], plot=FALSE)
-      ci=as.numeric(b$conf)
+  class.frag.nbgenes.obs=cut(frag.stats.obs$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(frag.stats.obs$nb_genes_500kb)), include.lowest=T, labels=c("[0, 5]", "(5, 10]", "(10, 15]", "(15, 20]", "(20, 25]", "(25, 30]", ">30"))
+  class.frag.nbgenes.sim=cut(frag.stats.sim$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(frag.stats.sim$nb_genes_500kb)), include.lowest=T, labels=c("[0, 5]", "(5, 10]", "(10, 15]", "(15, 20]", "(20, 25]", "(25, 30]", ">30"))
 
-      median.matrix[cell, class]=median(expdata[this.genes, paste(cell, featureexp, sep="_")],na.rm=T)
-      ci.low.matrix[cell, class]=ci[1]
-      ci.high.matrix[cell, class]=ci[2]
-    }
-  }
+  ## conservation
   
-  ## compute ylim on all values
+  mean.cons.frag.obs=tapply(frag.stats.obs$pcungapped, class.frag.nbgenes.obs, mean, na.rm=T)
+  ci.cons.frag.low.obs=tapply(frag.stats.obs$pcungapped, class.frag.nbgenes.obs, function(x) t.test(x)[["conf.int"]][1])
+  ci.cons.frag.high.obs=tapply(frag.stats.obs$pcungapped, class.frag.nbgenes.obs, function(x) t.test(x)[["conf.int"]][2])
   
-  ylim=range(c(as.numeric(ci.low.matrix), as.numeric(ci.high.matrix)))
-  addy=diff(ylim)/5
-  ylim=ylim+c(-addy, addy)
+  mean.cons.frag.sim=tapply(frag.stats.sim$pcungapped, class.frag.nbgenes.sim, mean, na.rm=T)
+  ci.cons.frag.low.sim=tapply(frag.stats.sim$pcungapped, class.frag.nbgenes.sim, function(x) t.test(x)[["conf.int"]][1])
+  ci.cons.frag.high.sim=tapply(frag.stats.sim$pcungapped, class.frag.nbgenes.sim, function(x) t.test(x)[["conf.int"]][2])
 
-  ## now do the actual plot
+  ## pc repeats
+
+  frag.stats.obs$pcrepeat=100*frag.stats.obs$repeat_bp/frag.stats.obs$length
+  frag.stats.sim$pcrepeat=100*frag.stats.sim$repeat_bp/frag.stats.sim$length
+
+  mean.rep.frag.obs=tapply(frag.stats.obs$pcrepeat, class.frag.nbgenes.obs, mean, na.rm=T)
+  ci.rep.frag.low.obs=tapply(frag.stats.obs$pcrepeat, class.frag.nbgenes.obs, function(x) t.test(x)[["conf.int"]][1])
+  ci.rep.frag.high.obs=tapply(frag.stats.obs$pcrepeat, class.frag.nbgenes.obs, function(x) t.test(x)[["conf.int"]][2])
+
   
-  xpos=1:length(contact.classes)
-  names(xpos)=contact.classes
-  xlim=c(0.5, length(contact.classes)+0.5)
+  mean.rep.frag.sim=tapply(frag.stats.sim$pcrepeat, class.frag.nbgenes.sim, mean, na.rm=T)
+  ci.rep.frag.low.sim=tapply(frag.stats.sim$pcrepeat, class.frag.nbgenes.sim, function(x) t.test(x)[["conf.int"]][1])
+  ci.rep.frag.high.sim=tapply(frag.stats.sim$pcrepeat, class.frag.nbgenes.sim, function(x) t.test(x)[["conf.int"]][2])
   
-  cex.mtext = 0.75
   
-  plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
+  ## enhancers
   
-  for(cell in cells){
-    for(class in contact.classes){
-      x=xpos[class]+smallxcell[cell]
-      
-      med=median.matrix[cell, class]
-      ci.low=ci.low.matrix[cell, class]
-      ci.high=ci.high.matrix[cell, class]
-      
-      points(x, med, pch=20, col=col.cells[cell], cex=1.1)
-      segments(x, ci.low, x, ci.high,  col=col.cells[cell])
-    }
-  }
+  class.enh.nbgenes.obs=cut(enh.stats.obs$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(enh.stats.obs$nb_genes_500kb)), include.lowest=T, labels=c("[0, 5]", "(5, 10]", "(10, 15]", "(15, 20]", "(20, 25]", "(25, 30]", ">30"))
+  class.enh.nbgenes.sim=cut(enh.stats.sim$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(enh.stats.sim$nb_genes_500kb)), include.lowest=T, labels=c("[0, 5]", "(5, 10]", "(10, 15]", "(15, 20]", "(20, 25]", "(25, 30]", ">30"))
+
+  ## conservation
   
-  abline(v=xpos[1:length(contact.classes)-1]+diff(xpos)[1]/2, lty=3, col="gray40")
+  mean.cons.enh.obs=tapply(enh.stats.obs$pcungapped, class.enh.nbgenes.obs, mean, na.rm=T)
+  ci.cons.enh.low.obs=tapply(enh.stats.obs$pcungapped, class.enh.nbgenes.obs, function(x) t.test(x)[["conf.int"]][1])
+  ci.cons.enh.high.obs=tapply(enh.stats.obs$pcungapped, class.enh.nbgenes.obs, function(x) t.test(x)[["conf.int"]][2])
   
-  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1, las=2)
-  mtext(ylab, side=2, line=2.95, cex=cex.mtext)
+  mean.cons.enh.sim=tapply(enh.stats.sim$pcungapped, class.enh.nbgenes.sim, mean, na.rm=T)
+  ci.cons.enh.low.sim=tapply(enh.stats.sim$pcungapped, class.enh.nbgenes.sim, function(x) t.test(x)[["conf.int"]][1])
+  ci.cons.enh.high.sim=tapply(enh.stats.sim$pcungapped, class.enh.nbgenes.sim, function(x) t.test(x)[["conf.int"]][2])
+
+  ## pc repeats
+
+  enh.stats.obs$pcrepeat=100*enh.stats.obs$repeat_bp/enh.stats.obs$length
+  enh.stats.sim$pcrepeat=100*enh.stats.sim$repeat_bp/enh.stats.sim$length
+
+  mean.rep.enh.obs=tapply(enh.stats.obs$pcrepeat, class.enh.nbgenes.obs, mean, na.rm=T)
+  ci.rep.enh.low.obs=tapply(enh.stats.obs$pcrepeat, class.enh.nbgenes.obs, function(x) t.test(x)[["conf.int"]][1])
+  ci.rep.enh.high.obs=tapply(enh.stats.obs$pcrepeat, class.enh.nbgenes.obs, function(x) t.test(x)[["conf.int"]][2])
+
   
-  ## plot label
-  if(length(xpos)==5){
-    plot.lab.pos=xlim[1]-diff(xlim)/3.5
-  } else{
-    plot.lab.pos=xlim[1]-diff(xlim)/2
-  }
+  mean.rep.enh.sim=tapply(enh.stats.sim$pcrepeat, class.enh.nbgenes.sim, mean, na.rm=T)
+  ci.rep.enh.low.sim=tapply(enh.stats.sim$pcrepeat, class.enh.nbgenes.sim, function(x) t.test(x)[["conf.int"]][1])
+  ci.rep.enh.high.sim=tapply(enh.stats.sim$pcrepeat, class.enh.nbgenes.sim, function(x) t.test(x)[["conf.int"]][2])
   
-  mtext(plot.label, side=3, line=1.15, at=plot.lab.pos, font=2, cex=1.2)
-  
-  axis(side=1, cex.axis=1, mgp=c(3, 0.75, 0), at=xpos, labels=rep("",length(xpos)))
-  mtext(xax.labels, at=xpos, side=1, line=0.75, cex=0.75, las=xax.las)
-  
-  mtext(xlab, side=1, line=4.5, cex=cex.mtext)
+  prepare=F
 }
 
-################################################################################################################################
-################################################################################################################################
+##########################################################################
 
-pdf(paste(pathFigures, "/SupplementaryFigure3.pdf", sep=""), width=6.85, height=6)
+## 1 column width 85 mm = 3.34 in
+## 1.5 column width 114 mm = 4.49 in 
+## 2 columns width 174 mm = 6.85 in
+## max height: 11 in
 
-m=matrix(rep(NA,2*9), nrow=2)
-m[1,]=c(rep(c(1,2,3), each=3))
-m[2,]=c(rep(4,3), rep(5,2), rep(6,2), rep(7,2))
+pdf(paste(pathFigures, "SupplementaryFigure4.pdf", sep=""), width=4.49, height=6)
+
+m=matrix(rep(NA, 2*6), nrow=2)
+m[1,]=c(rep(1,2), rep(2, 4))
+m[2,]=c(rep(3,2), rep(4, 4))
 
 layout(m)
 
-par(mar = c(6.5, 4.5, 2.5, 0.5))
+###########################################################################
 
-################################################################################################################################
+labels.genes=c("a", "c")
+labels.repeats=c("b", "d")
 
-######################## nb of contacted enhancers and expression level  ########################
+names(labels.genes)=c("frag", "enh")
+names(labels.repeats)=c("frag", "enh")
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp=paste(sp, "MeanRPKM",sep="_"), cells=cells, ylab="mean expression level (RPKM)", plot.label="a", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
+for(type in c("frag", "enh")){
 
-################################################################################################################################
+  ## get objects
+  stats.obs=get(paste(type, ".stats.obs", sep=""))
+  stats.sim=get(paste(type, ".stats.sim", sep=""))
 
-######################## nb of contacted enhancers and expression conservation, before correction  ########################
+  mean.cons.obs=get(paste("mean.cons.",type,".obs",sep=""))
+  ci.cons.low.obs=get(paste("ci.cons.",type,".low.obs",sep=""))
+  ci.cons.high.obs=get(paste("ci.cons.",type,".high.obs",sep=""))
+  
+  mean.rep.obs=get(paste("mean.rep.",type,".obs",sep=""))
+  ci.rep.low.obs=get(paste("ci.rep.",type,".low.obs",sep=""))
+  ci.rep.high.obs=get(paste("ci.rep.",type,".high.obs",sep=""))
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp="ExpressionConservation", cells=cells, ylab="expression conservation", plot.label="b", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
+  mean.cons.sim=get(paste("mean.cons.",type,".sim",sep=""))
+  ci.cons.low.sim=get(paste("ci.cons.",type,".low.sim",sep=""))
+  ci.cons.high.sim=get(paste("ci.cons.",type,".high.sim",sep=""))
+  
+  mean.rep.sim=get(paste("mean.rep.",type,".sim",sep=""))
+  ci.rep.low.sim=get(paste("ci.rep.",type,".low.sim",sep=""))
+  ci.rep.high.sim=get(paste("ci.rep.",type,".high.sim",sep=""))
+  
+  ###########################################################################
 
+  ## nb genes
+  
+  par(mar=c(6.75, 3.75, 2.1, 1.1))
 
-######################## nb of contacted enhancers and expression conservation, after correction  ########################
+  if(ref=="human"){
+    ylim=range(c(0, 25))
+  }
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="c", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
+   if(ref=="mouse"){
+    ylim=range(c(0, 40))
+  } 
 
-################################################################################################################################
+  plot(1, type="n", xlim=c(0.5, 2.5), ylim=ylim, xlab="", ylab="", axes=F)
+  
+  boxplot(stats.obs$nb_genes_500kb, col="white", border=dataset.colors[["Original"]], add=T, at=1, axes=F, outline=F, boxwex=0.5, notch=T)
+  
+  boxplot(stats.sim$nb_genes_500kb, pch=20, col="white", border=dataset.colors[["Simulated"]], add=T, at=2, axes=F, outline=F, boxwex=0.5, notch=T)
+  
+  axis(side=1, mgp=c(3, 0.5,0), at=1:2, labels=rep("", 2))
+  axis(side=2, mgp=c(3, 0.75,0))
+  
+  mtext("number of genes within 500kb", side=2, line=2.5, cex=0.75)
+  
+  mtext(c("PCHi-C", "simulated"), at=1:2, side=1, line=0.75, cex=0.75, las=2)
+  
+  mtext(labels.genes[type], side=3, at=-0.55, font=2, line=1)
+ 
+ ###########################################################################
 
-######################## sequence conservation and expression conservation      ########################
+  ## pc repeats
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.aln.score", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="d", xlab="enhancer sequence conservation", xax.labels=levels(regcons[["ESC"]][,"class.aln.score"]), xax.las=2)
+  par(mar=c(6.75, 3.5, 2.1, 1))
+  
+  xpos=1:length(mean.rep.obs)
+  xlim=range(xpos)+c(-0.5, 0.5)
 
-################################################################################################################################
+  ylim=range(c(ci.rep.low.obs, ci.rep.high.obs, ci.rep.low.sim, ci.rep.high.sim))
+  smally=diff(ylim)/10
+  ylim=ylim+c(-smally,smally)
+  
+  
+  smallx=c(-0.1, 0.1)
+  
+  plot(1, type="n", xlab="", ylab="", axes=F, main="", xlim=xlim, ylim=ylim)
+  
+  points(xpos+smallx[1], mean.rep.obs, col=dataset.colors["Original"], pch=20)
+  segments(xpos+smallx[1], ci.rep.low.obs, xpos+smallx[1], ci.rep.high.obs, col=dataset.colors[["Original"]])
+  
+  points(xpos+smallx[2], mean.rep.sim, col=dataset.colors["Simulated"], pch=20)
+  segments(xpos+smallx[2], ci.rep.low.sim, xpos+smallx[2], ci.rep.high.sim, col=dataset.colors[["Simulated"]])
+  
+  abline(v=xpos[-length(xpos)]+0.5, lty=3, col="gray40")
+  
+  axis(side=2, mgp=c(3, 0.75, 0), las=2)
+  axis(side=1, mgp=c(3, 0.75, 0), at=xpos, labels=rep("", length(xpos)))
+  
+  mtext(names(mean.rep.obs), at=xpos, side=1, line=1, las=2, cex=0.75)
+  
+  mtext("number of genes within 500 kb", side=1, line=4.5, cex=0.75)
+  mtext("% repetitive sequence", side=2, line=2.5, cex=0.75)
 
-######################## synteny conservation and expression conservation      ########################
+  mtext(labels.repeats[type], side=3, at=-1, font=2, line=1)
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.synteny.cons", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="e", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=2)
+  
+  if(type=="frag"){
+    legend("topleft", col=dataset.colors, legend = c("PCHi-C data", "simulated data"), box.col="white", bg="white", pch=20, cex=1.1, inset=c(0.01,-0.05), xpd=NA)
 
-################################################################################################################################
-#######################  contact conservation and expression conservation        ########################
+    mtext("restriction fragments", side=4, line=-0.25, cex=0.75)
+  } else{
+    mtext("enhancers", side=4, line=-0.25, cex=0.75)
+  }  
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.contact.cons", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="f", xlab="contact conservation", xax.labels=levels(regcons[["ESC"]][,"class.contact.cons"]), xax.las=2)
+}
 
-################################################################################################################################
-# empty plot for the legend
-par(mar=c(0, 0.1, 0, 0.3)) 
-plot.new()
-
-
-legend("topleft", bg="white", box.col="white", legend=c("B lymphocytes", "", "embryonic stem cells","", "pre-adipocytes"), col=c(col.cells[1], "white", col.cells[2], "white", col.cells[3]), pch=20, inset=c(0.05, 0.15), xpd=NA)
-       
-################################################################################################################################
+###########################################################################
 
 dev.off()
 
-################################################################################################################################
-
+###########################################################################
