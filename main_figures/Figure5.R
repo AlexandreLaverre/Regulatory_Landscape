@@ -81,7 +81,6 @@ for(i in 6:10){
 }
 
 
-
 layout(m)
 
 mtext.CEX=0.7
@@ -169,40 +168,6 @@ mtext("mouse", side=1, at=0.5, line=11, cex=0.65, font=2)
 
 mtext("a", side=3, font=2, line=0.75, at=-0.85, cex=1)
 
-
-##############################################################################
-## conservation as distance between gene and promoters
-
-YLIM=c(-1,30)
-
-class_leg <- c("0",  "0.5",  "1", "1.5", "2")
-
-par(lwd = 0.7)
-
-xlim=c(0.5, length(cons.dist[["ENCODE"]]["obs",])+0.5)
-
-par(mar=c(3.5, 4.5, 2, 2.1))
-plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM,  yaxs="i")
-nbclass=length(cons.dist.conf.low[[enh]]["obs",])
-  
-points(cons.dist[[enh]]["obs",],pch=20, col=dataset.colors["Original"])
-segments(1:nbclass, cons.dist.conf.low[[enh]]["obs",], 1:nbclass, cons.dist.conf.high[[enh]]["obs",], col=dataset.colors["Original"])
-
-points(cons.dist[[enh]]["sim",],pch=20, col=dataset.colors["Simulated"])
-segments(1:nbclass, cons.dist.conf.low[[enh]]["sim",], 1:nbclass, cons.dist.conf.high[[enh]]["sim",], col=dataset.colors["Simulated"])
-
-## axis, legend & plot label
-axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0))
-mtext("distance from promoter region (Mb)", side=1, line=2, cex=mtext.CEX)
-
-axis(side=2, mgp=c(3, 0.75, 0), las=2)
-mtext("% conserved contacts", side=2, line=2.5,  cex=mtext.CEX)
-
-legend("topright", col=dataset.colors, legend = c("PCHi-C data", "simulated data"), box.col="white", bg="white", pch=20, inset=c(0.01, -0.05))
-
-
-mtext("b", side=3, line=0.65, at=-7.5, font=2, cex=1.05)
-
 ##############################################################################
 
 ## conservation as a number of cell types
@@ -236,7 +201,40 @@ mtext("number of cell types", side=1, line=2, cex=mtext.CEX)
 axis(side=2, mgp=c(3, 0.75, 0), las=2)
 mtext("% conserved contacts", side=2, line=2.5, cex=mtext.CEX)
 
-mtext("c", side=3, line=0.5, at=-0.7, font=2, cex=1)
+mtext("b", side=3, line=0.5, at=-0.7, font=2, cex=1)
+
+##############################################################################
+## conservation as distance between gene and promoters
+
+YLIM=c(-1,30)
+
+class_leg <- c("0",  "0.5",  "1", "1.5", "2")
+
+par(lwd = 0.7)
+
+xlim=c(0.5, length(cons.dist[["ENCODE"]]["obs",])+0.5)
+
+par(mar=c(3.5, 4.5, 2, 2.1))
+plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=YLIM,  yaxs="i")
+nbclass=length(cons.dist.conf.low[[enh]]["obs",])
+  
+points(cons.dist[[enh]]["obs",],pch=20, col=dataset.colors["Original"])
+segments(1:nbclass, cons.dist.conf.low[[enh]]["obs",], 1:nbclass, cons.dist.conf.high[[enh]]["obs",], col=dataset.colors["Original"])
+
+points(cons.dist[[enh]]["sim",],pch=20, col=dataset.colors["Simulated"])
+segments(1:nbclass, cons.dist.conf.low[[enh]]["sim",], 1:nbclass, cons.dist.conf.high[[enh]]["sim",], col=dataset.colors["Simulated"])
+
+## axis, legend & plot label
+axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0))
+mtext("distance from promoter region (Mb)", side=1, line=2, cex=mtext.CEX)
+
+axis(side=2, mgp=c(3, 0.75, 0), las=2)
+mtext("% conserved contacts", side=2, line=2.5,  cex=mtext.CEX)
+
+legend("topright", col=dataset.colors, legend = c("PCHi-C data", "simulated data"), box.col="white", bg="white", pch=20, inset=c(0.01, -0.05))
+
+
+mtext("c", side=3, line=0.65, at=-7.5, font=2, cex=1.05)
 
 ##############################################################################
 
