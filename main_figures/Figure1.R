@@ -99,6 +99,16 @@ if(prepare){
 
   hcl=sample.clustering[[sp]][["hclust.alldist"]]
   sample.order=sample.clustering[[sp]][["sample.order.alldist"]]
+
+  ## statistics for the test
+
+  print(paste("interactions shared across cell types"))
+  print(paste("observed", round(100*length(which(obs$nb_celltypes>=2))/nrow(obs))))
+  print(paste("simulated", round(100*length(which(sim$nb_celltypes>=2))/nrow(sim))))
+
+  print(paste("long range (>500kb) shared across cell types"))
+  print(paste("observed", round(100*length(which(obs$nb_celltypes>=2 & obs$distance>=5e5))/length(which(obs$distance>=5e5)))))
+  print(paste("simulated", round(100*length(which(sim$nb_celltypes>=2 & sim$distance>=5e5))/length(which(sim$distance>=5e5)))))
   
   ## we finish preparing the data
   prepare=FALSE
