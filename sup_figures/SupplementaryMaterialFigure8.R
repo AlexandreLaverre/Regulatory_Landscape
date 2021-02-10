@@ -78,7 +78,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "SupplementaryFigure8.pdf", sep=""), width=6.85, height=6.5)
+pdf(paste(pathFigures, "SupplementaryMaterialFigure8.pdf", sep=""), width=6.85, height=6.5)
 
 m=matrix(1:4, nrow=2, byrow=T)
 

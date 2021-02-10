@@ -73,7 +73,7 @@ for(i in 1:nbfigures){
   sim=simulated.contacts[[this.sp]]
 
   ## start figure
-  pdf(paste(pathFigures, "SupplementaryFigure",i,".pdf", sep=""), width=6.85, height=11)
+  pdf(paste(pathFigures, "SupplementaryMaterialFigure",i,".pdf", sep=""), width=6.85, height=11)
   
   ## layout
   
