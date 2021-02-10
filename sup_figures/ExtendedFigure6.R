@@ -1,25 +1,43 @@
 ######################################################################################################################
-library(Hmisc)
+
 options(stringsAsFactors = FALSE)
-source("../main_figures/parameters.R") ## pathFinalData are defined based on the user name
 
-sp="human"
+#######################################################################################################################
 
-load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
-load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
-load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData", sep=""))
+## if it's the first time we run this figure, we load and prepare data
 
-if (sp == "human"){
-  sp_name="Human"
-}else{
-  sp_name="Mouse"
+objects=ls()
+
+if(!"pathScripts"%in%objects){
+  load=T
+  prepare=T
+  source("../main_figures/parameters.R")
 }
 
-bord.measure = c("#AF46B4", "#4BB446")
-names(bord.measure) = c("Spearman's rho", "1-Euclidean distance")
-col.measure = c("#AF46B41A", "#4BB4461A")
-names(col.measure) = c("Spearman's rho", "1-Euclidean distance")
-nb = 1
+######################################################################################################################
+
+if(load){
+  sp="human"
+  
+  load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
+  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
+  
+  if (sp == "human"){
+    sp_name="Human"
+  }else{
+    sp_name="Mouse"
+  }
+  
+  bord.measure = c("#AF46B4", "#4BB446")
+  names(bord.measure) = c("Spearman's rho", "1-Euclidean distance")
+  col.measure = c("#AF46B41A", "#4BB4461A")
+  names(col.measure) = c("Spearman's rho", "1-Euclidean distance")
+  nb = 1
+
+  load=FALSE
+}
+
+######################################################################################################################
 
 clearboxplot <- function(measure, divergences, plotlabel){
   
@@ -37,7 +55,7 @@ clearboxplot <- function(measure, divergences, plotlabel){
   names(xpos) = levels(expdiv[[measure]])
   smallx=c(-0.15, 0.15)
   names(smallx)=c("Spearman's rho", "1-Euclidean distance")
- 
+  
   for (divergence in divergences){
     if (any(grepl("Spearman", divergence))){
       name="Spearman's rho"
@@ -75,9 +93,9 @@ clearboxplot <- function(measure, divergences, plotlabel){
       mtext(xlab, side=1, line=2.5, cex=CEXLAB)
     }
   }
-  
 }
 
+######################################################################################################################
 ######################################################################################################################
 
 pdf(file=paste(pathFigures, "ExtendedFigure6.pdf", sep=""), width = 6.85)
