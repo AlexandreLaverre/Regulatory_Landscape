@@ -84,7 +84,7 @@ if(prepare){
   ## test
 
   print("tests for fragments")
-  splist=colnames(frag_align_obs)[-c(1, ncol(frag_align_obs), ncol(frag_align_obs)-1)]
+  splist=colnames(frag_align_obs)[-c(1, ncol(frag_align_obs):(ncol(frag_align_obs)-4))]
   for(sp in splist){
     print(sp)
     print(wilcox.test(frag_align_obs[,sp], frag_align_simul[,sp]))
