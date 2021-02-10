@@ -287,7 +287,7 @@ par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
 par(mar=c(5.1, 4.5, 1, 1.5))
 
 nbclasses=length(levels(frag_align_obs$class_genes_500kb))
-xpos=nbclasses:1
+xpos=1:nbclasses
 
 xlim=c(0.5, max(xpos)+0.5)
 
@@ -363,7 +363,7 @@ for(type in c("restriction fragments", "enhancers")){
   axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
   mtext("% aligned sequence", side=2, line=3, cex=0.8)
   
-  abline(v=xpos[-1]+0.5, lty=2, col="gray40")
+  abline(v=sort(xpos)[-length(xpos)]+0.5, lty=2, col="gray40")
   
   mtext(labels[type], side=3, line=1, at=-0.75, font=2, cex=1.2)
 
