@@ -368,7 +368,7 @@ for(type in c("restriction fragments", "enhancers")){
   mtext(labels[type], side=3, line=1, at=-0.75, font=2, cex=1.2)
 
   if(type=="enhancers"){
-    legend("topleft", box.col="white", bg="white", pch=21, pt.bg=c("black", "white"), legend=c("all data", "without repeats"),xpd=NA, inset=c(0.01, -0.05), cex=1.1)
+    legend("topright", box.col="white", bg="white", pch=21, pt.bg=c("black", "white"), legend=c("all data", "without repeats"),xpd=NA, inset=c(0.01, -0.05), cex=1.1)
   }
     
 }
