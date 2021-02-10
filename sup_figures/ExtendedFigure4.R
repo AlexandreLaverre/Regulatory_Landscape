@@ -116,7 +116,7 @@ plot.expdiv.regdiv <- function(regland, featurecontact, cells,  expdata, feature
 ################################################################################################################################
 ################################################################################################################################
 
-pdf(paste(pathFigures, "/ExtendedFigure5.pdf", sep=""), width=6.85, height=6)
+pdf(paste(pathFigures, "/ExtendedFigure4.pdf", sep=""), width=6.85, height=6)
 
 m=matrix(rep(NA,2*9), nrow=2)
 m[1,]=c(rep(c(1,2,3), each=3))

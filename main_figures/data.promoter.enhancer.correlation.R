@@ -48,6 +48,10 @@ for(ref_sp in c("human", "mouse")){
       simul$IDContact=paste(simul$IDBait, simul$IDContactedFragment, sep="-")
 
       simul=simul[which(simul$IDContact%in%frag.contact.sim$idcontact),]
+
+      print(paste(ref_sp, enh, "observed mean corr, all distances", mean(obs$SpearmanCorrelation)))
+      print(paste(ref_sp, enh, "simulated mean corr, all distances", mean(simul$SpearmanCorrelation)))
+      print(wilcox.test(obs$SpearmanCorrelation, simul$SpearmanCorrelation))
             
       # according to distance
     

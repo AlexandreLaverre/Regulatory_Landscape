@@ -17,7 +17,6 @@ if(!"pathFigures"%in%objects){
 
 if(load){
  ref_sp = "human"
- close_sp= "macaque"
  target_sp = "mouse"
 
  enhancers = enhancer.datasets[[ref_sp]]
@@ -81,6 +80,22 @@ if(prepare){
   
   align_enhancer_obs$pcrepeat=enh.stats.obs[align_enhancer_obs$ID, "pcrepeat"]
   align_enhancer_sim$pcrepeat=enh.stats.sim[align_enhancer_sim$ID, "pcrepeat"]
+
+  ## test
+
+  print("tests for fragments")
+  splist=colnames(frag_align_obs)[-c(1, ncol(frag_align_obs), ncol(frag_align_obs)-1)]
+  for(sp in splist){
+    print(sp)
+    print(wilcox.test(frag_align_obs[,sp], frag_align_simul[,sp]))
+  }
+
+  print("tests for enhancers")
+
+  for(sp in splist){
+    print(sp)
+    print(wilcox.test(align_enhancer_obs[,sp], align_enhancer_sim[,sp]))
+  }
 
   prepare=FALSE
 }

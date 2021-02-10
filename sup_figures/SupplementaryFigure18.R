@@ -36,7 +36,7 @@ if(load){
 
 ##########################################################################
 
-pdf(paste(pathFigures, "SupplementaryFigure17.pdf", sep=""), width=6.85, height=11)
+pdf(paste(pathFigures, "SupplementaryFigure18.pdf", sep=""), width=6.85, height=11)
 
 ## layout
 

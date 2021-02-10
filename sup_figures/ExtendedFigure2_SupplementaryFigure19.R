@@ -23,9 +23,9 @@ for (sp in c("human", "mouse")){
   load(paste(pathFigures, "RData/data.features.coverage.", sp, ".RData", sep=""))
   
   if (sp == "human"){
-    pdf.name="ExtendedFigure3.pdf"
+    pdf.name="ExtendedFigure2.pdf"
   } else{
-    pdf.name="SupplementaryFigure18.pdf"
+    pdf.name="SupplementaryFigure19.pdf"
   }
   
   pdf(paste(pathFigures, pdf.name, sep=""), width=6.85, height=4.5)

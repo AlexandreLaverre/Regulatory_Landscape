@@ -116,7 +116,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "ExtendedFigure4.pdf", sep=""), width=4.49, height=6)
+pdf(paste(pathFigures, "ExtendedFigure3.pdf", sep=""), width=4.49, height=6)
 
 m=matrix(rep(NA, 2*6), nrow=2)
 m[1,]=c(rep(1,2), rep(2, 4))

@@ -67,7 +67,7 @@ if(prepare){
 
 ##############################################################################
 
-pdf(paste(pathFigures, "SupplementaryFigure23.pdf", sep=""), width=6.85, height=6.5)
+pdf(paste(pathFigures, "SupplementaryFigure24.pdf", sep=""), width=6.85, height=6.5)
 
 m=matrix(rep(NA, 9*20), nrow=9)
 

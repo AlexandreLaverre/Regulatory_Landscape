@@ -43,9 +43,9 @@ for (ref_sp in c("human", "mouse")){
   species <-species.list[[ref_sp]]
   
   if (ref_sp == "human"){
-    pdf_name="SupplementaryFigure21.pdf"
-  } else{
     pdf_name="SupplementaryFigure22.pdf"
+  } else{
+    pdf_name="SupplementaryFigure23.pdf"
   }
   pdf(paste(pathFigures, pdf_name, sep=""), width=6.85, height=7.5)
   
