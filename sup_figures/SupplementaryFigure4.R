@@ -21,8 +21,14 @@ if(!"pathScripts"%in%objects){
 if(load){
   sp="human"
   
-  load(paste(pathFigures, "RData/data.gene.annotations.RData", sep=""))
   load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
+
+  expdiv$EuclideanSimilarity <- 1-expdiv$EuclideanDistance
+  
+  expdiv$ClassRPKM <- cut(expdiv$MeanRPKM, breaks=quantile(expdiv$MeanRPKM, p=seq(from=0, to=1, length=6)), include.lowest=T)
+
+  expdiv$MeanTau=(expdiv$TauHuman+expdiv$TauMouse)/2
+  expdiv$ClassTau <- cut(expdiv$MeanTau, breaks=quantile(expdiv$MeanTau, p=seq(from=0, to=1, length=6)), include.lowest=T)
   
   if (sp == "human"){
     sp_name="Human"
@@ -30,106 +36,102 @@ if(load){
     sp_name="Mouse"
   }
   
-  bord.measure = c("#AF46B4", "#4BB446")
-  names(bord.measure) = c("Spearman's rho", "1-Euclidean distance")
-  col.measure = c("#AF46B41A", "#4BB4461A")
-  names(col.measure) = c("Spearman's rho", "1-Euclidean distance")
-  nb = 1
 
   load=FALSE
 }
 
 ######################################################################################################################
-
-clearboxplot <- function(measure, divergences, plotlabel){
-  
-  if (measure == "classTau"){
-    labels=c("broad", "", "", "narrow")
-    xlab="expression breadth"
-  } else{
-    labels=c("low", "", "", "high")
-    xlab="mean expression level"
-  }
-  
-  xlim=c(0.5, length(levels(expdiv[[measure]]))+0.5)
-  
-  xpos=seq(1, length(levels(expdiv[[measure]])), 1)
-  names(xpos) = levels(expdiv[[measure]])
-  smallx=c(-0.15, 0.15)
-  names(smallx)=c("Spearman's rho", "1-Euclidean distance")
-  
-  for (divergence in divergences){
-    if (any(grepl("Spearman", divergence))){
-      name="Spearman's rho"
-      ylim = c(-0.5, 1)
-    } else{
-      name="1-Euclidean distance"
-      ylim = c(0.55, 1)
-    }
-    
-    if (name=="Spearman's rho"){
-      par(mar=c(1.5, 3.75, 2.6, 1.1))
-    } else{
-      par(mar=c(4, 3.75, 0.6, 1.1))
-    }
-
-    plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
-
-    for(class in levels(expdiv[[measure]])){
-      x=xpos[class]+smallx[name]
-    
-      boxplot(expdiv[which(expdiv[[measure]] == class), divergence], at=x, border=bord.measure[name], col=col.measure[name],
-             boxwex=0.5, axes=F, add=T, notch=T, outline=F)
-    }
-    
-    abline(v=xpos[1:length(levels(expdiv[[measure]]))-1]+0.5, lty=3, col="gray40")
-    axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1.1)
-    mtext(name, side=2, line=2.5, cex=CEXLAB)
-    
-    if (name=="Spearman's rho"){
-      mtext(plotlabel, side=3, line=1, at=-0.1, font=2, cex=1.2)
-    }else{
-      axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", length(levels(expdiv[[measure]]))), cex.axis=0.8)
-      mtext(labels, at=xpos, side=1, line=1, cex=CEXLAB)
-      
-      mtext(xlab, side=1, line=2.5, cex=CEXLAB)
-    }
-  }
-}
-
-######################################################################################################################
 ######################################################################################################################
 
-pdf(file=paste(pathFigures, "SupplementaryFigure4.pdf", sep=""), width = 6.85)
+## 1 column width 85 mm = 3.34 in
+## 1.5 column width 114 mm = 4.49 in 
+## 2 columns width 174 mm = 6.85 in
+## max height: 11 in
 
-m=matrix(rep(NA, 10*2), nrow=10)
+######################################################################################################################
+
+pdf(file=paste(pathFigures, "SupplementaryFigure4.pdf", sep=""), width = 6.85, height=9)
+
+m=matrix(rep(NA, 9*2), nrow=9)
 for(i in 1:3){
-  m[i,]=c(1,3)
+  m[i,]=c(1,2)
 }
 
 for(i in 4:6){
-  m[i,]=c(2,4)
+  m[i,]=c(3,4)
 }
-for(i in 7:10){
+for(i in 7:9){
   m[i,]=c(5,6)
 }
 
 layout(m)
 
-CEXLAB = 0.9
+cex.lab= 0.8
 CEXstats = 0.8
-expdiv$EuclideanSimilarity <- 1-expdiv$EuclideanDistance
 
-################ Cofounding factors ################ 
-# Gene expression level
-expdiv$classRPKM <- cut2(expdiv$Human_MeanRPKM, g=4, include.lowest=T) 
-clearboxplot("classRPKM", c("CorrelationSpearman","EuclideanSimilarity"), "a")
+######################################################################################################################
+######################################################################################################################
 
-# Specificity
-clearboxplot("classTau", c("CorrelationSpearman","EuclideanSimilarity"), "b")
+## uncorrected Spearman's rho against class RPKM
 
-################ Correlation between Spearman and Euclidean  ################ 
-par(mar=c(4.5, 5, 3, 5)) # bottom, left, top, right
+par(mar=c(4.1, 4.5, 2.1, 1.5))
+boxplot(expdiv$CorrelationSpearman~expdiv$ClassRPKM, outline=F, names=rep("", 5), border="black", col="white", notch=T, boxwex=0.75, xlab="", ylab="", axes=F)
+axis(side=1, at=1:5, labels=c("low", "", "medium", "", "high"), mgp=c(3, 0.75, 0), cex.axis=1.3)
+axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
+
+mtext("expression level class", side=1, line=2.5, cex=cex.lab)
+mtext("Spearman's rho", side=2, line=3, cex=cex.lab)
+
+mtext("a", side=3, at=-0.65, font=2, cex=1.1, line=1)
+
+######################################################################################################################
+
+## uncorrected Spearman's rho against class Tau
+
+par(mar=c(4.1, 5.5, 2.1, 0.5))
+boxplot(expdiv$CorrelationSpearman~expdiv$ClassTau, outline=F, names=rep("", 5), border="black", col="white", notch=T, boxwex=0.75, xlab="", ylab="", axes=F)
+axis(side=1, at=1:5, labels=c("low", "", "medium", "", "high"), mgp=c(3, 0.75, 0), cex.axis=1.3)
+axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
+
+mtext("expression specificity class", side=1, line=2.5, cex=cex.lab)
+mtext("Spearman's rho", side=2, line=3, cex=cex.lab)
+
+mtext("b", side=3, at=-0.65, font=2, cex=1.1, line=1)
+
+######################################################################################################################
+
+## uncorrected Euclidean similarity against class RPKM
+
+par(mar=c(4.6, 4.5, 2.1, 1.5))
+boxplot(expdiv$EuclideanSimilarity~expdiv$ClassRPKM, outline=F, names=rep("", 5), border="black", col="white", notch=T, boxwex=0.75, xlab="", ylab="", axes=F)
+axis(side=1, at=1:5, labels=c("low", "", "medium", "", "high"), mgp=c(3, 0.75, 0), cex.axis=1.3)
+axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
+
+mtext("expression level class", side=1, line=2.5, cex=cex.lab)
+mtext("1-Euclidean distance", side=2, line=3, cex=cex.lab)
+
+mtext("c", side=3, at=-0.65, font=2, cex=1.1, line=1)
+
+######################################################################################################################
+
+
+## uncorrected Euclidean similarity against class Tau
+
+par(mar=c(4.6, 5.5, 2.1, 0.5))
+boxplot(expdiv$EuclideanSimilarity~expdiv$ClassTau, outline=F, names=rep("", 5), border="black", col="white", notch=T, boxwex=0.75, xlab="", ylab="", axes=F)
+axis(side=1, at=1:5, labels=c("low", "", "medium", "", "high"), mgp=c(3, 0.75, 0), cex.axis=1.3)
+axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
+
+mtext("expression specificity class", side=1, line=2.5, cex=cex.lab)
+mtext("1-Euclidean distance", side=2, line=3, cex=cex.lab)
+
+mtext("d", side=3, at=-0.65, font=2, cex=1.1, line=1)
+
+######################################################################################################################
+
+## correlation between Spearman's rho and Euclidean similarity, before correction ################ 
+
+par(mar=c(4.1, 4.5, 2.1, 1.5))
 
 smoothScatter(expdiv$EuclideanSimilarity, expdiv$CorrelationSpearman, xlab="", ylab="", cex.axis=1.1)
 
@@ -143,10 +145,12 @@ mtext(paste("Pearson's R = ", round(R, digits=2), ", rho = ",round(rho, digits=2
       side=3, line=0.5, cex=CEXstats)
 
 mtext("1-Euclidean distance", side=1, line=2.5, cex=CEXLAB)
-mtext("Spearman's rho", side=2, line=2.5, cex=CEXLAB)
-mtext("c", side=3, line=2, at=-0.01, font=2, cex=1.2)
+mtext("Spearman's rho", side=2, line=2.75, cex=CEXLAB)
+mtext("e", side=3, line=2, at=-0.01, font=2, cex=1.2)
 
-### Correlation between measures
+##############################################################################################
+
+## after correction
 smoothScatter(expdiv$CorrectedEuclideanSimilarity, expdiv$CorrectedSpearman, xlab="", ylab="", cex.axis=1.1)
 R=cor(expdiv$CorrectedEuclideanSimilarity, expdiv$CorrectedSpearman,method="pearson")
 rho=cor(expdiv$CorrectedEuclideanSimilarity, expdiv$CorrectedSpearman, method="spearman")
@@ -158,8 +162,8 @@ mtext(paste("Pearson's R = ", round(R, digits=2), ", rho = ",round(rho, digits=2
       side=3, line=0.5, cex=CEXstats)
 
 mtext("1-Euclidean distance (corrected)", side=1, line=2.5, cex=CEXLAB)
-mtext("Spearman's rho (corrected)", side=2, line=2.5, cex=CEXLAB)
-mtext("d", side=3, line=2, at=-0.8, font=2, cex=1.2)
+mtext("Spearman's rho (corrected)", side=2, line=2.75, cex=CEXLAB)
+mtext("f", side=3, line=2, at=-0.78, font=2, cex=1.2)
 
 ##############################################################################################
 
