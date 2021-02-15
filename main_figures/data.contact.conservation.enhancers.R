@@ -7,7 +7,6 @@ source("parameters.R")
 pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
-load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
 load(paste(pathFigures, "RData/data.bait.annotation.RData", sep=""))
 
@@ -52,7 +51,7 @@ for(ref in c("human", "mouse")){
     nbgenes.sim=length(unique(sim$origin_gene))
     
     print(paste(nrow(obs)," observed contacts for",nbgenes.obs,"genes before filtering"))
-    print(paste(nrow(sim)," simulated contacts for",nbgenes.sim,"before filtering"))
+    print(paste(nrow(sim)," simulated contacts for",nbgenes.sim,"genes before filtering"))
 
     ## select only previously filtered gene - enhancer pairs
 

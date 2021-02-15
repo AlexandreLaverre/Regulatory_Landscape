@@ -31,10 +31,16 @@ for(sp in c("human", "mouse")){
     rownames(obs) <- obs[,"enh"]
     rownames(sim) <- sim[,"enh"]
     
+    print(paste(nrow(obs), "observed contacted enhancers"))
+    print(paste(nrow(sim), "simulated contacted enhancers"))
+    
     ## select enhancers depending on the number of BLAT hits
     
     obs <- obs[which(obs$BLAT_match > minBLAT & obs$BLAT_match < maxBLAT),]
     sim <- sim[which(sim$BLAT_match > minBLAT & sim$BLAT_match < maxBLAT),]
+    
+    print(paste(nrow(obs), "observed contacted enhancers after filtering"))
+    print(paste(nrow(sim), "simulated contacted enhancers after filtering"))
     
     ## save results
     
