@@ -166,7 +166,9 @@ for(set in c("AllOrgans", "SomaticOrgans")){
 
   results=data.frame("IDMouse"=rownames(relexp.mouse), "IDHuman"=rownames(relexp.human),
                      "EuclideanDistance"=distance, "CorrelationSpearman"=correlation.spearman,
-                     "CorrelationPearson"=correlation.pearson, stringsAsFactors=F)
+    "CorrelationPearson"=correlation.pearson, stringsAsFactors=F)
+
+  results$EuclideanSimilarity=1-results$EuclideanDistance
   
   ######################################################################################
   
@@ -184,39 +186,22 @@ for(set in c("AllOrgans", "SomaticOrgans")){
   results$Mouse_MeanRPKM=apply(results[,grep("^Mouse_", colnames(results))],1, mean)
   
   results$MeanRPKM=(results$Human_MeanRPKM+results$Mouse_MeanRPKM)/2
-  
-  lm1=lm(1-results$EuclideanDistance~log2(results$MeanRPKM+1))
-  results$ResidualExpEuclideanSimilarity=lm1$residuals
-  
-  lm2=lm(results$CorrelationSpearman~log2(results$MeanRPKM1+1))
-  results$ResidualExpSpearman=lm2$residuals
-  
-  lm3=lm(results$CorrelationPearson~log2(results$MeanRPKM+1))
-  results$ResidualExpPearson=lm3$residuals
-  
-  ## correct for specificity
-  
+
+  ## expression specificity
   
   results$TauHuman=apply(avgexp.human, 1, function(x) compute.tau(as.numeric(x)))
   results$TauMouse=apply(avgexp.mouse, 1, function(x) compute.tau(as.numeric(x)))
-  
-  lm1=lm(1-results$EuclideanDistance~results$TauHuman)
-  results$ResidualTauEuclideanSimilarity=lm1$residuals
-  
-  lm2=lm(results$CorrelationSpearman~results$TauHuman)
-  results$ResidualTauSpearman=lm2$residuals
-  
-  lm3=lm(results$CorrelationPearson~results$TauHuman)
-  results$ResidualTauPearson=lm3$residuals
-  
-  ## correct for specifity AND expression
-  lm1=lm(1-results$EuclideanDistance~results$TauHuman+log2(results$MeanRPKM+1))
+
+  results$MeanTau=(results$TauHuman+results$TauMouse)/2
+    
+  ## correct for specifity and expression
+  lm1=lm(results$EuclideanSimilarity~results$MeanTau+log2(results$MeanRPKM+1))
   results$CorrectedEuclideanSimilarity=lm1$residuals
   
-  lm2=lm(results$CorrelationSpearman~results$TauHuman+log2(results$MeanRPKM+1))
+  lm2=lm(results$CorrelationSpearman~results$MeanTau+log2(results$MeanRPKM+1))
   results$CorrectedSpearman=lm2$residuals
   
-  lm3=lm(results$CorrelationPearson~results$TauHuman+log2(results$MeanRPKM+1))
+  lm3=lm(results$CorrelationPearson~results$MeanTau+log2(results$MeanRPKM+1))
   results$CorrectedPearson=lm3$residuals
   
   

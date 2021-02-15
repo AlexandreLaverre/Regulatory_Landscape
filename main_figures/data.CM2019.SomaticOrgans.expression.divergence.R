@@ -20,9 +20,7 @@ for (sp in c("human", "mouse")){
   expdiv=read.table(paste0(pathFinalData, "SupplementaryDataset6/expression_divergence/ExpressionDivergence_CardosoMoreira2019_SomaticOrgans.txt"), h=T, stringsAsFactors=F, sep="\t")
   rownames(expdiv)=expdiv[[paste0("ID", sp_name)]]
   
-  expdiv$classTau=cut2(expdiv[[paste0("Tau", sp_name)]], g=4, include.lowest=T)
-  
-  #select genes: protein-coding genes
+  ##select genes: protein-coding genes
   annot=gene.annot[[sp]]
   coding_genes=annot$GeneID[which(annot$GeneBiotype=="protein_coding")]
   genes=intersect(rownames(expdiv), coding_genes)
