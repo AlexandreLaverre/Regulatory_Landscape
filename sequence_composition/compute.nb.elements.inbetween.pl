@@ -47,22 +47,32 @@ sub readCoordinates{
 	    $start=$s[$header{"Start"}]+0;
 	    $end=$s[$header{"End"}]+0;
 	} else{
-	    ## interaction data
-	    my $chr_bait=$s[$header{"chr_bait"}];
-	    my $chr_frag=$s[$header{"chr"}];
 
-	    if($chr_bait eq $chr_frag){
-		$chr=$chr_frag;
+	    my $origin_gene_coord=$s[$header{"origin_gene_coord"}];
+	    my @t=split(":", $origin_gene_coord);
+	    
+	    my $chr_gene=$t[0];
+	    my $start_gene=$t[1]+0;
+	    my $end_gene=$t[2]+0;
 
-		my $start_bait=$s[$header{"start_bait"}]+0;
-		my $end_bait=$s[$header{"end_bait"}]+0;
+	    my $origin_enh=$s[$header{"origin_enh"}];
+	    my @u=split(":", $origin_enh);
+	    
+	    my $chr_enh=$u[0];
+	    my $start_enh=$u[1]+0;
+	    my $end_enh=$u[2]+0;
 
-		my $start_frag=$s[$header{"start"}]+0;
-		my $end_frag=$s[$header{"end"}]+0;
-
-		$start=min($start_bait, $start_frag);
-		$end=max($end_bait, $end_frag);
+	    if($chr_gene ne $chr_enh){
+		print "weird! different chromosomes found in ".$line."\n";
+		exit(1);
 	    }
+
+	    
+	    $chr=$chr_enh;
+	    
+	    $start=min($start_gene, $start_enh);
+	    $end=max($end_gene, $end_enh);
+	
 	}
 	
 	if($chr ne "NA"){
@@ -296,40 +306,47 @@ for(my $i=0; $i<@s; $i++){
     $header{$s[$i]}=$i;
 }
 
-
-print $output "chr_bait\tstart_bait\tend_bait\tchr\tstart\tend\tnb_".$type."_inbetween\n";
+print $output $line."\tnb_".$type."_inbetween\n";
 
 $line=<$input>;
 
 while($line){
     chomp $line;
     my @s=split("\t", $line);
-    
-    my $chr_bait=$s[$header{"chr_bait"}];
-    my $start_bait=$s[$header{"start_bait"}]+0;
-    my $end_bait=$s[$header{"end_bait"}]+0;
-    
-    my $chr_frag=$s[$header{"chr"}];
-    my $start_frag=$s[$header{"start"}]+0;
-    my $end_frag=$s[$header{"end"}]+0;
 
-     if($chr_bait eq $chr_frag){
-	 my $chr=$chr_frag;
-	 
-	 my $start=min($start_bait, $start_frag);
-	 my $end=max($end_bait, $end_frag);
-	 
-	 my $lineout=$chr_bait."\t".$start_bait."\t".$end_bait."\t".$chr_frag."\t".$start_frag."\t".$end_frag;
-	 
-	 my $margin=0;
-	 
-	 my $id=$chr.":".$start."-".$end;
-	 my $nb=@{$intersections{$margin}{$id}}; ## nb baits in this window
-	 
-	 $lineout.="\t".$nb;
-	 
-	 print $output $lineout."\n";
-     }
+    my $origin_gene_coord=$s[$header{"origin_gene_coord"}];
+    my @t=split(":", $origin_gene_coord);
+    
+    my $chr_gene=$t[0];
+    my $start_gene=$t[1]+0;
+    my $end_gene=$t[2]+0;
+    
+    my $origin_enh=$s[$header{"origin_enh"}];
+    my @u=split(":", $origin_enh);
+    
+    my $chr_enh=$u[0];
+    my $start_enh=$u[1]+0;
+    my $end_enh=$u[2]+0;
+    
+    if($chr_gene ne $chr_enh){
+	print "weird! different chromosomes found in ".$line."\n";
+	exit(1);
+    }
+    
+    my $chr=$chr_enh;
+    
+    my $start=min($start_gene, $start_enh);
+    my $end=max($end_gene, $end_enh);
+    
+    my $lineout=$line;
+    my $margin=0;
+    
+    my $id=$chr.":".$start."-".$end;
+    my $nb=@{$intersections{$margin}{$id}}; ## nb elements in this window
+    
+    $lineout.="\t".$nb;
+    
+    print $output $lineout."\n";
     
     $line=<$input>;
 }

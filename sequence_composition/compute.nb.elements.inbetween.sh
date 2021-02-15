@@ -4,10 +4,8 @@ export sp=$1
 
 ########################################################################
 
-export pathOriginal=/beegfs/data/necsulea/RegulatoryLandscapesManuscript/SupplementaryDataset1/${sp}
-export pathSimulated=/beegfs/data/necsulea/RegulatoryLandscapesManuscript/SupplementaryDataset2/${sp}
+export pathSynteny=/beegfs/data/necsulea/RegulatoryLandscapesManuscript/SupplementaryDataset7/${sp}/synteny_conservation
 export pathAnnot=/beegfs/data/necsulea/RegulatoryLandscapesManuscript/SupplementaryDataset3/genes
-export pathResults=/beegfs/data/necsulea/RegulatoryLandscapesManuscript/SupplementaryDataset5/${sp}
 export pathScripts=/beegfs/data/necsulea/RegulatoryLandscapes/scripts/sequence_composition
 
 ########################################################################
@@ -18,16 +16,19 @@ export pathGenes=${pathAnnot}/${sp}_genes_Ensembl94.txt
 
 for dataset in original simulated
 do
-    if [ ${dataset} = "original" ]; then
-	export pathInteractions=${pathOriginal}/all_interactions.txt
-    fi
+    for enh in ENCODE  FANTOM5  FOCS_GRO_seq  RoadmapEpigenomics
+    do
+	for tg in human macaque mouse rat rabbit dog cow elephant opossum chicken
+	do
+	    if [ -e ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ]; then
 
-    if [ ${dataset} = "simulated" ]; then
-	export pathInteractions=${pathSimulated}/simulated_all_interactions.txt
-    fi
-    
-    perl ${pathScripts}/compute.nb.elements.inbetween.pl --pathCoordinates1=${pathInteractions} --pathCoordinates2=${pathGenes} --type=genes --pathOutput=${pathResults}/statistics_${dataset}_interactions.txt
-   
+		mv ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt
+
+		perl ${pathScripts}/compute.nb.elements.inbetween.pl --pathCoordinates1=${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt --pathCoordinates2=${pathGenes} --type=genes --pathOutput=${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt
+
+	    fi
+	done
+    done
 done
 
 ########################################################################
