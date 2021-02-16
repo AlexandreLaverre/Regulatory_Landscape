@@ -8,7 +8,7 @@ enhancer.datasets=list()
 enhancer.datasets[["human"]]=c("ENCODE", "FANTOM5", "FOCS_GRO_seq", "RoadmapEpigenomics")
 enhancer.datasets[["mouse"]]=c("ENCODE", "FANTOM5")
 
-exclude=c("length_enh", "repeat_part", "GC_rate", "BLAT_match", "align_score", "target_data")
+exclude=c("length_enh", "repeat_part", "GC_rate", "BLAT_match", "align_score", "target_data", "target_dist")
 
 #####################################################################################
 
