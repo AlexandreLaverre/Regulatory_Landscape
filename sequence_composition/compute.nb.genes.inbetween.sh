@@ -21,7 +21,12 @@ do
 	for tg in human macaque mouse rat rabbit dog cow elephant opossum chicken
 	do
 	    if [ -e ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ]; then
-		export pathTargetGenes=${pathAnnot}/${tg}_genes_Ensembl94.txt
+		
+		if [ ${tg} = "macaque" ]; then
+		    export pathTargetGenes=${pathAnnot}/${tg}_genes_Ensembl99.txt
+		else
+		    export pathTargetGenes=${pathAnnot}/${tg}_genes_Ensembl94.txt
+		fi
 		
 		mv ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt
 
