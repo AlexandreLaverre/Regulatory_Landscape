@@ -10,7 +10,7 @@ export pathScripts=/beegfs/data/necsulea/RegulatoryLandscapes/scripts/sequence_c
 
 ########################################################################
 
-export pathGenes=${pathAnnot}/${sp}_genes_Ensembl94.txt
+export pathReferenceGenes=${pathAnnot}/${sp}_genes_Ensembl94.txt
 
 ########################################################################
 
@@ -21,10 +21,11 @@ do
 	for tg in human macaque mouse rat rabbit dog cow elephant opossum chicken
 	do
 	    if [ -e ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ]; then
+		export pathTargetGenes=${pathAnnot}/${tg}_genes_Ensembl94.txt
+		
+		mv ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt
 
-		##	mv ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt
-
-		perl ${pathScripts}/compute.nb.elements.inbetween.pl --pathCoordinates1=${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt --pathCoordinates2=${pathGenes} --type=genes --pathOutput=${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt
+		perl ${pathScripts}/compute.nb.genes.inbetween.pl --pathContacts=${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt --pathReferenceGenes=${pathReferenceGenes} --pathTargetGenes=${pathTargetGenes} --pathOutput=${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt
 
 	    fi
 	done

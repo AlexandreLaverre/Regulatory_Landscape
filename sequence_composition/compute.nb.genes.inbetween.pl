@@ -8,6 +8,8 @@ use strict;
 sub readGeneCoords{
     my $pathin=$_[0];
     my $genecoords=$_[1];
+
+    open(my $input, $pathin);
     
     my $line=<$input>; ## header
     chomp $line;
@@ -26,7 +28,7 @@ sub readGeneCoords{
 	my @s=split("\t", $line);
 
 	my $gene=$s[$header{"GeneID"}];
-	my $chr=$s[$header{"Chr"}];
+	my $chr="chr".$s[$header{"Chr"}];
 	my $start=$s[$header{"Start"}]+0;
 	my $end=$s[$header{"End"}]+0;
 	my $strand=$s[$header{"Strand"}];
@@ -50,7 +52,8 @@ sub readGeneCoords{
 sub readCoordinates{
     my $pathin=$_[0];
     my $type=$_[1];
-    my $coords=$_[2];
+    my $genes=$_[2];
+    my $coords=$_[3];
    
     open(my $input, $pathin);
     
@@ -90,13 +93,16 @@ sub readCoordinates{
 	    $end=$s[$header{"End"}]+0;
 	} else{
 	    ## interactions
-	    my $origin_gene_coord=$s[$header{"origin_gene_coord"}];
-	    my @t=split(":", $origin_gene_coord);
-	    
-	    my $chr_gene=$t[0];
-	    my $start_gene=$t[1]+0;
-	    my $end_gene=$t[2]+0;
+	    my $origin_gene=$s[$header{"origin_gene"}];
 
+	    if(!exists $genes->{$origin_gene}){
+		print "Weird! cannot find ".$origin_gene." in gene coordinates.\n";
+		exit(1);
+	    }
+
+	    my $chr_gene=$genes->{$origin_gene}{"chr"};
+	    my $tss_gene=$genes->{$origin_gene}{"tss"};
+	   
 	    my $origin_enh=$s[$header{"origin_enh"}];
 	    my @u=split(":", $origin_enh);
 	    
@@ -109,12 +115,10 @@ sub readCoordinates{
 		exit(1);
 	    }
 
-	    
 	    $chr=$chr_enh;
 	    
-	    $start=min($start_gene, $start_enh);
-	    $end=max($end_gene, $end_enh);
-	
+	    $start=min($tss_gene, $start_enh);
+	    $end=max($tss_gene, $end_enh);
 	}
 	
 	if($chr ne "NA"){
@@ -291,11 +295,12 @@ sub printHelp{
 my %parameters;
 
 $parameters{"pathContacts"}="NA";
-$parameters{"pathGenes"}="NA";
+$parameters{"pathReferenceGenes"}="NA";
+$parameters{"pathTargetGenes"}="NA";
 $parameters{"pathOutput"}="NA";
 
 my %defaultvalues;
-my @defaultpars=("pathContacts", "pathGenes","pathOutput");
+my @defaultpars=("pathContacts", "pathReferenceGenes", "pathTargetGenes", "pathOutput");
 
 my %numericpars;
 
@@ -352,19 +357,25 @@ print "\n";
 ######################################################################
 ######################################################################
 
-print "Reading interacting element coordinates...\n";
+print "Reading gene coordinates...\n";
 
-my $type=$parameters{"type"};
+my %refgenes;
+readGeneCoords($parameters{"pathReferenceGenes"}, \%refgenes);
 
-my %fragments;
-readCoordinates($parameters{"pathCoordinates1"}, "contacts", \%fragments);
+my %tggenes;
+readGeneCoords($parameters{"pathTargetGenes"}, \%tggenes);
 
 print "Done.\n";
 
-print "Reading ".$type." coordinates...\n";
+######################################################################
 
-my %baits;
-readCoordinates($parameters{"pathCoordinates2"}, $type, \%baits);
+print "Reading interacting element coordinates...\n";
+
+my %coords1;
+readCoordinates($parameters{"pathContacts"}, "contacts", \%refgenes, \%coords1);
+
+my %coords2;
+readCoordinates($parameters{"pathReferenceGenes"}, "genes", \%refgenes, \%coords2);
 
 print "Done.\n";
 
@@ -380,7 +391,7 @@ print "margin ".$margin."\n";
 
 $intersections{$margin}={};
 
-computeIntersection(\%fragments, \%baits, $margin, $intersections{$margin});
+computeIntersection(\%coords1, \%coords2, $margin, $intersections{$margin});
 
 print "Done.\n";
 
@@ -401,7 +412,7 @@ print "Done.\n";
 
 print "Writing output...\n";
 
-open(my $input, $parameters{"pathCoordinates1"});
+open(my $input, $parameters{"pathContacts"});
 open(my $output, ">".$parameters{"pathOutput"});
 
 my $line=<$input>;
@@ -415,24 +426,30 @@ for(my $i=0; $i<@s; $i++){
     $header{$s[$i]}=$i;
 }
 
-print $output $line."\tnb_".$type."_inbetween\tlength_".$type."\n";
+print $output "origin_gene\torigin_gene_coord\torigin_enh\torigin_dist\ttarget_gene\ttarget_gene_coord\ttarget_enh\ttarget_dist\tnb_genes_inbetween\tlength_genes_inbetween\n";
 
 $line=<$input>;
 
 while($line){
     chomp $line;
     my @s=split("\t", $line);
-
-    my $origin_gene_coord=$s[$header{"origin_gene_coord"}];
-    my @t=split(":", $origin_gene_coord);
     
-    my $chr_gene=$t[0];
-    my $start_gene=$t[1]+0;
-    my $end_gene=$t[2]+0;
+    my $origin_gene=$s[$header{"origin_gene"}];
+    
+    if(!exists $refgenes{$origin_gene}){
+	print "Weird! cannot find ".$origin_gene." in gene coordinates.\n";
+	exit(1);
+    }
+    
+    my $chr_gene=$refgenes{$origin_gene}{"chr"};
+    my $start_gene=$refgenes{$origin_gene}{"start"};
+    my $end_gene=$refgenes{$origin_gene}{"end"};
+    my $strand_gene=$refgenes{$origin_gene}{"strand"};
+    my $tss_gene=$refgenes{$origin_gene}{"tss"};
     
     my $origin_enh=$s[$header{"origin_enh"}];
     my @u=split(":", $origin_enh);
-    
+	    
     my $chr_enh=$u[0];
     my $start_enh=$u[1]+0;
     my $end_enh=$u[2]+0;
@@ -444,17 +461,35 @@ while($line){
     
     my $chr=$chr_enh;
     
-    my $start=min($start_gene, $start_enh);
-    my $end=max($end_gene, $end_enh);
-    
-    my $lineout=$line;
+    my $start=min($tss_gene, $start_enh);
+    my $end=max($tss_gene, $end_enh);
+            
     my $margin=0;
     
     my $id=$chr.":".$start."-".$end;
     my $nb=@{$intersections{$margin}{$id}}; ## nb elements in this window
     my $length=$blocks{$margin}{$id}{"length"};
+
+    ## modify output slightly
+
+    my $origin_gene_coord=$chr_gene.":".$start_gene.":".$end_gene.":".$strand_gene;
+    my $origin_dist=$s[$header{"origin_dist"}];
+    my $target_gene=$s[$header{"target_gene"}];
+    my $target_enh=$s[$header{"target_enh"}];
+    my $target_dist=$s[$header{"target_dist"}];
+
+    if(!exists $tggenes{$target_gene}){
+	print "Weird! cannot find ".$target_gene." in gene coordinates.\n";
+	exit(1);
+    }
+
+    my $chr_gene_tg=$tggenes{$target_gene}{"chr"};
+    my $start_gene_tg=$tggenes{$target_gene}{"start"};
+    my $end_gene_tg=$tggenes{$target_gene}{"end"};
+    my $strand_gene_tg=$tggenes{$target_gene}{"strand"};
+    my $target_gene_coord=$chr_gene_tg.":".$start_gene_tg.":".$end_gene_tg.":".$strand_gene_tg;
     
-    $lineout.="\t".$nb."\t".$length;
+    my $lineout=$origin_gene."\t".$origin_gene_coord."\t".$origin_enh."\t".$origin_dist."\t".$target_gene."\t".$target_gene_coord."\t".$target_enh."\t".$target_dist."\t".$nb."\t".$length;
     
     print $output $lineout."\n";
     
