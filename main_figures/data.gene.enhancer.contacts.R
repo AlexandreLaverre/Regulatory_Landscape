@@ -136,6 +136,11 @@ for(sp in c("human", "mouse")){
     sim$nb_cell <- apply(sim[,samples], 1, function(x) length(unique(celltypes[which(!is.na(x))])))
     
     ## select interactions in the accepted distance range
+    ## distance : minimum distance between baited TSS and enhancer mid-point
+
+    real$dist=real$min_dist_baitedTSS
+    sim$dist=sim$min_dist_baitedTSS
+    
     real=real[which(real$dist>=minDistance & real$dist<=maxDistance),]
     sim=sim[which(sim$dist>=minDistance & sim$dist<=maxDistance),]
 
