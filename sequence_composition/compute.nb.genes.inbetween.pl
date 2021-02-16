@@ -5,6 +5,48 @@ use strict;
 
 #######################################################################
 
+sub readGeneCoords{
+    my $pathin=$_[0];
+    my $genecoords=$_[1];
+    
+    my $line=<$input>; ## header
+    chomp $line;
+    
+    my @s=split("\t", $line);
+    my %header;
+    
+    for(my $i=0; $i<@s; $i++){
+	$header{$s[$i]}=$i;
+    }
+
+    $line=<$input>;
+
+    while($line){
+	chomp $line;
+	my @s=split("\t", $line);
+
+	my $gene=$s[$header{"GeneID"}];
+	my $chr=$s[$header{"Chr"}];
+	my $start=$s[$header{"Start"}]+0;
+	my $end=$s[$header{"End"}]+0;
+	my $strand=$s[$header{"Strand"}];
+
+	my $tss=$start;
+
+	if($strand eq "-1" || $strand eq "-"){
+	    $tss=$end;
+	}
+
+	$genecoords->{$gene}={"chr"=>$chr, "start"=>$start, "end"=>$end, "strand"=>$strand, "tss"=>$tss};
+	
+	$line=<$input>;
+    }
+
+    close($input);
+}
+
+#######################################################################
+
 sub readCoordinates{
     my $pathin=$_[0];
     my $type=$_[1];
@@ -47,7 +89,7 @@ sub readCoordinates{
 	    $start=$s[$header{"Start"}]+0;
 	    $end=$s[$header{"End"}]+0;
 	} else{
-
+	    ## interactions
 	    my $origin_gene_coord=$s[$header{"origin_gene_coord"}];
 	    my @t=split(":", $origin_gene_coord);
 	    
@@ -170,6 +212,63 @@ sub computeIntersection{
 
 #######################################################################
 
+sub computeIntersectionBlocks{
+    my $intersect=$_[0];
+    my $blocks=$_[1];
+    
+    foreach my $id (keys %{$intersect}){
+	my %hashcoords;
+
+	foreach my $id2 (@{$intersect->{$id}}){
+	    my @s=split(":", $id2);
+	    my @t=split("-", $s[1]);
+	    
+	    my $start=$t[0]+0;
+	    my $end=$t[1]+0;
+
+	    if(exists $hashcoords{$start}){
+		if($end>$hashcoords{$start}){
+		    $hashcoords{$start}=$end;
+		}
+	    } else{
+		$hashcoords{$start}=$end;
+	    }
+	}
+
+	$blocks->{$id}={"start"=>[], "end"=>[], "length"=>0};
+
+	my @uniquestart=keys %hashcoords;
+	my @sortedstart=sort {$a<=>$b} @uniquestart;
+
+	my $currentstart=$sortedstart[0];
+	my $currentend=$hashcoords{$currentstart};
+
+	for(my $i=1; $i<@sortedstart; $i++){
+	    my $thisstart=$sortedstart[$i];
+	    my $thisend=$hashcoords{$thisstart};
+
+	    if($thisstart>=$currentstart && $thisstart<=($currentend+1)){
+		if($thisend>$currentend){
+		    $currentend=$thisend;
+		}
+	    } else{
+		push(@{$blocks->{$id}{"start"}}, $currentstart);
+		push(@{$blocks->{$id}{"end"}}, $currentend);
+		$blocks->{$id}{"length"}+=($currentend-$currentstart+1);
+
+		$currentstart=$thisstart;
+		$currentend=$thisend;
+	    }
+	}
+
+	push(@{$blocks->{$id}{"start"}}, $currentstart);
+	push(@{$blocks->{$id}{"end"}}, $currentend);
+	$blocks->{$id}{"length"}+=($currentend-$currentstart+1);
+    }
+}
+
+#######################################################################
+
 sub printHelp{
 
     my $parnames=$_[0];
@@ -191,13 +290,12 @@ sub printHelp{
 
 my %parameters;
 
-$parameters{"pathCoordinates1"}="NA";
-$parameters{"pathCoordinates2"}="NA";
-$parameters{"type"}="NA";
+$parameters{"pathContacts"}="NA";
+$parameters{"pathGenes"}="NA";
 $parameters{"pathOutput"}="NA";
 
 my %defaultvalues;
-my @defaultpars=("pathCoordinates1", "pathCoordinates2","type", "pathOutput");
+my @defaultpars=("pathContacts", "pathGenes","pathOutput");
 
 my %numericpars;
 
@@ -258,10 +356,8 @@ print "Reading interacting element coordinates...\n";
 
 my $type=$parameters{"type"};
 
-print "type ".$type."\n";
-
 my %fragments;
-readCoordinates($parameters{"pathCoordinates1"}, "fragments", \%fragments);
+readCoordinates($parameters{"pathCoordinates1"}, "contacts", \%fragments);
 
 print "Done.\n";
 
@@ -290,6 +386,19 @@ print "Done.\n";
 
 ######################################################################
 
+print "Constructing intersection blocks...\n";
+
+my %blocks;
+
+foreach my $margin (keys %intersections){
+    $blocks{$margin}={};
+    computeIntersectionBlocks($intersections{$margin}, $blocks{$margin});
+}
+
+print "Done.\n";
+
+######################################################################
+
 print "Writing output...\n";
 
 open(my $input, $parameters{"pathCoordinates1"});
@@ -306,7 +415,7 @@ for(my $i=0; $i<@s; $i++){
     $header{$s[$i]}=$i;
 }
 
-print $output $line."\tnb_".$type."_inbetween\n";
+print $output $line."\tnb_".$type."_inbetween\tlength_".$type."\n";
 
 $line=<$input>;
 
@@ -343,8 +452,9 @@ while($line){
     
     my $id=$chr.":".$start."-".$end;
     my $nb=@{$intersections{$margin}{$id}}; ## nb elements in this window
+    my $length=$blocks{$margin}{$id}{"length"};
     
-    $lineout.="\t".$nb;
+    $lineout.="\t".$nb."\t".$length;
     
     print $output $lineout."\n";
     

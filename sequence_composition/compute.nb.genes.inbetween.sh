@@ -22,7 +22,7 @@ do
 	do
 	    if [ -e ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ]; then
 
-		mv ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt
+		##	mv ${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt ${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt
 
 		perl ${pathScripts}/compute.nb.elements.inbetween.pl --pathCoordinates1=${pathSynteny}/${enh}/backup_${sp}2${tg}_${dataset}_synteny.txt --pathCoordinates2=${pathGenes} --type=genes --pathOutput=${pathSynteny}/${enh}/${sp}2${tg}_${dataset}_synteny.txt
 
