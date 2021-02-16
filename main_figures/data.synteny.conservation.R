@@ -87,6 +87,15 @@ for(ref_sp in c("human", "mouse")){
       synt_obs <- synt_obs[which(synt_obs$align_score >= align.threshold),]
       synt_simul <- synt_simul[which(synt_simul$align_score >=align.threshold),]
 
+      ## we use the minimum distance between baited TSS and enhancer for the reference species
+      ## the minimum distance between all TSS and enhancer for target species
+
+      synt_obs$origin_dist=synt_obs$origin_min_dist_baitedTSS
+      synt_simul$origin_dist=synt_simul$origin_min_dist_baitedTSS
+
+      synt_obs$target_dist=synt_obs$target_min_dist_allTSS
+      synt_simul$target_dist=synt_simul$target_min_dist_allTSS
+
       ## compute distance classes for original pairs
 
       synt_obs$class_dist <- cut(synt_obs$origin_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)

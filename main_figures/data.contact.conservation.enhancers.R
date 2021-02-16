@@ -77,6 +77,11 @@ for(ref in c("human", "mouse")){
 
     print(paste(nrow(obs)," observed contacts for",nbgenes.obs,"genes after filtering ortho"))
     print(paste(nrow(sim)," simulated contacts for",nbgenes.sim,"genes after filtering ortho"))
+
+    ## origin distance
+    ## we use the minimum distance between baited TSS and enhancer
+    obs$origin_dist=obs$origin_min_dist_baitedTSS
+    sim$origin_dist=sim$origin_min_dist_baitedTSS
     
     ## save data after the first filtering steps
 
