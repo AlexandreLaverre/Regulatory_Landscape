@@ -297,40 +297,41 @@ while($line){
     ## target species, only if needed
 
     if($indextargetdist ne "NA"){
-	
-	 my $targetdist=$s[$header{"target_dist"}];
+	my $targetgene=$s[$header{"target_gene"}];
+	my $targetgenecoord=$s[$header{"target_gene_coord"}];
 
-	 if($targetdist eq "trans" || $targetdist eq "NA"){
-	    ## no point in recomputing the target distance
-	     print $output join("\t", @s[0..($indexorigindist-1)])."\t".$mindistallref."\t".$mindistbaitedref."\t".join("\t", @s[($indexorigindist+1)..$#s])."\n";
-	 } else{
-	     my $targetgene=$s[$header{"target_gene"}];
-	     
-	     if(!exists $tgtss{$targetgene}){
-		 print "Weird! we don't have transcript coordinates for ".$targetgene."\n";
-		 exit(1);
-	     }
+	my @u=split(":", $targetgenecoord);
+	my $chrgene=$u[0];
 
-	     my $tgenh=$s[$header{"target_enh"}];
-	     my @t=split(":", $tgenh);
-	     
-	     my $startenh=$t[1]+0;
-	     my $endenh=$t[2]+0;
-	     
-	     my @distances;
-	     
-	     foreach my $pos (keys %{$tgtss{$targetgene}}){
-		 my $dist=abs($pos-($startenh+$endenh)/2);
-		 push(@distances, $dist);
-	     }
-
-	     my $mindistalltg=min @distances;
-
-	     ## indexorigindist should always be smaller than indextargetdist
-	     
-	      print $output join("\t", @s[0..($indexorigindist-1)])."\t".$mindistallref."\t".$mindistbaitedref."\t".join("\t", @s[($indexorigindist+1)..($indextargetdist-1)])."\t".$mindistalltg."\t".join("\t", @s[($indextargetdist+1)..$#s])."\n";
+	 if(!exists $tgtss{$targetgene}){
+	     print "Weird! we don't have transcript coordinates for ".$targetgene."\n";
+	     exit(1);
 	 }
+	 
+	 my $tgenh=$s[$header{"target_enh"}];
+	 my @t=split(":", $tgenh);
+	 
+	 my $chrenh=$t[0];
+	 my $startenh=$t[1]+0;
+	 my $endenh=$t[2]+0;
+	 
+	 my @distances;
+	 
+	 foreach my $pos (keys %{$tgtss{$targetgene}}){
+	     my $dist=abs($pos-($startenh+$endenh)/2);
+	     push(@distances, $dist);
+	 }
+	 
+	my $mindistalltg=min @distances;
+
+	if($chrgene ne $chrenh){ 
+	    $mindistalltg="trans"; 
+	}
 	
+	## indexorigindist should always be smaller than indextargetdist
+	
+	print $output join("\t", @s[0..($indexorigindist-1)])."\t".$mindistallref."\t".$mindistbaitedref."\t".join("\t", @s[($indexorigindist+1)..($indextargetdist-1)])."\t".$mindistalltg."\t".join("\t", @s[($indextargetdist+1)..$#s])."\n";
+    	
     } else{
 	## there is no target dist in this file
         print $output join("\t", @s[0..($indexorigindist-1)])."\t".$mindistallref."\t".$mindistbaitedref."\t".join("\t", @s[($indexorigindist+1)..$#s])."\n";
