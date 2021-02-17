@@ -12,6 +12,8 @@ pathFragments=paste(pathFinalData, "SupplementaryDataset1/", sep="")
 fragment.statistics=list()
 
 for(sp in c("human", "mouse")){
+
+  print(sp)
   
   obs=fread(paste(pathStats, sp, "/statistics_contacted_sequence_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
   sim=fread(paste(pathStats, sp, "/statistics_contacted_sequence_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
@@ -28,6 +30,14 @@ for(sp in c("human", "mouse")){
   rownames(obs) <- obs$ID
   rownames(sim) <- sim$ID
 
+  ## total covered length
+
+  obs$length=obs$end-obs$start+1
+  sim$length=sim$end-sim$start+1
+
+  print(paste("total covered length, observed, before filtering: ",sum(obs$length)))
+  print(paste("total covered length, simulated, before filtering: ",sum(sim$length)))
+  
   ## remove outlier fragments
 
   outlier.frag <- read.table(paste(pathFragments, sp, "/aberrant_fragments.txt", sep=""), h=T, stringsAsFactors=F)
@@ -54,6 +64,9 @@ for(sp in c("human", "mouse")){
   sim <- sim[which(sim$BLAT_match > minBLAT & sim$BLAT_match < maxBLAT),]
   
   ## save results
+
+  print(paste("total covered length, observed, after filtering: ",sum(obs$length)))
+  print(paste("total covered length, simulated, after filtering: ",sum(sim$length)))
   
   fragment.statistics[[sp]]=list("original"=obs, "simulated"=sim)
 }
