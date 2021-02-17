@@ -160,6 +160,7 @@ sub computeIntersection{
     my $coords2=$_[1];
     my $margin=$_[2];
     my $intersect=$_[3];
+    my $intersectcoords=$_[4];
 
     foreach my $chr (keys %{$coords1}){
 	my $nb1=@{$coords1->{$chr}{"start"}};
@@ -176,6 +177,7 @@ sub computeIntersection{
 		my $id1=$chr.":".$start1."-".$end1;
 		
 		$intersect->{$id1}=[];
+		$intersectcoords->{$id1}=[];
 
 		my $j=$firstj;
 		
@@ -194,8 +196,10 @@ sub computeIntersection{
 
 		    if($M<=$m){
 			my $id2=$chr.":".$start2."-".$end2;
+			my $idoverlap=$chr.":".$M."-".$m;
 
 			push(@{$intersect->{$id1}}, $id2);
+			push(@{$intersectcoords->{$id1}}, $idoverlap);
 		    }
 		    
 		    $j++;
@@ -209,6 +213,7 @@ sub computeIntersection{
 		my $id1=$chr.":".$start1."-".$end1;
 
 		$intersect->{$id1}=[];
+		$intersectcoords->{$id1}=[];
 	    }
 	}
     }
@@ -384,14 +389,16 @@ print "Done.\n";
 print "Computing intersections...\n";
 
 my %intersections;
+my %intersectcoords;
 
 my $margin=0;
 
 print "margin ".$margin."\n";
 
 $intersections{$margin}={};
+$intersectcoords{$margin}={};
 
-computeIntersection(\%coords1, \%coords2, $margin, $intersections{$margin});
+computeIntersection(\%coords1, \%coords2, $margin, $intersections{$margin},$intersectcoords{$margin});
 
 print "Done.\n";
 
@@ -401,9 +408,9 @@ print "Constructing intersection blocks...\n";
 
 my %blocks;
 
-foreach my $margin (keys %intersections){
+foreach my $margin (keys %intersectcoords){
     $blocks{$margin}={};
-    computeIntersectionBlocks($intersections{$margin}, $blocks{$margin});
+    computeIntersectionBlocks($intersectcoords{$margin}, $blocks{$margin});
 }
 
 print "Done.\n";
