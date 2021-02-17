@@ -13,9 +13,9 @@ if(!"pathFigures"%in%objects){
 ##########################################################################
 
 if(load){
- ref_sp = "human"
+ ref_sp = "mouse"
 
- target_species=c("rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken") ## other species already done
+ target_species=c("rat", "rabbit", "human", "macaque", "dog", "cow", "elephant", "opossum", "chicken") 
  
  load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
 
@@ -36,11 +36,11 @@ if(load){
 
 ##########################################################################
 
-pdf(paste(pathFigures, "SupplementaryMaterialFigure17.pdf", sep=""), width=6.85, height=10)
+pdf(paste(pathFigures, "SupplementaryMaterialFigure18.pdf", sep=""), width=6.85, height=11)
 
 ## layout
 
-m=matrix(1:8, nrow=4)
+m=matrix(1:10, nrow=5)
 layout(m)
 
 ###########################################################################
@@ -90,7 +90,7 @@ for(other_sp in target_species){
   
   mtext(paste(ref_sp, " vs. ", other_sp,sep=""), side=3, cex=0.8)
   
-  mtext(labels[other_sp], side=3, line=1, at=-7.5, font=2, cex=1.2)
+  mtext(labels[other_sp], side=3, line=0.8, at=-7.5, font=2, cex=1.2)
 }
 
 ###########################################################################
