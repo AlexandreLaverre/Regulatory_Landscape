@@ -100,7 +100,7 @@ if(prepare){
 
 ##########################################################################
 
-pdf(paste(pathFigures, "SupplementaryMaterialFigure9.pdf", sep=""), width=6.85, height=3.5)
+pdf(paste(pathFigures, "SupplementaryMaterialFigure10.pdf", sep=""), width=6.85, height=3.5)
 
 m=matrix(c(rep(1, 7), rep(2, 7)), nrow=1)
 

@@ -97,7 +97,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "SupplementaryMaterialFigure8.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "SupplementaryMaterialFigure9.pdf", sep=""), width=6.85, height=5.5)
 
 par(mfrow=c(2,2))
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
