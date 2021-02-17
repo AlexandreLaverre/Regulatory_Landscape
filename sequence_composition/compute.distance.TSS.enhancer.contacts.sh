@@ -51,24 +51,24 @@ done
 
 ## contact conservation
 
-for datasetref in original simulated
-do
-    for datasettg in original simulated
-    do
-	for enh in ENCODE  FANTOM5  FOCS_GRO_seq RoadmapEpigenomics
-	do
-	    for tg in human mouse 
-	    do	    
-		export pathTargetTranscriptCoords=${pathAnnot}/${tg}_transcripts_Ensembl94.txt
+# for datasetref in original simulated
+# do
+#     for datasettg in original simulated
+#     do
+# 	for enh in ENCODE  FANTOM5  FOCS_GRO_seq RoadmapEpigenomics
+# 	do
+# 	    for tg in human mouse 
+# 	    do	    
+# 		export pathTargetTranscriptCoords=${pathAnnot}/${tg}_transcripts_Ensembl94.txt
 		
-		if [ -e ${pathContacts}/${enh}/${sp}_${datasetref}2${tg}_${datasettg}.txt ]; then
-		    mv ${pathContacts}/${enh}/${sp}_${datasetref}2${tg}_${datasettg}.txt ${pathContacts}/${enh}/backup_${sp}_${datasetref}2${tg}_${datasettg}.txt
+# 		if [ -e ${pathContacts}/${enh}/${sp}_${datasetref}2${tg}_${datasettg}.txt ]; then
+# 		    mv ${pathContacts}/${enh}/${sp}_${datasetref}2${tg}_${datasettg}.txt ${pathContacts}/${enh}/backup_${sp}_${datasetref}2${tg}_${datasettg}.txt
 		    
-		    perl ${pathScripts}/compute.distance.TSS.enhancer.contacts.pl --pathContacts=${pathContacts}/${enh}/backup_${sp}_${datasetref}2${tg}_${datasettg}.txt --pathReferenceBaitAnnotation=${pathBaitAnnotation} --pathReferenceTranscriptCoordinates=${pathReferenceTranscriptCoords} --pathTargetTranscriptCoordinates=${pathTargetTranscriptCoords} --pathOutput=${pathContacts}/${enh}/${sp}_${datasetref}2${tg}_${datasettg}.txt
-		fi
-	    done
-	done
-    done
-done
+# 		    perl ${pathScripts}/compute.distance.TSS.enhancer.contacts.pl --pathContacts=${pathContacts}/${enh}/backup_${sp}_${datasetref}2${tg}_${datasettg}.txt --pathReferenceBaitAnnotation=${pathBaitAnnotation} --pathReferenceTranscriptCoordinates=${pathReferenceTranscriptCoords} --pathTargetTranscriptCoordinates=${pathTargetTranscriptCoords} --pathOutput=${pathContacts}/${enh}/${sp}_${datasetref}2${tg}_${datasettg}.txt
+# 		fi
+# 	    done
+# 	done
+#     done
+# done
 
 ########################################################################

@@ -11,12 +11,12 @@ for ref in human mouse
 do
     for enh in ENCODE FANTOM5 FOCS_GRO_seq RoadmapEpigenomics
     do
-	if [ ${enh} = "FANTOM_GRO_seq" ]; then
+	if [ ${enh} = "FOCS_GRO_seq" ]; then
 	    export origin_enh=GRO_seq
 	fi
 
 	if [ ${enh} = "RoadmapEpigenomics" ]; then
-	    export origin_enh=Roadmap
+	    export origin_enh=RoadMap
 	fi
 
 	if [ ${enh} = "ENCODE" ]; then
@@ -27,16 +27,20 @@ do
 	    export origin_enh=CAGE
 	fi
 
-	
-	for tg in human macaque mouse rat rabbit dog cow elephant opossum chicken
+	for dataset in original simulated
 	do
-	    
-	    if [ -e ${pathOrigin}/${ref}/synteny_conservation/${origin_enh}/${ref}2${tg}_${dataset}_synteny.txt_unique ]; then
-		echo ${pathOrigin}/${ref}/synteny_conservation/${origin_enh}/${ref}2${tg}_${dataset}_synteny.txt_unique 
-	    else
-		echo "not found "${ref} ${tg} ${enh} {dataset}
-	    fi
+	    for tg in human macaque mouse rat rabbit dog cow elephant opossum chicken
+	    do
+		
+		if [ -e ${pathOrigin}/${ref}/synteny_conservation/${origin_enh}/${ref}2${tg}_${origin_enh}_${dataset}_synteny.txt_unique ]; then
+		    echo "OK "${ref} ${tg} ${enh} ${dataset}
 
+		    cp ${pathOrigin}/${ref}/synteny_conservation/${origin_enh}/${ref}2${tg}_${origin_enh}_${dataset}_synteny.txt_unique ${pathDest}/${ref}/synteny_conservation/${enh}/${ref}2${tg}_${dataset}_synteny.txt 
+		else
+		    echo "not found "${ref} ${tg} ${enh} ${dataset}
+		    echo ${pathOrigin}/${ref}/synteny_conservation/${origin_enh}/${ref}2${tg}_${origin_enh}_${dataset}_synteny.txt_unique 
+		fi
+	    done
 	done
     done
 done
