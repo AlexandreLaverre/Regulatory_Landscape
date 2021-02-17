@@ -67,7 +67,7 @@ for(i in 7:9){
 layout(m)
 
 cex.lab= 0.8
-CEXstats = 0.8
+cex.stats = 0.8
 
 ######################################################################################################################
 ######################################################################################################################
@@ -142,10 +142,10 @@ y=expdiv$CorrelationSpearman
 abline(lm(y~x), col="red")
 
 mtext(paste("Pearson's R = ", round(R, digits=2), ", rho = ",round(rho, digits=2),sep=""),
-      side=3, line=0.5, cex=CEXstats)
+      side=3, line=0.5, cex=cex.stats)
 
-mtext("1-Euclidean distance", side=1, line=2.5, cex=CEXLAB)
-mtext("Spearman's rho", side=2, line=2.75, cex=CEXLAB)
+mtext("1-Euclidean distance", side=1, line=2.5, cex=cex.lab)
+mtext("Spearman's rho", side=2, line=2.75, cex=cex.lab)
 mtext("e", side=3, line=2, at=-0.01, font=2, cex=1.2)
 
 ##############################################################################################
@@ -159,10 +159,10 @@ y=expdiv$CorrectedSpearman
 abline(lm(y~x), col="red")
 
 mtext(paste("Pearson's R = ", round(R, digits=2), ", rho = ",round(rho, digits=2),sep=""),
-      side=3, line=0.5, cex=CEXstats)
+      side=3, line=0.5, cex=cex.stats)
 
-mtext("1-Euclidean distance (corrected)", side=1, line=2.5, cex=CEXLAB)
-mtext("Spearman's rho (corrected)", side=2, line=2.75, cex=CEXLAB)
+mtext("1-Euclidean distance (corrected)", side=1, line=2.5, cex=cex.lab)
+mtext("Spearman's rho (corrected)", side=2, line=2.75, cex=cex.lab)
 mtext("f", side=3, line=2, at=-0.78, font=2, cex=1.2)
 
 ##############################################################################################
