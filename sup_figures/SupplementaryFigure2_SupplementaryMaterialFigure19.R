@@ -81,7 +81,7 @@ for (sp in c("human", "mouse")){
       nb = nb+1
     }
 
-    par(mar = c(0, 0, 0, 0)) # bottom, left, top, right
+    par(mar = c(3, 0, 1.5, 0)) # bottom, left, top, right
 
     plot.new()
     

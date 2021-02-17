@@ -9,24 +9,82 @@ if(!"pathFigures"%in%objects){
  species.list=list()
  species.list[["human"]] <-c("macaque", "mouse", "rat",  "rabbit", "dog", "cow", "elephant", "opossum", "chicken")
  species.list[["mouse"]] <-c("rat", "rabbit", "macaque", "human", "dog", "cow", "elephant", "opossum", "chicken")
-  
- enh="ENCODE" ## only one enhancer set
  
  load=T
 }
 
 #########################################################################################################################
 
-if(load==TRUE){
-  conserv_synteny_list=list()
-
+if(load){
+  prop.obs.alldist <- list()
+  prop.sim.alldist <- list()
+  ci.low.obs.alldist <- list()
+  ci.low.sim.alldist <- list()
+  ci.high.obs.alldist <- list()
+  ci.high.sim.alldist <- list()
+  pvalues.alldist <- list()
+  
   for (ref_sp in c("human", "mouse")){
-    print(paste0("loading.. ", ref_sp))
+    print(paste0('loading... ', ref_sp))
+    
     load(paste(pathFigures, "RData/data.synteny.conservation.",ref_sp,".RData", sep=""))
-    conserv_synteny_list[[ref_sp]]=conserv_synteny
-    rm("conserv_synteny")
+  
+    species=species.list[[ref_sp]]
+    
+    prop.obs.alldist[[ref_sp]] <- list()
+    prop.sim.alldist[[ref_sp]] <- list()
+    ci.low.obs.alldist[[ref_sp]] <- list()
+    ci.low.sim.alldist[[ref_sp]] <- list()
+    ci.high.obs.alldist[[ref_sp]] <- list()
+    ci.high.sim.alldist[[ref_sp]] <- list()
+    pvalues.alldist[[ref_sp]] <- list()
+       
+    ## compute statistics for all enhancers, all species, all interactions between minDistanceSyntenyRef and maxDistanceSyntenyRef
+    for (enh in enhancer.datasets[[ref_sp]]){
+      
+      for(sp in species){
+        synt_obs <- conserv_synteny[[enh]][[sp]][["synt_obs"]]
+        synt_simul <- conserv_synteny[[enh]][[sp]][["synt_simul"]]
+        
+        nb_cons_synt_obs <- length(which(synt_obs$origin_dist >= minDistanceSyntenyRef & synt_obs$origin_dist <= maxDistanceSyntenyRef & synt_obs$target_dist <= maxDistanceSyntenyTarget))
+        nb_cons_synt_simul <- length(which(synt_simul$origin_dist >= minDistanceSyntenyRef & synt_simul$origin_dist <= maxDistanceSyntenyRef & synt_simul$target_dist <= maxDistanceSyntenyTarget))
+        
+        nb_tot_synt_obs <- length(which(synt_obs$origin_dist >= minDistanceSyntenyRef & synt_obs$origin_dist <= maxDistanceSyntenyRef))
+        nb_tot_synt_simul <- length(which(synt_simul$origin_dist >= minDistanceSyntenyRef & synt_simul$origin_dist <= maxDistanceSyntenyRef))
+        
+        ## chi-squared test
+        mat <- matrix(c(nb_cons_synt_obs, nb_cons_synt_simul, nb_tot_synt_obs-nb_cons_synt_obs, nb_tot_synt_simul-nb_cons_synt_simul), nrow=2)
+        pval <- chisq.test(mat)$p.value
+        
+        pvalues.alldist[[ref_sp]][[enh]] <- c(pvalues.alldist[[ref_sp]][[enh]], pval)
+        
+        prop.obs.alldist[[ref_sp]][[enh]] <- c(prop.obs.alldist[[ref_sp]][[enh]], 100*nb_cons_synt_obs/nb_tot_synt_obs)
+        prop.sim.alldist[[ref_sp]][[enh]] <- c(prop.sim.alldist[[ref_sp]][[enh]], 100*nb_cons_synt_simul/nb_tot_synt_simul)
+        
+        prop.test.obs <- prop.test(x = nb_cons_synt_obs, n=nb_tot_synt_obs, p=0.5)
+        prop.test.simul <- prop.test(x = nb_cons_synt_simul, n=nb_tot_synt_simul, p=0.5)
+        
+        ci.low.obs.alldist[[ref_sp]][[enh]] <- c(ci.low.obs.alldist[[ref_sp]][[enh]], 100*prop.test.obs$conf.int[1])
+        ci.high.obs.alldist[[ref_sp]][[enh]] <- c(ci.high.obs.alldist[[ref_sp]][[enh]], 100*prop.test.obs$conf.int[2])
+        
+        ci.low.sim.alldist[[ref_sp]][[enh]] <- c(ci.low.sim.alldist[[ref_sp]][[enh]], 100*prop.test.simul$conf.int[1])
+        ci.high.sim.alldist[[ref_sp]][[enh]] <- c(ci.high.sim.alldist[[ref_sp]][[enh]], 100*prop.test.simul$conf.int[2])
+      }
+      
+      names(prop.obs.alldist[[ref_sp]][[enh]]) <- species
+      names(prop.sim.alldist[[ref_sp]][[enh]]) <- species
+      
+      names(ci.low.obs.alldist[[ref_sp]][[enh]]) <- species
+      names(ci.high.obs.alldist[[ref_sp]][[enh]]) <- species
+      
+      names(ci.low.sim.alldist[[ref_sp]][[enh]]) <- species
+      names(ci.high.sim.alldist[[ref_sp]][[enh]]) <- species
+      
+      names(pvalues.alldist[[ref_sp]][[enh]]) <- species
+    }
   }
   
+  ## we do this just once
   load=FALSE
 }
 
@@ -37,88 +95,106 @@ if(load==TRUE){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-## actual figure
-
 for (ref_sp in c("human", "mouse")){
-  species <-species.list[[ref_sp]]
+ 
+  if (ref_sp == "human"){
+    pdf_name="SupplementaryMaterialFigure20.pdf"
+    height=7
+    cex.axis=0.9
+    cex.lab=0.85
+    cexleg=1
+    cex.text=1
+    xpart=7.5
+  } else{
+    pdf_name="SupplementaryMaterialFigure21.pdf"
+    height=4.5
+    cex.axis=0.7
+    cex.lab=0.7
+    cexleg=0.7
+    cex.text=0.7
+    xpart=6.5
+  }
+  
+  pdf(paste(pathFigures, pdf_name, sep=""), height=height)
   
   if (ref_sp == "human"){
-    pdf_name="SupplementaryMaterialFigure22.pdf"
-  } else{
-    pdf_name="SupplementaryMaterialFigure23.pdf"
+    par(mfrow=c(4,1))
+     par(mar=c(3.1, 4.5, 2.1, 1.1))
+  }else{
+    par(mfrow=c(2,1))
+     par(mar=c(3.1, 3.7, 2.1, 1.1))
   }
-  pdf(paste(pathFigures, pdf_name, sep=""), width=6.85, height=7.5)
   
-  par(mfrow=c(3,3))
-  par(mar=c(3.1, 4.1, 2.5, 1.1))
-  
-  ###################################################################################
-  
-  ## synteny conservation as a function of the distance between promoter and enhancer
-  
-  labels <- letters[1:length(species)]
-  names(labels) <- species
-  
-  nbkept=25
-  
-  for (sp in species){
-    conserv.obs <- conserv_synteny_list[[ref_sp]][[enh]][[sp]][["synt_obs"]]
-    conserv.sim <- conserv_synteny_list[[ref_sp]][[enh]][[sp]][["synt_simul"]]
-    
-    prop.obs=tapply(conserv.obs$target_dist, conserv.obs$class_dist, function(x) 100*length(which(x<maxDistanceSyntenyTarget))/length(x))[1:nbkept]
-    prop.sim=tapply(conserv.sim$target_dist, conserv.sim$class_dist, function(x) 100*length(which(x<maxDistanceSyntenyTarget))/length(x))[1:nbkept]
-    
-    ci.obs.low=tapply(conserv.obs$target_dist, conserv.obs$class_dist, function(x) 100*prop.test(length(which(x<maxDistanceSyntenyTarget)), length(x))$conf.int[1])[1:nbkept]
-    ci.obs.high=tapply(conserv.obs$target_dist, conserv.obs$class_dist, function(x) 100*prop.test(length(which(x<maxDistanceSyntenyTarget)), length(x))$conf.int[2])[1:nbkept]
-    
-    ci.sim.low=tapply(conserv.sim$target_dist, conserv.sim$class_dist, function(x) 100*prop.test(length(which(x<maxDistanceSyntenyTarget)), length(x))$conf.int[1])[1:nbkept]
-    ci.sim.high=tapply(conserv.sim$target_dist, conserv.sim$class_dist, function(x) 100*prop.test(length(which(x<maxDistanceSyntenyTarget)), length(x))$conf.int[2])[1:nbkept]
-    
-    par(mar=c(3.1, 4.1, 2.1, 1.1))
-    
-    ylim=range(c(ci.sim.low, ci.obs.low, ci.obs.high, ci.sim.high))
-    
-    smally=diff(ylim)/10
-    ylim=ylim+c(-smally, smally)
-    
-    
-    plot(1, type="n", xlim=c(0.5, nbkept+0.5), ylim=ylim, xlab="", ylab="", axes=F)
-    
-    xpos=1:nbkept
-    
-    lines(xpos, prop.obs, col=dataset.colors["Original"])
-    segments(xpos, ci.obs.low, xpos, ci.obs.high, col=dataset.colors["Original"])
-    
-    lines(xpos, prop.sim, col=dataset.colors["Simulated"])
-    segments(xpos, ci.sim.low, xpos, ci.sim.high, col=dataset.colors["Simulated"])
-    
-    axis(side=2, las=2,  mgp=c(3, 0.75, 0), cex.axis=0.9)
-    
-    xax=c(1, 5, 10, 15, 20, 25)
-    axlab=as.character(c(0.05, 0.25, 0.5, 0.75, 1, 1.5))
-    
-    axis(side=1, mgp=c(3, 0.65, 0), at=xax, labels=axlab, cex.axis=0.95)
-    
-    mtext("% pairs in conserved synteny", side=2, line=2.5, cex=0.75)
-    mtext("distance to promoters (Mb)", side=1, line=2, cex=0.75)
+#########################################################################################################################
 
+  species <- species.list[[ref_sp]]
+  
+  labels=letters[1:length(enhancer.datasets[[ref_sp]])]
+  names(labels)=enhancer.datasets[[ref_sp]]
+
+  for (enh in enhancer.datasets[[ref_sp]]){
+    m <- matrix(c(prop.obs.alldist[[ref_sp]][[enh]], prop.sim.alldist[[ref_sp]][[enh]]), nrow=2, byrow=T)
+    
+    ylim=c(50,105)
+      
+    bar <-barplot(m, beside=T, space=c(0.25, 1.2), col=dataset.colors, border=dataset.colors, axes=F,  ylim = ylim, xpd=F)
+    colnames(bar)<-species
+    
+    axis(side=2, las=2,  mgp=c(3, 0.75, 0), cex.axis=cex.axis)
+   
+    mtext("% pairs in \n conserved synteny", side=2, line=2, cex=cex.lab)
+    
+    xax=apply(bar, 2, mean)
+    axis(side=1, at=xax, mgp=c(3, 0.65, 0), labels=rep("", length(species)))
+    mtext(species, side=1, at=xax, line=0.5, cex=0.75)
+    
+    mtext(paste(ref_sp, "vs."), side=1, line=0.5, at=min(xax)-diff(xax)[1]*1, cex=0.75)
+    
+    segments(bar[1,], ci.low.obs.alldist[[ref_sp]][[enh]], bar[1,], ci.high.obs.alldist[[ref_sp]][[enh]], col="black", lwd=1.1)
+    segments(bar[2,], ci.low.sim.alldist[[ref_sp]][[enh]], bar[2,], ci.high.sim.alldist[[ref_sp]][[enh]], col="black", lwd=1.1)
+    
+    smallx=(bar[2,2]-bar[1,2])/10
+    
+    for (sp in species){
+      this.pval=pvalues.alldist[[ref_sp]][[enh]][sp]
+      
+      if(this.pval < 0.0001){
+        text="***"
+      } else{
+        if(this.pval < 0.001){
+          text="**"
+        } else{
+          if(this.pval < 0.01){
+            text="*"
+          } else{
+            text="NS"
+          }
+        }
+      }
+      
+      ypos=max(prop.obs.alldist[[ref_sp]][[enh]][sp], prop.sim.alldist[[ref_sp]][[enh]][sp])+2
+      
+      segments(bar[1,sp]+smallx, ypos, bar[2,sp]-smallx, ypos)
+      text(text, x=mean(as.numeric(bar[,sp])), y=ypos+2.5, xpd=NA, cex=cex.text)
+    }
     
     ## legend
-    if (labels[sp] == "a"){
-      legend("bottomleft", legend = c("PCHi-C data", "simulated data"), col=dataset.colors, lty=1, cex=1.1, bty='n')
+ 
+    
+    if (enh == "ENCODE"){
+      legend("topright", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors, inset=c(0,-0.08), cex=cexleg, bty='n')
     }
-        
-    mtext(paste(ref_sp, "vs.", sp, sep=" "), side=3, cex=0.75, line=-0.5)
+    
+    mtext(enh.syn[enh], side=3, cex=0.8, line=0.5)
 
-    mtext(labels[sp], side=3, cex=0.95, font=2, line=1, at=-7)
+    xlim=range(as.numeric(bar))
+    
+    mtext(labels[enh], side=3, font=2, line=0.95, at=xlim[1]-diff(xlim)/xpart)
   }
-  
-  #####################################################################################
   
   dev.off()
   
-  #######################################################################################
-  
-  
 }
+
+#########################################################################################################################
 
