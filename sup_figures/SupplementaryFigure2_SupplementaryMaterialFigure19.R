@@ -29,13 +29,19 @@ for (sp in c("human", "mouse")){
   }
   
   pdf(paste(pathFigures, pdf.name, sep=""), width=6.85, height=4.5)
-  
-  par(mar = c(3, 3.1, 1.5, 0.5)) # bottom, left, top, right
-  par(mfrow=c(length(sequences),4))
-  
+   
+  m=matrix(rep(NA, 82), nrow=2)
+  m[1,]=c(rep(1:4, each=10), rep(5, 1))
+  m[2,]=c(rep(6:9, each=10), rep(10,1))
+
+  layout(m)
+    
   nb=1
   
   for (seq in sequences){
+
+    par(mar = c(3, 3.1, 1.5, 0.1)) # bottom, left, top, right
+    
     for (feat in features){
       
       ymax=max(c(feat_prop_dist[[seq]][["obs"]][[paste0(feat,"_conflow")]], feat_prop_dist[[seq]][["obs"]][[paste0(feat,"_confup")]],  feat_prop_dist[[seq]][["simul"]][[paste0(feat,"_conflow")]], feat_prop_dist[[seq]][["simul"]][[paste0(feat,"_confup")]]), na.rm =T)
@@ -54,8 +60,8 @@ for (sp in c("human", "mouse")){
       segments(xpos, feat_prop_dist[[seq]][["simul"]][[paste0(feat,"_conflow")]], xpos, feat_prop_dist[[seq]][["simul"]][[paste0(feat,"_confup")]], col=dataset.colors["Simulated"])
       
       
-      class_leg <- c("0.05", "0.5", "1", "1.5", "2")
-      axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=0.9)
+      class_leg <- c("0", "0.5", "1", "1.5", "2")
+      axis(side=1, at=c(0,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0), cex.axis=0.9)
       axis(side=2, mgp=c(3, 0.65, 0), cex.axis=0.9, las=2)
       
       if (nb == 4){
@@ -64,12 +70,25 @@ for (sp in c("human", "mouse")){
       }
       
       mtext(ylab[feat], side=2, cex=0.7, line=2)
-      
-      mtext("distance to promoters (Mb)", side=1, line=1.75, cex=0.7)
-            
+
+      if(seq=="fragment"){
+         mtext("distance to baits (Mb)", side=1, line=1.75, cex=0.7)
+      } else{
+        mtext("distance to promoters (Mb)", side=1, line=1.75, cex=0.7)
+      }
       mtext(letters[nb], side=3, line=0, at=-10.75, font=2, cex=0.9)
       
       nb = nb+1
+    }
+
+    par(mar = c(0, 0, 0, 0)) # bottom, left, top, right
+
+    plot.new()
+    
+    if(seq=="fragment"){
+      mtext("restriction fragments", side=2, line=-1, cex=0.7)
+    } else{
+      mtext("enhancers", side=2, line=-1, cex=0.7)
     }
     
   }

@@ -108,7 +108,7 @@ axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.25, at=(ymin+ymax)*0.9/2)
-mtext("distance to promoters (Mb)", side=1, line=2.25, cex=0.85)
+mtext("distance to baits (Mb)", side=1, line=2.25, cex=0.85)
 
 mtext("b", side=3, line=1.45, at=-5.75, font=2, cex=1.2)
 

@@ -58,7 +58,7 @@ for (sp in c("human", "mouse")){
     mtext("distance to baits (Mb)", side=1, line=2, cex=0.85)
     
     mtext(letters[nb], side=3, line=1, at=-7.75, font=2, cex=1.2)
-    mtext(paste(sp, enh, sep=" "), side=3, cex=0.8, line=0)
+    mtext(paste(sp, enh.syn[enh], sep=" "), side=3, cex=0.8, line=0)
     
     nb = nb+1
   }

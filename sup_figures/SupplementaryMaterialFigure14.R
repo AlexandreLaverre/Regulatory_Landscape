@@ -99,7 +99,7 @@ for(enh in c("FANTOM5", "RoadmapEpigenomics", "FOCS_GRO_seq")){
   
   mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.75, line=0.5)
   
-  mtext(enh.syn[enh], side=3, line=-1, cex=0.7)
+  mtext(enh.syn[enh], side=3, line=-1, cex=0.75)
   
   mtext(labels[enh], side=3, line=0.5, at=-8, font=2, cex=1.2)
 

@@ -134,16 +134,9 @@ for (ref_sp in c("human", "mouse")){
 
   for (enh in enhancer.datasets[[ref_sp]]){
     m <- matrix(c(prop.obs.alldist[[ref_sp]][[enh]], prop.sim.alldist[[ref_sp]][[enh]]), nrow=2, byrow=T)
-        
-    if (enh == "FANTOM5"){
-      ylim=c(50,105)
-    } else{
-      ylim = c(65,105)
-    }
-    if (ref_sp == "mouse"){
-      ylim=c(65,100)
-    }
     
+    ylim=c(50,105)
+      
     bar <-barplot(m, beside=T, space=c(0.25, 1.2), col=dataset.colors, border=dataset.colors, axes=F,  ylim = ylim, xpd=F)
     colnames(bar)<-species
     
@@ -192,7 +185,7 @@ for (ref_sp in c("human", "mouse")){
       legend("topright", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors, inset=c(0,-0.08), cex=cexleg, bty='n')
     }
     
-    mtext(enh, side=3, cex=0.8, line=0.5)
+    mtext(enh.syn[enh], side=3, cex=0.8, line=0.5)
 
     xlim=range(as.numeric(bar))
     

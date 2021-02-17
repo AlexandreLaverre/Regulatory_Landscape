@@ -78,7 +78,7 @@ for(other_sp in target_species){
   segments(xpos, ci.low.simul, xpos, ci.high.simul, col=dataset.colors["Simulated"])
   
   axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
-  mtext("distance to promoters (Mb)", side=1, line=2.2, cex=0.8)
+  mtext("distance to baits (Mb)", side=1, line=2.2, cex=0.8)
   
   axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
   mtext("% aligned sequence", side=2, line=3, cex=0.8)

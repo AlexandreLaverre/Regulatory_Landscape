@@ -99,6 +99,8 @@ for(sp in c("human", "mouse")){
     }
   }
 
+  mtext(paste("hierarchical clustering", sp, sep=", "), side=3, line=0.5, cex=0.7)
+
   ## AFC plot
 
   afc=data.AFC[[sp]][["AFC"]]
@@ -113,6 +115,7 @@ for(sp in c("human", "mouse")){
   axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.85)
   axis(side=2, mgp=c(3, 0.5, 0), cex.axis=0.85)
 
+  mtext(paste("correspondence analysis", sp, sep=", "), side=3, line=0.5, cex=0.7)
   mtext(paste("axis 1 (", explained[1],"% explained variance)",sep=""), side=1, line=1.75, cex=0.7)
   mtext(paste("axis 2 (", explained[2],"% explained variance)",sep=""), side=2, line=1.75, cex=0.7)
 
