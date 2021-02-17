@@ -138,10 +138,10 @@ for(sp in c("human", "mouse")){
   }
 
   axis(side=1, at=1:nbclass, labels=classes, cex.axis=0.9, mgp=c(3, 0.5, 0))
-  mtext("number of cell types w. chromatin contacts", side=1, line=2, cex=0.7, at=(nbclass+1)/2)
+  mtext("nb. cell types w. chromatin contacts", side=1, line=2, cex=0.75, at=(nbclass+1)/2)
   
   axis(side=2, cex.axis=0.9, mgp=c(3, 0.75, 0))
-  mtext("percentage of samples w. detectable expression", side=2, line=2, cex=0.7)
+  mtext("% samples w. detectable expression", side=2, line=2, cex=0.75)
 
   mtext(labels[sp], side=3, at=xlim[1]-diff(xlim)/6.5, line=0, font=2)
   

@@ -55,7 +55,7 @@ for (sp in c("human", "mouse")){
     
     
     mtext("% length covered\n by enhancers", side=2, cex=0.85, line=2, at=(ymin+ymax)*0.9/2)
-    mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
+    mtext("distance to baits (Mb)", side=1, line=2, cex=0.85)
     
     mtext(letters[nb], side=3, line=1, at=-7.75, font=2, cex=1.2)
     mtext(paste(sp, enh, sep=" "), side=3, cex=0.8, line=0)
