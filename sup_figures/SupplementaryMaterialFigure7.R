@@ -141,11 +141,11 @@ axis(side=2, cex=1, mgp=c(3, 0.75, 0), las=2)
 mtext(paste("observed data, rho=",rho, sep=""), side=3, cex=0.85, line=0.25)
 
 mtext("number of contacting baits", side=1, line=2, cex=0.95)
-mtext("number of genes in 500 kb window", side=2, line=2.5, cex=0.95)
+mtext("number of genes within 500 kb", side=2, line=2.5, cex=0.95)
 
 ## plot label
   
-mtext("c", side=3, line=1.5, at=-12, font=2, cex=1.2)
+mtext("c", side=3, line=1.5, at=-13.75, font=2, cex=1.2)
 
 ##########################################################################
 
@@ -163,11 +163,11 @@ axis(side=2, cex=1, mgp=c(3, 0.75, 0), las=2)
 mtext(paste("simulated data, rho=",rho, sep=""), side=3, cex=0.85, line=0.25)
 
 mtext("number of contacting baits", side=1, line=2, cex=0.95)
-mtext("number of genes in 500 kb window", side=2, line=2.5, cex=0.95)
+mtext("number of genes within 500 kb", side=2, line=2.5, cex=0.95)
 
 ## plot label
   
-mtext("d", side=3, line=1.5, at=-6, font=2, cex=1.2)
+mtext("d", side=3, line=1.5, at=-6.5, font=2, cex=1.2)
 
 ##########################################################################
 
