@@ -433,7 +433,7 @@ for(my $i=0; $i<@s; $i++){
     $header{$s[$i]}=$i;
 }
 
-print $output "origin_gene\torigin_gene_coord\torigin_enh\torigin_dist\ttarget_gene\ttarget_gene_coord\ttarget_enh\ttarget_dist\tnb_genes_inbetween\tlength_genes_inbetween\n";
+print $output "origin_gene\torigin_gene_coord\torigin_enh\torigin_dist\ttarget_gene\ttarget_gene_coord\ttarget_enh\ttarget_dist\tnb_genes_inbetween\tfr_length_genes_inbetween\n";
 
 $line=<$input>;
 
@@ -477,6 +477,8 @@ while($line){
     my $nb=@{$intersections{$margin}{$id}}; ## nb elements in this window
     my $length=$blocks{$margin}{$id}{"length"};
 
+    my $frlength=$length/($end-$start+1);
+
     ## modify output slightly
 
     my $origin_gene_coord=$chr_gene.":".$start_gene.":".$end_gene.":".$strand_gene;
@@ -496,7 +498,7 @@ while($line){
     my $strand_gene_tg=$tggenes{$target_gene}{"strand"};
     my $target_gene_coord=$chr_gene_tg.":".$start_gene_tg.":".$end_gene_tg.":".$strand_gene_tg;
     
-    my $lineout=$origin_gene."\t".$origin_gene_coord."\t".$origin_enh."\t".$origin_dist."\t".$target_gene."\t".$target_gene_coord."\t".$target_enh."\t".$target_dist."\t".$nb."\t".$length;
+    my $lineout=$origin_gene."\t".$origin_gene_coord."\t".$origin_enh."\t".$origin_dist."\t".$target_gene."\t".$target_gene_coord."\t".$target_enh."\t".$target_dist."\t".$nb."\t".$frlength;
     
     print $output $lineout."\n";
     
