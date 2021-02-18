@@ -1,5 +1,8 @@
 #######################################################################################
+
 options(stringsAsFactors = FALSE)
+
+#######################################################################################
 
 objects=ls()
 
@@ -13,77 +16,89 @@ if(!"pathScripts"%in%objects){
 
 if(load){
   sp="human"
+  enh="ENCODE"
+  
   load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
-  load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep="")) ## enhancers are already filtered for duplication levels, repeat proprtion etc
-  load(paste(pathFigures, "RData/data.", sp, ".regland.conservation.RData",sep=""))
+  contact.data = gene.enhancer.contacts[[sp]][[enh]][["real"]]
+    
+  load(paste(pathFigures, "RData/data.regland.conservation.RData",sep=""))
+  regcons=regland.conservation[[sp]][[enh]]
+
   load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
+ 
+  pathResults=paste(pathFinalData, "SupplementaryDataset9/", sep="")
+
   load=FALSE
-  
 }
 
 #######################################################################################
-# Total contacts and median distance to enhancers
+## Total contacts and median distance to enhancers
+## only PCHi-C data
 
-for (data in c("real", "simulated")){
-  contact.data = gene.enhancer.contacts[["human"]][["ENCODE"]][[data]]
-  
-  # Filters on enhancers
-  if (data == "real"){
-    data.stats="original"
-  }else{
-    data.stats=data
-  }
-  enh.stat.data = enhancer.statistics[["human"]][["ENCODE"]][[data.stats]]
-  contact.data = contact.data[which(contact.data$enhancer%in%enh.stat.data$enh),]
-  
-  if (data == "real"){
-    data.name="original"
-  }else{
-    data.name=data
-  }
-  
-  nb_total = unlist(with(contact.data, tapply(enhancer, factor(gene), function(x) length(x))))
-  median_dist = unlist(with(contact.data, tapply(dist, factor(gene), median, na.rm=T)))
-  
-  gene.stat <- data.frame("nb_total"=nb_total, "median_dist"=median_dist)
-  
-  write.table(rownames(gene.stat[order(-gene.stat$nb_total),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.", data.name, ".total.contacts.txt", sep=""),
-              row.names=FALSE, col.names=FALSE, quote=F)
-  
-  write.table(rownames(gene.stat[order(-gene.stat$median_dist),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.", data.name, ".median.enhancers.distance.txt", sep=""),
-              row.names=FALSE, col.names=FALSE, quote=F)
-}
+## total number of contacted enhancers
+nb.total=tapply(contact.data$enhancer, as.factor(contact.data$gene), function(x) length(unique(x)))
 
+df.nbcontacts=data.frame("GeneID"=levels(as.factor(contact.data$gene)), "NbContacts"=nb.total, stringsAsFactors=F)
+df.nbcontacts=df.nbcontacts[order(df.nbcontacts$NbContacts, decreasing=T),]
+
+write.table(df.nbcontacts, file=paste(pathResults, "GeneTable_TotalNbContacts.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+writeLines(df.nbcontacts$GeneID, con=paste(pathResults, "GeneList_TotalNbContacts.txt", sep=""))
+
+## median distance
+median.dist = tapply(contact.data$dist, as.factor(contact.data$gene), median, na.rm=T)
+
+df.mediandist=data.frame("GeneID"=levels(as.factor(contact.data$gene)), "MedianDistance"=median.dist, stringsAsFactors=F)
+df.mediandist=df.mediandist[order(df.mediandist$MedianDistance, decreasing=T),]
+
+write.table(df.mediandist, file=paste(pathResults, "GeneTable_MedianDistance.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+writeLines(df.mediandist$GeneID, con=paste(pathResults, "GeneList_MedianDistance.txt", sep=""))
 
 #######################################################################################
-# Regulatory Landscape Conservation 
-ranked.var = c(".align.score.", ".conserved.seq.", ".conserved.synt.", ".conserv.contacts.")
-names(ranked.var) = c("align_score", "ratio_cons_seq", "ratio_cons_synt", "ratio_cons_int")
 
-for (data in c("obs", "sim")){
-  regland = genes.conservation[["ENCODE"]][[data]][["all"]]
-  
-  if (data == "obs"){
-    data.name="original"
-  }else{
-    data.name="simulated"
-  }
-  
-  for (var in names(ranked.var)){
-    write.table(rownames(regland[order(-regland[[var]]),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.", data.name, ranked.var[var], ".txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
-  }
+## enhancer alignment score
+df.alnscore=regcons[,c("gene", "mean.aln.score.all")]
+colnames(df.alnscore)=c("GeneID", "MeanAlignmentScore")
 
-}
-###########
+df.alnscore=df.alnscore[which(!is.na(df.alnscore$MeanAlignmentScore)),]
+
+df.alnscore=df.alnscore[order(df.alnscore$MeanAlignmentScore, decreasing=T),]
+
+write.table(df.alnscore, file=paste(pathResults, "GeneTable_MeanEnhancerAlignmentScore.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+writeLines(df.alnscore$GeneID, con=paste(pathResults, "GeneList_MeanEnhancerAlignmentScore.txt", sep=""))
 
 #######################################################################################
-# Gene expression pattern Conservation 
+## contact conservation
+df.contactcons=regcons[,c("gene", "fr.contact.cons.all")]
+colnames(df.contactcons)=c("GeneID", "FractionConservedContacts")
+df.contactcons=df.contactcons[which(!is.na(df.contactcons$FractionConservedContacts)),]
 
-write.table(rownames(expdiv[order(-expdiv$CorrelationSpearman),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.spearman.correlation.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
-write.table(rownames(expdiv[order(-expdiv$CorrectedSpearman),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.corrected.spearman.correlation.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
+df.contactcons=df.contactcons[order(df.contactcons$FractionConservedContacts, decreasing=T),]
 
-write.table(rownames(expdiv[order(expdiv$EuclideanDistance),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.euclidean.distance.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
-write.table(rownames(expdiv[order(-expdiv$CorrectedEuclideanSimilarity),]), file =paste(pathSuppTables,"ranked.list.genes/ordered.genes.corrected.euclidean.distance.txt", sep=""), row.names=FALSE, col.names=FALSE, quote=F)
+write.table(df.contactcons, file=paste(pathResults, "GeneTable_FractionConservedContacts.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+writeLines(df.contactcons$GeneID, con=paste(pathResults, "GeneList_FractionConservedContacts.txt", sep=""))
 
+#######################################################################################
 
-###########
+## synteny conservation
+df.syntenycons=regcons[,c("gene", "fr.synteny.cons.all")]
+colnames(df.syntenycons)=c("GeneID", "FractionConservedSynteny")
+df.syntenycons=df.syntenycons[which(!is.na(df.syntenycons$FractionConservedSynteny)),]
+
+df.syntenycons=df.syntenycons[order(df.syntenycons$FractionConservedSynteny, decreasing=T),]
+
+write.table(df.syntenycons, file=paste(pathResults, "GeneTable_FractionConservedSynteny.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+writeLines(df.syntenycons$GeneID, con=paste(pathResults, "GeneList_FractionConservedSynteny.txt", sep=""))
+
+#######################################################################################
+
+## expression conservation
+df.expcons=expdiv[,c("IDHuman", "CorrectedSpearman")]
+colnames(df.expcons)=c("GeneID", "CorrectedSpearmanCorrelation")
+
+df.expcons=df.expcons[which(!is.na(df.expcons$CorrectedSpearmanCorrelation)),]
+df.expcons=df.expcons[order(df.expcons$CorrectedSpearmanCorrelation, decreasing=T),]
+ 
+write.table(df.expcons, file=paste(pathResults, "GeneTable_ExpressionConservation.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+writeLines(df.expcons$GeneID, con=paste(pathResults, "GeneList_ExpressionConservation.txt", sep=""))
+
+#######################################################################################
