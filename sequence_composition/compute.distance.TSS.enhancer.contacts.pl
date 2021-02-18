@@ -299,6 +299,7 @@ while($line){
     if($indextargetdist ne "NA"){
 	my $targetgene=$s[$header{"target_gene"}];
 	my $targetgenecoord=$s[$header{"target_gene_coord"}];
+	my $oldtargetdist=$s[$header{"target_dist"}];
 
 	my @u=split(":", $targetgenecoord);
 	my $chrgene=$u[0];
@@ -324,7 +325,7 @@ while($line){
 	 
 	my $mindistalltg=min @distances;
 
-	if($chrgene ne $chrenh){ 
+	if($oldtargetdist eq "trans"){ 
 	    $mindistalltg="trans"; 
 	}
 	
