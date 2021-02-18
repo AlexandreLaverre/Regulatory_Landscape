@@ -105,7 +105,7 @@ for(ref in c("human", "mouse")){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-  if(sp=="human"){
+  if(ref=="human"){
     pdf(paste(pathFigures, "SupplementaryFigure3.pdf", sep=""), width=6.85, height=6)
   } else{
     pdf(paste(pathFigures, "SupplementaryMaterialFigure21.pdf", sep=""), width=6.85, height=6)
