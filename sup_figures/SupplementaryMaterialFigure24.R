@@ -94,7 +94,7 @@ for(ref in c("human", "mouse")){
     smallx=c(0, 0)
     names(smallx)=c("obs", "sim")
     
-    ylim=c(70, 100)
+    ylim=c(65, 100)
     
     plot(1, type="n", xlim=c(0.5, nbkept+0.5), ylim=ylim, axes=F, xlab="", ylab="")
     

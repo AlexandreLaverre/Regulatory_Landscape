@@ -51,8 +51,12 @@ for (sp in c("human", "mouse")){
       
       plot(feat_prop_dist[[seq]][["obs"]][[feat]], col=dataset.colors["Original"], main="", type="n", xlab="", ylab="",  axes=F, ylim=c(ymin,ymax))
       
-      lines(feat_prop_dist[[seq]][["obs"]][[feat]], col=dataset.colors["Original"])
-      lines(feat_prop_dist[[seq]][["simul"]][[feat]], col=dataset.colors["Simulated"])
+      ## lines(feat_prop_dist[[seq]][["obs"]][[feat]], col=dataset.colors["Original"])
+      ## lines(feat_prop_dist[[seq]][["simul"]][[feat]], col=dataset.colors["Simulated"])
+
+      points(feat_prop_dist[[seq]][["obs"]][[feat]], col=dataset.colors["Original"], pch=20)
+      points(feat_prop_dist[[seq]][["simul"]][[feat]], col=dataset.colors["Simulated"], pch=20)
+
       
       xpos=1:length(feat_prop_dist[[seq]][["obs"]][[feat]])
       

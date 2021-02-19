@@ -76,10 +76,12 @@ for(other_sp in target_species){
   
   plot(1, type="n", xlab="", ylab="", axes=F, main="", xlim=xlim, ylim=ylim, xaxs="i")
   
-  lines(xpos, mean.val.obs, col=dataset.colors["Original"])
+  ## lines(xpos, mean.val.obs, col=dataset.colors["Original"])
+  points(xpos, mean.val.obs, col=dataset.colors["Original"], pch=20)
   segments(xpos, ci.low.obs, xpos, ci.high.obs, col=dataset.colors["Original"])
   
-  lines(xpos, mean.val.simul, col=dataset.colors["Simulated"])
+  ## lines(xpos, mean.val.simul, col=dataset.colors["Simulated"])
+  points(xpos, mean.val.simul, col=dataset.colors["Simulated"], pch=20)
   segments(xpos, ci.low.simul, xpos, ci.high.simul, col=dataset.colors["Simulated"])
   
   axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)

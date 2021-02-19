@@ -134,8 +134,11 @@ mtext("a", side=3, line=1.5, at=-3.9, font=2, cex=1.2)
 ylim=c(0.5, max(c(as.numeric(mean_nb_celltypes_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Simulated",]))))
 ylim[2]=ylim[2]+0.5
 
-plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=ylim, xlab="", ylab="", axes=F)
-lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_celltypes_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5)
+## plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Original",]), type="l", col=dataset.colors["Original"], ylim=ylim, xlab="", ylab="", axes=F)
+## lines(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_celltypes_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5)
+
+plot(as.numeric(mean_dist["Original",]), as.numeric(mean_nb_celltypes_dist["Original",]), pch=20, col=dataset.colors["Original"], ylim=ylim, xlab="", ylab="", axes=F)
+points(as.numeric(mean_dist["Simulated",]), as.numeric(mean_nb_celltypes_dist["Simulated",]), col=dataset.colors["Simulated"], lwd=1.5, pch=20)
 
 ## X axis
 xax=pretty(range(as.numeric(mean_dist)))

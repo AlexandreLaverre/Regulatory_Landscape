@@ -34,9 +34,13 @@ for (sp in c("human", "mouse")){
     
     plot(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"], main="", type="n", xlab="",ylab="",  axes=F, ylim=c(ymin,ymax))
     
-    lines(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"])
-    lines(enh_prop_dist[["simul"]][[enh]], col=dataset.colors["Simulated"])
-        
+    ## lines(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"])
+    ## lines(enh_prop_dist[["simul"]][[enh]], col=dataset.colors["Simulated"])
+
+    points(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"], pch=20)
+    points(enh_prop_dist[["simul"]][[enh]], col=dataset.colors["Simulated"], pch=20)
+
+          
     xpos=1:length(enh_prop_dist[["obs"]][[enh]])
     
     segments(xpos, enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], xpos, enh_prop_dist[["obs"]][[paste0(enh,"_confup")]], col=dataset.colors["Original"])
