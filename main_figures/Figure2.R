@@ -89,8 +89,11 @@ par(mar=c(3.1, 4.5, 2.75, 1))
 
 plot(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"], main="", type="n", xlab="",ylab="",  axes=F, ylim=c(ymin,ymax))
 
-lines(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"])
-lines(enh_prop_dist[["simul"]][[enh]], col=dataset.colors["Simulated"])
+## lines(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"])
+## lines(enh_prop_dist[["simul"]][[enh]], col=dataset.colors["Simulated"])
+
+points(enh_prop_dist[["obs"]][[enh]], col=dataset.colors["Original"], pch=20)
+points(enh_prop_dist[["simul"]][[enh]], col=dataset.colors["Simulated"], pch=20)
 
 
 xpos=1:length(enh_prop_dist[["obs"]][[enh]])
@@ -121,8 +124,11 @@ par(mar=c(3.1, 4.5, 3, 1))
 
 plot(enh_prop_nb_cell[["obs"]][[enh]], type="n", ylim=ylim,  axes=F, xlab="", ylab="")
 
-lines(enh_prop_nb_cell[["obs"]][[enh]], col=dataset.colors["Original"])
-lines(enh_prop_nb_cell[["simul"]][[enh]], col=dataset.colors["Simulated"])
+## lines(enh_prop_nb_cell[["obs"]][[enh]], col=dataset.colors["Original"])
+## lines(enh_prop_nb_cell[["simul"]][[enh]], col=dataset.colors["Simulated"])
+
+points(enh_prop_nb_cell[["obs"]][[enh]], col=dataset.colors["Original"], pch=20)
+points(enh_prop_nb_cell[["simul"]][[enh]], col=dataset.colors["Simulated"], pch=20)
 
 xpos=1:length(enh_prop_nb_cell[["obs"]][[enh]])
 
@@ -150,8 +156,11 @@ par(mar=c(3.1, 4.5, 3, 1))
 
 plot(correl_activity[["obs"]][[enh]], type="n", ylab="", main="", las=2, ylim=ylim, axes=F)
 
-lines(correl_activity[["obs"]][[enh]], col=dataset.colors["Original"])
-lines(correl_activity[["simul"]][[enh]], col=dataset.colors["Simulated"])
+## lines(correl_activity[["obs"]][[enh]], col=dataset.colors["Original"])
+## lines(correl_activity[["simul"]][[enh]], col=dataset.colors["Simulated"])
+
+points(correl_activity[["obs"]][[enh]], col=dataset.colors["Original"], pch=20)
+points(correl_activity[["simul"]][[enh]], col=dataset.colors["Simulated"], pch=20)
 
 xpos=1:length(correl_activity[["obs"]][[enh]])
 

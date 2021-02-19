@@ -198,10 +198,12 @@ for (sp in selected.species){
 
   xpos=1:nbkept
 
-  lines(xpos, prop.obs, col=dataset.colors["Original"])
+  ## lines(xpos, prop.obs, col=dataset.colors["Original"])
+  points(xpos, prop.obs, col=dataset.colors["Original"], pch=20)
   segments(xpos, ci.obs.low, xpos, ci.obs.high, col=dataset.colors["Original"])
 
-  lines(xpos, prop.sim, col=dataset.colors["Simulated"])
+  ## lines(xpos, prop.sim, col=dataset.colors["Simulated"])
+  points(xpos, prop.sim, col=dataset.colors["Simulated"], pch=20)
   segments(xpos, ci.sim.low, xpos, ci.sim.high, col=dataset.colors["Simulated"])
 
   axis(side=2, las=2,  mgp=c(3, 0.75, 0), cex.axis=0.9)
