@@ -98,7 +98,7 @@ if(load){
 for (ref_sp in c("human", "mouse")){
  
   if (ref_sp == "human"){
-    pdf_name="SupplementaryMaterialFigure24.pdf"
+    pdf_name="SupplementaryMaterialFigure25.pdf"
     height=7
     cex.axis=0.9
     cex.lab=0.85
@@ -106,7 +106,7 @@ for (ref_sp in c("human", "mouse")){
     cex.text=1
     xpart=7.5
   } else{
-    pdf_name="SupplementaryMaterialFigure25.pdf"
+    pdf_name="SupplementaryMaterialFigure26.pdf"
     height=4.5
     cex.axis=0.7
     cex.lab=0.7

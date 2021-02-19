@@ -4,7 +4,7 @@ source("../main_figures/parameters.R")
 
 ##############################################################################
 
-pdf(paste(pathFigures, "SupplementaryMaterialFigure32.pdf", sep=""), width=6.85, height=3)
+pdf(paste(pathFigures, "SupplementaryMaterialFigure33.pdf", sep=""), width=6.85, height=3)
 par(mfrow=c(1,2))
 par(mar=c(3, 4, 2, 1)) # bottom, left, top, right
 

@@ -135,7 +135,7 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distance, enhancer.lis
 
 ################################################################################################################################
 
-pdf(file=paste(pathFigures, "SupplementaryMaterialFigure34.pdf", sep=""), width=6.85, height=11)
+pdf(file=paste(pathFigures, "SupplementaryMaterialFigure35.pdf", sep=""), width=6.85, height=11)
 m=matrix(rep(NA, 4*8), nrow=4)
 
 m[1,]=c(rep(1, 4), rep(5, 4))

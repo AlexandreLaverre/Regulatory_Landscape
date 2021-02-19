@@ -139,9 +139,9 @@ if(load){
 for(sp in c("human", "mouse")){
    
   if (sp == "human"){
-    pdf.name = "SupplementaryMaterialFigure30.pdf"
-  }else{
     pdf.name = "SupplementaryMaterialFigure31.pdf"
+  }else{
+    pdf.name = "SupplementaryMaterialFigure32.pdf"
   }
   
   print(pdf.name)
