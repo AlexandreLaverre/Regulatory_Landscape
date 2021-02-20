@@ -59,11 +59,11 @@ for(sp in c("human", "mouse")){
   ## max height: 11 in
   
   if(sp=="human"){
-    pdf(paste(pathFigures, "SupplementaryMaterialFigure7.pdf", sep=""), width=6.85, height=6.5)
+    pdf(paste(pathFigures, "SupplementaryMaterialFigure9.pdf", sep=""), width=6.85, height=6.5)
   }
 
   if(sp=="mouse"){
-    pdf(paste(pathFigures, "SupplementaryMaterialFigure8.pdf", sep=""), width=6.85, height=6.5)
+    pdf(paste(pathFigures, "SupplementaryMaterialFigure10.pdf", sep=""), width=6.85, height=6.5)
   }
   
   m=matrix(1:4, nrow=2, byrow=T)
