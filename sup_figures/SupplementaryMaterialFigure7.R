@@ -98,15 +98,15 @@ for(sp in c("human", "mouse")){
   abline(0,1, lty=3)
 
   ax=pretty(lim)
-  axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.9, at=ax, labels=paste(ax,"k",sep=""))
-  mtext("nb. contacted fragments, PCHi-C data", side=1, cex=0.75, line=1.75)
+  axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.95, at=ax, labels=paste(ax,"k",sep=""))
+  mtext("nb. contacted fragments, PCHi-C", side=1, cex=0.85, line=1.75)
 
-  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.9, at=ax, labels=paste(ax,"k",sep=""))
-  mtext("nb. contacted fragments, simulated data", side=2, cex=0.75, line=2.25)
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.95, at=ax, labels=paste(ax,"k",sep=""))
+  mtext("nb. contacted fragments, simulations", side=2, cex=0.85, line=2.25)
 
-  mtext(labels[sp], side=3, at=lim[1]-diff(lim)/4.48, font=2, line=1.15)
+  mtext(labels[sp], side=3, at=lim[1]-diff(lim)/4.48, font=2, line=1.15, cex=1.1)
 
-  mtext(sp, side=3, line=0.5, cex=0.75)
+  mtext(sp, side=3, line=0.5, cex=0.9)
 }
 
 #############################################################################
@@ -131,15 +131,15 @@ for(sp in c("human", "mouse")){
   abline(0,1, lty=3)
 
   ax=pretty(lim)
-  axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.9, at=ax, labels=paste(ax,"Mb",sep=""))
-  mtext("length contacted fragments, PCHi-C data", side=1, cex=0.75, line=1.75)
+  axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.95, at=ax, labels=paste(ax,"Mb",sep=""))
+  mtext("total length fragments, PCHi-C", side=1, cex=0.85, line=1.75)
 
-  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.9, at=ax, labels=paste(ax,"Mb",sep=""))
-  mtext("length contacted fragments, simulated data", side=2, cex=0.75, line=2.25)
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.95, at=ax, labels=paste(ax,"Mb",sep=""))
+  mtext("total length fragments, simulations", side=2, cex=0.85, line=2.25)
 
-  mtext(labels[sp], side=3, at=lim[1]-diff(lim)/4.48, font=2, line=1.15)
+  mtext(labels[sp], side=3, at=lim[1]-diff(lim)/4.48, font=2, line=1.15, cex=1.1)
 
-  mtext(sp, side=3, line=0.5, cex=0.8)
+  mtext(sp, side=3, line=0.5, cex=0.9)
 
 }
 
