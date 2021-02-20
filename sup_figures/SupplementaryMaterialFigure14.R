@@ -29,7 +29,7 @@ if(load){
 
 #################################################################################################################
 
-pdf(paste(pathFigures, "SupplementaryMaterialFigure13.pdf", sep=""), width=3.4, height=6.85)
+pdf(paste(pathFigures, "SupplementaryMaterialFigure14.pdf", sep=""), width=3.4, height=6.85)
 
 ############################################################################################################################
 ############################################## correlation gene expression and enhancers activity ##########################

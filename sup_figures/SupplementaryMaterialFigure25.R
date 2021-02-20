@@ -23,7 +23,7 @@ if(!"pathScripts"%in%objects){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "SupplementaryMaterialFigure24.pdf", sep=""), width=6.85, height=8.5)
+pdf(paste(pathFigures, "SupplementaryMaterialFigure25.pdf", sep=""), width=6.85, height=8.5)
 
 layout(matrix(1:6, nrow=3, byrow=F))
 

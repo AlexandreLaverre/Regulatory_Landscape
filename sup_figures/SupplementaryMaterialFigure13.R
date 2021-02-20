@@ -31,7 +31,7 @@ if(load){
 
 #################################################################################################################
 
-pdf(paste(pathFigures, "SupplementaryMaterialFigure12.pdf", sep=""), width=6.85, height=5)
+pdf(paste(pathFigures, "SupplementaryMaterialFigure13.pdf", sep=""), width=6.85, height=5)
 
 par(mai = c(0.5, 0.5, 0.3, 0.2)) # bottom, left, top, right
 
