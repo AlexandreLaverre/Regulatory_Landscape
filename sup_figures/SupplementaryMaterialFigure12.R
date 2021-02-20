@@ -162,8 +162,8 @@ plot(correl_activity[["obs"]][[enh]], type="n", ylab="", main="", las=2, ylim=yl
 ## lines(correl_activity[["obs"]][[enh]], col=dataset.colors["Original"])
 ## lines(correl_activity[["simul"]][[enh]], col=dataset.colors["Simulated"])
 
-points(correl_activity[["obs"]][[enh]], col=dataset.colors["Original"])
-points(correl_activity[["simul"]][[enh]], col=dataset.colors["Simulated"])
+points(correl_activity[["obs"]][[enh]], col=dataset.colors["Original"], pch=20)
+points(correl_activity[["simul"]][[enh]], col=dataset.colors["Simulated"], pch=20)
 
 
 xpos=1:length(correl_activity[["obs"]][[enh]])

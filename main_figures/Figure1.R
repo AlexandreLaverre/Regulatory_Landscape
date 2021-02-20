@@ -174,7 +174,7 @@ shhgenecoords$name[which(shhgenecoords$id==shhid)]="SHH"
 shhgenecoords$name[which(shhgenecoords$id=="ENSG00000105983")]="LMBR1"
 shhgenecoords$name[which(shhgenecoords$id=="ENSG00000182648")]="LINC01006" 
 
-plot.annotations.genes(gene.coords=shhgenecoords, focus.gene=shhid, gene.biotypes=c("protein_coding", "lincRNA"), xlim=shhxlim, col.focus="red", col.other="gray60", axis=T, axisunit="Mb", axisside=3, cex.name=0.9, name.position="top", show.arrows=T, highlighted.genes=c("ENSG00000105983", "ENSG00000182648"))
+plot.annotations.genes(gene.coords=shhgenecoords, focus.gene=shhid, gene.biotypes=c("protein_coding", "lincRNA"), xlim=shhxlim, col.focus=col.Shh, col.other="gray60", axis=T, axisunit="Mb", axisside=3, cex.name=0.9, name.position="top", show.arrows=T, highlighted.genes=c("ENSG00000105983", "ENSG00000182648"))
 
 ## axis label
 
