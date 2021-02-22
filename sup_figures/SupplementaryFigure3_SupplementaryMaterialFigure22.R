@@ -108,7 +108,7 @@ for(ref in c("human", "mouse")){
   if(ref=="human"){
     pdf(paste(pathFigures, "SupplementaryFigure3.pdf", sep=""), width=6.85, height=6)
   } else{
-    pdf(paste(pathFigures, "SupplementaryMaterialFigure21.pdf", sep=""), width=6.85, height=6)
+    pdf(paste(pathFigures, "SupplementaryMaterialFigure22.pdf", sep=""), width=6.85, height=6)
   }
   
   m=matrix(rep(NA, 2*10), nrow=2)

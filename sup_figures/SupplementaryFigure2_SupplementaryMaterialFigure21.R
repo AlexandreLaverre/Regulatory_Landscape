@@ -25,7 +25,7 @@ for (sp in c("human", "mouse")){
   if (sp == "human"){
     pdf.name="SupplementaryFigure2.pdf"
   } else{
-    pdf.name="SupplementaryMaterialFigure20.pdf"
+    pdf.name="SupplementaryMaterialFigure21.pdf"
   }
   
   pdf(paste(pathFigures, pdf.name, sep=""), width=6.85, height=4.5)
