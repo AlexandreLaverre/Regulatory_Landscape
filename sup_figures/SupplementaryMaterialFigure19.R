@@ -15,7 +15,7 @@ if(!"pathFigures"%in%objects){
 if(load){
  ref_sp = "human"
 
- target_species=c("rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken") ## other species already done
+ target_species=c("macaque", "rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken") ## other species already done
  
  load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
 
@@ -97,10 +97,7 @@ for(other_sp in target_species){
 
 ###########################################################################
 
-## empty plot + legend
-
-plot(1, type="n", xlab="", ylab="", axes=F)
-
+## legend
 
 legend("topleft", legend = c("PCHi-C data", "simulated data"), col=dataset.colors, lty=1, bty='n',  inset=c(0, 0.01), xpd=NA, cex=1.25)
 
