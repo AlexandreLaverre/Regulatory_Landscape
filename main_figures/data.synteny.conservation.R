@@ -113,9 +113,9 @@ for(ref_sp in c("human", "mouse")){
 
       ## remove gene coordinates etc
 
-      synt_obs=synt_obs[,which(!(colnames(synt_obs)%in%c("origin_gene_coord", "target_gene", "target_gene_coord", "nb_genes_inbetween", "origin_min_dist_baitedTSS", "origin_min_dist_allTSS", "target_min_dist_allTSS")))]
+      synt_obs=synt_obs[,which(!(colnames(synt_obs)%in%c("origin_gene_coord", "target_gene_coord", "nb_genes_inbetween", "origin_min_dist_baitedTSS", "origin_min_dist_allTSS", "target_min_dist_allTSS")))]
 
-      synt_simul=synt_simul[,which(!(colnames(synt_simul)%in%c("origin_gene_coord", "target_gene", "target_gene_coord", "nb_genes_inbetween", "origin_min_dist_baitedTSS", "origin_min_dist_allTSS", "target_min_dist_allTSS")))]
+      synt_simul=synt_simul[,which(!(colnames(synt_simul)%in%c("origin_gene_coord", "target_gene_coord", "nb_genes_inbetween", "origin_min_dist_baitedTSS", "origin_min_dist_allTSS", "target_min_dist_allTSS")))]
       
       conserv_synteny[[enh]][[sp]]=list("synt_obs"=synt_obs, "synt_simul"=synt_simul)
             
