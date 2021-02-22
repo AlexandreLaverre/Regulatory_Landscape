@@ -73,6 +73,8 @@ for(ref_sp in c("human", "mouse")){
 
       print(paste(nrow(synt_obs)," observed contacts after filtering"))
       print(paste(nrow(synt_simul)," simulated contacts after filtering"))
+
+     
                
       ## threshold alignment score: 5% quantile, observed values
             
@@ -108,6 +110,12 @@ for(ref_sp in c("human", "mouse")){
       ## transform distance to numeric values
       synt_obs$target_dist <- as.numeric(synt_obs$target_dist)
       synt_simul$target_dist <- as.numeric(synt_simul$target_dist)
+
+      ## remove gene coordinates etc
+
+      synt_obs=synt_obs[,which(!(colnames(synt_obs)%in%c("origin_gene_coord", "target_gene", "target_gene_coord", "nb_genes_inbetween", "origin_min_dist_baitedTSS", "origin_min_dist_allTSS", "target_min_dist_allTSS")))]
+
+      synt_simul=synt_simul[,which(!(colnames(synt_simul)%in%c("origin_gene_coord", "target_gene", "target_gene_coord", "nb_genes_inbetween", "origin_min_dist_baitedTSS", "origin_min_dist_allTSS", "target_min_dist_allTSS")))]
       
       conserv_synteny[[enh]][[sp]]=list("synt_obs"=synt_obs, "synt_simul"=synt_simul)
             
