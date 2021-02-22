@@ -164,9 +164,9 @@ for(sp in c("human", "mouse")){
 ############################## CHICAGO score according to dist ###############################
   
   if (sp == "human"){
-    ylim=c(6, 12)
+    ylim=c(6, 10)
   }else{
-    ylim=c(6, 9)
+    ylim=c(6, 11)
   }
   
   plot(1, type="n", xlim=c(0.5, 40.5), ylim=ylim, xlab="", ylab="", axes=F)
@@ -199,9 +199,9 @@ for(sp in c("human", "mouse")){
   names(smallx)=enhancer.datasets[[sp]]
   
   if (sp == "human"){
-    ylim=c(30, 60)
+    ylim=c(25, 55)
   }else{
-    ylim=c(40, 60)
+    ylim=c(35, 55)
   }
   
   xlim=c(0.5, nb_chicago_class+0.5)
