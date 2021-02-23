@@ -24,6 +24,13 @@ for(ref_sp in c("human", "mouse")){
     simul[,paste0(enh,"_pclen")]=as.numeric(simul[,paste0(enh, "_bp")])*100/simul$length
   }
   
+  overlap = c(length(which(as.numeric(obs[,"ENCODE_bp"]) > 0)), length(which(as.numeric(simul[,"ENCODE_bp"]) > 0)))
+  non.overlap = c(length(which(as.numeric(obs[,"ENCODE_bp"]) == 0)), length(which(as.numeric(simul[,"ENCODE_bp"]) == 0)))
+  
+  print(paste(ref_sp, "observed restriction fragment overlap with at least one ENCODE enhancer", round((overlap[1]*100/nrow(obs)),2), "%"))
+  print(paste(ref_sp, "simulated restriction fragment overlap with at least one ENCODE enhancer", round((overlap[2]*100/nrow(simul)),2), "%"))
+  print(chisq.test(matrix(c(overlap, non.overlap), nrow=2)))
+  
   ###################### Proportions of contacted sequences covered by enhancers ########################
   
   data <- c()
