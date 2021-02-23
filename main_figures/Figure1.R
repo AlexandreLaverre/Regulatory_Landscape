@@ -16,7 +16,8 @@ if(!"pathScripts"%in%objects){
 if(load){
  
   library(ape)
-     
+  library(bootBCa, lib=pathRlibs)
+  
   sp="human"
   
   ## functions for genome browser plots
@@ -91,10 +92,17 @@ if(prepare){
 
   mean_nb_celltypes_dist <- t(sapply(filtered_data, function(x)   tapply(x$nb_celltypes, as.factor(x$dist_class), mean, na.rm=T)))
   mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
-  
-  dist_conf_low_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
-  dist_conf_high_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
 
+  print("computing bootstrap confidence intervals")
+  
+  dist_conf_low_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-BCa(y, delta=NA, M=100, theta="mean"); return(z[4])})))
+
+  dist_conf_high_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-BCa(y, delta=NA, M=100, theta="mean"); return(z[5])})))
+
+  print("done")
+
+
+  
   # dendrogram based on the % of shared interactions between samples, observed-simulated 
 
   hcl=sample.clustering[[sp]][["hclust.alldist"]]
