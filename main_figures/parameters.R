@@ -18,6 +18,7 @@ if(user=="laverre"){
 
 if(user=="necsulea"){
   pathFinalData="/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
+  pathRlibs="/beegfs/home/necsulea/Rlibs"
 }
 
 if(user=="ubuntu"){
