@@ -87,6 +87,8 @@ if(prepare){
   splist=colnames(frag_align_obs)[-c(1, ncol(frag_align_obs):(ncol(frag_align_obs)-4))]
   for(sp in splist){
     print(sp)
+    print(paste("observed median fraction of contacted fragment aligned", round(median(frag_align_obs[,sp], na.rm=T)*100,2), "%"))
+    print(paste("simulated median fraction of contacted fragment aligned", round(median(frag_align_simul[,sp], na.rm=T)*100,2), "%"))
     print(wilcox.test(frag_align_obs[,sp], frag_align_simul[,sp]))
   }
 
@@ -94,6 +96,8 @@ if(prepare){
 
   for(sp in splist){
     print(sp)
+    print(paste("observed median fraction of contacted ENCODE aligned", round(median(align_enhancer_obs[,sp], na.rm=T)*100,2), "%"))
+    print(paste("simulated median fraction of contacted ENCODE aligned", round(median(align_enhancer_sim[,sp], na.rm=T)*100,2), "%"))
     print(wilcox.test(align_enhancer_obs[,sp], align_enhancer_sim[,sp]))
   }
 
