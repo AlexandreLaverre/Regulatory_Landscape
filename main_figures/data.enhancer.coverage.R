@@ -1,6 +1,9 @@
 #########################################################################################################################
 
 library(data.table)
+library(bootBCa, lib=pathRlibs)
+
+set.seed(19)
 
 options(stringsAsFactors = FALSE)
 
@@ -41,16 +44,18 @@ for(ref_sp in c("human", "mouse")){
   ### Proportion of the sequences covered by enhancers
 
   for (enh in enhancers){
-    x <- t.test(obs[,paste0(enh, "_pclen")])
-    data <- c(data, x$estimate)
-    conf_up <- c(conf_up, x$conf.int[1])
-    conf_low <- c(conf_low, x$conf.int[2])
+    print(paste("confidence intervals, total",enh))
+    
+    x <- BCa(obs[,paste0(enh, "_pclen")], delta=NA, M=100, theta=mean, na.rm=T)
+    data <- c(data, x[3])
+    conf_up <- c(conf_up, x[5])
+    conf_low <- c(conf_low, x[4])
     id <- c(id, paste0(enh,":obs"))
     
-    x <- t.test(simul[,paste0(enh, "_pclen")])
-    data <- c(data, x$estimate)
-    conf_up <- c(conf_up, x$conf.int[1])
-    conf_low <- c(conf_low, x$conf.int[2])
+    x <- BCa(obs[,paste0(enh, "_pclen")], delta=NA, M=100, theta=mean, na.rm=T)
+    data <- c(data, x[3])
+    conf_up <- c(conf_up, x[5])
+    conf_low <- c(conf_low, x[4])
     id <- c(id, paste0(enh,":sim"))
   }
   
@@ -65,13 +70,17 @@ for(ref_sp in c("human", "mouse")){
   simul_enh_dist <- list()
   
   for (enh in enhancers){
-    obs_enh_dist[[enh]] <- tapply(obs[, paste0(enh, "_pclen")], obs$dist_class, mean)
-    obs_enh_dist[[paste0(enh, "_conflow")]] <- tapply(obs[, paste0(enh, "_pclen")], obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
-    obs_enh_dist[[paste0(enh, "_confup")]] <- tapply(obs[, paste0(enh, "_pclen")], obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
+    print(paste("confidence intervals by distance",enh))
+    
+    BC.obs=tapply(obs[, paste0(enh, "_pclen")], obs$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+    obs_enh_dist[[enh]] <- unlist(lapply(BC.obs, function(x) x[3]))
+    obs_enh_dist[[paste0(enh, "_conflow")]] <- unlist(lapply(BC.obs, function(x) x[4]))
+    obs_enh_dist[[paste0(enh, "_confup")]] <- unlist(lapply(BC.obs, function(x) x[5]))
 
-    simul_enh_dist[[enh]] <- tapply(simul[, paste0(enh, "_pclen")], simul$dist_class, mean)
-    simul_enh_dist[[paste0(enh, "_conflow")]] <- tapply(simul[, paste0(enh, "_pclen")], simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
-    simul_enh_dist[[paste0(enh, "_confup")]] <- tapply(simul[, paste0(enh, "_pclen")], simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
+    BC.sim=tapply(simul[, paste0(enh, "_pclen")], simul$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+    simul_enh_dist[[enh]] <- unlist(lapply(BC.sim, function(x) x[3]))
+    simul_enh_dist[[paste0(enh, "_conflow")]] <- unlist(lapply(BC.sim, function(x) x[4]))
+    simul_enh_dist[[paste0(enh, "_confup")]] <- unlist(lapply(BC.sim, function(x) x[5]))
   }
   
   enh_prop_dist <- list(obs=obs_enh_dist, simul=simul_enh_dist)
@@ -85,15 +94,17 @@ for(ref_sp in c("human", "mouse")){
   simul_enh_cell <- list()
   
   for (enh in enhancers){
-    obs_enh_cell[[enh]] <- tapply(obs[, paste0(enh, "_pclen")], obs$nb_cell, mean)
-    obs_enh_cell[[paste0(enh, "_conflow")]] <- tapply(obs[, paste0(enh, "_pclen")], obs$nb_cell, function(x) tryCatch(t.test(x)[["conf.int"]][1], error=function(e) 0))
-    obs_enh_cell[[paste0(enh, "_confup")]] <- tapply(obs[, paste0(enh, "_pclen")], obs$nb_cell, function(x) tryCatch(t.test(x)[["conf.int"]][2], error=function(e) 0))
-
-
-    simul_enh_cell[[enh]] <- tapply(simul[, paste0(enh, "_pclen")], simul$nb_cell, mean)
-    simul_enh_cell[[paste0(enh, "_conflow")]] <- tapply(simul[, paste0(enh, "_pclen")], simul$nb_cell, function(x) tryCatch(t.test(x)[["conf.int"]][1], error=function(e) 0))
-    simul_enh_cell[[paste0(enh, "_confup")]] <- tapply(simul[, paste0(enh, "_pclen")], simul$nb_cell, function(x) tryCatch(t.test(x)[["conf.int"]][2], error=function(e) 0))
+    print(paste("confidence intervals by cell type",enh))
     
+    BC.obs=tapply(obs[, paste0(enh, "_pclen")], obs$nb_cell, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+    obs_enh_cell[[enh]] <- unlist(lapply(BC.obs, function(x) x[3]))
+    obs_enh_cell[[paste0(enh, "_conflow")]] <- unlist(lapply(BC.obs, function(x) x[4]))
+    obs_enh_cell[[paste0(enh, "_confup")]] <- unlist(lapply(BC.obs, function(x) x[5]))
+
+    BC.sim=tapply(simul[, paste0(enh, "_pclen")], simul$nb_cell, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+    simul_enh_cell[[enh]] <- unlist(lapply(BC.sim, function(x) x[3]))
+    simul_enh_cell[[paste0(enh, "_conflow")]] <- unlist(lapply(BC.sim, function(x) x[4]))
+    simul_enh_cell[[paste0(enh, "_confup")]] <- unlist(lapply(BC.sim, function(x) x[5]))
   }
   
   enh_prop_nb_cell <- list(obs=obs_enh_cell, simul=simul_enh_cell)
