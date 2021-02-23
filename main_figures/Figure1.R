@@ -7,6 +7,8 @@ if(!"pathScripts"%in%objects){
   load=T
   prepare=T
   source("parameters.R") ## paths are defined based on the user name
+
+  set.seed(19)
 }
 
 ###########################################################################################
@@ -90,17 +92,18 @@ if(prepare){
 
   ## divide interactions based on distance, compute mean number of samples by distance class
 
-  mean_nb_celltypes_dist <- t(sapply(filtered_data, function(x)   tapply(x$nb_celltypes, as.factor(x$dist_class), mean, na.rm=T)))
+  print("computing bootstrap confidence intervals")
+
+  dist_cons_celltypes <- lapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-BCa(y, delta=NA, M=100, theta=mean); return(z)}))
+  
+  dist_conf_low_celltypes <- t(sapply(dist_cons_celltypes, function(x) unlist(lapply(x, function(y) y[4]))))
+  dist_conf_high_celltypes <- t(sapply(dist_cons_celltypes, function(x) unlist(lapply(x, function(y) y[5]))))
+
+  mean_nb_celltypes_dist <- t(sapply(dist_cons_celltypes, function(x)   unlist(lapply(x, function(y) y[3])))) 
+
   mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
 
-  print("computing bootstrap confidence intervals")
-  
-  dist_conf_low_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-BCa(y, delta=NA, M=100, theta=mean); return(z[4])})))
-
-  dist_conf_high_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-BCa(y, delta=NA, M=100, theta=mean); return(z[5])})))
-
   print("done")
-
 
   
   # dendrogram based on the % of shared interactions between samples, observed-simulated 
