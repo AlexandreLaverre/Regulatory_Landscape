@@ -58,6 +58,8 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
   ci.high.matrix=median.matrix  
   
   for(dist in distances){
+    values <- c()
+    groups <- c()
     for(class in contact.classes){
 
       this.genes=regland$gene[which(regland[,paste(feature, dist, sep=".")] == class)]
@@ -67,7 +69,13 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
       median.matrix[dist, class]=median(expdata[this.genes],na.rm=T)
       ci.low.matrix[dist, class]=ci[1]
       ci.high.matrix[dist, class]=ci[2]
+      
+      values <- c(values, expdata[this.genes])
+      groups <- c(groups, rep(class, length(expdata[this.genes])))
     }
+    
+    pval = kruskal.test(values, groups)$p.value
+    print(paste0("Kruskal-Wallis test : ", ylab, " according to ", feature, " for ", dist, " contacts; p-val:", pval))
   }
   
   ## compute ylim on all values
@@ -126,7 +134,7 @@ selected.distances=c("all", "shortrange", "longrange")
 
 ################################################################################################################################
 
-pdf(file=paste(pathFigures, "Figure6.pdf", sep=""), width = 6.85,  height=7)
+#pdf(file=paste(pathFigures, "Figure6.pdf", sep=""), width = 6.85,  height=7)
 
 m=matrix(rep(NA,2*9), nrow=2)
 m[1,]=c(rep(c(1,2,3), each=3))
@@ -189,7 +197,7 @@ legend("topleft", col=c(col.distances[1], "white", col.distances[2], "white", co
 
 ################################################################################################################################
 
-dev.off()
+#dev.off()
 
 ################################################################################################################################
 ################################################################################################################################

@@ -52,7 +52,9 @@ plot.expdiv.regdiv <- function(regland, featurecontact, cells,  expdata, feature
   
   for(cell in cells){
     this.regland=regland[[cell]]
-
+    values <- c()
+    groups <- c()
+    
     for(class in contact.classes){
       this.genes=this.regland$gene[which(this.regland[, featurecontact] == class)]
       b=boxplot(expdata[this.genes, paste(cell, featureexp, sep="_")], plot=FALSE)
@@ -61,7 +63,13 @@ plot.expdiv.regdiv <- function(regland, featurecontact, cells,  expdata, feature
       median.matrix[cell, class]=median(expdata[this.genes, paste(cell, featureexp, sep="_")],na.rm=T)
       ci.low.matrix[cell, class]=ci[1]
       ci.high.matrix[cell, class]=ci[2]
+      
+      values <- c(values, expdata[this.genes, paste(cell, featureexp, sep="_")])
+      groups <- c(groups, rep(class, length(expdata[this.genes, paste(cell, featureexp, sep="_")])))
     }
+    
+    pval = kruskal.test(values, groups)$p.value
+    print(paste0("Kruskal-Wallis test : ", ylab, " according to ", featurecontact, " for ", cell, " p-val:", pval))
   }
   
   ## compute ylim on all values
@@ -116,7 +124,7 @@ plot.expdiv.regdiv <- function(regland, featurecontact, cells,  expdata, feature
 ################################################################################################################################
 ################################################################################################################################
 
-pdf(paste(pathFigures, "/SupplementaryFigure5.pdf", sep=""), width=6.85, height=6)
+#pdf(paste(pathFigures, "/SupplementaryFigure5.pdf", sep=""), width=6.85, height=6)
 
 m=matrix(rep(NA,2*9), nrow=2)
 m[1,]=c(rep(c(1,2,3), each=3))
@@ -170,7 +178,7 @@ legend("topleft", bg="white", box.col="white", legend=c("B lymphocytes", "", "em
        
 ################################################################################################################################
 
-dev.off()
+#dev.off()
 
 ################################################################################################################################
 
