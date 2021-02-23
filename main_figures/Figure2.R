@@ -72,6 +72,7 @@ for (x in seq(1,length(allxpos)-1, by=2)){
 
 
 mtext("a", side=3, line=1.45, at=-1.3, font=2, cex=1.2)
+print(paste("Restriction fragment length covered by ENCODE enhancers:", round(m.prop[1,1], 2), "% in PCHi-C;", round(m.prop[2,1], 2), "% in simulation"))
 
 ###########################################################################################################################
 ##########################  Fig2-B - Enhancer proportion according to distance ############################################
