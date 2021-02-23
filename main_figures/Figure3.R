@@ -9,6 +9,8 @@ if(!"pathFigures"%in%objects){
  library(ape)
  library(vioplot)
 
+ set.seed(19)
+ 
  load=T
  prepare=T
 }
@@ -243,27 +245,43 @@ for(type in c("restriction fragments", "enhancers")){
     data.sim=align_enhancer_sim
   }
   
-  mean.val.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) mean(x, na.rm=T))
-  ci.low.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
+  ## mean.val.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) mean(x, na.rm=T))
+  ## ci.low.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
+  ## ci.high.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
   
-  mean.val.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) mean(x, na.rm=T))
-  ci.low.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) t.test(x)[["conf.int"]][2])
+  ## mean.val.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) mean(x, na.rm=T))
+  ## ci.low.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) t.test(x)[["conf.int"]][1])
+  ## ci.high.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) t.test(x)[["conf.int"]][2])
 
- ylim=range(c(ci.low.obs, ci.high.obs, ci.low.sim, ci.high.sim))
+  print("computing confidence intervals")
+  
+  print("observed")
+  BC.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.val.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  ci.low.obs=unlist(lapply(BC.obs, function(x) x[4]))
+  ci.high.obs=unlist(lapply(BC.obs, function(x) x[5]))
 
- dy=diff(ylim)/20
- ylim=ylim+c(-dy, dy)
+  print("simulated")
+  BC.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.val.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  ci.low.sim=unlist(lapply(BC.sim, function(x) x[4]))
+  ci.high.sim=unlist(lapply(BC.sim, function(x) x[5]))
 
- plot(1, type="n", xlab="", ylab="", axes=F, main="", xlim=xlim, ylim=ylim, xaxs="i")
-
- points(xpos, mean.val.obs, col=dataset.colors["Original"], pch=20)
- segments(xpos, ci.low.obs, xpos, ci.high.obs, col=dataset.colors["Original"])
-
- points(xpos, mean.val.sim, col=dataset.colors["Simulated"], pch=20)
- segments(xpos, ci.low.sim, xpos, ci.high.sim, col=dataset.colors["Simulated"])
-
+  print("done")
+  
+  ylim=range(c(ci.low.obs, ci.high.obs, ci.low.sim, ci.high.sim))
+  
+  dy=diff(ylim)/20
+  ylim=ylim+c(-dy, dy)
+  
+  plot(1, type="n", xlab="", ylab="", axes=F, main="", xlim=xlim, ylim=ylim, xaxs="i")
+  
+  points(xpos, mean.val.obs, col=dataset.colors["Original"], pch=20)
+  segments(xpos, ci.low.obs, xpos, ci.high.obs, col=dataset.colors["Original"])
+  
+  points(xpos, mean.val.sim, col=dataset.colors["Simulated"], pch=20)
+  segments(xpos, ci.low.sim, xpos, ci.high.sim, col=dataset.colors["Simulated"])
+  
   axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
 
   if(type=="enhancers"){
@@ -321,23 +339,56 @@ for(type in c("restriction fragments", "enhancers")){
   }
 
   ## all 
-  mean.val.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) mean(x, na.rm=T))
-  ci.low.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) t.test(x)[["conf.int"]][2])
+  ## mean.val.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) mean(x, na.rm=T))
+  ## ci.low.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) t.test(x)[["conf.int"]][1])
+  ## ci.high.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) t.test(x)[["conf.int"]][2])
 
-  mean.val.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) mean(x, na.rm=T))
-  ci.low.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) t.test(x)[["conf.int"]][2])
+  ## mean.val.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) mean(x, na.rm=T))
+  ## ci.low.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) t.test(x)[["conf.int"]][1])
+  ## ci.high.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) t.test(x)[["conf.int"]][2])
+
+  
+  ## mean.val.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs[which(data.obs$pcrepeat==0), "class_genes_500kb"], function(x) mean(x, na.rm=T))
+  ## ci.low.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs[which(data.obs$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][1])
+  ## ci.high.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs[which(data.obs$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][2])
+
+  ## mean.val.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim[which(data.sim$pcrepeat==0), "class_genes_500kb"], function(x) mean(x, na.rm=T))
+  ## ci.low.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim[which(data.sim$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][1])
+  ## ci.high.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim[which(data.sim$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][2])
+
+  print("computing confidence intervals")
+  
+  print("observed")
+  BC.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.val.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  ci.low.obs=unlist(lapply(BC.obs, function(x) x[4]))
+  ci.high.obs=unlist(lapply(BC.obs, function(x) x[5]))
+
+  print("simulated")
+  BC.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.val.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  ci.low.sim=unlist(lapply(BC.sim, function(x) x[4]))
+  ci.high.sim=unlist(lapply(BC.sim, function(x) x[5]))
 
   ## no repeats
-  
-  mean.val.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs[which(data.obs$pcrepeat==0), "class_genes_500kb"], function(x) mean(x, na.rm=T))
-  ci.low.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs[which(data.obs$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][1])
-  ci.high.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs[which(data.obs$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][2])
 
-  mean.val.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim[which(data.sim$pcrepeat==0), "class_genes_500kb"], function(x) mean(x, na.rm=T))
-  ci.low.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim[which(data.sim$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][1])
-  ci.high.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim[which(data.sim$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][2])
+  print("observed no repeats")
+
+  BC.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs$class_genes_500kb[which(data.obs$pcrepeat==0)], function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.val.obs.norep=unlist(lapply(BC.obs.norep, function(x) x[3]))
+  ci.low.obs.norep=unlist(lapply(BC.obs.norep, function(x) x[4]))
+  ci.high.obs.norep=unlist(lapply(BC.obs.norep, function(x) x[5]))
+  
+  print("simulated no repeats")
+  
+  BC.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim$class_genes_500kb[which(data.sim$pcrepeat==0)], function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.val.sim.norep=unlist(lapply(BC.sim.norep, function(x) x[3]))
+  ci.low.sim.norep=unlist(lapply(BC.sim.norep, function(x) x[4]))
+  ci.high.sim.norep=unlist(lapply(BC.sim.norep, function(x) x[5]))
+
+  
+  print("done")
+  
 
   ## plot
   
