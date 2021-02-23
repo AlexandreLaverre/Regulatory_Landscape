@@ -1,13 +1,13 @@
 #########################################################################################################################
 
+source("parameters.R")
+
 library(data.table)
 library(bootBCa, lib=pathRlibs)
 
 set.seed(19)
 
 options(stringsAsFactors = FALSE)
-
-source("parameters.R")
 
 load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
 
