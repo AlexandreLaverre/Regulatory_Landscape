@@ -68,7 +68,7 @@ if(prepare){
 
 ##############################################################################
 
-pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=4.5)
+#pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=4.5)
 
 m=matrix(rep(NA, 10*20), nrow=10)
 
@@ -224,6 +224,7 @@ segments(1:nbclass, cons.dist.conf.low[[enh]]["obs",], 1:nbclass, cons.dist.conf
 points(cons.dist[[enh]]["sim",],pch=20, col=dataset.colors["Simulated"])
 segments(1:nbclass, cons.dist.conf.low[[enh]]["sim",], 1:nbclass, cons.dist.conf.high[[enh]]["sim",], col=dataset.colors["Simulated"])
 
+   
 ## axis, legend & plot label
 axis(side=1, at=c(1,10,20,30,40), labels=class_leg, mgp=c(3, 0.65, 0))
 mtext("distance from promoter region (Mb)", side=1, line=2, cex=mtext.CEX)
@@ -236,9 +237,17 @@ legend("topright", col=dataset.colors, legend = c("PCHi-C data", "simulated data
 
 mtext("c", side=3, line=0.65, at=-7.5, font=2, cex=1.05)
 
+## Message
+dist.conserv.simul.0 = names(which(cons.dist[[enh]]["sim",] == 0)[1])
+obs.conserv.simul.0 = cons.dist[[enh]]["obs", dist.conserv.simul.0]
+
+print(paste0("Above ", dist.conserv.simul.0, " Mb, there is virtually no contact conservation for simulated data"))
+print(paste0("While for PCHi-C data the contact conservation is around ",  round(obs.conserv.simul.0, 2), "%"))
+
+
 ##############################################################################
 
-dev.off()
+#dev.off()
 
 ##############################################################################
 ##############################################################################
