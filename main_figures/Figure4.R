@@ -62,7 +62,7 @@ if(prepare){
     ## chi-squared test
     mat <- matrix(c(nb_cons_synt_obs, nb_cons_synt_simul, nb_tot_synt_obs-nb_cons_synt_obs, nb_tot_synt_simul-nb_cons_synt_simul), nrow=2)
     pval <-chisq.test(mat)$p.value
-
+    
     pvalues.alldist <- c(pvalues.alldist, pval)
 
     prop.obs.alldist <- c(prop.obs.alldist, 100*nb_cons_synt_obs/nb_tot_synt_obs)
@@ -76,6 +76,11 @@ if(prepare){
 
     ci.low.sim.alldist <- c(ci.low.sim.alldist, 100*prop.test.simul$conf.int[1])
     ci.high.sim.alldist <- c(ci.high.sim.alldist, 100*prop.test.simul$conf.int[2])
+    
+    print(paste0(ref_sp, " to ", sp))
+    print(paste0("PCHi-C promoters-ENCODE pairs maintained in synteny : ", round(100*nb_cons_synt_obs/nb_tot_synt_obs,2), "%"))
+    print(paste0("Simulated promoters-ENCODE pairs maintained in synteny : ", round(100*nb_cons_synt_simul/nb_tot_synt_simul,2), "%"))
+    print(paste0("Wilcoxon test p-value: ", pval))
   }
   
   names(prop.obs.alldist) <- species
@@ -88,6 +93,7 @@ if(prepare){
   names(ci.high.sim.alldist) <- species
 
   names(pvalues.alldist) <- species
+
   
   prepare=FALSE
 }
