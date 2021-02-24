@@ -2,6 +2,10 @@
 
 source("../main_figures/parameters.R")
 
+set.seed(19)
+
+library(bootBCa, lib=pathRlibs)
+
 #########################################################################
 
 for(ref in c("human", "mouse")){
@@ -42,28 +46,38 @@ for(ref in c("human", "mouse")){
 
   frag.stats.obs$pcrepeat=100*frag.stats.obs$repeat_bp/frag.stats.obs$length
   frag.stats.sim$pcrepeat=100*frag.stats.sim$repeat_bp/frag.stats.sim$length
-
-  mean.rep.frag.obs=tapply(frag.stats.obs$pcrepeat, class.frag.nbgenes.obs, mean, na.rm=T)
-  ci.rep.frag.low.obs=tapply(frag.stats.obs$pcrepeat, class.frag.nbgenes.obs, function(x) t.test(x)[["conf.int"]][1])
-  ci.rep.frag.high.obs=tapply(frag.stats.obs$pcrepeat, class.frag.nbgenes.obs, function(x) t.test(x)[["conf.int"]][2])
   
-  mean.rep.frag.sim=tapply(frag.stats.sim$pcrepeat, class.frag.nbgenes.sim, mean, na.rm=T)
-  ci.rep.frag.low.sim=tapply(frag.stats.sim$pcrepeat, class.frag.nbgenes.sim, function(x) t.test(x)[["conf.int"]][1])
-  ci.rep.frag.high.sim=tapply(frag.stats.sim$pcrepeat, class.frag.nbgenes.sim, function(x) t.test(x)[["conf.int"]][2])
+  print("computing confidence intervals, repeats vs nb genes, fragments")
+  
+  BC.obs=tapply(frag.stats.obs$pcrepeat,  class.frag.nbgenes.obs, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.rep.frag.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  ci.rep.frag.low.obs=unlist(lapply(BC.obs, function(x) x[4]))
+  ci.rep.frag.high.obs=unlist(lapply(BC.obs, function(x) x[5]))
+
+  BC.sim=tapply(frag.stats.sim$pcrepeat,  class.frag.nbgenes.sim, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.rep.frag.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  ci.rep.frag.low.sim=unlist(lapply(BC.sim, function(x) x[4]))
+  ci.rep.frag.high.sim=unlist(lapply(BC.sim, function(x) x[5]))
+
+  print("done")
 
   ## conservation as a function of the proportion of repeats
 
   frag.stats.obs$repeat_class=cut(frag.stats.obs$pcrepeat, breaks=seq(from=0, to=100, length=6), include.lowest=T)
   frag.stats.sim$repeat_class=cut(frag.stats.sim$pcrepeat, breaks=seq(from=0, to=100, length=6), include.lowest=T)
 
-  mean.cons.repclass.frag.obs=tapply(frag.stats.obs$pcungapped,  frag.stats.obs$repeat_class, mean, na.rm=T)
-  ci.low.cons.repclass.frag.obs=tapply(frag.stats.obs$pcungapped,  frag.stats.obs$repeat_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.cons.repclass.frag.obs=tapply(frag.stats.obs$pcungapped,  frag.stats.obs$repeat_class, function(x) t.test(x)[["conf.int"]][2])
+  print("computing confidence intervals, conservation vs. pc repeats, fragments")
+
+  BC.obs=tapply(frag.stats.obs$pcungapped, frag.stats.obs$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.cons.repclass.frag.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  ci.low.cons.repclass.frag.obs=unlist(lapply(BC.obs, function(x) x[4]))
+  ci.high.cons.repclass.frag.obs=unlist(lapply(BC.obs, function(x) x[5]))
   
-  mean.cons.repclass.frag.sim=tapply(frag.stats.sim$pcungapped,  frag.stats.sim$repeat_class, mean, na.rm=T)
-  ci.low.cons.repclass.frag.sim=tapply(frag.stats.sim$pcungapped,  frag.stats.sim$repeat_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.cons.repclass.frag.sim=tapply(frag.stats.sim$pcungapped,  frag.stats.sim$repeat_class, function(x) t.test(x)[["conf.int"]][2])
-    
+  BC.sim=tapply(frag.stats.sim$pcungapped, frag.stats.sim$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.cons.repclass.frag.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  ci.low.cons.repclass.frag.sim=unlist(lapply(BC.sim, function(x) x[4]))
+  ci.high.cons.repclass.frag.sim=unlist(lapply(BC.sim, function(x) x[5]))
+  print("done")
   
   ## enhancers
   
@@ -75,29 +89,40 @@ for(ref in c("human", "mouse")){
 
   enh.stats.obs$pcrepeat=100*enh.stats.obs$repeat_bp/enh.stats.obs$length
   enh.stats.sim$pcrepeat=100*enh.stats.sim$repeat_bp/enh.stats.sim$length
-
-  mean.rep.enh.obs=tapply(enh.stats.obs$pcrepeat, class.enh.nbgenes.obs, mean, na.rm=T)
-  ci.rep.enh.low.obs=tapply(enh.stats.obs$pcrepeat, class.enh.nbgenes.obs, function(x) t.test(x)[["conf.int"]][1])
-  ci.rep.enh.high.obs=tapply(enh.stats.obs$pcrepeat, class.enh.nbgenes.obs, function(x) t.test(x)[["conf.int"]][2])
-
   
-  mean.rep.enh.sim=tapply(enh.stats.sim$pcrepeat, class.enh.nbgenes.sim, mean, na.rm=T)
-  ci.rep.enh.low.sim=tapply(enh.stats.sim$pcrepeat, class.enh.nbgenes.sim, function(x) t.test(x)[["conf.int"]][1])
-  ci.rep.enh.high.sim=tapply(enh.stats.sim$pcrepeat, class.enh.nbgenes.sim, function(x) t.test(x)[["conf.int"]][2])
+  print("computing confidence intervals, pc repeats vs. genes, enhancers")
+  
+  BC.obs=tapply(enh.stats.obs$pcrepeat,  class.enh.nbgenes.obs, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.rep.enh.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  ci.rep.enh.low.obs=unlist(lapply(BC.obs, function(x) x[4]))
+  ci.rep.enh.high.obs=unlist(lapply(BC.obs, function(x) x[5]))
+  
+  BC.sim=tapply(enh.stats.sim$pcrepeat,  class.enh.nbgenes.sim, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.rep.enh.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  ci.rep.enh.low.sim=unlist(lapply(BC.sim, function(x) x[4]))
+  ci.rep.enh.high.sim=unlist(lapply(BC.sim, function(x) x[5]))
+
+  print("done")
 
   ## conservation as a function of the proportion of repeats
   
   enh.stats.obs$repeat_class=cut(enh.stats.obs$pcrepeat, breaks=seq(from=0, to=100, length=6), include.lowest=T)
   enh.stats.sim$repeat_class=cut(enh.stats.sim$pcrepeat, breaks=seq(from=0, to=100, length=6), include.lowest=T)
 
-  mean.cons.repclass.enh.obs=tapply(enh.stats.obs$pcungapped,  enh.stats.obs$repeat_class, mean, na.rm=T)
-  ci.low.cons.repclass.enh.obs=tapply(enh.stats.obs$pcungapped,  enh.stats.obs$repeat_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.cons.repclass.enh.obs=tapply(enh.stats.obs$pcungapped,  enh.stats.obs$repeat_class, function(x) t.test(x)[["conf.int"]][2])
+  print("computing confidence intervals, conservation vs. pc repeats, fragments")
   
-  mean.cons.repclass.enh.sim=tapply(enh.stats.sim$pcungapped,  enh.stats.sim$repeat_class, mean, na.rm=T)
-  ci.low.cons.repclass.enh.sim=tapply(enh.stats.sim$pcungapped,  enh.stats.sim$repeat_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.cons.repclass.enh.sim=tapply(enh.stats.sim$pcungapped,  enh.stats.sim$repeat_class, function(x) t.test(x)[["conf.int"]][2])
+  BC.obs=tapply(enh.stats.obs$pcungapped,  enh.stats.obs$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.cons.repclass.enh.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  ci.low.cons.repclass.enh.obs=unlist(lapply(BC.obs, function(x) x[4]))
+  ci.high.cons.repclass.enh.obs=unlist(lapply(BC.obs, function(x) x[5]))
   
+  BC.sim=tapply(enh.stats.sim$pcungapped,  enh.stats.sim$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.cons.repclass.enh.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  ci.low.cons.repclass.enh.sim=unlist(lapply(BC.sim, function(x) x[4]))
+  ci.high.cons.repclass.enh.sim=unlist(lapply(BC.sim, function(x) x[5]))
+
+  print("done")
+ 
 ###########################################################################
   
 ## 1 column width 85 mm = 3.34 in
