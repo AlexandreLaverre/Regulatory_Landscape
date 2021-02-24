@@ -15,10 +15,29 @@ source("parameters.R") ## paths are defined based on the user name
 if(load){
   ref_sp="human"
   
-  load(paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp,".RData", sep=""))
   load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.",ref_sp,".RData", sep=""))
   
   enhancers = enhancer.datasets[[ref_sp]]
+
+  all.enh.prop=data.frame(id=character(0), data=numeric(0), conf_up=numeric(0), conf_low=numeric(0))
+  all.enh.prop.nbcell=list("obs"=list(), "simul"=list())
+  all.enh.prop.dist=list("obs"=list(), "simul"=list())
+  
+  for(enh in enhancers){
+    load(paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp,".",enh,".RData", sep=""))
+
+    all.enh.prop=rbind(all.enh.prop, enh_prop, stringsAsFactors=F)
+    
+    all.enh.prop.nbcell[["obs"]]=c(all.enh.prop.nbcell[["obs"]], enh_prop_nb_cell[["obs"]])
+    all.enh.prop.nbcell[["simul"]]=c(all.enh.prop.nbcell[["simul"]], enh_prop_nb_cell[["simul"]])
+
+    all.enh.prop.dist[["obs"]]=c(all.enh.prop.dist[["obs"]], enh_prop_dist[["obs"]])
+    all.enh.prop.dist[["simul"]]=c(all.enh.prop.dist[["simul"]], enh_prop_dist[["simul"]])
+  }
+
+  enh_prop=all.enh.prop
+  enh_prop_dist=all.enh.prop.dist
+  enh_prop_nb_cell=all.enh.prop.nbcell
 }
 
 #################################################################################################################
