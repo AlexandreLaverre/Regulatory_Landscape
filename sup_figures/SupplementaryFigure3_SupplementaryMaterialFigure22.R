@@ -74,14 +74,14 @@ for(ref in c("human", "mouse")){
 
   BC.obs=tapply(frag.stats.obs$pcungapped, frag.stats.obs$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.cons.repclass.frag.obs=unlist(lapply(BC.obs, function(x) x[3]))
-  names(means.cons.repclass.frag.obs)=levels(frag.stats.obs$repeat_class)
+  names(mean.cons.repclass.frag.obs)=levels(frag.stats.obs$repeat_class)
   
   ci.low.cons.repclass.frag.obs=unlist(lapply(BC.obs, function(x) x[4]))
   ci.high.cons.repclass.frag.obs=unlist(lapply(BC.obs, function(x) x[5]))
   
   BC.sim=tapply(frag.stats.sim$pcungapped, frag.stats.sim$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.cons.repclass.frag.sim=unlist(lapply(BC.sim, function(x) x[3]))
-  names(means.cons.repclass.frag.sim)=levels(frag.stats.sim$repeat_class)
+  names(mean.cons.repclass.frag.sim)=levels(frag.stats.sim$repeat_class)
   
   ci.low.cons.repclass.frag.sim=unlist(lapply(BC.sim, function(x) x[4]))
   ci.high.cons.repclass.frag.sim=unlist(lapply(BC.sim, function(x) x[5]))
