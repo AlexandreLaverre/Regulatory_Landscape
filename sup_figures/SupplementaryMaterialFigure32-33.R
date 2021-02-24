@@ -80,19 +80,21 @@ if(load){
       
       enh_align = enh_align[common,]
       enh_align$class_score = enh_obs[common,]$class_score
-      
-      cons.seq[[sp]][[enh]] <- tapply(100*enh_align[[tg]], as.factor(enh_align$class_score), function(x) mean(x, na.rm=T))
-      cons.seq.conf.low[[sp]][[enh]] <- tapply(100*enh_align[[tg]], as.factor(enh_align$class_score), function(x) t.test(x)[["conf.int"]][1])
-      cons.seq.conf.high[[sp]][[enh]] <- tapply(100*enh_align[[tg]], as.factor(enh_align$class_score), function(x) t.test(x)[["conf.int"]][2])
+
+      BC.seq=tapply(100*enh_align[[tg]], as.factor(enh_align$class_score), function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+      cons.seq[[sp]][[enh]] <- unlist(lapply(BC.seq, function(x) x[3]))
+      cons.seq.conf.low[[sp]][[enh]] <- unlist(lapply(BC.seq, function(x) x[4]))
+      cons.seq.conf.high[[sp]][[enh]] <-unlist(lapply(BC.seq, function(x) x[5]))
       
       ## Calculate relation with distance to promoter
       contact_obs <- contact.conservation[[paste0(sp, "2", tg)]][[enh]][["obs"]] 
       
       contact_obs$class_dist <- cut(contact_obs$origin_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
-      
-      chicago.dist[[sp]][[enh]] <- tapply(contact_obs$origin_med_score, as.factor(contact_obs$class_dist), function(x) mean(x, na.rm=T))
-      chicago.dist.conf.low[[sp]][[enh]] <- tapply(contact_obs$origin_med_score, as.factor(contact_obs$class_dist), function(x) t.test(x)[["conf.int"]][1])
-      chicago.dist.conf.high[[sp]][[enh]] <- tapply(contact_obs$origin_med_score, as.factor(contact_obs$class_dist), function(x) t.test(x)[["conf.int"]][2])
+
+      BC.chic=tapply(contact_obs$origin_med_score, as.factor(contact_obs$class_dist), function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+      chicago.dist[[sp]][[enh]] <- unlist(lapply(BC.chic, function(x) x[3]))
+      chicago.dist.conf.low[[sp]][[enh]] <- unlist(lapply(BC.chic, function(x) x[4]))
+      chicago.dist.conf.high[[sp]][[enh]] <-unlist(lapply(BC.chic, function(x) x[5]))
       
       ## Calculate contact conservation proportion
       contact_obs$cons=apply(contact_obs[,sampleinfo.tg$Sample.ID], 1, function(x) any(x>0))
