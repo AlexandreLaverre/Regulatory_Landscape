@@ -13,7 +13,7 @@ load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
 
 #########################################################################################################################
 
-## for(ref_sp in c("human", "mouse")){
+for(ref_sp in c("human", "mouse")){
   
   enhancers = enhancer.datasets[[ref_sp]]
   
@@ -23,7 +23,7 @@ load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
   obs$dist_class <-cut(obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
   simul$dist_class <- cut(simul$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
     
-  ## for(enh in enhancers){
+   for(enh in enhancers){
     print(enh)
     
     ## compute percentage of length covered by enhancers
@@ -113,7 +113,7 @@ load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
     save(enh_prop, enh_prop_nb_cell, enh_prop_dist, file = paste(pathFigures, "RData/data.enhancer.coverage.", ref_sp, ".",enh,".RData", sep=""))
     
     ############################################################################################################## 
- ##  }
-## }
+  }
+}
 
 ############################################################################################################## 
