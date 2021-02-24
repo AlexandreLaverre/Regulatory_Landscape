@@ -76,7 +76,18 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
     
     pval = kruskal.test(values, groups)$p.value
     print(paste0("Kruskal-Wallis test : ", ylab, " according to ", feature, " for ", dist, " contacts; p-val:", pval))
+
+    ## compare just first and last class
+
+    firstclass=contact.classes[1]
+    lastclass=contact.classes[length(contact.classes)]
+
+    extpval=kruskal.test(values[which(groups%in%c(firstclass, lastclass))], groups[which(groups%in%c(firstclass, lastclass))])$p.value
+
+    print(paste0("Kruskal-Wallis test, first class vs. last class : ", ylab, " according to ", feature, " for ", dist, " contacts; p-val:", pval))
   }
+
+  
   
   ## compute ylim on all values
   
