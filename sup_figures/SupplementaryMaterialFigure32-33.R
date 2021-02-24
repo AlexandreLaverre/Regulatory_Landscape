@@ -14,6 +14,10 @@ if(!"pathScripts"%in%objects){
   load=T
   prepare=T
   source("../main_figures/parameters.R")
+
+  library(bootBCa, lib=pathRlibs)
+  
+  set.seed(19)
 }
 
 ##################################################################

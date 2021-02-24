@@ -5,6 +5,10 @@ if(!"pathScripts"%in%objects){
   load=T
   prepare=T
   source("../main_figures/parameters.R") ## paths are defined based on the user name
+  
+  library(bootBCa, lib=pathRlibs)
+  
+  set.seed(19)
 }
 
 ###########################################################################################
@@ -79,13 +83,14 @@ if(prepare){
 
   ## divide interactions based on distance, compute mean number of samples by distance class
 
-  mean_nb_celltypes_dist <- t(sapply(filtered_data, function(x)   tapply(x$nb_celltypes, as.factor(x$dist_class), mean, na.rm=T)))
-  mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
   
-  dist_conf_low_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][1])})))
-  dist_conf_high_celltypes <- t(sapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-t.test(y); return(z[["conf.int"]][2])})))
+  mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
 
-   
+  mean_nb_celltypes_dist <- t(sapply(dist_cons_celltypes, function(x)   unlist(lapply(x, function(y) y[3])))) 
+  dist_conf_low_celltypes <- t(sapply(dist_cons_celltypes, function(x) unlist(lapply(x, function(y) y[4]))))
+  dist_conf_high_celltypes <- t(sapply(dist_cons_celltypes, function(x) unlist(lapply(x, function(y) y[5]))))
+
+  
   ## we finish preparing the data
   prepare=FALSE
 }
