@@ -8,6 +8,17 @@ if(!"pathScripts"%in%objects){
   prepare=T
   source("../main_figures/parameters.R")
   
+ 
+}
+
+
+#################################################################################################################
+
+if(load){
+  ref_sp="mouse"
+   
+  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.",ref_sp,".RData", sep=""))
+  
   enhancers = enhancer.datasets[[ref_sp]]
 
   all.enh.prop=data.frame(id=character(0), data=numeric(0), conf_up=numeric(0), conf_low=numeric(0))
@@ -29,18 +40,6 @@ if(!"pathScripts"%in%objects){
   enh_prop=all.enh.prop
   enh_prop_dist=all.enh.prop.dist
   enh_prop_nb_cell=all.enh.prop.nbcell
-}
-
-
-#################################################################################################################
-
-if(load){
-  ref_sp="mouse"
-  
- 
-  load(paste(pathFigures, "RData/data.promoter.enhancer.correlation.",ref_sp,".RData", sep=""))
-  
-  enhancers = enhancer.datasets[[ref_sp]]
 }
 
 #################################################################################################################

@@ -22,7 +22,7 @@ nb=1
 
 for (sp in c("human", "mouse")){
 
-  enhancers = enhancer.datasets[[ref_sp]]
+  enhancers = enhancer.datasets[[sp]]
   
   all.enh.prop=data.frame(id=character(0), data=numeric(0), conf_up=numeric(0), conf_low=numeric(0))
   all.enh.prop.nbcell=list("obs"=list(), "simul"=list())
