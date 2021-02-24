@@ -61,19 +61,11 @@ for(ref_sp in c("human", "mouse")){
       obs$dist_class <-cut(obs$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
       simul$dist_class <- cut(simul$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
 
-      ## obs_correl_activity_dist[[paste0(enh)]] <- tapply(obs$SpearmanCorrelation, obs$dist_class, function(x) mean(x, na.rm=T))
-      ## obs_correl_activity_dist[[paste0(enh, "_conflow")]] <- tapply(obs$SpearmanCorrelation, obs$dist_class, function(x) t.test(x, na.rm=T)[["conf.int"]][1])
-      ## obs_correl_activity_dist[[paste0(enh, "_confup")]] <- tapply(obs$SpearmanCorrelation, obs$dist_class, function(x) t.test(x, na.rm=T)[["conf.int"]][2])
-
       BC.obs=tapply(obs$SpearmanCorrelation, obs$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
       obs_correl_activity_dist[[enh]]=unlist(lapply(BC.obs, function(x) x[3]))
       obs_correl_activity_dist[[paste0(enh, "_conflow")]]=unlist(lapply(BC.obs, function(x) x[4]))
       obs_correl_activity_dist[[paste0(enh, "_confup")]]=unlist(lapply(BC.obs, function(x) x[5]))
-        
-      ## simul_correl_activity_dist[[paste0(enh)]] <- tapply(simul$SpearmanCorrelation, simul$dist_class, function(x) mean(x, na.rm=T))
-      ## simul_correl_activity_dist[[paste0(enh, "_conflow")]] <- tapply(simul$SpearmanCorrelation, simul$dist_class, function(x) t.test(x, na.rm=T)[["conf.int"]][1])
-      ## simul_correl_activity_dist[[paste0(enh, "_confup")]] <- tapply(simul$SpearmanCorrelation, simul$dist_class, function(x) t.test(x, na.rm=T)[["conf.int"]][2])
-      
+       
       BC.simul=tapply(simul$SpearmanCorrelation, simul$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
       simul_correl_activity_dist[[enh]]=unlist(lapply(BC.simul, function(x) x[3]))
       simul_correl_activity_dist[[paste0(enh, "_conflow")]]=unlist(lapply(BC.simul, function(x) x[4]))

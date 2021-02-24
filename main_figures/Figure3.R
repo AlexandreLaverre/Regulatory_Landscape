@@ -246,14 +246,6 @@ for(type in c("restriction fragments", "enhancers")){
     data.sim=align_enhancer_sim
   }
   
-  ## mean.val.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) mean(x, na.rm=T))
-  ## ci.low.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
-  ## ci.high.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
-  
-  ## mean.val.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) mean(x, na.rm=T))
-  ## ci.low.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) t.test(x)[["conf.int"]][1])
-  ## ci.high.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) t.test(x)[["conf.int"]][2])
-
   print("computing confidence intervals")
   
   print("observed")
@@ -340,23 +332,7 @@ for(type in c("restriction fragments", "enhancers")){
   }
 
   ## all 
-  ## mean.val.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) mean(x, na.rm=T))
-  ## ci.low.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) t.test(x)[["conf.int"]][1])
-  ## ci.high.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) t.test(x)[["conf.int"]][2])
-
-  ## mean.val.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) mean(x, na.rm=T))
-  ## ci.low.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) t.test(x)[["conf.int"]][1])
-  ## ci.high.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) t.test(x)[["conf.int"]][2])
-
   
-  ## mean.val.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs[which(data.obs$pcrepeat==0), "class_genes_500kb"], function(x) mean(x, na.rm=T))
-  ## ci.low.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs[which(data.obs$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][1])
-  ## ci.high.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs[which(data.obs$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][2])
-
-  ## mean.val.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim[which(data.sim$pcrepeat==0), "class_genes_500kb"], function(x) mean(x, na.rm=T))
-  ## ci.low.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim[which(data.sim$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][1])
-  ## ci.high.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim[which(data.sim$pcrepeat==0), "class_genes_500kb"], function(x) t.test(x)[["conf.int"]][2])
-
   print("computing confidence intervals")
   
   print("observed")

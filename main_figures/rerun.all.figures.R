@@ -1,14 +1,14 @@
 
 ## all scripts that generate figures
 
-fig.scripts=c("Figure1.R", "Figure2.R", "Figure3.R", "Figure4.R", "Figure5.R", "Figure6.R")
+fig.scripts.fast=c( "Figure2.R", "Figure4.R", "Figure5.R", "Figure6.R")
 
 ############################################################################
 
-for(file in fig.scripts){
+for(file in fig.scripts.fast){
   ## cleanup
   objects=ls()
-  objects=setdiff(objects, c("fig.scripts", "file"))
+  objects=setdiff(objects, c("fig.scripts.fast", "file"))
   rm(list=objects)
 
   ## run the script
@@ -18,4 +18,25 @@ for(file in fig.scripts){
 
 ############################################################################
 
+fig.scripts.slow=c("Figure1.R", "Figure3.R")
+
+print("Do you want to redo figures 1 and 3 (BCa computations)?")
+
+consent=scan(what=character(), nmax=1)
+
+if(consent=="yes"){
+
+  for(file in fig.scripts.slow){
+    ## cleanup
+    objects=ls()
+    objects=setdiff(objects, c("fig.scripts.slow", "file"))
+    rm(list=objects)
+    
+    ## run the script
+    print(file)
+    source(file)
+  }
+}
+
+############################################################################
 
