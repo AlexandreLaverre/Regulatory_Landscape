@@ -85,6 +85,8 @@ if(load){
       enh_align = enh_align[common,]
       enh_align$class_score = enh_obs[common,]$class_score
 
+      print(paste("confidence intervals, class score", enh, sp, tg))
+
       BC.seq=tapply(100*enh_align[[tg]], as.factor(enh_align$class_score), function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
       cons.seq[[sp]][[enh]] <- unlist(lapply(BC.seq, function(x) x[3]))
       cons.seq.conf.low[[sp]][[enh]] <- unlist(lapply(BC.seq, function(x) x[4]))
@@ -94,6 +96,8 @@ if(load){
       contact_obs <- contact.conservation[[paste0(sp, "2", tg)]][[enh]][["obs"]] 
       
       contact_obs$class_dist <- cut(contact_obs$origin_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
+
+      print(paste("confidence intervals, chicago score", enh, sp, tg))
 
       BC.chic=tapply(contact_obs$origin_med_score, as.factor(contact_obs$class_dist), function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
       chicago.dist[[sp]][[enh]] <- unlist(lapply(BC.chic, function(x) x[3]))
