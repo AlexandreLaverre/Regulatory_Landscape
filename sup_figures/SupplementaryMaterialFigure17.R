@@ -3,11 +3,12 @@
 objects=ls()
 
 if(!"pathFigures"%in%objects){
-
- source("../main_figures/parameters.R")
-
- load=T
- prepare=T
+  
+  source("../main_figures/parameters.R")
+  library(bootBCa, lib=pathRlibs)
+  
+  load=T
+  prepare=T
 }
 
 ##########################################################################
@@ -56,13 +57,21 @@ for(other_sp in target_species){
   class_leg <- c("0", "0.5", "1", "1.5", "2")
   xax=seq(from=0, to=max(xpos)+1, by=10)
   
-  mean.val.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) mean(x, na.rm=T))
-  ci.low.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
+  print("computing confidence intervals")
   
-  mean.val.simul=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) mean(x, na.rm=T))
-  ci.low.simul=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
-  ci.high.simul=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
+  print("observed")
+  BC.obs=tapply(100*frag_align_obs[, other_sp], frag_align_obs$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.val.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  ci.low.obs=unlist(lapply(BC.obs, function(x) x[4]))
+  ci.high.obs=unlist(lapply(BC.obs, function(x) x[5]))
+
+  print("simulated")
+  BC.sim=tapply(100*frag_align_simul[, other_sp], frag_align_simul$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+  mean.val.simul=unlist(lapply(BC.sim, function(x) x[3]))
+  ci.low.simul=unlist(lapply(BC.sim, function(x) x[4]))
+  ci.high.simul=unlist(lapply(BC.sim, function(x) x[5]))
+
+  print("done")
   
   ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul))
   
