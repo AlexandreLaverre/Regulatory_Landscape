@@ -7,6 +7,8 @@ if(!"pathFigures"%in%objects){
   source("../main_figures/parameters.R")
   library(bootBCa, lib=pathRlibs)
   
+  set.seed(19)
+  
   load=T
   prepare=T
 }
