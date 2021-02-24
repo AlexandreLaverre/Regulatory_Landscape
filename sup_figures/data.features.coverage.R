@@ -6,6 +6,10 @@ options(stringsAsFactors = FALSE)
 
 source("../main_figures/parameters.R")
 
+library(bootBCa, lib=pathRlibs)
+
+set.seed(19)
+
 load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
 load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
 
@@ -43,13 +47,18 @@ for(ref_sp in c("human", "mouse")){
   simul_feat_dist <- list()
   
   for (feat in features){
-    obs_feat_dist[[feat]] <- tapply(obs[, paste0(feat, "_pclen")], obs$dist_class, mean, na.rm=T)
-    obs_feat_dist[[paste0(feat, "_conflow")]] <- tapply(obs[, paste0(feat, "_pclen")], obs$dist_class, function(x) t.test(x)[["conf.int"]][1])
-    obs_feat_dist[[paste0(feat, "_confup")]] <- tapply(obs[, paste0(feat, "_pclen")], obs$dist_class, function(x) t.test(x)[["conf.int"]][2])
-    
-    simul_feat_dist[[feat]] <- tapply(simul[, paste0(feat, "_pclen")], simul$dist_class, mean, na.rm=T)
-    simul_feat_dist[[paste0(feat, "_conflow")]] <- tapply(simul[, paste0(feat, "_pclen")], simul$dist_class, function(x) t.test(x)[["conf.int"]][1])
-    simul_feat_dist[[paste0(feat, "_confup")]] <- tapply(simul[, paste0(feat, "_pclen")], simul$dist_class, function(x) t.test(x)[["conf.int"]][2])
+    print(paste("confidence intervals fragments", feat))
+    print("observed")
+    BC.obs=tapply(obs[, paste0(feat, "_pclen")], obs$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+    obs_feat_dist[[feat]] <- unlist(lapply(BC.obs, function(x) x[3]))
+    obs_feat_dist[[paste0(feat, "_conflow")]] <-  unlist(lapply(BC.obs, function(x) x[4]))
+    obs_feat_dist[[paste0(feat, "_confup")]] <-  unlist(lapply(BC.obs, function(x) x[5]))
+
+    print("simulated")
+    BC.simul=tapply(simul[, paste0(feat, "_pclen")], simul$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+    simul_feat_dist[[feat]] <- unlist(lapply(BC.simul, function(x) x[3]))
+    simul_feat_dist[[paste0(feat, "_conflow")]] <-  unlist(lapply(BC.simul, function(x) x[4]))
+    simul_feat_dist[[paste0(feat, "_confup")]] <-  unlist(lapply(BC.simul, function(x) x[5]))
   }
   
   feat_prop_dist[["fragment"]] <- list(obs=obs_feat_dist, simul=simul_feat_dist)
@@ -84,17 +93,19 @@ for(ref_sp in c("human", "mouse")){
     simul_feat_dist <- list()
     
     for (feat in features){
-      obs_feat_dist[[feat]] <- tapply(obs[, paste0(feat, "_pclen")], obs$dist_class, mean, na.rm=T)
-      obs_feat_dist[[paste0(feat, "_conflow")]] <- tapply(obs[, paste0(feat, "_pclen")], obs$dist_class, function(x) 
-        tryCatch(t.test(x)[["conf.int"]][1], error = function(e) 0))
-      obs_feat_dist[[paste0(feat, "_confup")]] <- tapply(obs[, paste0(feat, "_pclen")], obs$dist_class, function(x)
-        tryCatch(t.test(x)[["conf.int"]][2], error = function(e) 0))
-      
-      simul_feat_dist[[feat]] <- tapply(simul[, paste0(feat, "_pclen")], simul$dist_class, mean, na.rm=T)
-      simul_feat_dist[[paste0(feat, "_conflow")]] <- tapply(simul[, paste0(feat, "_pclen")], simul$dist_class, function(x)
-        tryCatch(t.test(x)[["conf.int"]][1], error = function(e) 0))
-      simul_feat_dist[[paste0(feat, "_confup")]] <- tapply(simul[, paste0(feat, "_pclen")], simul$dist_class, function(x)
-        tryCatch(t.test(x)[["conf.int"]][2], error = function(e) 0))
+
+      print(paste("confidence intervals",enh, feat))
+      print("observed")
+      BC.obs=tapply(obs[, paste0(feat, "_pclen")], obs$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+      obs_feat_dist[[feat]] <- unlist(lapply(BC.obs, function(x) x[3]))
+      obs_feat_dist[[paste0(feat, "_conflow")]] <-  unlist(lapply(BC.obs, function(x) x[4]))
+      obs_feat_dist[[paste0(feat, "_confup")]] <-  unlist(lapply(BC.obs, function(x) x[5]))
+
+      print("simulated")
+      BC.simul=tapply(simul[, paste0(feat, "_pclen")], simul$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+      simul_feat_dist[[feat]] <- unlist(lapply(BC.simul, function(x) x[3]))
+      simul_feat_dist[[paste0(feat, "_conflow")]] <-  unlist(lapply(BC.simul, function(x) x[4]))
+      simul_feat_dist[[paste0(feat, "_confup")]] <-  unlist(lapply(BC.simul, function(x) x[5]))
     }
     
     feat_prop_dist[[enh]] <- list(obs=obs_feat_dist, simul=simul_feat_dist)
