@@ -21,10 +21,31 @@ par(mfrow=c(3,2))
 nb=1
 
 for (sp in c("human", "mouse")){
+
+  enhancers = enhancer.datasets[[ref_sp]]
   
-  load(paste(pathFigures, "RData/data.enhancer.coverage.", sp, ".RData", sep=""))
+  all.enh.prop=data.frame(id=character(0), data=numeric(0), conf_up=numeric(0), conf_low=numeric(0))
+  all.enh.prop.nbcell=list("obs"=list(), "simul"=list())
+  all.enh.prop.dist=list("obs"=list(), "simul"=list())
   
-  for (enh in enhancer.datasets[[sp]]){
+  for(enh in enhancers){
+    load(paste(pathFigures, "RData/data.enhancer.coverage.", sp,".",enh,".RData", sep=""))
+    
+    all.enh.prop=rbind(all.enh.prop, enh_prop, stringsAsFactors=F)
+    
+    all.enh.prop.nbcell[["obs"]]=c(all.enh.prop.nbcell[["obs"]], enh_prop_nb_cell[["obs"]])
+    all.enh.prop.nbcell[["simul"]]=c(all.enh.prop.nbcell[["simul"]], enh_prop_nb_cell[["simul"]])
+    
+    all.enh.prop.dist[["obs"]]=c(all.enh.prop.dist[["obs"]], enh_prop_dist[["obs"]])
+    all.enh.prop.dist[["simul"]]=c(all.enh.prop.dist[["simul"]], enh_prop_dist[["simul"]])
+  }
+  
+  enh_prop=all.enh.prop
+  enh_prop_dist=all.enh.prop.dist
+  enh_prop_nb_cell=all.enh.prop.nbcell
+  
+  
+  for (enh in enhancers){
     ymax=max(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
     ymin=min(c(enh_prop_dist[["obs"]][[paste0(enh,"_conflow")]], enh_prop_dist[["obs"]][[paste0(enh,"_confup")]],  enh_prop_dist[["simul"]][[paste0(enh,"_conflow")]], enh_prop_dist[["simul"]][[paste0(enh,"_confup")]]))
     
