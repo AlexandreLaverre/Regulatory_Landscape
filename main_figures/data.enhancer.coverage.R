@@ -52,7 +52,7 @@ for(ref_sp in c("human", "mouse")){
     conf_low <- c(conf_low, x[4])
     id <- c(id, paste0(enh,":obs"))
     
-    x <- BCa(obs[,paste0(enh, "_pclen")], delta=NA, M=100, theta=mean, na.rm=T)
+    x <- BCa(simul[,paste0(enh, "_pclen")], delta=NA, M=100, theta=mean, na.rm=T)
     data <- c(data, x[3])
     conf_up <- c(conf_up, x[5])
     conf_low <- c(conf_low, x[4])
