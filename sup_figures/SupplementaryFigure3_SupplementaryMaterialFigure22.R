@@ -51,11 +51,15 @@ for(ref in c("human", "mouse")){
   
   BC.obs=tapply(frag.stats.obs$pcrepeat,  class.frag.nbgenes.obs, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.rep.frag.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  names(mean.rep.frag.obs)=levels(class.frag.nbgenes.obs)
+  
   ci.rep.frag.low.obs=unlist(lapply(BC.obs, function(x) x[4]))
   ci.rep.frag.high.obs=unlist(lapply(BC.obs, function(x) x[5]))
 
   BC.sim=tapply(frag.stats.sim$pcrepeat,  class.frag.nbgenes.sim, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.rep.frag.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  names(mean.rep.frag.sim)=levels(class.frag.nbgenes.sim)
+  
   ci.rep.frag.low.sim=unlist(lapply(BC.sim, function(x) x[4]))
   ci.rep.frag.high.sim=unlist(lapply(BC.sim, function(x) x[5]))
 
@@ -70,11 +74,15 @@ for(ref in c("human", "mouse")){
 
   BC.obs=tapply(frag.stats.obs$pcungapped, frag.stats.obs$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.cons.repclass.frag.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  names(means.cons.repclass.frag.obs)=levels(frag.stats.obs$repeat_class)
+  
   ci.low.cons.repclass.frag.obs=unlist(lapply(BC.obs, function(x) x[4]))
   ci.high.cons.repclass.frag.obs=unlist(lapply(BC.obs, function(x) x[5]))
   
   BC.sim=tapply(frag.stats.sim$pcungapped, frag.stats.sim$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.cons.repclass.frag.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  names(means.cons.repclass.frag.sim)=levels(frag.stats.sim$repeat_class)
+  
   ci.low.cons.repclass.frag.sim=unlist(lapply(BC.sim, function(x) x[4]))
   ci.high.cons.repclass.frag.sim=unlist(lapply(BC.sim, function(x) x[5]))
   print("done")
@@ -94,11 +102,15 @@ for(ref in c("human", "mouse")){
   
   BC.obs=tapply(enh.stats.obs$pcrepeat,  class.enh.nbgenes.obs, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.rep.enh.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  names(mean.rep.enh.obs)=levels(class.enh.nbgenes.obs)
+        
   ci.rep.enh.low.obs=unlist(lapply(BC.obs, function(x) x[4]))
   ci.rep.enh.high.obs=unlist(lapply(BC.obs, function(x) x[5]))
   
   BC.sim=tapply(enh.stats.sim$pcrepeat,  class.enh.nbgenes.sim, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.rep.enh.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  names(mean.rep.enh.sim)=levels(class.enh.nbgenes.sim)
+  
   ci.rep.enh.low.sim=unlist(lapply(BC.sim, function(x) x[4]))
   ci.rep.enh.high.sim=unlist(lapply(BC.sim, function(x) x[5]))
 
@@ -113,11 +125,15 @@ for(ref in c("human", "mouse")){
   
   BC.obs=tapply(enh.stats.obs$pcungapped,  enh.stats.obs$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.cons.repclass.enh.obs=unlist(lapply(BC.obs, function(x) x[3]))
+  names(mean.cons.repclass.enh.obs)=levels(enh.stats.obs$repeat_class)
+  
   ci.low.cons.repclass.enh.obs=unlist(lapply(BC.obs, function(x) x[4]))
   ci.high.cons.repclass.enh.obs=unlist(lapply(BC.obs, function(x) x[5]))
   
   BC.sim=tapply(enh.stats.sim$pcungapped,  enh.stats.sim$repeat_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
   mean.cons.repclass.enh.sim=unlist(lapply(BC.sim, function(x) x[3]))
+  names(mean.cons.repclass.enh.sim)=levels(enh.stats.sim$repeat_class)
+        
   ci.low.cons.repclass.enh.sim=unlist(lapply(BC.sim, function(x) x[4]))
   ci.high.cons.repclass.enh.sim=unlist(lapply(BC.sim, function(x) x[5]))
 
