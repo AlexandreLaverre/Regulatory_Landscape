@@ -84,7 +84,7 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
 
     extpval=kruskal.test(values[which(groups%in%c(firstclass, lastclass))], groups[which(groups%in%c(firstclass, lastclass))])$p.value
 
-    print(paste0("Kruskal-Wallis test, first class vs. last class : ", ylab, " according to ", feature, " for ", dist, " contacts; p-val:", pval))
+    print(paste0("Kruskal-Wallis test, first class vs. last class : ", ylab, " according to ", feature, " for ", dist, " contacts; p-val:", extpval))
   }
 
   
