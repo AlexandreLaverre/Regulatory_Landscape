@@ -82,15 +82,20 @@ if(prepare){
   pc_nb_celltypes_matrix=100*nb_celltypes_matrix/apply(nb_celltypes_matrix,1, sum)
 
   ## divide interactions based on distance, compute mean number of samples by distance class
-
   
-  mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
+  print("computing bootstrap confidence intervals")
 
-  mean_nb_celltypes_dist <- t(sapply(dist_cons_celltypes, function(x)   unlist(lapply(x, function(y) y[3])))) 
+  dist_cons_celltypes <- lapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-BCa(y, delta=NA, M=100, theta=mean); return(z)}))
+  
   dist_conf_low_celltypes <- t(sapply(dist_cons_celltypes, function(x) unlist(lapply(x, function(y) y[4]))))
   dist_conf_high_celltypes <- t(sapply(dist_cons_celltypes, function(x) unlist(lapply(x, function(y) y[5]))))
 
-  
+  mean_nb_celltypes_dist <- t(sapply(dist_cons_celltypes, function(x)   unlist(lapply(x, function(y) y[3])))) 
+
+  mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
+
+  print("done")
+   
   ## we finish preparing the data
   prepare=FALSE
 }
