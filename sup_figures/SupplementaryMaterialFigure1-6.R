@@ -147,6 +147,9 @@ for(i in 1:nbfigures){
 
     median.obs=median(nb.contacts.per.bait.obs)
     mtext(paste("median ", median.obs, sep=""), side=3, line=-1.5, cex=0.8, col=dataset.colors["Original"])
+    
+    median.sim=median(nb.contacts.per.bait.sim)
+    mtext(paste("median ", median.sim, sep=""), side=3, line=-1.75, cex=0.8, col=dataset.colors["Simulated"])
 
   
     ## number of interactions per fragment
@@ -177,7 +180,7 @@ for(i in 1:nbfigures){
     median.obs=median(nb.contacts.per.frag.obs)
     mtext(paste("median ", median.obs, sep=""), side=3, line=-1.5, cex=0.8, col=dataset.colors["Original"])
     median.sim=median(nb.contacts.per.frag.sim)
-    mtext(paste("median ", median.obs, sep=""), side=3, line=-2.5, cex=0.8, col=dataset.colors["Simulated"])
+    mtext(paste("median ", median.sim, sep=""), side=3, line=-2.5, cex=0.8, col=dataset.colors["Simulated"])
 
   }
 
