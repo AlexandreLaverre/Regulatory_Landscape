@@ -67,7 +67,7 @@ if(prepare){
 }
 #############################################################################################
 
-pdf(file=paste(pathFigures, "Figure1_FigureSupplement1.pdf", sep=""), width=6.85, height=9)
+pdf(file=paste(pathFigures, "eLife_Figures/Figure1_FigureSupplement1.pdf", sep=""), width=6.85, height=9)
 
 m=matrix(rep(NA, 4*3), nrow=4)
 
