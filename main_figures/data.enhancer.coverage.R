@@ -10,6 +10,7 @@ set.seed(19)
 options(stringsAsFactors = FALSE)
 
 load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
+load(paste(pathFigures,  "RData/data.fragment.contacts.RData",sep=""))
 
 #########################################################################################################################
 
@@ -19,6 +20,18 @@ for(ref_sp in c("human", "mouse")){
   
   obs <- fragment.statistics[[ref_sp]][["original"]]
   simul <- fragment.statistics[[ref_sp]][["simulated"]]
+  
+  ## select fragments that are in previously filtered contacts (within correct distance range)
+
+
+  frag.contacts.obs <- observed.contacts[[ref_sp]]
+  frag.contacts.sim <- simulated.contacts[[ref_sp]]
+  
+  obs <- obs[which(obs$ID%in%frag.contacts.obs$id_frag),]
+  simul <- simul[which(simul$ID%in%frag.contacts.sim$id_frag),]
+  
+
+  ## compute distance class
   
   obs$dist_class <-cut(obs$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
   simul$dist_class <- cut(simul$median_dist, breaks=seq(from=minDistance, to=maxDistance, by=50000), include.lowest = T)
