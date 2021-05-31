@@ -22,7 +22,7 @@ if(user=="necsulea"){
 }
 
 if(user=="ubuntu"){
-  pathFinalData="/mnt/RegulatoryLandscapesManuscript/"
+  pathFinalData="/mnt/mydatalocal/RegulatoryLandscapesManuscript/"
 }
 
 ## current directory - we run scripts from the scripts/main_figures folder
