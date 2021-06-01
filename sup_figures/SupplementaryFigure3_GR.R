@@ -1,4 +1,4 @@
-#########################################################################
+#################################################################################
 
 ## if it's the first time we run this figure, we load and prepare data
 
@@ -10,143 +10,141 @@ if(!"pathScripts"%in%objects){
   source("../main_figures/parameters.R")
 }
 
-##########################################################################
+#################################################################################
 
 if(load){
-  library(ape)
-  
-  load(paste(pathFigures, "RData/data.sample.clustering.RData", sep=""))
-  load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-  load(paste(pathFigures, "RData/data.AFC.RData", sep=""))
 
-  load=FALSE
+  load(paste(pathFigures, "RData/data.fragment.contacts.RData",sep=""))
+  load(paste(pathFigures, "RData/data.sample.info.RData",sep=""))
+
+   load=F
+ }
+
+#################################################################################
+
+if(prepare){
+
+  nb.unique.fragments.obs=list()
+  nb.unique.fragments.sim=list()
+
+  length.unique.fragments.obs=list()
+  length.unique.fragments.sim=list()
+  
+  for(sp in c("human", "mouse")){
+    print(sp)
+    
+    samples=sampleinfo[[sp]][,"Sample.ID"]
+  
+    obs=observed.contacts[[sp]]
+    sim=simulated.contacts[[sp]]
+    
+    nb.unique.fragments.obs[[sp]]=unlist(lapply(samples, function(x) length(unique(obs$id_frag[which(obs[,x]>0)]))))
+    nb.unique.fragments.sim[[sp]]=unlist(lapply(samples, function(x) length(unique(sim$id_frag[which(obs[,x]>0)]))))
+    
+    length.unique.fragments.obs[[sp]]=unlist(lapply(samples, function(x) {y=obs[which(obs[,x]>0), ]; y=y[which(!duplicated(y$id_frag)),]; return(sum(y$contacted_length))}))
+    length.unique.fragments.sim[[sp]]=unlist(lapply(samples, function(x) {y=sim[which(sim[,x]>0), ]; y=y[which(!duplicated(y$id_frag)),]; return(sum(y$contacted_length))}))
+
+    print(paste(sum(obs$contacted_length[which(!duplicated(obs$id_frag))])/1e6, "Mb total covered length, observed data"))
+    print(paste(sum(sim$contacted_length[which(!duplicated(sim$id_frag))])/1e6, "Mb total covered length, simulated data"))
+
+    nb.obs=length(unique(obs$id_frag))
+    nb.sim=length(unique(sim$id_frag))
+    nb.common=length(intersect(obs$id_frag, sim$id_frag))
+
+    print(paste("observed",nb.obs,"fragments, simulated",nb.sim,"fragments,", nb.common, "in common"))
+
+    obs$id=paste(obs$id_bait, obs$id_frag, sep="-")
+    sim$id=paste(sim$id_bait, sim$id_frag, sep="-")
+
+    print(paste("observed",nrow(obs),"contacts, simulated",nrow(sim),"contacts,", length(intersect(obs$id, sim$id)), "in common"))
+    
+  }
+  
+  prepare=F
 }
 
-##########################################################################
+#################################################################################
 
 ## 1 column width 85 mm = 3.34 in
 ## 1.5 column width 114 mm = 4.49 in 
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S3.pdf", sep=""), width=6.85, height=5.5)
+#############################################################################
 
-## layout
-m=matrix(rep(NA,20*40), nrow=20)
-for(i in 1:9){
-  m[i,]=c(rep(1,3), rep(2, 20), rep(3, 17))
-}
-m[10,]=c(rep(1,3), rep(2, 20), rep(4, 17))
+pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S3.pdf", sep=""), width=6.85, height=6.5)
 
-for(i in 11:19){
-  m[i,]=c(rep(5,3), rep(6, 20), rep(7, 17))
-}
-m[20,]=c(rep(5,3), rep(6, 20), rep(8, 17))
-
+m=matrix(1:4, nrow=2, byrow=T)
 layout(m)
 
-##########################################################################
-fig = 1
+#############################################################################
+
+## nb of contacted fragments, obs vs. sim
+
+labels=c("a","b")
+names(labels)=c("human", "mouse")
 
 for(sp in c("human", "mouse")){
-  ## get data for this species
-  info=sampleinfo[[sp]]
-  rownames(info)=info$Sample.ID
+
+  par(mar=c(3.5, 4.1, 2.25, 1.5))
+
+  lim=range(c(nb.unique.fragments.obs[[sp]], nb.unique.fragments.sim[[sp]]))/1000
+  lim=lim+c(-diff(lim)/20, diff(lim)/20)
   
-  tree=as.phylo(sample.clustering[[sp]][["hclust.alldist"]])
-  sample.order=sample.clustering[[sp]][["sample.order.alldist"]]
-  mat.obs=sample.clustering[[sp]][["mat.alldist.obs"]]
-  mat.sim=sample.clustering[[sp]][["mat.alldist.sim"]]
-  mat.diff=as.matrix(mat.obs-mat.sim)
-  diag(mat.diff)=rep(NA, length(sample.order))
-  
-  mat.diff=mat.diff[sample.order, sample.order]
+  plot(nb.unique.fragments.obs[[sp]]/1000, nb.unique.fragments.sim[[sp]]/1000, pch=20, xlab="", ylab="", axes=F, xlim=lim, ylim=lim)
 
-  mat.diff=100*mat.diff ## percentage instead of fraction
-  
-  ## tree
-  par(mar=c(0.75,1,1.35,0.1))
-  plot(tree, direction="rightwards", show.tip.label=FALSE)
-
-  ## plot label
-  mtext(letters[fig], side=3, at=0, font=2, line=0, cex=0.95)
-  fig = fig+1
-  
-  ## matrix obs-sim
-
-  par(mar=c(1,0,1.75,8.25))
-  image(mat.diff, axes=F, col=terrain.colors(50), zlim=c(0, 100))
-
-  ## colors by cell type
-
-  this.samples=rownames(mat.diff)
-  this.cells=info[this.samples, "Broad.cell.type.or.tissue"]
-  names(this.cells)=this.samples
-
-  ypos=seq(from=0, to=1, length=dim(mat.diff)[1])
-  ywidth=diff(ypos)[1]
-
-  for(c in unique(this.cells)){
-    all.ypos=ypos[which(this.cells==c)]
-
-    if(diff(range(which(this.cells==c)))==(length(all.ypos)-1)){
-      ## perfect clustering
-      segments(1+ywidth*0.75, min(all.ypos)-ywidth/3, 1+ywidth*0.75, max(all.ypos)+ywidth/3, xpd=NA)
-      mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.6, at=mean(all.ypos), col=col.celltypes[c])
-    } else{
-      segments(1+ywidth*0.75, all.ypos-ywidth/3, 1+ywidth*0.75, all.ypos+ywidth/3, xpd=NA)
-      mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.6, at=all.ypos, col=col.celltypes[c])
-    }
-  }
-
-  mtext(paste("hierarchical clustering", sp, sep=", "), side=3, line=0.5, cex=0.7)
-
-  ## AFC plot
-
-  afc=data.AFC[[sp]][["AFC"]]
-  explained=round(100*afc$eig/sum(afc$eig), digits=1)
-
-  par(mar=c(4.1, 5.5, 2, 1.5))
-  plot(afc$li[,1], afc$li[,2], pch=20, col=col.celltypes[this.cells[rownames(afc$li)]], xlab="", ylab="", axes=F, cex=1.25)
   box()
 
-  xlim=range(afc$li[,1])
+  abline(0,1, lty=3)
 
-  axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.85)
-  axis(side=2, mgp=c(3, 0.5, 0), cex.axis=0.85)
+  ax=pretty(lim)
+  axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.95, at=ax, labels=paste(ax,"k",sep=""))
+  mtext("nb. contacted fragments, PCHi-C", side=1, cex=0.85, line=1.75)
 
-  mtext(paste("correspondence analysis", sp, sep=", "), side=3, line=0.5, cex=0.7)
-  mtext(paste("axis 1 (", explained[1],"% explained variance)",sep=""), side=1, line=1.75, cex=0.7)
-  mtext(paste("axis 2 (", explained[2],"% explained variance)",sep=""), side=2, line=1.75, cex=0.7)
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.95, at=ax, labels=paste(ax,"k",sep=""))
+  mtext("nb. contacted fragments, simulations", side=2, cex=0.85, line=2.25)
 
-  ## plot labels
-  mtext(toupper(letters[fig]), side=3, at=xlim[1]-diff(xlim)/5.3, font=2, line=0.5, cex=0.95)
-  fig = fig+1
+  mtext(labels[sp], side=3, at=lim[1]-diff(lim)/4.48, font=2, line=1.15, cex=1.1)
+
+  mtext(sp, side=3, line=0.5, cex=0.9)
+}
+
+#############################################################################
+
+## length of contacted fragments, obs vs. sim
+
+labels=c("c","d")
+names(labels)=c("human", "mouse")
+
+for(sp in c("human", "mouse")){
+
+  par(mar=c(3.5, 4.1, 2.25, 1.5))
+
+  lim=range(c(length.unique.fragments.obs[[sp]], length.unique.fragments.sim[[sp]]))/1e6
+
+  lim=lim+c(-diff(lim)/20, diff(lim)/20)
   
-  ## legend for the heatmap
+  plot(length.unique.fragments.obs[[sp]]/1e6, length.unique.fragments.sim[[sp]]/1e6, pch=20, xlab="", ylab="", axes=F, xlim=lim, ylim=lim)
 
-  if(sp=="mouse"){
-    par(mar=c(1.45,1.1,0.0,13.1))
-    z=seq(0, 100, length = 50)
-    zlim=c(0,100)
-    xax=c(0, 25, 50, 75, 100)
-    xax=xax[which(xax>=min(z) & xax<=max(z))]
-    image(x=z, z = matrix(z, ncol = 1), col = terrain.colors(50), zlim=zlim, xlim=range(xax)+c(-2,2), xaxt="n" ,yaxt="n")
-    
-    par(tck=-0.75)
-    axis(side=1, at = xax, labels = xax, cex.axis=0.85, mgp=c(3,0.4,0))
-    
-    mtext("% shared interactions", side=4, las=2, at=1.15, cex=0.65, line=1)
-    mtext("(observed-simulated)", side=4, las=2, at=-1.55, cex=0.65, line=1)
-    par(tck=NA)
-  } else{
-    ## empty plot
-    par(mar=c(1.35,1.1,0.0,13.1))
-    plot(1, type="n", xlab="", ylab="", main="", axes=F)
-  }
+  box()
+
+  abline(0,1, lty=3)
+
+  ax=pretty(lim)
+  axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.95, at=ax, labels=paste(ax,"Mb",sep=""))
+  mtext("total length fragments, PCHi-C", side=1, cex=0.85, line=1.75)
+
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.95, at=ax, labels=paste(ax,"Mb",sep=""))
+  mtext("total length fragments, simulations", side=2, cex=0.85, line=2.25)
+
+  mtext(labels[sp], side=3, at=lim[1]-diff(lim)/4.48, font=2, line=1.15, cex=1.1)
+
+  mtext(sp, side=3, line=0.5, cex=0.9)
 
 }
 
-##########################################################################
+#############################################################################
 
 dev.off()
+
+#############################################################################
