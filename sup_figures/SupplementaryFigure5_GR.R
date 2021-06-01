@@ -69,7 +69,7 @@ for(sp in c("human", "mouse")){
   plot(tree, direction="rightwards", show.tip.label=FALSE)
 
   ## plot label
-  mtext(letters[fig], side=3, at=0, font=2, line=0, cex=0.95)
+  mtext(touppr(letters[fig]), side=3, at=0, font=2, line=0, cex=0.95)
   fig = fig+1
   
   ## matrix obs-sim
