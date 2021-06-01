@@ -199,7 +199,7 @@ for(sp in c("human", "mouse")){
          col=col.enhancers[enhancer.datasets[[sp]]], bty="n", cex=1, seg.len=1)
 
   ## plot label
-  mtext("a", side=3, font=2, at=-7.2, line=2.5)
+  mtext("A", side=3, font=2, at=-7.2, line=2.5)
   
   
   ############################## Sequence conservation ###############################
@@ -236,7 +236,7 @@ for(sp in c("human", "mouse")){
   mtext(paste0("% aligned sequence in ", tg), side=2, line=2.5, cex=mtext.CEX)
 
   ## plot label
-  mtext("b", side=3, font=2, at=-0.9, line=2.5)
+  mtext("B", side=3, font=2, at=-0.9, line=2.5)
   
   ############################## Synteny conservation ###############################
   if (sp == "human"){
@@ -265,7 +265,7 @@ for(sp in c("human", "mouse")){
   mtext(paste0("% pairs in conserved synteny in ", tg), side=2, line=2.5, cex=mtext.CEX)
   
   ## plot label
-  mtext("c", side=3, font=2, at=-0.9, line=2.5)
+  mtext("C", side=3, font=2, at=-0.9, line=2.5)
   
 ############################## Contact conservation ###############################
   
@@ -296,7 +296,7 @@ for(sp in c("human", "mouse")){
 
   
   ## plot label
-  mtext("d", side=3, font=2, at=-0.9, line=2.5)
+  mtext("D", side=3, font=2, at=-0.9, line=2.5)
   
   #####################################################################################
   

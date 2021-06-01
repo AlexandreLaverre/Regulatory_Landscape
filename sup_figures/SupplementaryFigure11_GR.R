@@ -138,35 +138,35 @@ par(mar = c(6.5, 4.5, 2.5, 0.5))
 
 ######################## nb of contacted enhancers and expression level  ########################
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp=paste(sp, "MeanRPKM",sep="_"), cells=cells, ylab="mean expression level (RPKM)", plot.label="a", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp=paste(sp, "MeanRPKM",sep="_"), cells=cells, ylab="mean expression level (RPKM)", plot.label="A", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
 
 ################################################################################################################################
 
 ######################## nb of contacted enhancers and expression conservation, before correction  ########################
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp="ExpressionConservation", cells=cells, ylab="expression conservation", plot.label="b", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp="ExpressionConservation", cells=cells, ylab="expression conservation", plot.label="B", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
 
 
 ######################## nb of contacted enhancers and expression conservation, after correction  ########################
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="c", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.nb.contacts", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="C", xlab="number of contacts", xax.labels=levels(regcons[["ESC"]][,"class.nb.contacts"]), xax.las=2)
 
 ################################################################################################################################
 
 ######################## sequence conservation and expression conservation      ########################
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.aln.score", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="d", xlab="enhancer sequence conservation", xax.labels=levels(regcons[["ESC"]][,"class.aln.score"]), xax.las=2)
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.aln.score", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="D", xlab="enhancer sequence conservation", xax.labels=levels(regcons[["ESC"]][,"class.aln.score"]), xax.las=2)
 
 ################################################################################################################################
 
 ######################## synteny conservation and expression conservation      ########################
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.synteny.cons", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="e", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=2)
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.synteny.cons", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="E", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=2)
 
 ################################################################################################################################
 #######################  contact conservation and expression conservation        ########################
 
-plot.expdiv.regdiv(regland=regcons, featurecontact="class.contact.cons", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="f", xlab="contact conservation", xax.labels=levels(regcons[["ESC"]][,"class.contact.cons"]), xax.las=2)
+plot.expdiv.regdiv(regland=regcons, featurecontact="class.contact.cons", expdata=expdiv_cells, featureexp="ResidualExpressionConservation", cells=cells, ylab="exp. cons. (corrected)", plot.label="F", xlab="contact conservation", xax.labels=levels(regcons[["ESC"]][,"class.contact.cons"]), xax.las=2)
 
 ################################################################################################################################
 # empty plot for the legend

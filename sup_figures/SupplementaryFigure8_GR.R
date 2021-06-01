@@ -139,7 +139,7 @@ for(ref in c("human", "mouse")){
   axis(side=2, cex.axis=0.95, mgp=c(3, 0.75,0))
   mtext("% successful liftOver", side=2, line=2.5, cex=0.75)
   
-  mtext("a", side=3, line=1, font=2, cex=1, at=-1.5)
+  mtext("A", side=3, line=1, font=2, cex=1, at=-1.5)
   
  ###################################################################################
   ##, repetitive elements
@@ -164,7 +164,7 @@ for(ref in c("human", "mouse")){
   axis(side=2, cex.axis=0.95, mgp=c(3, 0.75,0))
   mtext("% length covered by repeats", side=2, line=2.5, cex=0.75)
   
-  mtext("b", side=3, line=1, font=2, cex=1, at=0)
+  mtext("B", side=3, line=1, font=2, cex=1, at=0)
   
  ###################################################################################
 
@@ -187,7 +187,7 @@ for(ref in c("human", "mouse")){
   axis(side=2, cex.axis=0.95, mgp=c(3, 0.75,0))
   mtext("% aligned sequence", side=2, line=2.5, cex=0.75)
   
-  mtext("c", side=3, line=1, font=2, cex=1, at=-0.5)
+  mtext("C", side=3, line=1, font=2, cex=1, at=-0.5)
   
 ###################################################################################
   
@@ -210,7 +210,7 @@ for(ref in c("human", "mouse")){
   axis(side=2, cex.axis=0.95, mgp=c(3, 0.75,0))
   mtext("% identical sequence", side=2, line=2.5, cex=0.75)
   
-  mtext("d", side=3, line=1, font=2, cex=1, at=-0.5)
+  mtext("D", side=3, line=1, font=2, cex=1, at=-0.5)
   
 ###################################################################################
   
@@ -241,7 +241,7 @@ for(ref in c("human", "mouse")){
   axis(side=2, cex.axis=0.95, mgp=c(3, 0.75,0))
   mtext("% successful liftOver", side=2, line=2.5, cex=0.75)
   
-  mtext("e", side=3, line=1, font=2, cex=1, at=-1.5)
+  mtext("E", side=3, line=1, font=2, cex=1, at=-1.5)
   
 ###################################################################################
   ##, repetitive elements
@@ -267,7 +267,7 @@ for(ref in c("human", "mouse")){
   mtext("% length covered by repeats", side=2, line=2.5, cex=0.75)
   
   
-  mtext("f", side=3, line=1, font=2, cex=1, at=0)
+  mtext("F", side=3, line=1, font=2, cex=1, at=0)
 ###################################################################################
   
   ## pc ungapped for lifted enhancers
@@ -290,7 +290,7 @@ for(ref in c("human", "mouse")){
   mtext("% aligned sequence", side=2, line=2.5, cex=0.75)
   
   
-  mtext("g", side=3, line=1, font=2, cex=1, at=-0.5)
+  mtext("G", side=3, line=1, font=2, cex=1, at=-0.5)
   
 ###################################################################################
   
@@ -314,7 +314,7 @@ for(ref in c("human", "mouse")){
   mtext("% identical sequence", side=2, line=2.5, cex=0.75)
   
   
-  mtext("h", side=3, line=1, font=2, cex=1, at=-0.5)
+  mtext("H", side=3, line=1, font=2, cex=1, at=-0.5)
     
 ###################################################################################
   
