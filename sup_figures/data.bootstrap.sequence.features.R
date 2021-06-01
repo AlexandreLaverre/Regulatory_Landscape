@@ -142,7 +142,7 @@ for(ref in c("human", "mouse")){
 
   ## save objects
 
-  save(list=ls(), file=paste(pathFigures, "RData/data.bootstrap.sequence.features.",sp.,"RData",sep=""))
+  save(list=ls(), file=paste(pathFigures, "RData/data.bootstrap.sequence.features.",ref,"RData",sep=""))
 }
 
 ##########################################################################
