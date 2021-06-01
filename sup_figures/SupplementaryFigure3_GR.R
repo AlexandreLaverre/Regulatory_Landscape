@@ -81,7 +81,7 @@ layout(m)
 
 ## nb of contacted fragments, obs vs. sim
 
-labels=c("a","b")
+labels=c("A","B")
 names(labels)=c("human", "mouse")
 
 for(sp in c("human", "mouse")){
@@ -113,7 +113,7 @@ for(sp in c("human", "mouse")){
 
 ## length of contacted fragments, obs vs. sim
 
-labels=c("c","d")
+labels=c("C","D")
 names(labels)=c("human", "mouse")
 
 for(sp in c("human", "mouse")){

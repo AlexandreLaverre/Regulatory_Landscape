@@ -59,58 +59,19 @@ for(sp in c("human", "mouse")){
   ## max height: 11 in
   
   if(sp=="human"){
-    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S4.pdf", sep=""), width=6.85, height=6.5)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S4.pdf", sep=""), width=6.85, height=3.5)
   }
 
   if(sp=="mouse"){
     pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure10.pdf", sep=""), width=6.85, height=6.5)
   }
   
-  m=matrix(1:4, nrow=2, byrow=T)
+  m=matrix(1:2, nrow=2, byrow=T)
   
   layout(m)
   
 ##########################################################################
 
-  ## bait degree
-  
-  par(mar=c(4.5, 4.5, 2.1, 1.1))
-  
-  ylim=c(0, max(as.numeric(pc.degree.bait)))
-  
-  b=barplot(pc.degree.bait, beside=T, xlab='', ylim=ylim, space=c(0.4,1), names=rep("", dim(pc.degree.bait)[2]), ylab="", border=dataset.colors[c("Original", "Simulated")], col=dataset.colors[c("Original", "Simulated")], lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1, las=2)
-  
-  ## axis labels
-  mtext("number of contacted fragments", side=1, line=2.75, cex=0.95)
-  mtext("% baits", side=2, line=2.5, cex=0.95)
-  
-  mtext(colnames(pc.degree.bait), at=apply(b, 2, mean), line=0.25, cex=0.75, side=1, las=2)
-  
-  ## legend & plot label
-  legend("topleft", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],  fill=dataset.colors[c("Original", "Simulated")], bty='n', cex=1, inset=c(0.05, -0.15), xpd=NA)
-  
-  mtext("a", side=3, line=1, at=-8, font=2, cex=1.2)
-  
-##########################################################################
-  
-  ## bait degree
-  
-  par(mar=c(4.5, 4.5, 2.1, 1.1))
-  
-  ylim=c(0, max(as.numeric(pc.degree.frag)))
-  
-  b=barplot(pc.degree.frag, beside=T, xlab='', ylim=ylim, space=c(0.4,1), names=rep("", dim(pc.degree.frag)[2]), ylab="", border=dataset.colors[c("Original", "Simulated")], col=dataset.colors[c("Original", "Simulated")], lwd=1.5,  mgp=c(3, 0.75, 0), cex.axis=1, las=2)
-  
-  ## axis labels
-  mtext("number of contacting baits", side=1, line=1.75, cex=0.95)
-  mtext("% fragments", side=2, line=2.5, cex=0.95)
-  
-  mtext(colnames(pc.degree.frag), at=apply(b, 2, mean), line=0.25, cex=0.8, side=1, las=1)
-  
-  ## plot label
-  
-  mtext("b", side=3, line=1, at=-8, font=2, cex=1.2)
-  
 ##########################################################################
   
   ## correlation between number of observed contacts and number of genes in 500 kb window
@@ -131,7 +92,7 @@ for(sp in c("human", "mouse")){
   
   ## plot label
   
-  mtext("c", side=3, line=1.5, at=-13.75, font=2, cex=1.2)
+  mtext("A", side=3, line=1.5, at=-13.75, font=2, cex=1.2)
   
 ##########################################################################
   
@@ -153,7 +114,7 @@ for(sp in c("human", "mouse")){
   
   ## plot label
   
-  mtext("d", side=3, line=1.5, at=-6.5, font=2, cex=1.2)
+  mtext("B", side=3, line=1.5, at=-6.5, font=2, cex=1.2)
   
  ##########################################################################
    
