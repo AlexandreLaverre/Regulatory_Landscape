@@ -14,6 +14,7 @@ user=as.character(Sys.getenv()["USER"])
 
 if(user=="laverre"){
   pathFinalData="/home/laverre/Manuscript/"
+   pathRlibs=NULL
 }
 
 if(user=="necsulea"){
@@ -23,6 +24,7 @@ if(user=="necsulea"){
 
 if(user=="ubuntu"){
   pathFinalData="/mnt/mydatalocal/RegulatoryLandscapesManuscript/"
+  pathRlibs=NULL
 }
 
 ## current directory - we run scripts from the scripts/main_figures folder

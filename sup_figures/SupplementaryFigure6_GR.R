@@ -6,6 +6,8 @@ set.seed(19)
 
 library(bootBCa, lib=pathRlibs)
 
+## install.packages("bootBCa", repos="http://R-Forge.R-project.org")
+
 #########################################################################
 
 for(ref in c("human", "mouse")){
