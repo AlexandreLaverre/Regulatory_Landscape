@@ -9,7 +9,7 @@ fig.scripts=grep("Figure", all.files, value=T)
 for(file in fig.scripts){
   ## cleanup
   objects=ls()
-  objects=setdiff(objects, c("fig.scripts"))
+  objects=setdiff(objects, c("file", "fig.scripts"))
   rm(list=objects)
 
   ## run the script
