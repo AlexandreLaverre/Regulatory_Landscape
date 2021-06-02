@@ -35,8 +35,6 @@ for(sp in c("human", "mouse")){
     pdf.name = "GenomeResearch_Figures/SupplementaryMaterialFigure33.pdf"
   }
   
-  print(pdf.name)
-  
   tg=setdiff(c("human", "mouse"), sp)
   sampleinfo.tg=sampleinfo[[tg]]
   
