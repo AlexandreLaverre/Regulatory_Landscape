@@ -1,11 +1,17 @@
 #########################################################################
-  
+
+source("../main_figures/parameters.R")
+
+#########################################################################
+
 ## 1 column width 85 mm = 3.34 in
 ## 1.5 column width 114 mm = 4.49 in 
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
 for(ref in c("human", "mouse")){
+  load(paste(pathFigures, "RData/data.bootstrap.repeats.conservation.",ref,"RData",sep=""))
+  
   tg=setdiff(c("human", "mouse"), ref)
   
   enh="ENCODE"

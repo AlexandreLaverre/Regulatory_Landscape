@@ -2,8 +2,6 @@
 
 source("../main_figures/parameters.R")
 
-set.seed(19)
-
 ###########################################################################
   
 ## 1 column width 85 mm = 3.34 in
