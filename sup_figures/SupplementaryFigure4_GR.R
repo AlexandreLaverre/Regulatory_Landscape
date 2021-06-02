@@ -66,7 +66,7 @@ for(sp in c("human", "mouse")){
     pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure10.pdf", sep=""), width=6.85, height=6.5)
   }
   
-  m=matrix(1:2, nrow=2, byrow=T)
+  m=matrix(1:2, nrow=2, byrow=F)
   
   layout(m)
   
