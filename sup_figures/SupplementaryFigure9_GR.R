@@ -1,7 +1,5 @@
 ##########################################################################
 
-library(Hmisc)
-
 options(stringsAsFactors = FALSE)
 
 #########################################################################
@@ -14,8 +12,6 @@ if(!"pathScripts"%in%objects){
   load=T
   prepare=T
   source("../main_figures/parameters.R")
-
-  library(bootBCa, lib=pathRlibs)
   
   set.seed(19)
 }
@@ -58,7 +54,7 @@ for(sp in c("human", "mouse")){
   
 ############################## CHICAGO score according to dist ###############################
   
-  if (sp == "human"){
+  if(sp == "human"){
     ylim=c(6, 10)
   }else{
     ylim=c(6, 11)
