@@ -12,6 +12,9 @@ set.seed(19)
 ## max height: 11 in
 
 for(ref in c("human", "mouse")){
+  ## load data
+  load(paste(pathFigures, "RData/data.bootstrap.sequence.features.",ref,"RData",sep=""))
+  
   tg=setdiff(c("human", "mouse"), ref)
   
   enh="ENCODE"
