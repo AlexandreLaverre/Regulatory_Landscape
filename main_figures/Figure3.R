@@ -152,7 +152,7 @@ tiplabels(species_names, bg = NA, adj = -0.1, frame="none", cex=1.3)
 legend("bottomleft", fill=dataset.colors, border=dataset.colors, legend = c("PCHi-C data", "simulated data"), bty='n', cex=1.3, xpd=T, inset=c(-0.01, -0.1), horiz=FALSE)
 
 # label
-mtext("a", side=3, line=0.5, at=-0.05, font=2, cex=1.2)
+mtext("A", side=3, line=0.5, at=-0.05, font=2, cex=1.1)
 
 ######################## b - Restriction fragments sequence conservation ########################
 
@@ -185,7 +185,7 @@ mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.8, line=0.5)
 
 mtext("restriction fragments", side=3, line=-1, cex=0.8)
 
-mtext("b", side=3, line=0.5, at=-8, font=2, cex=1.2)
+mtext("B", side=3, line=0.5, at=-8, font=2, cex=1.1)
 
 ########################## c - ENCODE enhancers sequence conservation ########################
 
@@ -212,7 +212,7 @@ mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.8, line=0.5)
 
 mtext("enhancers", side=3, line=-1, cex=0.8)
 
-mtext("c", side=3, line=0.5, at=-8, font=2, cex=1.2)
+mtext("C", side=3, line=0.5, at=-8, font=2, cex=1.1)
 
 ######################## Conserved sequence human to  mouse vs distance to promoters  ########################
 
@@ -228,39 +228,15 @@ xlim=c(-0.5, max(xpos)+1)
 class_leg <- c("0", "0.5", "1", "1.5", "2")
 xax=seq(from=0, to=max(xpos)+1, by=10)
 
-labels=c("d", "e")
+labels=c("D", "E")
 names(labels)=c("restriction fragments", "enhancers")
 
 other_sp=target_sp
 
 for(type in c("restriction fragments", "enhancers")){
   
-  if(type=="restriction fragments"){
-    data.obs=frag_align_obs
-    data.sim=frag_align_simul
-  }
-
-  if(type=="enhancers"){
-    data.obs=align_enhancer_obs
-    data.sim=align_enhancer_sim
-  }
-  
-  print("computing confidence intervals")
-  
-  print("observed")
-  BC.obs=tapply(100*data.obs[, other_sp], data.obs$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
-  mean.val.obs=unlist(lapply(BC.obs, function(x) x[3]))
-  ci.low.obs=unlist(lapply(BC.obs, function(x) x[4]))
-  ci.high.obs=unlist(lapply(BC.obs, function(x) x[5]))
-
-  print("simulated")
-  BC.sim=tapply(100*data.sim[, other_sp], data.sim$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
-  mean.val.sim=unlist(lapply(BC.sim, function(x) x[3]))
-  ci.low.sim=unlist(lapply(BC.sim, function(x) x[4]))
-  ci.high.sim=unlist(lapply(BC.sim, function(x) x[5]))
-
-  print("done")
-  
+  load(paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".RData"))
+    
   ylim=range(c(ci.low.obs, ci.high.obs, ci.low.sim, ci.high.sim))
   
   dy=diff(ylim)/20
@@ -289,7 +265,7 @@ for(type in c("restriction fragments", "enhancers")){
 
  mtext(paste(ref_sp, " vs. ", other_sp, ", ", type,sep=""), side=3, cex=0.8, line=1)
 
- mtext(labels[type], side=3, line=1, at=-7.75, font=2, cex=1.2)
+ mtext(labels[type], side=3, line=1, at=-7.75, font=2, cex=1.1)
 }
 
 #######################################################################################################
@@ -313,58 +289,14 @@ names(smallx)=c("obs", "sim")
 xax=xpos
 class_leg=levels(frag_align_obs$class_genes_500kb)
 
-labels=c("f", "g")
+labels=c("F", "G")
 names(labels)=c("restriction fragments", "enhancers")
 
 other_sp=target_sp
 
 for(type in c("restriction fragments", "enhancers")){
   
-  if(type=="restriction fragments"){
-    data.obs=frag_align_obs
-    data.sim=frag_align_simul
-  }
-
-  if(type=="enhancers"){
-    data.obs=align_enhancer_obs
-    data.sim=align_enhancer_sim
-  }
-
-  ## all 
-  
-  print("computing confidence intervals")
-  
-  print("observed")
-  BC.obs=tapply(100*data.obs[, other_sp], data.obs$class_genes_500kb, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
-  mean.val.obs=unlist(lapply(BC.obs, function(x) x[3]))
-  ci.low.obs=unlist(lapply(BC.obs, function(x) x[4]))
-  ci.high.obs=unlist(lapply(BC.obs, function(x) x[5]))
-
-  print("simulated")
-  BC.sim=tapply(100*data.sim[, other_sp], data.sim$class_genes_500kb, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
-  mean.val.sim=unlist(lapply(BC.sim, function(x) x[3]))
-  ci.low.sim=unlist(lapply(BC.sim, function(x) x[4]))
-  ci.high.sim=unlist(lapply(BC.sim, function(x) x[5]))
-
-  ## no repeats
-
-  print("observed no repeats")
-
-  BC.obs.norep=tapply(100*data.obs[which(data.obs$pcrepeat==0), other_sp], data.obs$class_genes_500kb[which(data.obs$pcrepeat==0)], function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
-  mean.val.obs.norep=unlist(lapply(BC.obs.norep, function(x) x[3]))
-  ci.low.obs.norep=unlist(lapply(BC.obs.norep, function(x) x[4]))
-  ci.high.obs.norep=unlist(lapply(BC.obs.norep, function(x) x[5]))
-  
-  print("simulated no repeats")
-  
-  BC.sim.norep=tapply(100*data.sim[which(data.sim$pcrepeat==0), other_sp], data.sim$class_genes_500kb[which(data.sim$pcrepeat==0)], function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
-  mean.val.sim.norep=unlist(lapply(BC.sim.norep, function(x) x[3]))
-  ci.low.sim.norep=unlist(lapply(BC.sim.norep, function(x) x[4]))
-  ci.high.sim.norep=unlist(lapply(BC.sim.norep, function(x) x[5]))
-
-  
-  print("done")
-  
+ load(paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".RData"))
 
   ## plot
   
