@@ -107,7 +107,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "SupplementaryMaterialFigure8.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure3.pdf", sep=""), width=6.85, height=5.5)
 
 par(mfrow=c(2,2))
 par(mai = c(1, 0.8, 0.5, 0.1)) # internal margins
@@ -135,7 +135,7 @@ legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.col
        cex=1.1, inset=c(0.05, -0.2), xpd=NA, title=ref_sp)
 
 ##plot label
-mtext("a", side=3, line=1.5, at=-3.9, font=2, cex=1.2)
+mtext("A", side=3, line=1.5, at=-3.9, font=2, cex=1.1)
 
 ################################################################################################
 
@@ -173,13 +173,13 @@ legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors
 
 ## plot label
 
-mtext("b", side=3, line=1.5, at=-4.2e5, font=2, cex=1.2)
+mtext("B", side=3, line=1.5, at=-4.2e5, font=2, cex=1.1)
 
 ################################################################################################
 
 #################### C - Cumulative number of interactions #######
 
-labels=c("c", "d")
+labels=c("C", "D")
 
 names(labels)=c("human", "mouse")
 
@@ -209,7 +209,7 @@ for (sp in c("human", "mouse")){
 
   pos.xlab=xlim[1]-diff(xlim)/4
   
-  mtext(labels[sp], side=3, line=1, at=pos.xlab, font=2, cex=1.2)
+  mtext(labels[sp], side=3, line=1, at=pos.xlab, font=2, cex=1.1)
 }
 
 ###########################################################################################

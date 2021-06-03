@@ -12,7 +12,7 @@ source("../main_figures/parameters.R") ## paths are defined based on the user na
 ###########################################################################################################################
 ##########################  Enhancer proportion according to distance ############################################
 
-pdf(paste(pathFigures, "SupplementaryMaterialFigure12.pdf", sep=""), width=6.85, height=7.5)
+pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure4.pdf", sep=""), width=6.85, height=7.5)
 
 par(mai = c(0.5, 0.5, 0.1, 0.2)) # bottom, left, top, right
 
@@ -82,7 +82,7 @@ for (sp in c("human", "mouse")){
     mtext("% length covered\n by enhancers", side=2, cex=0.85, line=2, at=(ymin+ymax)*0.9/2)
     mtext("distance to baits (Mb)", side=1, line=2, cex=0.85)
     
-    mtext(letters[nb], side=3, line=1, at=-7.75, font=2, cex=1.2)
+    mtext(toupper(letters[nb]), side=3, line=1, at=-7.75, font=2, cex=1.2)
     mtext(paste(sp, enh.syn[enh], sep=" "), side=3, cex=0.8, line=0)
     
     nb = nb+1

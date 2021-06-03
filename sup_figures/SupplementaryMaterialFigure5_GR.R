@@ -93,7 +93,7 @@ for (x in seq(1,length(allxpos)-1, by=2)){
 }
 
 at=-0.1
-mtext("a", side=3, line=1.45, at=at, font=2, cex=1.2)
+mtext("A", side=3, line=1.45, at=at, font=2, cex=1.2)
 
 ###########################################################################################################################
 ##########################  Fig2-B - Enhancer proportion according to distance ############################################
@@ -132,7 +132,7 @@ legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.25, at=(ymin+ymax)*0.9/2)
 mtext("distance to baits (Mb)", side=1, line=2.25, cex=0.85)
 
-mtext("b", side=3, line=1.45, at=-5.75, font=2, cex=1.2)
+mtext("B", side=3, line=1.45, at=-5.75, font=2, cex=1.2)
 
 #############################################################################################################################
 ##################################  Fig2-C - Enhancer proportion according to nb of cell types ##############################
@@ -165,7 +165,7 @@ mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=sum(ylim)*
 mtext("number of cell types", side=1, line=2, cex=0.85)
 
 at=-0.75
-mtext("c", side=3, line=1.25, at=at, font=2, cex=1.2)
+mtext("C", side=3, line=1.25, at=at, font=2, cex=1.2)
 
 ############################################################################################################################
 ############################################## correlation gene expression and enhancers activity ##########################
@@ -200,7 +200,7 @@ axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 mtext("Spearman's rho", side=2, cex=0.85, line=3, at=(ymin+ymax)*0.9/2)
 mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
 
-mtext("d", side=3, line=1.25, at=-7.5, font=2, cex=1.2)
+mtext("D", side=3, line=1.25, at=-7.5, font=2, cex=1.2)
 
 ##################################################################################################################################
 

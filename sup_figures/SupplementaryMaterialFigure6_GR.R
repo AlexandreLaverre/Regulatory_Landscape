@@ -36,7 +36,7 @@ pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure6.pdf"
 
 par(mfrow=c(3,1))
 
-labels=c("a", "b", "c")
+labels=c("A", "B", "C")
 names(labels)=enhancers
 
 for (enh in enhancers){
