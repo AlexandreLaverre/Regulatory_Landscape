@@ -90,7 +90,7 @@ for (x in seq(1,length(allxpos)-1, by=2)){
  }
 
 
-mtext("a", side=3, line=1.45, at=-1.3, font=2, cex=1.2)
+mtext("A", side=3, line=1.45, at=-1.3, font=2, cex=1.1)
 print(paste("Restriction fragment length covered by ENCODE enhancers:", round(m.prop[1,1], 2), "% in PCHi-C;", round(m.prop[2,1], 2), "% in simulation"))
 
 ###########################################################################################################################
@@ -131,7 +131,7 @@ legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.25, at=(ymin+ymax)*0.9/2)
 mtext("distance to baits (Mb)", side=1, line=2.25, cex=0.85)
 
-mtext("b", side=3, line=1.45, at=-5.75, font=2, cex=1.2)
+mtext("B", side=3, line=1.45, at=-5.75, font=2, cex=1.1)
 
 #############################################################################################################################
 ##################################  Fig2-C - Enhancer proportion according to nb of cell types ##############################
@@ -162,7 +162,7 @@ axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 mtext("% length covered by enhancers", side=2, cex=0.85, line=2.7, at=sum(ylim)*0.9/2)
 mtext("number of cell types", side=1, line=2, cex=0.85)
 
-mtext("c", side=3, line=1.25, at=-2.1, font=2, cex=1.2)
+mtext("C", side=3, line=1.25, at=-2.1, font=2, cex=1.1)
 
 ############################################################################################################################
 ############################################## correlation gene expression and enhancers activity ##########################
@@ -196,7 +196,7 @@ axis(side=2, mgp=c(3, 0.65, 0), cex.axis=1.1, las=2)
 mtext("Spearman's rho", side=2, cex=0.85, line=3, at=(ymin+ymax)*0.9/2)
 mtext("distance to promoters (Mb)", side=1, line=2, cex=0.85)
 
-mtext("d", side=3, line=1.25, at=-7.5, font=2, cex=1.2)
+mtext("D", side=3, line=1.25, at=-7.5, font=2, cex=1.1)
 
 ##################################################################################################################################
 

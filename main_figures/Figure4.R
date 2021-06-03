@@ -167,14 +167,14 @@ for (sp in species){
 legend("topright", legend = c("PCHi-C data", "simulated data"), fill=dataset.colors, border=dataset.colors, bty='n', cex=0.95, inset=c(0, -0.15), xpd=NA)
 
 ## plot label
-mtext("a", side=3, line=1, at=xax[1]-diff(xax)[1]*1.42, font=2, cex=1.05)
+mtext("A", side=3, line=1, at=xax[1]-diff(xax)[1]*1.42, font=2, cex=1.005)
 
 ###################################################################################
 
 ## synteny conservation as a function of the distance between promoter and enhancer
 
 selected.species <- c("mouse", "opossum")
-labels <- c("b", "c")
+labels <- c("B", "C")
 names(labels) <- selected.species
 
 nbkept=25
@@ -225,7 +225,7 @@ for (sp in selected.species){
 
 
   ## plot label
-  mtext(labels[sp], side=3, line=1, at=-5.5, font=2, cex=1.05)
+  mtext(labels[sp], side=3, line=1, at=-5.5, font=2, cex=1.005)
   
 }
 
