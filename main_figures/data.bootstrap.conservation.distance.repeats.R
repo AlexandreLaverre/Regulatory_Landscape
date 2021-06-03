@@ -7,7 +7,7 @@ source("parameters.R")
 for(ref_sp in c("human", "mouse")){
   target_sp = setdiff(c("human", "mouse"), ref_sp)
 
-  print(refs_sp)
+  print(ref_sp)
   
   enhancers = enhancer.datasets[[ref_sp]]
   
