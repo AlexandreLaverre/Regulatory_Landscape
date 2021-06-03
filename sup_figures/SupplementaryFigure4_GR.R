@@ -59,11 +59,11 @@ for(sp in c("human", "mouse")){
   ## max height: 11 in
   
   if(sp=="human"){
-    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S4.pdf", sep=""), width=6.85, height=3.5)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S4.pdf", sep=""), width=6.85, height=3.25)
   }
 
   if(sp=="mouse"){
-    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure10.pdf", sep=""), width=6.85, height=6.5)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure10.pdf", sep=""), width=6.85, height=3.25)
   }
   
   m=matrix(1:2, nrow=1, byrow=F)
@@ -72,6 +72,10 @@ for(sp in c("human", "mouse")){
   
 ##########################################################################
 
+  par(mar=c(3.5, 3.5, 2, 1.1))
+  cex.axis=0.8
+  cex.label=0.85
+  
 ##########################################################################
   
   ## correlation between number of observed contacts and number of genes in 500 kb window
@@ -79,20 +83,20 @@ for(sp in c("human", "mouse")){
   
   rho=round(cor(as.numeric(frag.degree.obs), stats.obs[names(frag.degree.obs), "nb_genes_500kb"], method="spearman"), digits=2)
   
-  par(mar=c(3.75, 4.5, 3, 1.1))
+  
   smoothScatter(as.numeric(frag.degree.obs), stats.obs[names(frag.degree.obs), "nb_genes_500kb"], pch=20, xlab="", ylab="", axes=F, cex=0.5, nbin=75)
   
-  axis(side=1, cex=1, mgp=c(3, 0.5, 0))
-  axis(side=2, cex=1, mgp=c(3, 0.75, 0), las=2)
+  axis(side=1, cex.axis=cex.axis, mgp=c(3, 0.5, 0))
+  axis(side=2, cex.axis=cex.axis, mgp=c(3, 0.75, 0), las=2)
   
-  mtext(paste("observed data, rho=",rho, sep=""), side=3, cex=0.85, line=0.25)
+  mtext(paste("PCHi-C data, rho=",rho, sep=""), side=3, cex=0.85, line=0.25)
   
-  mtext("number of contacting baits", side=1, line=2, cex=0.95)
-  mtext("number of genes within 500 kb", side=2, line=2.5, cex=0.95)
+  mtext("number of contacting baits", side=1, line=2, cex=cex.label)
+  mtext("number of genes within 500 kb", side=2, line=2.5, cex=cex.label)
   
   ## plot label
   
-  mtext("A", side=3, line=1.5, at=-13.75, font=2, cex=1.2)
+  mtext("A", side=3, line=1.05, at=-15.75, font=2, cex=1.2)
   
 ##########################################################################
   
@@ -101,20 +105,20 @@ for(sp in c("human", "mouse")){
   
   rho=round(cor(as.numeric(frag.degree.sim), stats.sim[names(frag.degree.sim), "nb_genes_500kb"], method="spearman"), digits=2)
   
-  par(mar=c(3.75, 4.5, 3, 1.1))
+
   smoothScatter(as.numeric(frag.degree.sim), stats.sim[names(frag.degree.sim), "nb_genes_500kb"], pch=20, xlab="", ylab="", axes=F, cex=0.5, nbin=75)
   
-  axis(side=1, cex=1, mgp=c(3, 0.5, 0))
-  axis(side=2, cex=1, mgp=c(3, 0.75, 0), las=2)
+  axis(side=1, cex.axis=cex.axis, mgp=c(3, 0.5, 0))
+  axis(side=2, cex.axis=cex.axis, mgp=c(3, 0.75, 0), las=2)
   
   mtext(paste("simulated data, rho=",rho, sep=""), side=3, cex=0.85, line=0.25)
   
-  mtext("number of contacting baits", side=1, line=2, cex=0.95)
-  mtext("number of genes within 500 kb", side=2, line=2.5, cex=0.95)
+  mtext("number of contacting baits", side=1, line=2, cex=cex.label)
+  mtext("number of genes within 500 kb", side=2, line=2.5, cex=cex.label)
   
   ## plot label
   
-  mtext("B", side=3, line=1.5, at=-6.5, font=2, cex=1.2)
+  mtext("B", side=3, line=1.05, at=-8, font=2, cex=1.2)
   
  ##########################################################################
    
