@@ -20,7 +20,7 @@ for(ref in c("human", "mouse")){
   if(ref=="human"){
     pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S6.pdf", sep=""), width=6.85, height=6)
   } else{
-    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure22.pdf", sep=""), width=6.85, height=6)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure3.pdf", sep=""), width=6.85, height=6)
   }
   
   m=matrix(rep(NA, 2*10), nrow=2)

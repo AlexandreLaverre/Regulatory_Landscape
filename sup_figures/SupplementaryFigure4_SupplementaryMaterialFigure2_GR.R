@@ -63,7 +63,7 @@ for(sp in c("human", "mouse")){
   }
 
   if(sp=="mouse"){
-    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure10.pdf", sep=""), width=6.85, height=3.25)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure2.pdf", sep=""), width=6.85, height=3.25)
   }
   
   m=matrix(1:2, nrow=1, byrow=F)
