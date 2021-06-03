@@ -2,10 +2,14 @@
 
 source("parameters.R")
 
+library(bootBCa, lib=pathRlibs)
+
 #########################################################################################################################
 
 for(ref_sp in c("human", "mouse")){
   target_sp = setdiff(c("human", "mouse"), ref_sp)
+  
+  other_sp=target_sp
 
   print(ref_sp)
   
@@ -109,7 +113,7 @@ for(ref_sp in c("human", "mouse")){
    ci.low.sim=unlist(lapply(BC.sim, function(x) x[4]))
    ci.high.sim=unlist(lapply(BC.sim, function(x) x[5]))
    
-   save(list=c("BC.obs", "BC.sim", "mean.val.obs", "mean.val.sim", "ci.low.obs", "ci.high.obs", "ci.low.sim", "ci.high.sim"), file=paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".RData"))
+   save(list=c("BC.obs", "BC.sim", "mean.val.obs", "mean.val.sim", "ci.low.obs", "ci.high.obs", "ci.low.sim", "ci.high.sim"), file=paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".RData",sep=""))
    
    
 #######################################################################################################
@@ -147,7 +151,7 @@ for(ref_sp in c("human", "mouse")){
    ci.low.sim.norep=unlist(lapply(BC.sim.norep, function(x) x[4]))
    ci.high.sim.norep=unlist(lapply(BC.sim.norep, function(x) x[5]))
    
-   save(list=c("BC.obs", "BC.sim", "mean.val.obs", "mean.val.sim", "ci.low.obs", "ci.high.obs", "ci.low.sim", "ci.high.sim", "BC.obs.norep", "BC.sim.norep", "mean.val.obs.norep", "mean.val.sim.norep", "ci.low.obs.norep", "ci.high.obs.norep", "ci.low.sim.norep", "ci.high.sim.norep"), file=paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".RData"))
+   save(list=c("BC.obs", "BC.sim", "mean.val.obs", "mean.val.sim", "ci.low.obs", "ci.high.obs", "ci.low.sim", "ci.high.sim", "BC.obs.norep", "BC.sim.norep", "mean.val.obs.norep", "mean.val.sim.norep", "ci.low.obs.norep", "ci.high.obs.norep", "ci.low.sim.norep", "ci.high.sim.norep"), file=paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".RData",sep=""))
    
    print("done")
  }

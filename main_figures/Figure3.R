@@ -231,7 +231,6 @@ xax=seq(from=0, to=max(xpos)+1, by=10)
 labels=c("D", "E")
 names(labels)=c("restriction fragments", "enhancers")
 
-other_sp=target_sp
 
 for(type in c("restriction fragments", "enhancers")){
   
@@ -263,7 +262,7 @@ for(type in c("restriction fragments", "enhancers")){
  axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
  mtext("% aligned sequence", side=2, line=3, cex=0.8)
 
- mtext(paste(ref_sp, " vs. ", other_sp, ", ", type,sep=""), side=3, cex=0.8, line=1)
+ mtext(paste(ref_sp, " vs. ", target_sp, ", ", type,sep=""), side=3, cex=0.8, line=1)
 
  mtext(labels[type], side=3, line=1, at=-7.75, font=2, cex=1.1)
 }
@@ -292,7 +291,6 @@ class_leg=levels(frag_align_obs$class_genes_500kb)
 labels=c("F", "G")
 names(labels)=c("restriction fragments", "enhancers")
 
-other_sp=target_sp
 
 for(type in c("restriction fragments", "enhancers")){
   
