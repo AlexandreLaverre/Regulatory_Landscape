@@ -234,7 +234,7 @@ names(labels)=c("restriction fragments", "enhancers")
 
 for(type in c("restriction fragments", "enhancers")){
   
-  load(paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".RData"))
+  load(paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".RData", sep=""))
     
   ylim=range(c(ci.low.obs, ci.high.obs, ci.low.sim, ci.high.sim))
   
@@ -294,7 +294,7 @@ names(labels)=c("restriction fragments", "enhancers")
 
 for(type in c("restriction fragments", "enhancers")){
   
- load(paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".RData"))
+ load(paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".RData", sep=""))
 
   ## plot
   
