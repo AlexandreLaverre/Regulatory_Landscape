@@ -28,13 +28,13 @@ for(sp in c("human", "mouse")){
   obs$dist_class <- cut(obs$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
   obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-  obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:7, max(obs$nb_celltypes)), include.lowest=T)
+  obs$celltype_class<- cut(obs$nb_celltypes, breaks=unique(c(0:7, max(obs$nb_celltypes))), include.lowest=T)
   levels(obs$celltype_class)=c(as.character(1:7), ">7")
   
   sim$dist_class <- cut(sim$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
 
   sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-  sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:7, max(sim$nb_celltypes)), include.lowest=T)
+  sim$celltype_class<- cut(sim$nb_celltypes, breaks=unique(c(0:7, max(obs$nb_celltypes))), include.lowest=T)
   levels(sim$celltype_class)=c(as.character(1:7), ">7")
 
   filtered_data <- list("Original"=obs, "Simulated"=sim) ## data is already unbaited, in cis, in the right distance range

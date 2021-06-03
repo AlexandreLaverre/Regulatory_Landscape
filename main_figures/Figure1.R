@@ -134,7 +134,7 @@ mtext("chr7", at=shhxlim[2]+diff(shhxlim)/20, line=0.5, side=3, cex=0.75)
 
 ## plot label
 
-mtext("c", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/7.5, font=2, cex=1.2)
+mtext("C", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/7.5, font=2, cex=1.2)
 
 #############################################################################################
 
@@ -253,7 +253,7 @@ mtext("% interactions", side=2, line=2.5, cex=0.8)
 legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
        fill=dataset.colors[c("Original", "Simulated")], bty='n', 
        cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("a", side=3, line=1, at=-3.9, font=2, cex=1.2)
+mtext("A", side=3, line=1, at=-3.9, font=2, cex=1.2)
 
 ################################################################################################
 
@@ -289,7 +289,7 @@ for(dataset in rownames(mean_dist)){
 ## legend & plot label
 
 legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("b", side=3, line=1, at=-3.15e5, font=2, cex=1.2)
+mtext("B", side=3, line=1, at=-3.15e5, font=2, cex=1.2)
 
 ###########################################################################################
 
