@@ -5,7 +5,7 @@ library(bootBCa, lib=pathRlibs)
 
 set.seed(19)
 
-for(ref_sp in c( "human", "mouse"){
+for(ref_sp in c( "human", "mouse")){
   
   if(ref_sp=="human"){
     target_species=c("macaque", "rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken") ## other species already done
