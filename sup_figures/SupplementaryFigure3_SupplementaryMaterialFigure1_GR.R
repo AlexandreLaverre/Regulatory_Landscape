@@ -117,7 +117,7 @@ for(sp in c("human", "mouse")){
   if(sp=="human"){
     pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S3.pdf", sep=""), width=5.5, height=5.75)
   } else{
-    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterial_Figure1.pdf", sep=""), width=5.5, height=5.75)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure1.pdf", sep=""), width=5.5, height=5.75)
   }
    
   m=matrix(1:4, nrow=2, byrow=T)
