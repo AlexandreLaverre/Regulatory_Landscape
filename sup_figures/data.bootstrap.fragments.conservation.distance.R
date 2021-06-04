@@ -12,7 +12,8 @@ for(ref_sp in c( "human", "mouse")){
   }
 
   if(ref_sp=="mouse"){
-    target_species=c("rat", "rabbit", "human", "macaque", "dog", "cow", "elephant", "opossum", "chicken") }
+    target_species=c("rat", "rabbit", "human", "macaque", "dog", "cow", "elephant", "opossum", "chicken")
+  }
   
   load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
   

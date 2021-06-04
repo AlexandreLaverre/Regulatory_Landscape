@@ -3,10 +3,7 @@
 objects=ls()
 
 if(!"pathFigures"%in%objects){
-  
   source("../main_figures/parameters.R")
-    
-  set.seed(19)
 }
 
 ##########################################################################
