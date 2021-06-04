@@ -33,7 +33,7 @@ for(ref_sp in c( "human", "mouse")){
     ci.high.simul=unlist(lapply(BC.sim, function(x) x[5]))
     
     
-    save(list=c("BC.obs", "mean.val.obs", "ci.low.obs", "ci.high.obs", "BC.sim", "mean.val.sim", "ci.low.sim", "ci.high.sim"), file=paste(pathFigures, "RData/data.bootstrap.fragments.conservation.distance.",ref_sp,".",other_sp,".RData",sep="")) 
+    save(list=c("BC.obs", "mean.val.obs", "ci.low.obs", "ci.high.obs", "BC.sim", "mean.val.simul", "ci.low.simul", "ci.high.simul"), file=paste(pathFigures, "RData/data.bootstrap.fragments.conservation.distance.",ref_sp,".",other_sp,".RData",sep="")) 
     
   }
 
