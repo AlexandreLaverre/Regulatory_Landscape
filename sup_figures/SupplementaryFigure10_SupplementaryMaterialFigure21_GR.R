@@ -32,7 +32,7 @@ for(sp in c("human", "mouse")){
   if (sp == "human"){
     pdf.name = "GenomeResearch_Figures/Supplemental_Fig_S10.pdf"
   }else{
-    pdf.name = "GenomeResearch_Figures/SupplementaryMaterialFigureY.pdf"
+    pdf.name = "GenomeResearch_Figures/SupplementaryMaterialFigure21.pdf"
   }
   
   tg=setdiff(c("human", "mouse"), sp)
