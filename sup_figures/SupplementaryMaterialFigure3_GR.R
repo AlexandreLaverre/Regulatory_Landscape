@@ -21,6 +21,10 @@ if(load){
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
   load(paste(pathFigures, "RData/data.samples.cumulative.interactions.RData", sep=""))
+
+  ## observed and simulated contacts - already bait-other, in the right distance range
+  load(paste(pathFigures, "RData/data.bootstrap.nb.cell.types.",ref_sp,".RData",sep=""))
+
  
   nb_cell_max = 5
   load=FALSE ## we only do this once
@@ -31,71 +35,8 @@ if(load){
 ## prepare data for figure
 
 if(prepare){
-  ## observed and simulated contacts - already bait-other, in the right distance range
-  obs=observed.contacts[[ref_sp]]
-  sim=simulated.contacts[[ref_sp]]
-
-  info=sampleinfo[[ref_sp]]
-  rownames(info)=info$Sample.ID
-  
-  samples=info$Sample.ID 
-  celltypes=info$Broad.cell.type.or.tissue
-  names(celltypes)=samples
-  
-  print(paste("there are", length(samples), "samples"))
-  
-  breaks_samples=c(0, 1, 5, 10, 15, 20, length(samples))
-  nb_samples_names=c("1", "2-5", "6-10", "11-15", "16-20", paste("21-", length(samples), sep=""))
+ ## already prepared data for bootrap intervals
     
-  obs$nb_samples <- apply(obs[,samples], 1, function(x) sum(!is.na(x)))
-  obs$sample_class <- cut(obs$nb_samples, breaks=breaks_samples, include.lowest = T)
-  obs$dist_class <- cut(obs$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
-
-  obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-  obs$celltype_class<- cut(obs$nb_celltypes, breaks=c(0:nb_cell_max, max(obs$nb_celltypes)), include.lowest=T)
-  levels(obs$celltype_class)=c(as.character(1:nb_cell_max), paste0(">", nb_cell_max))
-  
-  sim$nb_samples <- apply(sim[,samples], 1, function(x) sum(!is.na(x)))
-  sim$sample_class <- cut(sim$nb_samples, breaks=breaks_samples, include.lowest = T)
-  sim$dist_class <- cut(sim$distance, breaks=seq(from=minDistance, to=maxDistance, by=50e3), include.lowest = T)
-
-  sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
-  sim$celltype_class<- cut(sim$nb_celltypes, breaks=c(0:nb_cell_max, max(sim$nb_celltypes)), include.lowest=T)
-  levels(sim$celltype_class)=c(as.character(1:nb_cell_max),paste0(">", nb_cell_max))
-
-  filtered_data <- list("Original"=obs, "Simulated"=sim) ## data is already unbaited, in cis, in the right distance range
- 
-  ## compute number of interactions in each nb samples class
-  
-  nb_samples_matrix <- sapply(filtered_data, function(x) as.numeric(table(x$sample_class)))
-  rownames(nb_samples_matrix) = nb_samples_names
-
-  nb_samples_matrix=t(nb_samples_matrix)
-  pc_nb_samples_matrix=100*nb_samples_matrix/apply(nb_samples_matrix,1, sum)
-
-  ## same for cell types
-  
-  nb_celltypes_matrix <- sapply(filtered_data, function(x) as.numeric(table(x$celltype_class)))
-  rownames(nb_celltypes_matrix) = levels(obs$celltype_class)
-
-  nb_celltypes_matrix=t(nb_celltypes_matrix)
-  pc_nb_celltypes_matrix=100*nb_celltypes_matrix/apply(nb_celltypes_matrix,1, sum)
-
-  ## divide interactions based on distance, compute mean number of samples by distance class
-  
-  print("computing bootstrap confidence intervals")
-
-  dist_cons_celltypes <- lapply(filtered_data, function(x) tapply(x$nb_celltypes, as.factor(x$dist_class), function(y) {z<-BCa(y, delta=NA, M=100, theta=mean); return(z)}))
-  
-  dist_conf_low_celltypes <- t(sapply(dist_cons_celltypes, function(x) unlist(lapply(x, function(y) y[4]))))
-  dist_conf_high_celltypes <- t(sapply(dist_cons_celltypes, function(x) unlist(lapply(x, function(y) y[5]))))
-
-  mean_nb_celltypes_dist <- t(sapply(dist_cons_celltypes, function(x)   unlist(lapply(x, function(y) y[3])))) 
-
-  mean_dist <- t(sapply(filtered_data, function(x)   tapply(x$distance, as.factor(x$dist_class), mean, na.rm=T)))
-
-  print("done")
-   
   ## we finish preparing the data
   prepare=FALSE
 }
