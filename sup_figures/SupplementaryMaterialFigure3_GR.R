@@ -61,7 +61,7 @@ b=barplot(as.matrix(pc_nb_celltypes_matrix), beside=T, xlab='',
           ylab="", border=dataset.colors[c("Original", "Simulated")],  col=dataset.colors[c("Original", "Simulated")],
   lwd=1.5,  mgp=c(3, 0.75, 0), axes=F)
 
-axis(side=1, cex.axis=1, at=apply(b, 2, mean), labels=rep("", 6))
+axis(side=1, cex.axis=1, at=apply(b, 2, mean), labels=rep("", dim(b)[2]))
 axis(side=2, cex.axis=1, las=2)
 
 mtext(colnames(nb_celltypes_matrix), at=apply(b, 2, mean), side=1, line=0.5, cex=0.85)
@@ -76,7 +76,7 @@ legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.col
        cex=1.1, inset=c(0.05, -0.2), xpd=NA, title=ref_sp)
 
 ##plot label
-mtext("A", side=3, line=1.5, at=-3.9, font=2, cex=1.1)
+mtext("A", side=3, line=1.5, at=-5.5, font=2, cex=1.1)
 
 ################################################################################################
 
