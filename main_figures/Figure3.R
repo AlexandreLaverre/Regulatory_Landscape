@@ -115,7 +115,7 @@ if(prepare){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "Figure3.pdf", sep=""), width=6.85, height=9)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure3.pdf", sep=""), width=6.85, height=9)
 
 par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right
 

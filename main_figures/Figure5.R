@@ -68,7 +68,7 @@ if(prepare){
 
 ##############################################################################
 
-pdf(paste(pathFigures, "Figure5.pdf", sep=""), width=6.85, height=4.5)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure5.pdf", sep=""), width=6.85, height=4.5)
 
 m=matrix(rep(NA, 10*20), nrow=10)
 

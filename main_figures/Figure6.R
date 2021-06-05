@@ -145,7 +145,7 @@ selected.distances=c("all", "shortrange", "longrange")
 
 ################################################################################################################################
 
-pdf(file=paste(pathFigures, "Figure6.pdf", sep=""), width = 6.85,  height=7)
+pdf(file=paste(pathFigures, "GenomeResearch_Figures/Figure6.pdf", sep=""), width = 6.85,  height=7)
 
 m=matrix(rep(NA,2*9), nrow=2)
 m[1,]=c(rep(c(1,2,3), each=3))

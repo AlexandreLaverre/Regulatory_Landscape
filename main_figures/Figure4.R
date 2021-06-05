@@ -107,7 +107,7 @@ if(prepare){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "Figure4.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure4.pdf", sep=""), width=6.85, height=5.5)
 
 layout(matrix(c(1, 1, 2, 3), nrow = 2, byrow = TRUE))
 
