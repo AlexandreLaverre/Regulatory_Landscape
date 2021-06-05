@@ -56,7 +56,7 @@ for (ref_sp in c("human", "mouse")){
   
   ## synteny conservation as a function of the distance between promoter and enhancer
   
-  labels <- letters[1:length(species)]
+  labels <- toupper(letters[1:length(species)])
   names(labels) <- species
   
   nbkept=25
@@ -106,7 +106,7 @@ for (ref_sp in c("human", "mouse")){
 
     
     ## legend
-    if (labels[sp] == "a"){
+    if (labels[sp] == "A"){
       legend("bottomleft", legend = c("PCHi-C data", "simulated data"), col=dataset.colors, lty=1, cex=1.1, bty='n')
     }
         

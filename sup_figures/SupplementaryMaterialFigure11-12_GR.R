@@ -46,7 +46,7 @@ for(ref_sp in c( "human", "mouse")){
   
 ###########################################################################
   
-  labels=letters[1:length(target_species)]
+  labels=toupper(letters[1:length(target_species)])
   names(labels)=target_species
   
   par(mar=c(4.1, 4.5, 2.1, 1.5))

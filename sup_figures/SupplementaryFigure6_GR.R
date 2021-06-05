@@ -24,7 +24,7 @@ if(load){
   maxval=c(7, 5)
   names(maxval)=c("human", "mouse")
 
-  labels=c("a", "b")
+  labels=c("A", "B")
   names(labels)=c("human", "mouse")
   
   load=FALSE

@@ -129,7 +129,7 @@ for (ref_sp in c("human", "mouse")){
 
   species <- species.list[[ref_sp]]
   
-  labels=letters[1:length(enhancer.datasets[[ref_sp]])]
+  labels=toupper(letters[1:length(enhancer.datasets[[ref_sp]])])
   names(labels)=enhancer.datasets[[ref_sp]]
 
   for (enh in enhancer.datasets[[ref_sp]]){

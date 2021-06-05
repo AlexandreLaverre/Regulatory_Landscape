@@ -46,7 +46,7 @@ for (ref in c("human", "mouse")){
   mtext(paste(ref, 'vs.', tg, sep=" "), side=3, line=0.5, at=22, cex=0.8)
 
   ## plot label
-  mtext(letters[nb], side=3, line=1, at=-11, font=2, cex=1.1)
+  mtext(toupper(letters[nb]), side=3, line=1, at=-11, font=2, cex=1.1)
   
   par(xpd=TRUE)
   

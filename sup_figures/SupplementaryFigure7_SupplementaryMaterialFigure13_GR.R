@@ -80,7 +80,7 @@ for (sp in c("human", "mouse")){
       } else{
         mtext("distance to promoters (Mb)", side=1, line=1.75, cex=0.7)
       }
-      mtext(letters[nb], side=3, line=0, at=-10.75, font=2, cex=0.9)
+      mtext(toupper(letters[nb]), side=3, line=0, at=-10.75, font=2, cex=0.85)
       
       nb = nb+1
     }

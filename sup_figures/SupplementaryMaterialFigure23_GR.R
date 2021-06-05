@@ -48,10 +48,10 @@ for (ref_sp in c("human", "mouse")){
   
   if (ref_sp == "human"){
     YLIM=c(-1,80)
-    lab="a"
+    lab="A"
   }else{
     YLIM=c(-1, 80)
-    lab="b"
+    lab="B"
   }
   
   xlim=c(-0.5, length(cons.dist[["all"]][[enh]]["obs",])+1)

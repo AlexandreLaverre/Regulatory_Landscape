@@ -64,7 +64,7 @@ tiplabels(species_names[tree$tip.label], bg = NA, adj = -0.1, frame="none", cex=
 legend("bottomleft", fill=dataset.colors, border=dataset.colors, legend = c("PCHi-C data", "simulated data"), bty='n', cex=1.1, xpd=T, inset=c(-0.01, -0.15), horiz=FALSE)
 
 # label
-mtext("a", side=3, line=0.5, at=-0.05, font=2, cex=1.05)
+mtext("A", side=3, line=0.5, at=-0.05, font=2, cex=1.05)
 
 ######################## b - Restriction fragments sequence conservation ########################
 species <-c("human", "macaque", "rat", "rabbit", "cow", "dog", "elephant", "opossum", "chicken")
@@ -92,11 +92,11 @@ points(x=100*apply(frag_align_obs[,species], 2, mean, na.rm=T), y = ypos.obs, co
 axis(1, pos=0.7, at=seq(0,100,20), labels=c("0", "20", "40", "60", "80", "100"), cex.axis=1, mgp=c(3, 0.75, 0))
 mtext("% aligned sequence", side=1, xpd = TRUE, cex=0.75, line=1.25)
 mtext("restriction fragments", side=3, line=-0.5, cex=0.75)
-mtext("b", side=3, line=0.5, at=-8, font=2, cex=1.05)
+mtext("B", side=3, line=0.5, at=-8, font=2, cex=1.05)
 
 ######################## c - enhancer sequence conservation ########################
 
-labels=letters[3:4]
+labels=toupper(letters[3:4])
 names(labels)=c("ENCODE", "FANTOM5")
 
 for(enh in c("ENCODE", "FANTOM5")){

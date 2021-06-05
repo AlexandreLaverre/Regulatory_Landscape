@@ -64,7 +64,7 @@ tiplabels(species_names, bg = NA, adj = -0.1, frame="none", cex=1.1, xpd=NA)
 legend("bottomleft", fill=dataset.colors, border=dataset.colors, legend = c("PCHi-C data", "simulated data"), bty='n', cex=1.2, xpd=T, inset=c(-0.01, -0.15), horiz=FALSE)
 
 # label
-mtext("a", side=3, line=0.5, at=-0.05, font=2, cex=1.2)
+mtext("A", side=3, line=0.5, at=-0.05, font=2, cex=1.2)
 
 ######################## b - enhancer sequence conservation ########################
 
@@ -75,7 +75,7 @@ ypos.sim=c(4,8,12,16,20,24,28,32,36)-0.27
 ypos.obs=c(5,9,13,17,21,25,29,33,37)+0.27
 
 
-labels=letters[2:4]
+labels=toupper(letters[2:4])
 names(labels)=c("FANTOM5", "RoadmapEpigenomics", "FOCS_GRO_seq")
 
 for(enh in c("FANTOM5", "RoadmapEpigenomics", "FOCS_GRO_seq")){
