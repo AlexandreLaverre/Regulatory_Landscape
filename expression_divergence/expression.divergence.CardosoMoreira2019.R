@@ -14,7 +14,7 @@ if(user=="necsulea"){
 
 
 if(user=="ubuntu"){
-  pathFinalData="/mnt/RegulatoryLandscapesManuscript/"
+  pathFinalData="/mnt/mydatalocal/RegulatoryLandscapesManuscript/"
 }
 
 ######################################################################################
