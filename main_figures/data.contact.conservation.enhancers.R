@@ -9,6 +9,7 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
 load(paste(pathFigures, "RData/data.bait.annotation.RData", sep=""))
+load(paste(pathFigures, "RData/data.gene.annotation.RData", sep=""))
 
 ## alignment score minAlignScore defined in parameters.R
 
@@ -20,6 +21,8 @@ contact.conservation=list()
 for(ref in c("human", "mouse")){
 
   tg=setdiff(c("human", "mouse"), ref)
+
+  annot.tg=gene.annot[[tg]]
 
   contact.conservation[[paste(ref, "2", tg, sep="")]]=list()
 
@@ -87,7 +90,7 @@ for(ref in c("human", "mouse")){
 
     unfiltered.contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]]=list("obs"=obs, "sim"=sim) 
     
-    ## take only  genes baited in both species datasets
+    ## take only genes baited in both species datasets
     
     obs=obs[which(obs$target_gene %in% baited.genes.tg),]
     sim=sim[which(sim$target_gene %in% baited.genes.tg),]
@@ -105,7 +108,19 @@ for(ref in c("human", "mouse")){
     
     obs=obs[which(obs$align_score>=minAlignScore),]
     sim=sim[which(sim$align_score>=minAlignScore),]
+
+    ## take also contacts that are in conserved synteny - gene and lifted enhancer on the same chromosome
+
+    obs$chr_gene_tg=paste("chr",annot.tg[obs$target_gene, "Chr"], sep="")
+    obs$chr_enh_tg=unlist(lapply(obs$lifted_enh, function(x) unlist(strsplit(x, split=":"))))
+    obs=obs[which(obs$chr_gene_tg==obs$chr_enh_tg),]
+
+
+    sim$chr_gene_tg=paste("chr",annot.tg[sim$target_gene, "Chr"], sep="")
+    sim$chr_enh_tg=unlist(lapply(sim$lifted_enh, function(x) unlist(strsplit(x, split=":"))))
+    sim=sim[which(sim$chr_gene_tg==sim$chr_enh_tg),]
      
+    
     ## save final data
     
     contact.conservation[[paste(ref, "2", tg, sep="")]][[enh]]=list("obs"=obs, "sim"=sim) 
