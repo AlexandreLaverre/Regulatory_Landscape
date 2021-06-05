@@ -111,15 +111,37 @@ for(ref in c("human", "mouse")){
 
     ## take also contacts that are in conserved synteny - gene and lifted enhancer on the same chromosome
 
-    obs$chr_gene_tg=paste("chr",annot.tg[obs$target_gene, "Chr"], sep="")
-    obs$chr_enh_tg=unlist(lapply(obs$lifted_enh, function(x) unlist(strsplit(x, split=":"))))
-    obs=obs[which(obs$chr_gene_tg==obs$chr_enh_tg),]
+    ## read synteny conservation
+      
+    synt_obs <- fread(paste(pathEvolution,"/synteny_conservation/", enh, "/", ref, "2", tg, "_original_synteny.txt", sep=""), header=T)
+    synt_simul <- fread(paste(pathEvolution,"/synteny_conservation/", enh, "/", ref, "2", tg, "_simulated_synteny.txt", sep=""), header=T)
+    
+    class(synt_obs)<-"data.frame"
+    class(synt_simul)<-"data.frame"
+    
+    synt_obs$id=paste(synt_obs$origin_gene, synt_obs$origin_enh, sep="-")
+    synt_simul$id=paste(synt_simul$origin_gene, synt_simul$origin_enh, sep="-")
 
+    synt_obs$target_dist=synt_obs$target_min_dist_allTSS
+    synt_simul$target_dist=synt_simul$target_min_dist_allTSS
 
-    sim$chr_gene_tg=paste("chr",annot.tg[sim$target_gene, "Chr"], sep="")
-    sim$chr_enh_tg=unlist(lapply(sim$lifted_enh, function(x) unlist(strsplit(x, split=":"))))
-    sim=sim[which(sim$chr_gene_tg==sim$chr_enh_tg),]
-     
+    ## if in trans, target distance is NA
+    synt_obs$target_dist[which(synt_obs$target_dist=="trans")] <- NA
+    synt_simul$target_dist[which(synt_simul$target_dist=="trans")] <- NA 
+    
+    ## transform distance to numeric values
+    synt_obs$target_dist <- as.numeric(synt_obs$target_dist)
+    synt_simul$target_dist <- as.numeric(synt_simul$target_dist)
+
+    ## select interactions found between minDistance and maxDistance in tg species
+
+    synt_obs=synt_obs[which(synt_obs$target_dist>=minDistance & synt_obs$target_dist<=maxDistance),]
+    synt_simul=synt_simul[which(synt_simul$target_dist>=minDistance & synt_simul$target_dist<=maxDistance),]
+
+    ## select interactions with conserved synteny
+
+    obs=obs[which(obs$id%in%synt_obs$id),]
+    sim=sim[which(sim$id%in%synt_simul$id),]
     
     ## save final data
     
