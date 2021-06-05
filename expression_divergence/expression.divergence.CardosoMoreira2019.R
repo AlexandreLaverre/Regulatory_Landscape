@@ -137,6 +137,8 @@ for(set in c("AllOrgans", "SomaticOrgans")){
   nbsamples.mouse=apply(avgexp.mouse, 1, function(x) length(which(x>=minRPKM)))
   
   okgenes=which(nbsamples.human>=minsamples & nbsamples.mouse>=minsamples)
+
+  print(paste(length(okgenes), "ok genes"))
   
   avgexp.human=avgexp.human[okgenes,]
   avgexp.mouse=avgexp.mouse[okgenes,]
