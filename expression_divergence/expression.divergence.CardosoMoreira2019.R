@@ -22,7 +22,7 @@ if(user=="ubuntu"){
 pathExpressionData=paste(pathFinalData, "SupplementaryDataset6/", sep="")
 pathOrtho=paste(pathFinalData, "SupplementaryDataset7/", sep="")
  
-minRPKM=2
+minRPKM=1
 minsamples=3
 
 ######################################################################################
