@@ -161,7 +161,7 @@ par(mar = c(6.5, 4.5, 2.5, 0.5))
 expdata=expdiv[,"MeanRPKM"]
 names(expdata)=rownames(expdiv)
 
-plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.distances, ylab="mean expression level (RPKM)", plot.label="a", xlab="number of contacts", xax.labels=levels(regcons$class.nb.contacts.all), xax.las=2)
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.distances, ylab="mean expression level (RPKM)", plot.label="A", xlab="number of contacts", xax.labels=levels(regcons$class.nb.contacts.all), xax.las=2)
 
 ###########################################################################
 ## expression specificity as a function of number of contacts
@@ -169,7 +169,7 @@ plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.dis
 expdata=expdiv[,paste0("Tau", sp_name)]
 names(expdata)=rownames(expdiv)
 
-plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.distances, ylab="expression specificity", plot.label="b", xlab="number of contacts", xax.labels=levels(regcons$class.nb.contacts.all), xax.las=2)
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.distances, ylab="expression specificity", plot.label="B", xlab="number of contacts", xax.labels=levels(regcons$class.nb.contacts.all), xax.las=2)
 
 ###########################################################################
 
@@ -178,7 +178,7 @@ plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.dis
 expdata=expdiv[,"CorrectedSpearman"]
 names(expdata)=rownames(expdiv)
 
-plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.distances, ylab="expression conservation", plot.label="c", xlab="number of contacts", xax.labels=levels(regcons$class.nb.contacts.all), xax.las=2)
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, distances=selected.distances, ylab="expression conservation", plot.label="C", xlab="number of contacts", xax.labels=levels(regcons$class.nb.contacts.all), xax.las=2)
 
 
 ######################## gene expression profile evolution ################
@@ -187,17 +187,17 @@ expdata=expdiv[, "CorrectedSpearman"]
 names(expdata)=rownames(expdiv)
 
 ## expression conservation as a function of enhancer sequence conservation
-plot.expdiv.regdiv(regcons, "class.aln.score", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="d", xlab="enhancer sequence conservation",  xax.labels=levels(regcons$class.aln.score.all), xax.las=2) 
+plot.expdiv.regdiv(regcons, "class.aln.score", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="D", xlab="enhancer sequence conservation",  xax.labels=levels(regcons$class.aln.score.all), xax.las=2) 
 
 
 ## expression conservation as a function of enhancer synteny conservation
-plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="e", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=2)
+plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="E", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=2)
 
 
 par(mar = c(6.5, 4.5, 2.5, 0))
 
 ## expression conservation as a function of contact conservation
-plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="f", xlab="contact conservation", xax.labels=c("<10%", "10-40%", ">40%"), xax.las=2)
+plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="F", xlab="contact conservation", xax.labels=c("<10%", "10-40%", ">40%"), xax.las=2)
 
 #########################################################################
 ## empty plot for the legend
