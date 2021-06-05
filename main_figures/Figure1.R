@@ -75,31 +75,30 @@ pdf(paste(pathFigures, "Figure1.pdf", sep=""), width=6.85, height=8.5)
 
 m=matrix(rep(NA, 52*10), nrow=52)
 
-
-for(i in 1:19){
-  m[i,]=c(rep(9, 5), rep(10, 5))
-}
-
-
-for(i in 20:25){
+for(i in 1:6){
   m[i,]=c(rep(1,1), rep(2,9))
 }
 
-for(i in c(26)){
+for(i in c(7)){
   m[i,]=c(rep(3, 1), rep(4,9))
 }
 
-for(i in c(27:48)){
+for(i in c(8:29)){
   m[i,]=c(rep(5, 1), rep(6,9))
 }
 
 
-for(i in 49:51){
+for(i in 30:32){
   m[i,]=c(rep(7, 1), rep(8,9))
 }
-for(i in 52){
+for(i in 33){
   m[i,]=c(rep(11, 10))
 }
+
+for(i in 34:52){
+  m[i,]=c(rep(9, 5), rep(10, 5))
+}
+
 
 layout(m)
 
@@ -134,7 +133,7 @@ mtext("chr7", at=shhxlim[2]+diff(shhxlim)/20, line=0.5, side=3, cex=0.75)
 
 ## plot label
 
-mtext("C", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/7.5, font=2, cex=1.1)
+mtext("A", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/7.5, font=2, cex=1.1)
 
 #############################################################################################
 
@@ -253,7 +252,7 @@ mtext("% interactions", side=2, line=2.5, cex=0.8)
 legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],
        fill=dataset.colors[c("Original", "Simulated")], bty='n', 
        cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("A", side=3, line=1, at=-3.9, font=2, cex=1.1)
+mtext("B", side=3, line=1, at=-3.9, font=2, cex=1.1)
 
 ################################################################################################
 
@@ -289,7 +288,7 @@ for(dataset in rownames(mean_dist)){
 ## legend & plot label
 
 legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("B", side=3, line=1, at=-3.15e5, font=2, cex=1.1)
+mtext("C", side=3, line=1, at=-3.15e5, font=2, cex=1.1)
 
 ###########################################################################################
 
