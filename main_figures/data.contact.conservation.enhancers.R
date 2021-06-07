@@ -9,7 +9,6 @@ pathEvolution=paste(pathFinalData, "SupplementaryDataset7", sep="")
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.ortho.genes.RData", sep=""))
 load(paste(pathFigures, "RData/data.bait.annotation.RData", sep=""))
-load(paste(pathFigures, "RData/data.gene.annotation.RData", sep=""))
 
 ## alignment score minAlignScore defined in parameters.R
 
@@ -22,7 +21,6 @@ for(ref in c("human", "mouse")){
 
   tg=setdiff(c("human", "mouse"), ref)
 
-  annot.tg=gene.annot[[tg]]
 
   contact.conservation[[paste(ref, "2", tg, sep="")]]=list()
 
@@ -109,12 +107,18 @@ for(ref in c("human", "mouse")){
     obs=obs[which(obs$align_score>=minAlignScore),]
     sim=sim[which(sim$align_score>=minAlignScore),]
 
+    nbgenes.obs=length(unique(obs$origin_gene))
+    nbgenes.sim=length(unique(sim$origin_gene))
+
+    print(paste(nrow(obs)," observed contacts for",nbgenes.obs,"genes after filtering sequence alignment"))
+    print(paste(nrow(sim)," simulated contacts for",nbgenes.sim,"genes after filtering sequence alignment"))
+
     ## take also contacts that are in conserved synteny - gene and lifted enhancer on the same chromosome
 
     ## read synteny conservation
       
-    synt_obs <- fread(paste(pathEvolution,"/synteny_conservation/", enh, "/", ref, "2", tg, "_original_synteny.txt", sep=""), header=T)
-    synt_simul <- fread(paste(pathEvolution,"/synteny_conservation/", enh, "/", ref, "2", tg, "_simulated_synteny.txt", sep=""), header=T)
+    synt_obs <- fread(paste(pathEvolution, "/", ref, "/synteny_conservation/", enh, "/", ref, "2", tg, "_original_synteny.txt", sep=""), header=T)
+    synt_simul <- fread(paste(pathEvolution,"/",ref,"/synteny_conservation/", enh, "/", ref, "2", tg, "_simulated_synteny.txt", sep=""), header=T)
     
     class(synt_obs)<-"data.frame"
     class(synt_simul)<-"data.frame"
@@ -142,6 +146,15 @@ for(ref in c("human", "mouse")){
 
     obs=obs[which(obs$id%in%synt_obs$id),]
     sim=sim[which(sim$id%in%synt_simul$id),]
+
+    
+    nbgenes.obs=length(unique(obs$origin_gene))
+    nbgenes.sim=length(unique(sim$origin_gene))
+    
+    print(paste(nrow(obs)," observed contacts for",nbgenes.obs,"genes after filtering synteny"))
+    print(paste(nrow(sim)," simulated contacts for",nbgenes.sim,"genes after filtering synteny"))
+
+
     
     ## save final data
     
