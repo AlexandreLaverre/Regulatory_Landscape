@@ -128,10 +128,10 @@ for(sp in c("human", "mouse")){
     cons.synteny[[sp]][[enh]] <- sapply(levels(synt_obs$class_score), function(x)
                                         (nrow(synt_obs[which(synt_obs$target_dist <= maxDistanceSyntenyTarget & synt_obs$class_score == x),])/nrow(synt_obs[which(synt_obs$class_score == x ),]))*100)
     
-    cons.synteny.conf.low[[sp]][[enh]] <- sapply(levels(contact_obs$class_score), function(x)
+    cons.synteny.conf.low[[sp]][[enh]] <- sapply(levels(synt_obs$class_score), function(x)
                                                  prop.test(nrow(synt_obs[which(synt_obs$target_dist <= maxDistanceSyntenyTarget & synt_obs$class_score == x),]), nrow(synt_obs[which(synt_obs$class_score == x ),]))$conf.int[1]*100)
     
-    cons.synteny.conf.high[[sp]][[enh]] <- sapply(levels(contact_obs$class_score), function(x)
+    cons.synteny.conf.high[[sp]][[enh]] <- sapply(levels(synt_obs$class_score), function(x)
                                                   prop.test(nrow(synt_obs[which(synt_obs$target_dist <= maxDistanceSyntenyTarget & synt_obs$class_score == x),]), nrow(synt_obs[which(synt_obs$class_score == x ),]))$conf.int[2]*100)
     
   }
