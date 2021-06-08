@@ -199,7 +199,7 @@ plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, "all", enhancers, yla
 
 par(mar=c(4.75, 5.25, 2.5, 2.5)) # bottom, left, top, right
 
-plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="H", xlab="contact conservation", xax.labels=c("<10%", "10-40%", ">40%"), xax.las=1)
+plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="H", xlab="contact conservation", xax.labels=levels(regcons$class.contact.cons.all), xax.las=1)
 
 ################################################################################################################################
 
