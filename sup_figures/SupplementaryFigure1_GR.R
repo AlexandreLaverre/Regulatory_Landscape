@@ -1,254 +1,324 @@
-#########################################################################
+#############################################################################################
 
 ## if it's the first time we run this figure, we load and prepare data
 
 objects=ls()
 
 if(!"pathScripts"%in%objects){
-  load=TRUE
-  prepare=TRUE
+  load=T
+  prepare=T
   source("../main_figures/parameters.R")
-
-  pathEnhancers="../../../RegulatoryLandscapesManuscript/SupplementaryDataset4/"
-
-  library(plotrix)
 }
 
-##########################################################################
+#############################################################################################
 
 if(load){
-  sp="human"
+ 
+  load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
+  load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 
-  load(paste(pathFigures, "RData/data.fragment.contacts.RData",sep=""))
-
-  obs=observed.contacts[[sp]]
-  sim=simulated.contacts[[sp]]
-
-  load(paste(pathFigures, "RData/data.bait.annotation.RData",sep=""))
-
-  baits=bait.info[[sp]]
-
-  load(paste(pathFigures, "RData/data.restriction.map.RData", sep=""))
-
-  map=restriction.map[[sp]]
-
-  ## enhancer coordinates, ENCODE
-  enhancers=read.table(paste(pathEnhancers, sp, "/ENCODE/enhancer_coordinates.bed", sep=""), h=T, stringsAsFactors=F)
-  
   load=FALSE
 }
 
-##########################################################################
+#############################################################################################
 
 if(prepare){
-  ## "chr1:147541410:147546578"
-  ## "chrX:30722815:30725270"
+  sampleinfo.human=sampleinfo[["human"]]
+  sampleinfo.mouse=sampleinfo[["mouse"]]
+
+  exsample.human=sampleinfo.human$Sample.ID[1]
+  exsample.mouse=sampleinfo.mouse$Sample.ID[1]
+
+  ## contact data
+
+  obs.human=observed.contacts[["human"]]
+  sim.human=simulated.contacts[["human"]]
+
+  obs.mouse=observed.contacts[["mouse"]]
+  sim.mouse=simulated.contacts[["mouse"]]
+
+  ## median distance per sample
+
+  median.distance.obs.human=unlist(lapply(sampleinfo.human$Sample.ID, function(x) median(obs.human[which(!is.na(obs.human[,x])),"distance"])))
+  median.distance.sim.human=unlist(lapply(sampleinfo.human$Sample.ID, function(x) median(sim.human[which(!is.na(sim.human[,x])),"distance"])))
+
+  median.distance.obs.mouse=unlist(lapply(sampleinfo.mouse$Sample.ID, function(x) median(obs.mouse[which(!is.na(obs.mouse[,x])),"distance"])))
+  median.distance.sim.mouse=unlist(lapply(sampleinfo.mouse$Sample.ID, function(x) median(sim.mouse[which(!is.na(sim.mouse[,x])),"distance"])))
+
+
+  ## mean nb contacts per bait
+
+  mean.nb.contacts.bait.obs.human=unlist(lapply(sampleinfo.human$Sample.ID, function(x) {this.obs=obs.human[which(!is.na(obs.human[,x])),]; return(mean(as.numeric(table(this.obs$id_bait))))}))
+  mean.nb.contacts.bait.sim.human=unlist(lapply(sampleinfo.human$Sample.ID, function(x) {this.sim=sim.human[which(!is.na(sim.human[,x])),]; return(mean(as.numeric(table(this.sim$id_bait))))}))
   
-  ## bait="chr4:41081621:41085450"
-  ## cell="PEK_early"
-  
-  ## bait="chr12:53218969:53240775"
-  ## cell="hESC"
+  mean.nb.contacts.bait.obs.mouse=unlist(lapply(sampleinfo.mouse$Sample.ID, function(x) {this.obs=obs.mouse[which(!is.na(obs.mouse[,x])),]; return(mean(as.numeric(table(this.obs$id_bait))))}))
+  mean.nb.contacts.bait.sim.mouse=unlist(lapply(sampleinfo.mouse$Sample.ID, function(x) {this.sim=sim.mouse[which(!is.na(sim.mouse[,x])),]; return(mean(as.numeric(table(this.sim$id_bait))))}))
 
-  bait="chr11:66263828:66266552"
-  cell="CD34"
+  ## mean nb contacts per fragment
 
-  this.obs=obs[which(obs$id_bait==bait & !is.na(obs[,cell])),]
-  this.sim=sim[which(sim$id_bait==bait & !is.na(sim[,cell])),]
+  mean.nb.contacts.frag.obs.human=unlist(lapply(sampleinfo.human$Sample.ID, function(x) {this.obs=obs.human[which(!is.na(obs.human[,x])),]; return(mean(as.numeric(table(this.obs$id_frag))))}))
+  mean.nb.contacts.frag.sim.human=unlist(lapply(sampleinfo.human$Sample.ID, function(x) {this.sim=sim.human[which(!is.na(sim.human[,x])),]; return(mean(as.numeric(table(this.sim$id_frag))))}))
 
-  chr=this.obs$chr_bait[1]
+  mean.nb.contacts.frag.obs.mouse=unlist(lapply(sampleinfo.mouse$Sample.ID, function(x) {this.obs=obs.mouse[which(!is.na(obs.mouse[,x])),]; return(mean(as.numeric(table(this.obs$id_frag))))}))
+  mean.nb.contacts.frag.sim.mouse=unlist(lapply(sampleinfo.mouse$Sample.ID, function(x) {this.sim=sim.mouse[which(!is.na(sim.mouse[,x])),]; return(mean(as.numeric(table(this.sim$id_frag))))}))
 
-  xrange=range(c(this.obs$start, this.sim$start, this.obs$end, this.sim$end))
-
-  this.map=map[which(map$chr==chr & map$start>=xrange[1] & map$end<=xrange[2]),]
-
-  this.baits=baits[which(baits$chr==chr & baits$start>=xrange[1] & baits$end<=xrange[2]),]
-
-  this.enhancers=enhancers[which(enhancers$chr==chr & enhancers$start>=xrange[1] & enhancers$end<=xrange[2]),]
-
-
-  ## all obs, only this sample
-
-  all.obs=obs[which(!is.na(obs[,cell])),]
-  all.sim=sim[which(!is.na(sim[,cell])),]
   
   prepare=FALSE
 }
+#############################################################################################
 
-##########################################################################
+pdf(file=paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S2.pdf", sep=""), width=6.85, height=9)
 
-## 1 column width 85 mm = 3.34 in
-## 1.5 column width 114 mm = 4.49 in 
-## 2 columns width 174 mm = 6.85 in
-## max height: 11 in
+m=matrix(rep(NA, 4*3), nrow=4)
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S1.pdf", sep=""), width=6.85, height=3)
-
-m=matrix(rep(NA, 10*40), nrow=10)
-
-for(i in 1){
-  m[i,]=c(rep(1, 25), rep(6, 15))
-}
-
-for(i in 2:4){
-  m[i,]=c(rep(2, 25), rep(6, 15))
-}
-
-for(i in 5){
- m[i,]=c(rep(3, 25), rep(6, 15))
-}
-
-for(i in 6:9){
- m[i,]=c(rep(4, 25), rep(7, 15))
-}
-
-for(i in 10){
- m[i,]=c(rep(5, 25), rep(7, 15))
-}
+m[1,]=1:3
+m[2,]=4:6
+m[3,]=7:9
+m[4,]=10:12
 
 layout(m)
 
-##########################################################################
-## margin
+#############################################################################################
 
-par(mar=c(0.2, 5.2, 0.2, 1.2))
+labels=list("human"=c("A", "B","C"), "mouse"=c("D", "E", "F"))
 
-##########################################################################
+## example plots for human and mouse
 
-## legend plot
+for(sp in c("human", "mouse")){
+  sample=get(paste("exsample", sp, sep="."))
+  obs=get(paste("obs", sp, sep="."))
+  sim=get(paste("sim", sp, sep="."))
 
-plot(1, type="n", xlim=c(0,1.15), ylim=c(0,1), axes=F, xlab="", ylab="", xaxs="i", yaxs="i")
-
-legend("topright", c("PCHi-C data", "simulated data"), col=dataset.colors, lty=1, inset=0.01, bty="n", xpd=NA, cex=0.95, seg.len=1)
-
-small=0.01
-
-rect(0.815, -0.75, 0.83, -0.55, col="gray20", border="gray20", xpd=NA)
-rect(0.84, -0.75, 0.85, -0.55, col="gray80", border="gray80", xpd=NA)
-
-text(x=0.875, y=-0.6, labels="restriction fragments", cex=0.95, xpd=NA, adj=c(0,0.5))
-
-rect(0.83, -1.25, 0.832, -1.05, col="gray20", border="gray20", xpd=NA)
-rect(0.84, -1.25, 0.842, -1.05, col="gray20", border="gray20", xpd=NA)
-rect(0.82, -1.25, 0.822, -1.05, col="gray20", border="gray20", xpd=NA)
-
-text(x=0.875, y=-1.125, labels="enhancers", cex=0.95, xpd=NA, adj=c(0,0.5))
-
-rect(0.83, -1.75, 0.845, -1.55, col="gray80", border="red", xpd=NA)
-
-text(x=0.875, y=-1.65, labels="bait", cex=0.95, xpd=NA, adj=c(0,0.5))
-
-mtext("example bait, one sample", side=3, line=-1, at=0.05, cex=0.65, font=2)
-
-##########################################################################
-
-## observed interactions
-
-yrange=c(0, 1)
-
-plot(1, type="n", xlim=xrange, ylim=c(0,0.6), axes=F, xlab="", ylab="", xaxs="i", yaxs="i")
-
-for(i in 1:nrow(this.obs)){
-  pos.bait=(this.obs$start_bait[i]+this.obs$end_bait[i])/2
-  pos.frag=(this.obs$start[i]+this.obs$end[i])/2
-  x.center=(pos.bait+pos.frag)/2
-  R.x=abs(x.center-pos.bait)
-  R.y=0.5
+  this.info=get(paste("sampleinfo",sp,sep="."))
   
-  draw.ellipse(x=x.center, y=0, a=R.x, b=0.5, col=NA, border=dataset.colors["Original"])
-}
-
-##########################################################################
-
-## restriction fragments
-
-plot(1, type="n", xlim=xrange, ylim=c(-1,1), axes=F, xlab="", ylab="", xaxs="i")
-
-for(i in 1:dim(this.map)[1]){
-  if(i%%2==0){
-    rect(this.map$start[i], 0.25, this.map$end[i], 0.75, col="gray80", border=NA)
-  } else{
-    rect(this.map$start[i], 0.25, this.map$end[i], 0.75, col="gray20", border=NA)
+  celltype=this.info[which(this.info$Sample.ID==sample), "Broad.cell.type.or.tissue"]
+  
+  this.obs=obs[which(!is.na(obs[,sample])),]
+  this.sim=sim[which(!is.na(sim[,sample])),]
+  
+  ## distance bait-contact
+  
+  d.obs=density(this.obs$distance, bw=0.5)
+  d.sim=density(this.sim$distance, bw=0.5)
+  
+  xlim=range(c(0, maxDistance))
+  ylim=range(c(d.obs$y, d.sim$y))
+    
+  xaxs=c(0, 500e3, 1e6, 1.5e6, 2e6, 2.5e6)
+  xaxslabels=c("0", "0.5", "1", "1.5", "2", "2.5")  
+  
+  par(mar=c(3.1, 3.1, 2.1, 1.1))
+  plot(d.obs$x, d.obs$y, type="l", xlab="", ylab="", xlim=xlim, ylim=ylim, axes=F, col=dataset.colors["Original"])
+  lines(d.sim$x, d.sim$y, col=dataset.colors["Simulated"])
+  axis(side=1, mgp=c(3, 0.5, 0), at=xaxs, labels=xaxslabels, cex.axis=0.95)
+  mtext("distance bait-fragment (Mb)", side=1, line=1.5, cex=0.75)
+  
+  axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.95)
+  
+  mtext("density of nb contacts", side=2, line=2, cex=0.75)
+  
+  median.obs=round(median(this.obs$distance)/1000, digits=0)
+  median.sim=round(median(this.sim$distance)/1000, digits=0)
+  mtext(paste("median ", median.obs, " Kb", sep=""), side=3, line=-1.5, cex=0.75, col=dataset.colors["Original"])
+  mtext(paste("median ", median.sim, " Kb", sep=""), side=3, line=-2.5, cex=0.75, col=dataset.colors["Simulated"])
+  
+  ## legend
+  
+  if(sp=="human"){
+    legend("right", bty="n", col=dataset.colors, lty=1, legend=c("PCHi-C data", "simulated data"), cex=1.1, inset=0.05, xpd=NA)
   }
-}
 
-mtext("fragments", side=2, las=2, at=0.55, cex=0.65,line=1)
-
-## coordinates for the bait
-
-rect(this.obs$start_bait[1], 0.25, this.obs$end_bait[1], 0.75, col="gray80", border="red")
-abline(h=-0.5, lty=1, col="gray80")
-
-for(i in 1:dim(this.enhancers)[1]){
-  rect(this.enhancers$start[i], -0.25, this.enhancers$end[i], -0.75, col="gray20", border=NA)
-}
-
-mtext("enhancers", side=2, las=2, at=-0.45, cex=0.65,line=1)
-
-##########################################################################
-
-## simulated interactions
-
-yrange=c(0, 1)
-
-plot(1, type="n", xlim=xrange, ylim=c(-0.6,0), axes=F, xlab="", ylab="", xaxs="i", yaxs="i")
-
-for(i in 1:nrow(this.sim)){
-  pos.bait=(this.sim$start_bait[i]+this.sim$end_bait[i])/2
-  pos.frag=(this.sim$start[i]+this.sim$end[i])/2
-  x.center=(pos.bait+pos.frag)/2
-  R.x=abs(x.center-pos.bait)
-  R.y=0.5
+  ## label
+  mtext(labels[[sp]][1], side=3, at=-0.5e6, cex=1.1, font=2, line=0.85)
   
-  draw.ellipse(x=x.center, y=0, a=R.x, b=-0.5, col=NA, border=dataset.colors["Simulated"])
+  ## number of interactions per bait
+  
+  nb.contacts.per.bait.obs=as.numeric(table(this.obs$id_bait))
+  nb.contacts.per.bait.sim=as.numeric(table(this.sim$id_bait))
+  
+  maxval=max(c(20, nb.contacts.per.bait.obs, nb.contacts.per.bait.sim))
+  
+  tab.obs=table(cut(nb.contacts.per.bait.obs, breaks=unique(sort(c(0:19, maxval))), include.lowest=T))
+  tab.sim=table(cut(nb.contacts.per.bait.sim, breaks=unique(sort(c(0:19, maxval))), include.lowest=T))
+  m=matrix(c(tab.obs, tab.sim), nrow=2, byrow=T)
+  
+  par(mar=c(3.1, 3.1, 2.1, 1.1))
+  b=barplot(m, beside=T, col=dataset.colors, border=NA, axes=F, xlab="", ylab="")
+  xpos=apply(b,2,mean)
+  axis(side=1, at=xpos, labels=c(as.character(1:19), ""), cex=0.95, mgp=c(3, 0.5, 0))
+  mtext("20+", at=xpos[length(xpos)]+diff(xpos)[1]/2, side=1, line=0.5, cex=0.65)
+  
+  axis(side=2, cex=0.95, mgp=c(3, 0.5, 0))
+  mtext("nb. baits", side=2, line=1.5, cex=0.75)
+  mtext("nb. contacted fragments", side=1, line=1.5, cex=0.75)
+  
+  mean.obs=round(mean(nb.contacts.per.bait.obs), digits=2)
+  mtext(paste("mean ", mean.obs, sep=""), side=3, line=-1.5, cex=0.75, col=dataset.colors["Original"])
+  mean.sim=round(mean(nb.contacts.per.bait.sim), digits=2)
+  mtext(paste("mean ", mean.sim, sep=""), side=3, line=-2.5, cex=0.75, col=dataset.colors["Simulated"])
+
+  ## labels
+  mtext(labels[[sp]][2], side=3, at=-12, cex=1.1, font=2, line=0.85)
+  
+  ## number of interactions per fragment
+  
+  nb.contacts.per.frag.obs=as.numeric(table(this.obs$id_frag))
+  nb.contacts.per.frag.sim=as.numeric(table(this.sim$id_frag))
+  
+  maxval=max(c(20, nb.contacts.per.frag.obs, nb.contacts.per.frag.sim))
+  
+  tab.obs=table(cut(nb.contacts.per.frag.obs, breaks=unique(sort(c(0:9, maxval))), include.lowest=T))
+  tab.sim=table(cut(nb.contacts.per.frag.sim, breaks=unique(sort(c(0:9, maxval))), include.lowest=T))
+  m=matrix(c(tab.obs, tab.sim), nrow=2, byrow=T)
+  
+  par(mar=c(3.1, 3.1, 2.1, 3.1))
+  b=barplot(m, beside=T, col=dataset.colors, border=NA, axes=F, xlab="", ylab="")
+  xpos=apply(b,2,mean)
+  axis(side=1, at=xpos, labels=c(as.character(1:9), ""), cex=0.95, mgp=c(3, 0.5, 0))
+  
+  axis(side=2, cex=0.95, mgp=c(3, 0.5, 0))
+  
+  mtext("nb. fragments", side=2, line=1.5, cex=0.75)
+  mtext("nb. contacting baits", side=1, line=1.5, cex=0.75)
+  
+  nb=dim(this.obs)[1]
+  
+  mtext(paste(sp,"\n",sample, "\n", "N=", nb,  sep=""), side=4, cex=0.75, las=2, line=-2) 
+  
+  mean.obs=round(mean(nb.contacts.per.frag.obs), digits=2)
+  mtext(paste("mean ", mean.obs, sep=""), side=3, line=-1.5, cex=0.75, col=dataset.colors["Original"])
+  mean.sim=round(mean(nb.contacts.per.frag.sim), digits=2)
+  mtext(paste("mean ", mean.sim, sep=""), side=3, line=-2.5, cex=0.75, col=dataset.colors["Simulated"])
+
+  mtext(labels[[sp]][3], side=3, at=-5.5, cex=1.1, font=2, line=0.85)
   
 }
 
-##########################################################################
+#############################################################################################
 
-plot(1, type="n", xlim=xrange, ylim=c(-0.6,0), axes=F, xlab="", ylab="", xaxs="i", yaxs="i")
+## median distance, human
 
-xaxs=pretty(xrange/1e6, n=10)
-axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.9, line=-1.5, at=xaxs*1e6, labels=paste0(xaxs, "Mb"))
+par(mar=c(3.1, 3.1, 2.1, 1.1))
 
-mtext(chr, side=1, line=-2, at=xrange[1]-diff(xrange)/20, cex=0.625)
+plot(median.distance.obs.human/1000, median.distance.sim.human/1000, pch=20, xlab="", ylab="", axes=F, main="", xlim=c(150, 400), ylim=c(150, 400))
+abline(0,1)
 
-##########################################################################
+axis(side=1, mgp=c(3, 0.5, 0))
+axis(side=2, mgp=c(3, 0.5, 0))
 
-## density plot, distance, observed interactions
+box()
 
-d.obs=density(all.obs$distance, bw=0.5)
-d.sim=density(all.sim$distance, bw=0.5)
+mtext("median dist. (Kb), PCHi-C data", side=1, line=1.75, cex=0.75)
+mtext("median dist. (Kb), simulated", side=2, line=2.1, cex=0.75)
 
-xlim=range(c(0, maxDistance))
-ylim=range(c(d.obs$y, d.sim$y))
+mtext("G", side=3, at=90, cex=1.1, font=2, line=1)
 
-xaxs=c(0, 500e3, 1e6, 1.5e6, 2e6, 2.5e6)
-xaxslabels=c("0", "0.5", "1", "1.5", "2", "2.5")  
+#############################################################################################
 
-par(mar=c(2.8, 7.1, 1.1, 0.25))
-plot(d.obs$x, d.obs$y, type="l", xlab="", ylab="", xlim=xlim, ylim=ylim, axes=F, col=dataset.colors["Original"])
-axis(side=1, mgp=c(3, 0.5, 0), at=xaxs, labels=xaxslabels, cex.axis=0.9)
-mtext("distance bait-fragment (Mb)", side=1, line=1.5, cex=0.65)
+## mean nb contacts per bait
 
-axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.9)
+par(mar=c(3.1, 3.1, 2.1, 1.1))
 
-mtext("density, nb. contacts", side=2, line=2.1, cex=0.65)
+plot(mean.nb.contacts.bait.obs.human, mean.nb.contacts.bait.sim.human, pch=20, xlab="", ylab="", axes=F, main="", xlim=c(3, 15), ylim=c(3, 15))
+abline(0,1)
 
-mtext("all baits, one sample", side=3, line=0, at=xlim[2], adj=1, cex=0.65, font=2)
+axis(side=1, mgp=c(3, 0.5, 0))
+axis(side=2, mgp=c(3, 0.5, 0))
 
-##########################################################################
+box()
 
-## density plot, distance, simulated interactions
+mtext("mean nb. fragments, PCHi-C data", side=1, line=1.75, cex=0.75)
+mtext("mean nb. fragments, simulated", side=2, line=2, cex=0.75)
 
-plot(d.sim$x, d.sim$y, type="l", xlab="", ylab="", xlim=xlim, ylim=ylim, axes=F, col=dataset.colors["Simulated"])
-axis(side=1, mgp=c(3, 0.5, 0), at=xaxs, labels=xaxslabels, cex.axis=0.9)
-mtext("distance bait-fragment (Mb)", side=1, line=1.5, cex=0.65)
+mtext("H", side=3, at=0.1, cex=1.1, font=2, line=1)
 
-axis(side=2, mgp=c(3, 0.75, 0), cex.axis=0.9)
+#############################################################################################
 
-mtext("density, nb. contacts", side=2, line=2.1, cex=0.65)
+
+## mean nb contacts per fragment
+
+par(mar=c(3.1, 2.7, 2.1, 1.5))
+
+plot(mean.nb.contacts.frag.obs.human, mean.nb.contacts.frag.sim.human, pch=20, xlab="", ylab="", axes=F, main="", xlim=c(1, 2), ylim=c(1,2))
+abline(0,1)
+
+axis(side=1, mgp=c(3, 0.5, 0))
+axis(side=2, mgp=c(3, 0.5, 0))
+
+box()
+
+mtext("mean nb. baits, PCHi-C data", side=1, line=1.75, cex=0.75)
+mtext("mean nb. baits, simulated", side=2, line=2, cex=0.75)
+
+mtext("I", side=3, at=0.75, cex=1.1, font=2, line=1)
+
+mtext("human", side=4, line=0.1, cex=0.75)
+
+#############################################################################################
+#############################################################################################
+
+## median distance, mouse
+
+par(mar=c(3.1, 3.1, 2.1, 1.1))
+
+plot(median.distance.obs.mouse/1000, median.distance.sim.mouse/1000, pch=20, xlab="", ylab="", axes=F, main="")#, xlim=c(150, 400), ylim=c(150, 400))
+abline(0,1)
+
+axis(side=1, mgp=c(3, 0.5, 0))
+axis(side=2, mgp=c(3, 0.5, 0))
+
+box()
+
+mtext("median dist. (Kb), PCHi-C data", side=1, line=1.75, cex=0.75)
+mtext("median dist. (Kb), simulated", side=2, line=2.1, cex=0.75)
+
+mtext("J", side=3, at=45, cex=1.1, font=2, line=1)
+
+#############################################################################################
+
+## mean nb contacts per bait
+
+par(mar=c(3.1, 3.1, 2.1, 1.1))
+
+plot(mean.nb.contacts.bait.obs.mouse, mean.nb.contacts.bait.sim.mouse, pch=20, xlab="", ylab="", axes=F, main="", xlim=c(4, 13), ylim=c(4, 13))
+abline(0,1)
+
+axis(side=1, mgp=c(3, 0.5, 0))
+axis(side=2, mgp=c(3, 0.5, 0))
+
+box()
+
+mtext("mean nb. fragments, PCHi-C data", side=1, line=1.75, cex=0.75)
+mtext("mean nb. fragments, simulated", side=2, line=2, cex=0.75)
+
+mtext("K", side=3, at=1.9, cex=1.1, font=2, line=1)
+
+#############################################################################################
+
+## mean nb contacts per fragment
+
+par(mar=c(3.1, 2.7, 2.1, 1.5))
+
+plot(mean.nb.contacts.frag.obs.mouse, mean.nb.contacts.frag.sim.mouse, pch=20, xlab="", ylab="", axes=F, main="", xlim=c(1.1, 2.1), ylim=c(1.1,2.1))
+abline(0,1)
+
+axis(side=1, mgp=c(3, 0.5, 0))
+axis(side=2, mgp=c(3, 0.5, 0))
+
+box()
+
+mtext("mean nb. baits, PCHi-C data", side=1, line=1.75, cex=0.75)
+mtext("mean nb. baits, simulated", side=2, line=2, cex=0.75)
+
+mtext("L", side=3, at=0.85, cex=1.1, font=2, line=1)
+
+mtext("mouse", side=4, line=0.1, cex=0.75)
+
+#############################################################################################
+
+
+#############################################################################################
 
 dev.off()
 
-##########################################################################
+#############################################################################################

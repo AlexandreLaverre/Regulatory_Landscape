@@ -13,13 +13,82 @@ if(!"pathScripts"%in%objects){
 ##########################################################################
 
 if(load){
-  library(ape)
-  
-  load(paste(pathFigures, "RData/data.sample.clustering.RData", sep=""))
+ 
+  load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-  load(paste(pathFigures, "RData/data.AFC.RData", sep=""))
+  load(paste(pathFigures, "RData/data.bait.annotation.RData", sep=""))
+  load(paste(pathFigures, "RData/data.gene.expression.RData", sep=""))
 
+  minRPKM=1
+
+  maxval=c(7, 5)
+  names(maxval)=c("human", "mouse")
+
+  labels=c("A", "B")
+  names(labels)=c("human", "mouse")
+  
   load=FALSE
+}
+
+##########################################################################
+
+if(prepare){
+  ## determine number of cell types in which contacts were observed
+
+  all.data=list()
+
+  for(sp in c("human","mouse")){
+    obs=observed.contacts[[sp]]
+    sim=simulated.contacts[[sp]]
+    
+    info=sampleinfo[[sp]]
+    rownames(info)=info$Sample.ID
+    
+    samples=info$Sample.ID 
+    celltypes=info$Broad.cell.type.or.tissue
+    names(celltypes)=samples
+
+    M=maxval[sp]
+    
+    obs$nb_celltypes <- apply(obs[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
+    sim$nb_celltypes <- apply(sim[,samples],1, function(x) length(unique(celltypes[which(!is.na(x))])))
+    
+    ## bait annotation
+
+    bait.annot=bait.info[[sp]]
+    obs$geneID=bait.annot[obs$id_bait, "gene_ID"]
+    sim$geneID=bait.annot[sim$id_bait, "gene_ID"]
+    
+    ## expression
+
+    exp=avgexp.cm2019[[sp]]
+   
+    nbsamples.exp=apply(exp, 1, function(x) length(which(x>=minRPKM)))
+    names(nbsamples.exp)=rownames(exp)
+
+    ## select baits associated with a single gene, in expression data
+
+    obs=obs[which(obs$geneID%in%rownames(exp)),]
+    sim=sim[which(sim$geneID%in%rownames(exp)),]
+
+    ## we compute the maximum number of samples in which a gene has chromatin contacts
+
+    nb.celltypes.bygene.obs=tapply(obs$nb_celltypes, as.factor(obs$geneID), max)
+    nb.celltypes.bygene.sim=tapply(sim$nb_celltypes, as.factor(sim$geneID), max)
+
+    fac.celltypes.bygene.obs=cut(nb.celltypes.bygene.obs, breaks=c(0:M, max(obs$nb_celltypes)), include.lowest=T)
+    levels(fac.celltypes.bygene.obs)=c(as.character(1:M), paste0(">",M))
+
+    fac.celltypes.bygene.sim=cut(nb.celltypes.bygene.sim, breaks=c(0:M, max(sim$nb_celltypes)), include.lowest=T)
+    levels(fac.celltypes.bygene.sim)=c(as.character(1:M), paste0(">",M))
+
+    res.obs=data.frame("gene"=names(nb.celltypes.bygene.obs), "nbcontact"= nb.celltypes.bygene.obs, "classcontact"=fac.celltypes.bygene.obs, "nbexp"=nbsamples.exp[names(nb.celltypes.bygene.obs)])
+    res.sim=data.frame("gene"=names(nb.celltypes.bygene.sim), "nbcontact"= nb.celltypes.bygene.sim, "classcontact"=fac.celltypes.bygene.sim, "nbexp"=nbsamples.exp[names(nb.celltypes.bygene.sim)])
+   
+    all.data[[sp]]=list("obs"=res.obs, "sim"=res.sim)
+  }
+  
+  prepare=FALSE
 }
 
 ##########################################################################
@@ -29,124 +98,63 @@ if(load){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S5.pdf", sep=""), width=6.85, height=5.5)
+##########################################################################
 
-## layout
-m=matrix(rep(NA,20*40), nrow=20)
-for(i in 1:9){
-  m[i,]=c(rep(1,3), rep(2, 20), rep(3, 17))
-}
-m[10,]=c(rep(1,3), rep(2, 20), rep(4, 17))
+pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S6.pdf", sep=""), width=6.85, height=3.5)
 
-for(i in 11:19){
-  m[i,]=c(rep(5,3), rep(6, 20), rep(7, 17))
-}
-m[20,]=c(rep(5,3), rep(6, 20), rep(8, 17))
+m=matrix(c(rep(1, 7), rep(2, 7)), nrow=1)
 
 layout(m)
 
 ##########################################################################
-fig = 1
 
 for(sp in c("human", "mouse")){
-  ## get data for this species
-  info=sampleinfo[[sp]]
-  rownames(info)=info$Sample.ID
+  exp=avgexp.cm2019[[sp]]
+  nbsamples.tot=dim(exp)[2]
   
-  tree=as.phylo(sample.clustering[[sp]][["hclust.alldist"]])
-  sample.order=sample.clustering[[sp]][["sample.order.alldist"]]
-  mat.obs=sample.clustering[[sp]][["mat.alldist.obs"]]
-  mat.sim=sample.clustering[[sp]][["mat.alldist.sim"]]
-  mat.diff=as.matrix(mat.obs-mat.sim)
-  diag(mat.diff)=rep(NA, length(sample.order))
+  obs=all.data[[sp]][["obs"]]
+  sim=all.data[[sp]][["sim"]]
+
+  classes=levels(obs$classcontact)
+  nbclass=length(classes)
   
-  mat.diff=mat.diff[sample.order, sample.order]
+  xpos=1:nbclass
+  smallx=c(-0.25, 0.25)
 
-  mat.diff=100*mat.diff ## percentage instead of fraction
+  xlim=c(0.5, 9.5)
+  ylim=c(0, 100)
+
+  par(mar=c(3.5, 3.5, 1.5, 0.5))
+      
+  plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim)
   
-  ## tree
-  par(mar=c(0.75,1,1.35,0.1))
-  plot(tree, direction="rightwards", show.tip.label=FALSE)
-
-  ## plot label
-  mtext(toupper(letters[fig]), side=3, at=0, font=2, line=0, cex=0.95)
-  fig = fig+1
-  
-  ## matrix obs-sim
-
-  par(mar=c(1,0,1.75,8.25))
-  image(mat.diff, axes=F, col=terrain.colors(50), zlim=c(0, 100))
-
-  ## colors by cell type
-
-  this.samples=rownames(mat.diff)
-  this.cells=info[this.samples, "Broad.cell.type.or.tissue"]
-  names(this.cells)=this.samples
-
-  ypos=seq(from=0, to=1, length=dim(mat.diff)[1])
-  ywidth=diff(ypos)[1]
-
-  for(c in unique(this.cells)){
-    all.ypos=ypos[which(this.cells==c)]
-
-    if(diff(range(which(this.cells==c)))==(length(all.ypos)-1)){
-      ## perfect clustering
-      segments(1+ywidth*0.75, min(all.ypos)-ywidth/3, 1+ywidth*0.75, max(all.ypos)+ywidth/3, xpd=NA)
-      mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.6, at=mean(all.ypos), col=col.celltypes[c])
-    } else{
-      segments(1+ywidth*0.75, all.ypos-ywidth/3, 1+ywidth*0.75, all.ypos+ywidth/3, xpd=NA)
-      mtext(syn.celltypes[c], side=4, line=0.75, las=2, cex=0.6, at=all.ypos, col=col.celltypes[c])
-    }
+  for(i in 1:nbclass){
+    wobs=which(obs$classcontact==classes[i])
+    boxplot(100*obs$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[1], col=dataset.colors["Original"], notch=T, pch=20)
+    
+    wsim=which(sim$classcontact==classes[i])
+    boxplot(100*sim$nbexp[wobs]/nbsamples.tot, add=T, axes=F, at=xpos[i]+smallx[2], col=dataset.colors["Simulated"], notch=T, pch=20)
+    
   }
 
-  mtext(paste("hierarchical clustering", sp, sep=", "), side=3, line=0.5, cex=0.7)
-
-  ## AFC plot
-
-  afc=data.AFC[[sp]][["AFC"]]
-  explained=round(100*afc$eig/sum(afc$eig), digits=1)
-
-  par(mar=c(4.1, 5.5, 2, 1.5))
-  plot(afc$li[,1], afc$li[,2], pch=20, col=col.celltypes[this.cells[rownames(afc$li)]], xlab="", ylab="", axes=F, cex=1.25)
-  box()
-
-  xlim=range(afc$li[,1])
-
-  axis(side=1, mgp=c(3, 0.5, 0), cex.axis=0.85)
-  axis(side=2, mgp=c(3, 0.5, 0), cex.axis=0.85)
-
-  mtext(paste("correspondence analysis", sp, sep=", "), side=3, line=0.5, cex=0.7)
-  mtext(paste("axis 1 (", explained[1],"% explained variance)",sep=""), side=1, line=1.75, cex=0.7)
-  mtext(paste("axis 2 (", explained[2],"% explained variance)",sep=""), side=2, line=1.75, cex=0.7)
-
-  ## plot labels
-  mtext(toupper(letters[fig]), side=3, at=xlim[1]-diff(xlim)/5.3, font=2, line=0.5, cex=0.95)
-  fig = fig+1
+  axis(side=1, at=1:nbclass, labels=classes, cex.axis=0.9, mgp=c(3, 0.5, 0))
+  mtext("nb. cell types w. chromatin contacts", side=1, line=2, cex=0.75, at=(nbclass+1)/2)
   
-  ## legend for the heatmap
+  axis(side=2, cex.axis=0.9, mgp=c(3, 0.75, 0))
+  mtext("% samples w. detectable expression", side=2, line=2, cex=0.75)
 
-  if(sp=="mouse"){
-    par(mar=c(1.45,1.1,0.0,13.1))
-    z=seq(0, 100, length = 50)
-    zlim=c(0,100)
-    xax=c(0, 25, 50, 75, 100)
-    xax=xax[which(xax>=min(z) & xax<=max(z))]
-    image(x=z, z = matrix(z, ncol = 1), col = terrain.colors(50), zlim=zlim, xlim=range(xax)+c(-2,2), xaxt="n" ,yaxt="n")
-    
-    par(tck=-0.75)
-    axis(side=1, at = xax, labels = xax, cex.axis=0.85, mgp=c(3,0.4,0))
-    
-    mtext("% shared interactions", side=4, las=2, at=1.15, cex=0.65, line=1)
-    mtext("(observed-simulated)", side=4, las=2, at=-1.55, cex=0.65, line=1)
-    par(tck=NA)
+  mtext(labels[sp], side=3, at=xlim[1]-diff(xlim)/6.5, line=0, font=2)
+  
+  if (sp == "mouse"){
+    mtext(sp, side=3, cex=0.75, at=3.5)
+    legend("topright", legend=c("PCHi-C data", "simulated data"), fill=dataset.colors[c("Original", "Simulated")], bty='n', inset=c(-0.02, -0.01), xpd=NA)
   } else{
-    ## empty plot
-    par(mar=c(1.35,1.1,0.0,13.1))
-    plot(1, type="n", xlab="", ylab="", main="", axes=F)
+    mtext(sp, side=3, cex=0.75, at=4.5)
   }
-
 }
 
 ##########################################################################
 
 dev.off()
+
+##########################################################################
