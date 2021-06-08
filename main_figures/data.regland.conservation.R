@@ -112,7 +112,7 @@ for(ref in c("human", "mouse")){
       ## divide nb of contacts into 5 classes
      
       results[[paste("nb.contacts",dist.class,sep=".")]]=nb.contacts
-      results[[paste("class.nb.contacts",dist.class,sep=".")]]=cut(nb.contacts, breaks=c(-1, 0, 10, 20, 30, max(nb.contacts)), include.lowest=T, labels=c("0", "1-10", "11-20", "21-30", ">30"))
+      results[[paste("class.nb.contacts",dist.class,sep=".")]]=cut(nb.contacts, breaks=c(1, 10, 20, 30, 40, max(nb.contacts)), include.lowest=T, labels=c("1-10", "11-20", "21-30", "30-40", ">40"))
       
       ## mean conservation score by gene
       
@@ -151,7 +151,7 @@ for(ref in c("human", "mouse")){
       
       results[[paste("fr.contact.cons",dist.class,sep=".")]]=fr.cons.contact
       
-      results[[paste("class.contact.cons",dist.class, sep=".")]]=cut(fr.cons.contact, breaks=c(0, 0.1, 0.4, 1), include.lowest=T)
+      results[[paste("class.contact.cons",dist.class, sep=".")]]=cut(fr.cons.contact, breaks=c(0, 0.2, 0.4, 0.6, 0.8,  1), include.lowest=T)
     }    
     
     results=as.data.frame(results)
