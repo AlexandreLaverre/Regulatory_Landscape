@@ -28,7 +28,7 @@ names(cell.colors) = cells
 
 ######################################################################################################################
 
-pdf(file=paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S13.pdf", sep=""), width=6.85, height=3)
+pdf(file=paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S14.pdf", sep=""), width=6.85, height=3)
 
 m=matrix(rep(NA, 1*14), nrow=1)
 m[1,]=c(rep(1, 2), rep(2,4),  rep(3,4),  rep(4,4))
