@@ -21,7 +21,7 @@ if(load){
   
   enh="ENCODE"
   
-  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
+  load(paste(pathFigures, "RData/data.", sp, ".CM2019.AllOrgans.expdiv.RData", sep=""))
   load(paste(pathFigures, "RData/data.regland.conservation.RData", sep=""))
   
   regcons=regland.conservation[[sp]][[enh]]

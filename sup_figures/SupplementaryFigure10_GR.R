@@ -20,7 +20,7 @@ if(load){
     sp_name="Mouse"
   }
   
-  load(paste(pathFigures, "RData/data.", sp, ".CM2019.SomaticOrgans.expdiv.RData", sep=""))
+  load(paste(pathFigures, "RData/data.", sp, ".CM2019.AllOrgans.expdiv.RData", sep=""))
   expdiv$EuclideanSimilarity = 1-expdiv$EuclideanDistance
 
   load(paste(pathFigures, "RData/data.regland.conservation.RData", sep=""))
