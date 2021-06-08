@@ -120,10 +120,10 @@ for(sp in c("human", "mouse")){
     synt_obs <- conserv_synteny[[enh]][[tg]][["synt_obs"]]
     rownames(synt_obs) <- paste0(synt_obs$origin_gene, "-", synt_obs$origin_enh)
     rownames(contact_obs) <- paste0(contact_obs$origin_gene, "-", contact_obs$origin_enh)
-    
-    common=intersect(rownames(synt_obs), rownames(contact_obs))
-    synt_obs <- synt_obs[common,]
-    synt_obs$class_score = contact_obs[common,]$class_score
+
+
+    ## median score for synteny
+    synt_obs$class_score <- cut2(synt_obs$median_score, g=nb_chicago_class)
     
     cons.synteny[[sp]][[enh]] <- sapply(levels(synt_obs$class_score), function(x)
                                         (nrow(synt_obs[which(synt_obs$target_dist <= maxDistanceSyntenyTarget & synt_obs$class_score == x),])/nrow(synt_obs[which(synt_obs$class_score == x ),]))*100)
