@@ -116,7 +116,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/test_Figure1.pdf", sep=""), width=6.85, height=11)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure1.pdf", sep=""), width=6.85, height=11)
 
 ## layout
 
