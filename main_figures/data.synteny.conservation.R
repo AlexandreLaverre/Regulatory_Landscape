@@ -41,6 +41,9 @@ for(ref_sp in c("human", "mouse")){
 
     filtered.contacts.obs$id=paste(filtered.contacts.obs$gene, filtered.contacts.obs$enhancer, sep="-")
     filtered.contacts.sim$id=paste(filtered.contacts.sim$gene, filtered.contacts.sim$enhancer, sep="-")
+
+    rownames(filtered.contacts.obs)=filtered.contacts.obs$id
+    rownames(filtered.contacts.sim)=filtered.contacts.sim$id
     
     conserv_synteny[[enh]] <- list()
     
@@ -116,6 +119,12 @@ for(ref_sp in c("human", "mouse")){
       synt_obs=synt_obs[,which(!(colnames(synt_obs)%in%c("origin_gene_coord", "target_gene_coord", "nb_genes_inbetween", "origin_min_dist_baitedTSS", "origin_min_dist_allTSS", "target_min_dist_allTSS")))]
 
       synt_simul=synt_simul[,which(!(colnames(synt_simul)%in%c("origin_gene_coord", "target_gene_coord", "nb_genes_inbetween", "origin_min_dist_baitedTSS", "origin_min_dist_allTSS", "target_min_dist_allTSS")))]
+
+      ## add median score for contacts
+
+      synt_obs$median_score=filtered.contacts.obs[synt_obs$id, "median_score"]
+      synt_simul$median_score=filtered.contacts.sim[synt_simul$id, "median_score"]
+      
       
       conserv_synteny[[enh]][[sp]]=list("synt_obs"=synt_obs, "synt_simul"=synt_simul)
             
