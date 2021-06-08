@@ -14,10 +14,10 @@ if(load){
  
   enh="ENCODE"
   
-  load(paste(pathFigures, "RData/data.human.CM2019.SomaticOrgans.expdiv.RData", sep=""))
+  load(paste(pathFigures, "RData/data.human.CM2019.AllOrgans.expdiv.RData", sep=""))
   expdiv.human=expdiv
 
-  load(paste(pathFigures, "RData/data.mouse.CM2019.SomaticOrgans.expdiv.RData", sep=""))
+  load(paste(pathFigures, "RData/data.mouse.CM2019.AllOrgans.expdiv.RData", sep=""))
   expdiv.mouse=expdiv
 
   rm("expdiv")
@@ -162,7 +162,7 @@ names(expdata.mouse)=rownames(expdiv.mouse)
 expdata.human=expdiv.human[,"MeanRPKM"]
 names(expdata.human)=rownames(expdiv.human)
 
-plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all",  ylab="mean expression level (RPKM)", plot.label="A", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(6.5, 10))
+plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all",  ylab="mean expression level (RPKM)", plot.label="A", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(5.5, 10))
 
 plot.expdiv.regdiv(regcons.mouse, "class.nb.contacts", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
 
@@ -175,7 +175,7 @@ names(expdata.mouse)=rownames(expdiv.mouse)
 expdata.human=expdiv.human[,"TauHuman"]
 names(expdata.human)=rownames(expdiv.human)
 
-plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="expression specificity", plot.label="B", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.6, 0.8))
+plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="expression specificity", plot.label="B", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.68, 0.85))
 plot.expdiv.regdiv(regcons.mouse, "class.nb.contacts", expdata.mouse, distances="all",  add=T, smallx.add=0.15, col="navy")
 
 #############################################################################
@@ -188,21 +188,21 @@ names(expdata.mouse)=rownames(expdiv.mouse)
 expdata.human=expdiv.human[,"CorrectedSpearman"]
 names(expdata.human)=rownames(expdiv.human)
 
-plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="expression conservation", plot.label="C", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0, 0.1))
+plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="expression conservation", plot.label="C", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.01, 0.08))
 plot.expdiv.regdiv(regcons.mouse, "class.nb.contacts", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
 
 
 ########################## gene expression profile evolution ################
 
 ## expression conservation as a function of enhancer sequence conservation
-plot.expdiv.regdiv(regcons.human, "class.aln.score", expdata.human, distances="all", ylab = "expression conservation", plot.label="D", xlab="enhancer sequence conservation",  xax.labels=levels(regcons.human$class.aln.score.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.03, 0.17))
+plot.expdiv.regdiv(regcons.human, "class.aln.score", expdata.human, distances="all", ylab = "expression conservation", plot.label="D", xlab="enhancer sequence conservation",  xax.labels=levels(regcons.human$class.aln.score.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.03, 0.15))
 plot.expdiv.regdiv(regcons.mouse, "class.aln.score", expdata.mouse, distances="all",add=T,smallx.add=0.15, col="navy") 
 
 #########################################################################
 
 
 ##  expression conservation as a function of enhancer synteny conservation
- plot.expdiv.regdiv(regcons.human, "class.synteny.cons", expdata.human, distances="all", ylab = "expression conservation", plot.label="E", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.02, 0.075))
+ plot.expdiv.regdiv(regcons.human, "class.synteny.cons", expdata.human, distances="all", ylab = "expression conservation", plot.label="E", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.00, 0.06))
  plot.expdiv.regdiv(regcons.mouse, "class.synteny.cons", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
 
 #########################################################################
@@ -210,14 +210,14 @@ plot.expdiv.regdiv(regcons.mouse, "class.aln.score", expdata.mouse, distances="a
 
 par(mar = c(6.5, 4.5, 2.5, 6))
 
-plot.expdiv.regdiv(regcons.human, "class.contact.cons", expdata.human, distances="all", ylab = "expression conservation", plot.label="F", xlab="contact conservation", xax.labels=levels(regcons.human$class.contact.cons.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.02, 0.11))
+plot.expdiv.regdiv(regcons.human, "class.contact.cons", expdata.human, distances="all", ylab = "expression conservation", plot.label="F", xlab="contact conservation", xax.labels=levels(regcons.human$class.contact.cons.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.0, 0.095))
  plot.expdiv.regdiv(regcons.mouse, "class.contact.cons", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
 
 #############################################################################
 
 ## empty plot for the legend
 
-legend("topright", col=c("darkred", "white", "navy"), legend = c("human", "", "mouse"), box.col="white", bg="white", pch=20, cex=1.1, inset=c(-0.2,0.1), xpd=T)
+legend("bottomright", col=c("darkred", "white", "navy"), legend = c("human", "", "mouse"), box.col="white", bg="white", pch=20, cex=1.1, inset=c(-0.4,0.1), xpd=T)
 
 #############################################################################
 
