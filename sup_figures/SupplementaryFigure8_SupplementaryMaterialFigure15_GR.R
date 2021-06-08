@@ -105,7 +105,7 @@ for(ref in c("human", "mouse")){
   ## actual plot
 
   if(ref=="human"){
-    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S9.pdf", sep=""), width=6.85, height=6.5)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S8.pdf", sep=""), width=6.85, height=6.5)
   }
 
   if(ref=="mouse"){

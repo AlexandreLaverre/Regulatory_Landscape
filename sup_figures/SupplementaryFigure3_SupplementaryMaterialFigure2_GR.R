@@ -59,7 +59,7 @@ for(sp in c("human", "mouse")){
   ## max height: 11 in
   
   if(sp=="human"){
-    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S4.pdf", sep=""), width=6.85, height=3.25)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S3.pdf", sep=""), width=6.85, height=3.25)
   }
 
   if(sp=="mouse"){
