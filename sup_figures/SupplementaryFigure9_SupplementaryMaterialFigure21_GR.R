@@ -72,7 +72,7 @@ for(sp in c("human", "mouse")){
   mtext("distance to promoters (Mb)", side=1, line=2, cex=mtext.CEX)
   
   axis(side=2, mgp=c(3, 0.75, 0))
-  mtext("CHICAGO score", side=2, line=2.5, cex=mtext.CEX)
+  mtext("CHiCAGO score", side=2, line=2.5, cex=mtext.CEX)
   
   legend("topleft", legend=label.enhancers[enhancer.datasets[[sp]]], lty=1, 
          col=col.enhancers[enhancer.datasets[[sp]]], bty="n", cex=1, seg.len=1)
@@ -109,7 +109,7 @@ for(sp in c("human", "mouse")){
   abline(v=xpos[1:nb_chicago_class-1]+0.5, lty=3, col="gray40")
   axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", nb_chicago_class))
   mtext(1:nb_chicago_class, at=xpos, side=1, line=1, cex=mtext.CEX)
-  mtext("CHICAGO score decile", side=1, line=2.5, cex=mtext.CEX)
+  mtext("CHiCAGO score decile", side=1, line=2.5, cex=mtext.CEX)
   
   axis(side=2, mgp=c(3, 0.75, 0))
   mtext(paste0("% aligned sequence in ", tg), side=2, line=2.5, cex=mtext.CEX)
@@ -138,7 +138,7 @@ for(sp in c("human", "mouse")){
   abline(v=xpos[1:nb_chicago_class-1]+0.5, lty=3, col="gray40")
   axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", nb_chicago_class))
   mtext(1:nb_chicago_class, at=xpos, side=1, line=1, cex=mtext.CEX)
-  mtext("CHICAGO score decile", side=1, line=2.5, cex=mtext.CEX)
+  mtext("CHiCAGO score decile", side=1, line=2.5, cex=mtext.CEX)
   
   axis(side=2, mgp=c(3, 0.75, 0))
   mtext(paste0("% pairs in conserved synteny in ", tg), side=2, line=2.5, cex=mtext.CEX)
@@ -168,7 +168,7 @@ for(sp in c("human", "mouse")){
   abline(v=xpos[1:nb_chicago_class-1]+0.5, lty=3, col="gray40")
   axis(side=1, at=xpos, mgp=c(3, 0.5, 0), labels=rep("", nb_chicago_class))
   mtext(1:nb_chicago_class, at=xpos, side=1, line=1, cex=mtext.CEX)
-  mtext("CHICAGO score decile", side=1, line=2.5, cex=mtext.CEX)
+  mtext("CHiCAGO score decile", side=1, line=2.5, cex=mtext.CEX)
   
   axis(side=2, mgp=c(3, 0.75, 0))
   mtext(paste0("% pairs in conserved contact in ", tg), side=2, line=2.5, cex=mtext.CEX)
