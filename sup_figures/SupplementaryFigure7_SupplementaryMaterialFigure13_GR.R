@@ -18,7 +18,7 @@ for(ref in c("human", "mouse")){
   enh="ENCODE"
 
   if(ref=="human"){
-    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S6.pdf", sep=""), width=6.85, height=6)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S7.pdf", sep=""), width=6.85, height=6)
   } else{
     pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure13.pdf", sep=""), width=6.85, height=6)
   }

@@ -30,7 +30,7 @@ if(load){
 for(sp in c("human", "mouse")){
    
   if (sp == "human"){
-    pdf.name = "GenomeResearch_Figures/Supplemental_Fig_S8.pdf"
+    pdf.name = "GenomeResearch_Figures/Supplemental_Fig_S9.pdf"
   }else{
     pdf.name = "GenomeResearch_Figures/SupplementaryMaterialFigure20.pdf"
   }
