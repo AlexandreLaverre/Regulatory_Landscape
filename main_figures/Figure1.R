@@ -142,34 +142,35 @@ for(i in 13){
  m[i,]=c(rep(5, 6), rep(7, 4))
 }
 
-## SHH example
+## cell types
 
+## empty plot
 for(i in 14){
-  m[i,]=c(rep(17,10)) ## empty plot
-}
-
-for(i in 15:17){
-  m[i,]=c(rep(8,1), rep(9,9)) ## annotations
-}
-
-for(i in c(18)){
-  m[i,]=c(rep(10, 1), rep(11,9))
-}
-
-for(i in c(19:40)){
-  m[i,]=c(rep(12, 1), rep(13,9))
-}
-
-## ## enhancers
-## for(i in 41:44){
-##   m[i,]=c(rep(14, 1), rep(15,9))
-## }
-for(i in 41){
   m[i,]=c(rep(14, 10))
 }
 
-for(i in 42:50){
+for(i in 15){
+  m[i,]=c(rep(17,10)) ## empty plot
+}
+
+for(i in 16:24){
   m[i,]=c(rep(15, 5), rep(16, 5))
+}
+
+
+## SHH example
+
+
+for(i in 25:27){
+  m[i,]=c(rep(8,1), rep(9,9)) ## annotations
+}
+
+for(i in c(28)){
+  m[i,]=c(rep(10, 1), rep(11,9))
+}
+
+for(i in c(29:50)){
+  m[i,]=c(rep(12, 1), rep(13,9))
 }
 
 
@@ -358,7 +359,7 @@ mtext("genes", side=2, las=2, cex=0.7, line=1.75)
 
 ## plot label
 
-mtext("D", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/7.5, font=2, cex=1.1)
+mtext("F", side=3, line=0.5, at=shhxlim[1]-diff(shhxlim)/7.5, font=2, cex=1.1)
 
 #############################################################################################
 
@@ -448,7 +449,7 @@ mtext("% interactions", side=2, line=2.5, cex=0.75)
 
 ## legend & plot label
 ##legend("topright", legend=c("PCHi-C data", "simulated data"), border=dataset.colors[c("Original", "Simulated")],  fill=dataset.colors[c("Original", "Simulated")], bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
-mtext("E", side=3, line=1, at=-3.9, font=2, cex=1.1)
+mtext("D", side=3, line=1, at=-3.9, font=2, cex=1.1)
 
 ################################################################################################
 
@@ -482,7 +483,7 @@ for(dataset in rownames(mean_dist)){
 
 ## legend("topright", legend=c("PCHi-C data", "simulated data"), col=dataset.colors[c("Original", "Simulated")],lty=1, seg.len=1, bty='n', cex=1.1, inset=c(0.05, -0.1), xpd=NA)
 
-mtext("F", side=3, line=1, at=-3.15e5, font=2, cex=1.1)
+mtext("E", side=3, line=1, at=-3.15e5, font=2, cex=1.1)
 
 ###########################################################################################
 
