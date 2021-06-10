@@ -216,7 +216,7 @@ names(expdata)=rownames(expdiv)
   par(mar = c(6.5, 4.5, 2.5, 6))
   
   ## expression conservation as a function of contact conservation
-  plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="F", xlab="contact conservation", xax.labels=c("<10%", "10-40%", ">40%"), xax.las=2)
+  plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, distances=selected.distances, ylab = "expression conservation", plot.label="F", xlab="contact conservation", xax.labels=levels(regcons$class.contact.cons.all), xax.las=2)
   
   #########################################################################
 
