@@ -156,7 +156,7 @@ for(sp in c("human","mouse")){
   }
 
   if(sp == "mouse"){
-    pdf(file=paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure24.pdf", sep=""), width = 6.85,  height=7)
+    pdf(file=paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure22.pdf", sep=""), width = 6.85,  height=7)
     sp_name="Mouse"
   }
   
