@@ -135,7 +135,7 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distance, enhancer.lis
 
 ################################################################################################################################
 
-pdf(file=paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S11.pdf", sep=""), width=6.85, height=11)
+pdf(file=paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S12.pdf", sep=""), width=6.85, height=11)
 m=matrix(rep(NA, 4*8), nrow=4)
 
 m[1,]=c(rep(1, 4), rep(5, 4))
@@ -151,55 +151,55 @@ layout(m)
 
 par(mar=c(4.75, 5.25, 2.5, 1.5)) # bottom, left, top, right
 
-## Spearman's rho, uncorrected
+## Euclidean similarity, uncorrected
 
-expdata=expdiv[,"CorrelationSpearman"]
+expdata=expdiv[,"EuclideanSimilarity"]
 names(expdata)=rownames(expdiv)
 
 ## number of contacts
-plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, "all", enhancers, ylab="Spearman's rho", plot.label="A", xlab="number of contacts", xax.labels=levels(regcons[[enhancers[1]]]$class.nb.contacts.all), xax.las=1)
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, "all", enhancers, ylab="1-Euclidean distance", plot.label="A", xlab="number of contacts", xax.labels=levels(regcons[[enhancers[1]]]$class.nb.contacts.all), xax.las=1)
 
 legend("bottomright", legend=enhancers, pch=20, col=col.enhancers, cex=1, bty="o", box.col="white", bg="white",  inset=c(0.01, 0.01))
 
 ## enhancer sequence conservation
 
-plot.expdiv.regdiv(regcons, "class.aln.score", expdata, "all", enhancers, ylab="Spearman's rho", plot.label="B", xlab="enhancer sequence conservation", xax.labels=levels(regcons[[enhancers[1]]]$class.aln.score.all), xax.las=1)
+plot.expdiv.regdiv(regcons, "class.aln.score", expdata, "all", enhancers, ylab="1-Euclidean distance", plot.label="B", xlab="enhancer sequence conservation", xax.labels=levels(regcons[[enhancers[1]]]$class.aln.score.all), xax.las=1)
 
 ## synteny conservation
 
-plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, "all", enhancers, ylab="Spearman's rho", plot.label="C", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=1)
+plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, "all", enhancers, ylab="1-Euclidean distance", plot.label="C", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=1)
 
 ## contact conservation
 par(mar=c(4.75, 5.25, 2.5, 2.5)) # bottom, left, top, right
 
-plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, "all", enhancers, ylab="Spearman's rho", plot.label="D", xlab="contact conservation", xax.labels=levels(regcons$class.contact.cons.all), xax.las=1)
+plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, "all", enhancers, ylab="1-Euclidean distance", plot.label="D", xlab="contact conservation", xax.labels=levels(regcons$class.contact.cons.all), xax.las=1)
 
 ################################################################################################################################
 
 par(mar=c(4.75, 5.25, 2.5, 1.5)) # bottom, left, top, right
 
-## Spearman's rho, corrected
+## Euclidean similarity, corrected
 
-expdata=expdiv[,"CorrectedSpearman"]
+expdata=expdiv[,"CorrectedEuclideanSimilarity"]
 names(expdata)=rownames(expdiv)
 
 ## number of contacts
-plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, "all", enhancers, ylab="Spearman's rho\n(corrected)", plot.label="E", xlab="number of contacts", xax.labels=levels(regcons[[enhancers[1]]]$class.nb.contacts.all), xax.las=1)
+plot.expdiv.regdiv(regcons, "class.nb.contacts", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="E", xlab="number of contacts", xax.labels=levels(regcons[[enhancers[1]]]$class.nb.contacts.all), xax.las=1)
 
 ## enhancer sequence conservation
 
-plot.expdiv.regdiv(regcons, "class.aln.score", expdata, "all", enhancers, ylab="Spearman's rho\n(corrected)", plot.label="F", xlab="enhancer sequence conservation", xax.labels=levels(regcons[[enhancers[1]]]$class.aln.score.all), xax.las=1)
+plot.expdiv.regdiv(regcons, "class.aln.score", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="F", xlab="enhancer sequence conservation", xax.labels=levels(regcons[[enhancers[1]]]$class.aln.score.all), xax.las=1)
 
 ## synteny conservation
 
-plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, "all", enhancers, ylab="Spearman's rho\n(corrected)", plot.label="G", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=1)
+plot.expdiv.regdiv(regcons, "class.synteny.cons", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="G", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=1)
 
 
 ## contact conservation
 
 par(mar=c(4.75, 5.25, 2.5, 2.5)) # bottom, left, top, right
 
-plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, "all", enhancers, ylab="Spearman's rho\n(corrected)", plot.label="H", xlab="contact conservation", xax.labels=levels(regcons[["ENCODE"]][,"class.contact.cons.all"]), xax.las=1)
+plot.expdiv.regdiv(regcons, "class.contact.cons", expdata, "all", enhancers, ylab="1-Euclidean distance\n(corrected)", plot.label="H", xlab="contact conservation", xax.labels=levels(regcons[["ENCODE"]][,"class.contact.cons.all"]), xax.las=1)
 
 ################################################################################################################################
 
