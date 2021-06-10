@@ -29,7 +29,7 @@ if(load){
 
 ##############################################################################
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S10.pdf", seyp=""), width=6.85, height=3.5)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S10.pdf", sep=""), width=6.85, height=3.5)
 
 par(mar=c(3.5, 3.25, 2.1, 1.1))
 par(mfrow=c(1,2))
