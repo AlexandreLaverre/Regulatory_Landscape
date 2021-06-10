@@ -50,7 +50,7 @@ if(load){
 
 ######################################################################################################################
 
-pdf(file=paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S10.pdf", sep=""), width = 6.85, height=9)
+pdf(file=paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S9.pdf", sep=""), width = 6.85, height=9)
 
 m=matrix(rep(NA, 9*2), nrow=9)
 for(i in 1:3){

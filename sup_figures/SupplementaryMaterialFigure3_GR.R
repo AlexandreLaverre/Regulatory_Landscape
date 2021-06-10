@@ -12,7 +12,7 @@ source("../main_figures/parameters.R") ## paths are defined based on the user na
 ###########################################################################################################################
 ##########################  Enhancer proportion according to distance ############################################
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure4.pdf", sep=""), width=6.85, height=7.5)
+pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure3.pdf", sep=""), width=6.85, height=7.5)
 
 par(mai = c(0.5, 0.5, 0.1, 0.2)) # bottom, left, top, right
 

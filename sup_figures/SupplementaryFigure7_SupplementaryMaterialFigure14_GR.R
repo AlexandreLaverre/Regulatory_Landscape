@@ -105,11 +105,11 @@ for(ref in c("human", "mouse")){
   ## actual plot
 
   if(ref=="human"){
-    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S8.pdf", sep=""), width=6.85, height=6.5)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S7.pdf", sep=""), width=6.85, height=6.5)
   }
 
   if(ref=="mouse"){
-    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure15.pdf", sep=""), width=6.85, height=6.5)
+    pdf(paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure14.pdf", sep=""), width=6.85, height=6.5)
   }
   
   m=matrix(rep(NA, 2*19), nrow=2)

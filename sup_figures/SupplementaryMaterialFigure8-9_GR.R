@@ -19,12 +19,12 @@ for(ref_sp in c( "human", "mouse")){
   
   if(ref_sp=="human"){
     target_species=c("macaque", "rat", "rabbit", "dog", "cow", "elephant", "opossum", "chicken") ## other species already done
-    pdfname=paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure9.pdf", sep="")
+    pdfname=paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure8.pdf", sep="")
   }
   
   if(ref_sp=="mouse"){
     target_species=c("rat", "rabbit", "human", "macaque", "dog", "cow", "elephant", "opossum", "chicken")
-    pdfname=paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure10.pdf", sep="")
+    pdfname=paste(pathFigures, "GenomeResearch_Figures/SupplementaryMaterialFigure9.pdf", sep="")
   }
   
   load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
