@@ -6,8 +6,6 @@ if(!"pathScripts"%in%objects){
   prepare=T
   source("../main_figures/parameters.R") ## paths are defined based on the user name
   
-  library(bootBCa, lib=pathRlibs)
-  
   set.seed(19)
 }
 
