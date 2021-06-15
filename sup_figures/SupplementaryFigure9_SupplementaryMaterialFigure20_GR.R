@@ -119,9 +119,9 @@ for(sp in c("human", "mouse")){
   
   ############################## Synteny conservation ###############################
   if (sp == "human"){
-    ylim=c(93, 100)
+    ylim=c(93, 98)
   }else{
-    ylim=c(92, 100)
+    ylim=c(93, 98)
   }
   
   plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
