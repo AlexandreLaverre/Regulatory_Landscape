@@ -136,12 +136,10 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
   }
 }
 
-################################################################################################################################
-################################################################################################################################
+#############################################################################################################
+#############################################################################################################
 
-selected.distances=c("all", "shortrange", "longrange")
-
-################################################################################################################################
+#############################################################################################################
 
 pdf(file=paste(pathFigures, "GenomeResearch_Figures/Figure6.pdf", sep=""), width = 6.85,  height=7)
 
@@ -166,6 +164,17 @@ plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances=
 
 plot.expdiv.regdiv(regcons.mouse, "class.nb.contacts", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
 
+## tests 
+
+common.human=intersect(rownames(regcons.human), names(expdata.human))
+kw.human=kruskal.test(expdata.human[common.human]~regcons.human[common.human, "class.nb.contacts.all"])
+print(paste("human, class nb contacts vs. mean RPKM, pval", kw.human$p.value))
+
+
+common.mouse=intersect(rownames(regcons.mouse), names(expdata.mouse))
+kw.mouse=kruskal.test(expdata.mouse[common.mouse]~regcons.mouse[common.mouse, "class.nb.contacts.all"])
+print(paste("mouse, class nb contacts vs. mean RPKM, pval", kw.mouse$p.value))
+
 ###########################################################################
 ## expression specificity as a function of number of contacts
 
@@ -177,6 +186,18 @@ names(expdata.human)=rownames(expdiv.human)
 
 plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="expression specificity", plot.label="B", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.68, 0.85))
 plot.expdiv.regdiv(regcons.mouse, "class.nb.contacts", expdata.mouse, distances="all",  add=T, smallx.add=0.15, col="navy")
+
+
+## tests 
+
+common.human=intersect(rownames(regcons.human), names(expdata.human))
+kw.human=kruskal.test(expdata.human[common.human]~regcons.human[common.human, "class.nb.contacts.all"])
+print(paste("human, class nb contacts vs. Tau, pval", kw.human$p.value))
+
+
+common.mouse=intersect(rownames(regcons.mouse), names(expdata.mouse))
+kw.mouse=kruskal.test(expdata.mouse[common.mouse]~regcons.mouse[common.mouse, "class.nb.contacts.all"])
+print(paste("mouse, class nb contacts vs. Tau, pval", kw.mouse$p.value))
 
 #############################################################################
 
@@ -192,18 +213,54 @@ plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances=
 plot.expdiv.regdiv(regcons.mouse, "class.nb.contacts", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
 
 
+## tests 
+
+common.human=intersect(rownames(regcons.human), names(expdata.human))
+kw.human=kruskal.test(expdata.human[common.human]~regcons.human[common.human, "class.nb.contacts.all"])
+print(paste("human, class nb contacts vs. expression conservation, pval", kw.human$p.value))
+
+
+common.mouse=intersect(rownames(regcons.mouse), names(expdata.mouse))
+kw.mouse=kruskal.test(expdata.mouse[common.mouse]~regcons.mouse[common.mouse, "class.nb.contacts.all"])
+print(paste("mouse, class nb contacts vs. expression conservation, pval", kw.mouse$p.value))
+
+
 ########################## gene expression profile evolution ################
 
 ## expression conservation as a function of enhancer sequence conservation
 plot.expdiv.regdiv(regcons.human, "class.aln.score", expdata.human, distances="all", ylab = "expression conservation", plot.label="D", xlab="enhancer sequence conservation",  xax.labels=levels(regcons.human$class.aln.score.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.03, 0.15))
-plot.expdiv.regdiv(regcons.mouse, "class.aln.score", expdata.mouse, distances="all",add=T,smallx.add=0.15, col="navy") 
+plot.expdiv.regdiv(regcons.mouse, "class.aln.score", expdata.mouse, distances="all",add=T,smallx.add=0.15, col="navy")
+
+
+
+## tests 
+
+common.human=intersect(rownames(regcons.human), names(expdata.human))
+kw.human=kruskal.test(expdata.human[common.human]~regcons.human[common.human, "class.aln.score.all"])
+print(paste("human, class aln score vs. expression conservation, pval", kw.human$p.value))
+
+
+common.mouse=intersect(rownames(regcons.mouse), names(expdata.mouse))
+kw.mouse=kruskal.test(expdata.mouse[common.mouse]~regcons.mouse[common.mouse, "class.aln.score.all"])
+print(paste("mouse, class aln score vs. expression conservation, pval", kw.mouse$p.value))
 
 #########################################################################
 
-
 ##  expression conservation as a function of enhancer synteny conservation
  plot.expdiv.regdiv(regcons.human, "class.synteny.cons", expdata.human, distances="all", ylab = "expression conservation", plot.label="E", xlab="synteny conservation", xax.labels=c("<100%", "100%"), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.00, 0.06))
- plot.expdiv.regdiv(regcons.mouse, "class.synteny.cons", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
+plot.expdiv.regdiv(regcons.mouse, "class.synteny.cons", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
+
+
+## tests 
+
+common.human=intersect(rownames(regcons.human), names(expdata.human))
+kw.human=kruskal.test(expdata.human[common.human]~regcons.human[common.human, "class.synteny.cons.all"])
+print(paste("human, class synteny vs. expression conservation, pval", kw.human$p.value))
+
+
+common.mouse=intersect(rownames(regcons.mouse), names(expdata.mouse))
+kw.mouse=kruskal.test(expdata.mouse[common.mouse]~regcons.mouse[common.mouse, "class.synteny.cons.all"])
+print(paste("mouse, class synteny vs. expression conservation, pval", kw.mouse$p.value))
 
 #########################################################################
 ## expression conservation as a function of contact conservation
@@ -211,7 +268,20 @@ plot.expdiv.regdiv(regcons.mouse, "class.aln.score", expdata.mouse, distances="a
 par(mar = c(6.5, 4.5, 2.5, 6))
 
 plot.expdiv.regdiv(regcons.human, "class.contact.cons", expdata.human, distances="all", ylab = "expression conservation", plot.label="F", xlab="contact conservation", xax.labels=levels(regcons.human$class.contact.cons.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.0, 0.095))
- plot.expdiv.regdiv(regcons.mouse, "class.contact.cons", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
+plot.expdiv.regdiv(regcons.mouse, "class.contact.cons", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
+
+
+## tests 
+
+common.human=intersect(rownames(regcons.human), names(expdata.human))
+kw.human=kruskal.test(expdata.human[common.human]~regcons.human[common.human, "class.contact.cons.all"])
+print(paste("human, class contact conservation vs. expression conservation, pval", kw.human$p.value))
+
+
+common.mouse=intersect(rownames(regcons.mouse), names(expdata.mouse))
+kw.mouse=kruskal.test(expdata.mouse[common.mouse]~regcons.mouse[common.mouse, "class.contact.cons.all"])
+print(paste("mouse, class contact conservation vs. expression conservation, pval", kw.mouse$p.value))
+
 
 #############################################################################
 

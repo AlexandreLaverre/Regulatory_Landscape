@@ -82,7 +82,7 @@ axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
 mtext("expression level class", side=1, line=2.5, cex=cex.lab)
 mtext("Spearman's rho", side=2, line=3, cex=cex.lab)
 
-mtext("a", side=3, at=-0.65, font=2, cex=1.1, line=1)
+mtext("A", side=3, at=-0.65, font=2, cex=1.1, line=0.9)
 
 ######################################################################################################################
 
@@ -96,7 +96,7 @@ axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
 mtext("expression specificity class", side=1, line=2.5, cex=cex.lab)
 mtext("Spearman's rho", side=2, line=3, cex=cex.lab)
 
-mtext("b", side=3, at=-0.65, font=2, cex=1.1, line=1)
+mtext("B", side=3, at=-0.65, font=2, cex=1.1, line=0.9)
 
 ######################################################################################################################
 
@@ -110,7 +110,7 @@ axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
 mtext("expression level class", side=1, line=2.5, cex=cex.lab)
 mtext("1-Euclidean distance", side=2, line=3, cex=cex.lab)
 
-mtext("c", side=3, at=-0.65, font=2, cex=1.1, line=1)
+mtext("C", side=3, at=-0.65, font=2, cex=1.1, line=1)
 
 ######################################################################################################################
 
@@ -125,7 +125,7 @@ axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
 mtext("expression specificity class", side=1, line=2.5, cex=cex.lab)
 mtext("1-Euclidean distance", side=2, line=3, cex=cex.lab)
 
-mtext("d", side=3, at=-0.65, font=2, cex=1.1, line=1)
+mtext("D", side=3, at=-0.65, font=2, cex=1.1, line=1)
 
 ######################################################################################################################
 
@@ -146,7 +146,7 @@ mtext(paste("Pearson's R = ", round(R, digits=2), ", rho = ",round(rho, digits=2
 
 mtext("1-Euclidean distance", side=1, line=2.5, cex=cex.lab)
 mtext("Spearman's rho", side=2, line=2.75, cex=cex.lab)
-mtext("e", side=3, line=2, at=-0.01, font=2, cex=1.2)
+mtext("E", side=3, line=2, at=-0.15, font=2, cex=1.2)
 
 ##############################################################################################
 
@@ -163,7 +163,7 @@ mtext(paste("Pearson's R = ", round(R, digits=2), ", rho = ",round(rho, digits=2
 
 mtext("1-Euclidean distance (corrected)", side=1, line=2.5, cex=cex.lab)
 mtext("Spearman's rho (corrected)", side=2, line=2.75, cex=cex.lab)
-mtext("f", side=3, line=2, at=-0.78, font=2, cex=1.2)
+mtext("F", side=3, line=2, at=-0.93, font=2, cex=1.2)
 
 ##############################################################################################
 
