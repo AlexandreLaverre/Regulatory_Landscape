@@ -32,7 +32,7 @@ for(ref_sp in c("human", "mouse")){
   
   for(type in types){
     
-    print(ref_sp)
+    print("Reference species:", ref_sp)
     
     if(ref_sp == "human"){
       target_sp = "mouse"
@@ -62,16 +62,21 @@ for(ref_sp in c("human", "mouse")){
     for(tg in species){
       print(tg)
       load(paste(pathFigures, "RData/data.sequence.conservation.fragments.",ref_sp,"2", tg,".RData", sep=""))
-
-      this.cons=get(type)
-
-      frag_align[,tg]=this.cons[rownames(frag_align)]
       
+      this.cons=get(type)
+      frag_align[,tg]=this.cons[rownames(frag_align)]
+  
       rm(list=c("pcidentical", "pcungapped"))
     }
     
     frag_align_obs <- frag_align[which(frag_align$ID %in% obs$ID), c("ID", species)]
     frag_align_simul <- frag_align[which(frag_align$ID %in% simul$ID), c("ID", species) ]
+    
+    ## load phyloP scores
+    load(paste(pathFigures, "RData/data.phyloP.scores.restriction_fragments.",ref_sp,".RData", sep=""))
+    
+    frag_align_obs$phyloP_score <- phyloPscore[rownames(frag_align_obs)]
+    frag_align_simul$phyloP_score <- phyloPscore[rownames(frag_align_simul)]
     
     ## we compute median distance on filtered contacts
 
@@ -130,6 +135,10 @@ for(ref_sp in c("human", "mouse")){
       enh_align_obs <- enh_align[which(enh_align$ID %in% enh_obs_stats$enh),]
       enh_align_simul<- enh_align[which(enh_align$ID %in% enh_simul_stats$enh),]
   
+      ## load phyloP scores
+      load(paste(pathFigures, "RData/data.phyloP.scores.",enh,".",ref_sp,".RData", sep=""))
+      enh_align_obs$phyloP_score <- phyloPscore[rownames(enh_align_obs)]
+      enh_align_simul$phyloP_score <- phyloPscore[rownames(enh_align_simul)]
       
       ## median distance computed from filtered contacts
       
@@ -145,7 +154,7 @@ for(ref_sp in c("human", "mouse")){
 
     ## save results
 
-    save(list=c("frag_align_obs", "frag_align_simul", "list_align_enh"), file=paste(pathFigures, "RData/data.sequence.conservation.stats.",type,".",ref_sp,".RData", sep=""))
+    save(list=c("frag_align_obs", "frag_align_simul", "list_align_enh"), file=paste(pathFigures, "RData/data.sequence.conservation.stats.",type,".and.phyloP.",ref_sp,".RData", sep=""))
 
   }
 }
