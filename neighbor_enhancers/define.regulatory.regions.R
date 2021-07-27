@@ -15,46 +15,49 @@ for(sp in c("human", "mouse")){
     print(chr)
     
     this.tss=tss[which(tss$chr==chr),]
-    this.tss=this.tss[order(this.tss$TSS),]
 
-    ## we initialize regulatory region - 5kb upstream, 1kb downstream
-    
-    this.tss$start_region=rep(NA, dim(this.tss)[1])
-    this.tss$end_region=rep(NA, dim(this.tss)[1])
-
-    fwd=which(this.tss$strand==1)
-    rev=which(this.tss$strand==-1)
-    
-    this.tss$start_region[fwd]=this.tss$TSS[fwd]-5000
-    this.tss$end_region[fwd]=this.tss$TSS[fwd]+1000
-
-    this.tss$start_region[rev]=this.tss$TSS[rev]-1000
-    this.tss$end_region[rev]=this.tss$TSS[rev]+5000
+    if(nrow(this.tss)>0){
+      
+      this.tss=this.tss[order(this.tss$TSS),]
+      
+      ## we initialize regulatory region - 5kb upstream, 1kb downstream
+      
+      this.tss$start_region=rep(NA, dim(this.tss)[1])
+      this.tss$end_region=rep(NA, dim(this.tss)[1])
+      
+      fwd=which(this.tss$strand==1)
+      rev=which(this.tss$strand==-1)
+      
+      this.tss$start_region[fwd]=this.tss$TSS[fwd]-5000
+      this.tss$end_region[fwd]=this.tss$TSS[fwd]+1000
+      
+      this.tss$start_region[rev]=this.tss$TSS[rev]-1000
+      this.tss$end_region[rev]=this.tss$TSS[rev]+5000
+      
+      for(i in 1:nrow(this.tss)){
+        if(i>1){
+          previousTSS=this.tss$TSS[i-1]
+          this.tss$start_region[i]=min(this.tss$start_region[i],  max(this.tss$TSS[i]-1e6, previousTSS+1))
+        } else{
+          this.tss$start_region[i]=max(this.tss$TSS[i]-1e6, 1)
+        }
         
-    for(i in 1:nrow(this.tss)){
-      if(i>1){
-        previousTSS=this.tss$TSS[i-1]
-        this.tss$start_region[i]=min(this.tss$start_region[i],  max(this.tss$TSS[i]-1e6, previousTSS+1))
-      } else{
-        this.tss$start_region[i]=max(this.tss$TSS[i]-1e6, 1)
+        if(i<nrow(this.tss)){
+          nextTSS=this.tss$TSS[i+1]
+          this.tss$end_region[i]=max(this.tss$end_region[i], min(this.tss$TSS[i]+1e6, nextTSS-1))
+        } else{
+          this.tss$end_region[i]=this.tss$TSS[i]+1e6
+        }
       }
-
-      if(i<nrow(this.tss)){
-        nextTSS=this.tss$TSS[i+1]
-        this.tss$end_region[i]=max(this.tss$end_region[i], min(this.tss$TSS[i]+1e6, nextTSS-1))
+      
+      if(length(regions)==0){
+        regions=this.tss
       } else{
-        this.tss$end_region[i]=this.tss$TSS[i]+1e6
+        regions=rbind(regions, this.tss)
       }
     }
-
-    if(length(regions)==0){
-      regions=this.tss
-    } else{
-      regions=rbind(regions, this.tss)
-    }
-    
   }
-
+  
   write.table(regions, file=paste(pathResults, tolower(sp), "regulatory_regions_Ensembl",release,".txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
 }
 
