@@ -7,7 +7,7 @@ release=94
 ##########################################################################
 
 for(sp in c("human", "mouse")){
-  tss=read.table(paste(pathResults, tolower(sp), "canonical_transcripts_Ensembl",release,".txt",sep=""), h=T, stringsAsFactors=F, sep="\t")
+  tss=read.table(paste(pathResults, tolower(sp), "/canonical_transcripts_Ensembl",release,".txt",sep=""), h=T, stringsAsFactors=F, sep="\t")
 
   regions=c()
 
@@ -58,7 +58,7 @@ for(sp in c("human", "mouse")){
     }
   }
   
-  write.table(regions, file=paste(pathResults, tolower(sp), "regulatory_regions_Ensembl",release,".txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+  write.table(regions, file=paste(pathResults, tolower(sp), "/regulatory_regions_Ensembl",release,".txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
 }
 
 ##########################################################################

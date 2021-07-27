@@ -92,7 +92,7 @@ for(sp in c("Human", "Mouse")){
   txinfo$TSS[which(txinfo$strand==1)]=txinfo$start[which(txinfo$strand==1)]
   txinfo$TSS[which(txinfo$strand==-1)]=txinfo$end[which(txinfo$strand==-1)]
 
-  write.table(txinfo, file=paste(pathResults, tolower(sp), "canonical_transcripts_Ensembl",release,".txt",sep=""), row.names=F, col.names=T, sep="\t", quote=F)
+  write.table(txinfo, file=paste(pathResults, tolower(sp), "/canonical_transcripts_Ensembl",release,".txt",sep=""), row.names=F, col.names=T, sep="\t", quote=F)
   
 }
 
