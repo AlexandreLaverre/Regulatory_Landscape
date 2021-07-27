@@ -33,7 +33,11 @@ for(sp in c("Human", "Mouse")){
   txinfo=read.table(paste(pathEnsembl, sp, "/TranscriptInfo_Ensembl", release,".txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
   colnames(txinfo)[1]="gene_id"
   colnames(txinfo)[2]="transcript_id"
-
+  colnames(txinfo)[4]="chr"
+  colnames(txinfo)[5]="start"
+  colnames(txinfo)[6]="end"
+  colnames(txinfo)[7]="strand"
+  
   ## gene info
   geneinfo=read.table(paste(pathEnsembl, sp, "/GeneInfo_Ensembl", release,".txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
   rownames(geneinfo)=geneinfo$stable_id
@@ -85,8 +89,8 @@ for(sp in c("Human", "Mouse")){
   ## extract TSS
 
   txinfo$TSS=rep(NA, dim(txinfo)[1])
-  txinfo$TSS[which(txinfo$seq_region_strand==1)]=txinfo$seq_region_start[which(txinfo$seq_region_strand==1)]
-  txinfo$TSS[which(txinfo$seq_region_strand==-1)]=txinfo$seq_region_end[which(txinfo$seq_region_strand==-1)]
+  txinfo$TSS[which(txinfo$strand==1)]=txinfo$seq_region_start[which(txinfo$strand==1)]
+  txinfo$TSS[which(txinfo$strand==-1)]=txinfo$seq_region_end[which(txinfo$strand==-1)]
 
   write.table(txinfo, file=paste(pathResults, tolower(sp), "canonical_transcripts_Ensembl",release,".txt",sep=""), row.names=F, col.names=T, sep="\t", quote=F)
   
