@@ -36,7 +36,7 @@ fi
 if [ -e ${pathResults}/promoters_enhancers_in_contact_real_data.txt ]; then
     echo "already done"
 else
-    perl ${pathScripts}/extract.regions.in.contact.pl --pathContacts=${pathOriginalInteractions}/all_interactions.txt --pathPromoters=${pathFOCS}/promoter_coordinates_${assembly}.bed  --pathEnhancers=${pathFOCS}/enhancer_coordinates_${assembly}.bed --pathOutput=${pathResults}/promoters_enhancers_in_contact_real_data.txt
+    perl ${pathScripts}/extract.regions.in.contact.pl --pathContacts=${pathOriginalInteractions}/all_interactions.txt --pathPromoters=${pathFOCS}/promoter_coordinates_${assembly}.bed  --pathEnhancers=${pathFOCS}/enhancer_coordinates_${assembly}.bed --pathOutput=${pathResults}/promoters_enhancers_in_contact_real_data.txt 
 fi
 
 ###################################################################################
