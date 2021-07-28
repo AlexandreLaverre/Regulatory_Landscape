@@ -3,6 +3,7 @@
 export sp=$1
 export sample=$2
 export cluster=$3
+export nthreads=$4
 
 ##########################################################################
 
@@ -35,9 +36,15 @@ fi
 for file in `ls ${pathHiCup}/${sample} | grep sorted.dedup.bam`
 do
     export prefix=`basename ${file} .sorted.dedup.bam`
-    ## bedtools coverage -a ${pathHiCup}/frag_coords_${genome}_formatted.bed -b ${pathHiCup}/${sample}/${file} -split > ${pathHiCup}/${sample}/${prefix}_frag_coverage.txt
+    ## BAM files have to be sorted by position!
+
+    samtools sort -m 5G -@ ${nthreads} -O bam -o ${pathHiCup}/${sample}/${prefix}_sorted_by_pos.bam ${pathHiCup}/${sample}/${file}
 
     samtools bedcov ${pathHiCup}/frag_coords_${genome}_formatted.bed ${pathHiCup}/${sample}/${file} > ${pathHiCup}/${sample}/${prefix}_frag_coverage.txt
+    
+    ## bedtools coverage -a ${pathHiCup}/frag_coords_${genome}_formatted.bed -b ${pathHiCup}/${sample}/${file} -split > ${pathHiCup}/${sample}/${prefix}_frag_coverage.txt
+
+    
 done
 
 ##########################################################################
