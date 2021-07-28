@@ -9,21 +9,34 @@ load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
 
 minDistanceLongRange=250e3
 
+subsample = FALSE
+if (subsample){sample.suffix=".subsample"}else{sample.suffix=""}
+
 #################################################################################
 
 sample.clustering=list()
 
 for(sp in c("human", "mouse")){
   info=sampleinfo[[sp]]
-  rownames(info)=info$Sample.ID
+  samples=info$Sample.ID
+  
+  rownames(info)=samples
   
   observed=observed.contacts[[sp]]
   simulated=simulated.contacts[[sp]]
-
+  
+  # Sub-sampling to minimum number of interactions
+  if (subsample){
+    min.nb.interaction = min(apply(observed, 2, function(x) nrow(observed[which(!is.na(x)),])))
+    
+    for (sample in samples){
+      treshold.value =  min(head(sort(observed[[sample]] ,decreasing=TRUE), n=min.nb.interaction))
+      observed[which(observed[[sample]] < treshold.value), sample] = NA
+    }
+  }
+  
   observed.longrange=observed[which(observed$distance>=minDistanceLongRange),]
   simulated.longrange=simulated[which(simulated$distance>=minDistanceLongRange),]
-  
-  samples=info$Sample.ID
   
   ## matrix of similarity between pairs of samples, all distances
 
@@ -70,19 +83,24 @@ for(sp in c("human", "mouse")){
   diff.alldist=mat.alldist.obs-mat.alldist.sim
   diff.longrange=mat.longrange.obs-mat.longrange.sim
 
+  hclust.obs=hclust(as.dist(1-mat.alldist.obs))
   hclust.alldist=hclust(as.dist(1-diff.alldist))
   hclust.longrange=hclust(as.dist(1-diff.longrange))
 
+  sample.order.obs=rownames(mat.alldist.obs)[order.dendrogram(as.dendrogram(hclust.obs))]
   sample.order.alldist=rownames(diff.alldist)[order.dendrogram(as.dendrogram(hclust.alldist))]
   sample.order.longrange=rownames(diff.longrange)[order.dendrogram(as.dendrogram(hclust.longrange))]
 
   ## store results
 
-  sample.clustering[[sp]]=list("mat.alldist.obs"=mat.alldist.obs, "mat.alldist.sim"=mat.alldist.sim, "mat.longrange.obs"=mat.longrange.obs, "mat.longrange.sim"=mat.longrange.sim, "hclust.alldist"=hclust.alldist, "hclust.longrange"=hclust.longrange, "sample.order.alldist"=sample.order.alldist, "sample.order.longrange"=sample.order.longrange)
+  sample.clustering[[sp]]=list("mat.alldist.obs"=mat.alldist.obs, "mat.alldist.sim"=mat.alldist.sim,
+                               "mat.longrange.obs"=mat.longrange.obs, "mat.longrange.sim"=mat.longrange.sim,
+                               "hclust.obs"=hclust.obs, "hclust.alldist"=hclust.alldist, "hclust.longrange"=hclust.longrange, 
+                               "sample.order.obs"=sample.order.obs, "sample.order.alldist"=sample.order.alldist, "sample.order.longrange"=sample.order.longrange)
 }
 
 #################################################################################
 
-save(sample.clustering, file=paste(pathFigures, "RData/data.sample.clustering.RData", sep=""))
+save(sample.clustering, file=paste(pathFigures, "RData/data.sample.clustering", sample.suffix, ".RData", sep=""))
 
 #################################################################################
