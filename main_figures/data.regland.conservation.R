@@ -23,7 +23,7 @@ print("done")
 
 ## minDistance and maxDistance defined in parameters.R
 
-dist.classes=c("all", "shortrange", "longrange")
+dist.classes=c("all")
 min.distances=c(minDistance, minDistance, 500001)
 max.distances=c(maxDistance, 500000, maxDistance)
 
@@ -77,6 +77,10 @@ for(ref in c("human", "mouse")){
     load(paste(pathFigures, "RData/data.sequence.conservation.enhancers.",enh,".",ref,"2", tg,".RData", sep=""))
     contacts$align_score=pcungapped[contacts$enhancer]
 
+    load(paste(pathFigures, "RData/data.phyloP.scores.",enh,".",ref,".RData", sep=""))
+    contacts$phyloP_score=phyloPscore[contacts$enhancer]
+    contacts$phyloP_score.default0 = phyloPscore.default0[contacts$enhancer]
+     
     ## we load synteny conservation - already filtered, min sequence conservation >= 10% threshold
     
     load(paste(pathFigures, "/RData/data.synteny.conservation.", ref, ".RData", sep=""))
@@ -121,6 +125,13 @@ for(ref in c("human", "mouse")){
       results[[paste("mean.aln.score",dist.class,sep=".")]]=mean.aln.score
       results[[paste("class.aln.score", dist.class, sep=".")]]=cut(mean.aln.score, breaks=seq(from=0, to=1, length=6), include.lowest=T)
 
+      ## mean phyloP score by gene
+
+      mean.phyloP.score=tapply(filtered.contacts$phyloP_score, factor(filtered.contacts$gene, levels=all.genes), mean, na.rm=T)
+      
+      results[[paste("mean.phyloP.score",dist.class,sep=".")]]=mean.phyloP.score
+      results[[paste("class.phyloP.score", dist.class, sep=".")]]=cut(mean.phyloP.score, breaks=c(min(mean.phyloP.score, na.rm=T), 0, 0.25, 0.5, 0.75, 1, max(mean.phyloP.score, na.rm=T)), include.lowest=T, labels=c("<0", "(0-0.25]", "(0.25-0.5]", "(0.5-0.75]","(0.75-1]", ">1"))
+      
       ## synteny conservation
 
       filtered.synteny=synteny[which(synteny$id%in%filtered.contacts$id),]

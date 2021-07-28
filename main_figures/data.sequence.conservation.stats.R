@@ -32,7 +32,7 @@ for(ref_sp in c("human", "mouse")){
   
   for(type in types){
     
-    print("Reference species:", ref_sp)
+    print(paste0("Reference species:", ref_sp))
     
     if(ref_sp == "human"){
       target_sp = "mouse"
@@ -77,6 +77,9 @@ for(ref_sp in c("human", "mouse")){
     
     frag_align_obs$phyloP_score <- phyloPscore[rownames(frag_align_obs)]
     frag_align_simul$phyloP_score <- phyloPscore[rownames(frag_align_simul)]
+    
+    frag_align_obs$phyloP_score.default0 <- phyloPscore.default0[rownames(frag_align_obs)]
+    frag_align_simul$phyloP_score.default0 <- phyloPscore.default0[rownames(frag_align_simul)]
     
     ## we compute median distance on filtered contacts
 
@@ -128,7 +131,6 @@ for(ref_sp in c("human", "mouse")){
       enh_obs_stats=enh_obs_stats[which(enh_obs_stats$enh%in%enh.contacts.obs$enhancer),]
       enh_simul_stats=enh_simul_stats[which(enh_simul_stats$enh%in%enh.contacts.sim$enhancer),]
       
-
       ## select species
       enh_align <- enh_align[, c("ID", species)]
       
@@ -139,6 +141,10 @@ for(ref_sp in c("human", "mouse")){
       load(paste(pathFigures, "RData/data.phyloP.scores.",enh,".",ref_sp,".RData", sep=""))
       enh_align_obs$phyloP_score <- phyloPscore[rownames(enh_align_obs)]
       enh_align_simul$phyloP_score <- phyloPscore[rownames(enh_align_simul)]
+      
+      enh_align_obs$phyloP_score.default0 <- phyloPscore.default0[rownames(enh_align_obs)]
+      enh_align_simul$phyloP_score.default0 <- phyloPscore.default0[rownames(enh_align_simul)]
+      
       
       ## median distance computed from filtered contacts
       
@@ -154,7 +160,7 @@ for(ref_sp in c("human", "mouse")){
 
     ## save results
 
-    save(list=c("frag_align_obs", "frag_align_simul", "list_align_enh"), file=paste(pathFigures, "RData/data.sequence.conservation.stats.",type,".and.phyloP.",ref_sp,".RData", sep=""))
+    save(list=c("frag_align_obs", "frag_align_simul", "list_align_enh"), file=paste(pathFigures, "RData/data.sequence.conservation.stats.",type,".",ref_sp,".RData", sep=""))
 
   }
 }
