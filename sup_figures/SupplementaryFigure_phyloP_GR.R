@@ -12,7 +12,6 @@ if(!"pathFigures"%in%objects){
   set.seed(19)
   
   load=T
-  prepare=T
 }
 
 #########################################################################################################################
@@ -24,70 +23,126 @@ if(load){
   enhancers = enhancer.datasets[[ref_sp]]
   
   selenh="ENCODE"
+  load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
   
-  load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.and.phyloP.", ref_sp, ".RData", sep=""))
   
+  ## expression divergence
+  load(paste(pathFigures, "RData/data.human.CM2019.AllOrgans.expdiv.RData", sep=""))
+  expdiv.human=expdiv
   
-  ## enhancer statistics
-  load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
+  load(paste(pathFigures, "RData/data.mouse.CM2019.AllOrgans.expdiv.RData", sep=""))
+  expdiv.mouse=expdiv
   
-  enh.stats.obs=enhancer.statistics[[ref_sp]][[selenh]][["original"]]
-  enh.stats.simul=enhancer.statistics[[ref_sp]][[selenh]][["simulated"]]
+  rm("expdiv")
   
-  ## enhancer alignment
-  align_enhancer_obs=list_align_enh[[selenh]][["enh_align_obs"]]
-  align_enhancer_sim=list_align_enh[[selenh]][["enh_align_simul"]]
+  load(paste(pathFigures, "RData/data.regland.conservation.phyloP.RData", sep=""))
   
-  ## fragment statistics
-  load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
+  regcons.human=regland.conservation[["human"]][[selenh]]
+  regcons.mouse=regland.conservation[["mouse"]][[selenh]]
   
-  frag.stats.obs=fragment.statistics[[ref_sp]][["original"]]
-  frag.stats.simul=fragment.statistics[[ref_sp]][["simulated"]]
+  distances=c("all")
+  col.distances=c("black", "steelblue", "indianred")
+  names(col.distances)=distances
+  
+  smallxdist=c(0, 0.1, 0.2)
+  names(smallxdist)=c("all")
   
   load=F
 }
 
+
 #########################################################################################################################
 
-if(prepare){
+plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.label, smallx.add=0, xlab, xax.labels, xax.las, col=NA, add=FALSE, ylim=NA){
+  ## go through all classes and distances to compute median and ci
+  contact.classes=levels(regland[,paste(feature, distances[1],sep=".")])
   
-  ## add nb genes 
+  median.matrix=matrix(rep(NA, length(distances)*length(contact.classes)), nrow=length(distances))
+  rownames(median.matrix)=distances
+  colnames(median.matrix)=contact.classes
   
-  frag_align_obs$nb_genes_500kb=frag.stats.obs[frag_align_obs$ID, "nb_genes_500kb"]
-  frag_align_simul$nb_genes_500kb=frag.stats.simul[frag_align_simul$ID, "nb_genes_500kb"]
+  ci.low.matrix=median.matrix
+  ci.high.matrix=median.matrix  
   
-  align_enhancer_obs$nb_genes_500kb=enh.stats.obs[align_enhancer_obs$ID, "nb_genes_500kb"]
-  align_enhancer_sim$nb_genes_500kb=enh.stats.simul[align_enhancer_sim$ID, "nb_genes_500kb"]
+  for(dist in distances){
+    values <- c()
+    groups <- c()
+    for(class in contact.classes){
+      
+      this.genes=regland$gene[which(regland[,paste(feature, dist, sep=".")] == class)]
+      b=boxplot(expdata[this.genes], plot=FALSE)
+      ci=as.numeric(b$conf)
+      
+      median.matrix[dist, class]=median(expdata[this.genes],na.rm=T)
+      ci.low.matrix[dist, class]=ci[1]
+      ci.high.matrix[dist, class]=ci[2]
+      
+      values <- c(values, expdata[this.genes])
+      groups <- c(groups, rep(class, length(expdata[this.genes])))
+    }
+  }
   
-  ## add nb genes class
+  ## compute ylim on all values, if not provided
   
-  frag_align_obs$class_genes_500kb=cut(frag_align_obs$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(frag_align_obs$nb_genes_500kb)), include.lowest=T, labels=c("0-5", "6-10", "11-15", "16-20", "21-25", "26-30", ">30"))
+  if(any(is.na(ylim))){
+    ylim=range(c(as.numeric(ci.low.matrix), as.numeric(ci.high.matrix)))
+    addy=diff(ylim)/5
+    ylim=ylim+c(-addy, addy)
+  }
   
-  frag_align_simul$class_genes_500kb=cut(frag_align_simul$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(frag_align_simul$nb_genes_500kb)), include.lowest=T, labels=c("0-5", "6-10", "11-15", "16-20", "21-25", "26-30", ">30"))
+  ## now do the actual plot
   
-  align_enhancer_obs$class_genes_500kb=cut(align_enhancer_obs$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(align_enhancer_obs$nb_genes_500kb)), include.lowest=T, labels=c("0-5", "6-10", "11-15", "16-20", "21-25", "26-30", ">30"))
+  xpos=1:length(contact.classes)
+  names(xpos)=contact.classes
+  xlim=c(0.5, length(contact.classes)+0.5)
   
-  align_enhancer_sim$class_genes_500kb=cut(align_enhancer_sim$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(align_enhancer_sim$nb_genes_500kb)), include.lowest=T, labels=c("0-5", "6-10", "11-15", "16-20", "21-25", "26-30", ">30"))
+  cex.mtext = 0.75
   
-  ## add repeats
+  if(!add){
+    plot(1, type="n", xlab="", ylab="", axes=F, xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
+  } 
   
-  frag.stats.obs$pcrepeat=100*frag.stats.obs$repeat_bp/frag.stats.obs$length
-  frag.stats.simul$pcrepeat=100*frag.stats.simul$repeat_bp/frag.stats.simul$length
+  for(dist in distances){
+    for(class in contact.classes){
+      x=xpos[class]+smallxdist[dist]+smallx.add
+      
+      med=median.matrix[dist, class]
+      ci.low=ci.low.matrix[dist, class]
+      ci.high=ci.high.matrix[dist, class]
+      
+      if(!is.na(col)){
+        this.col=col
+      } else{
+        this.col=col.distances[dist]
+      }
+      points(x, med, pch=20, col=this.col, cex=1.1)
+      segments(x, ci.low, x, ci.high,  col=this.col)
+    }
+  }
   
-  frag_align_obs$pcrepeat=frag.stats.obs[frag_align_obs$ID, "pcrepeat"]
-  frag_align_simul$pcrepeat=frag.stats.simul[frag_align_simul$ID, "pcrepeat"]
-  
-  enh.stats.obs$pcrepeat=100*enh.stats.obs$repeat_bp/enh.stats.obs$length
-  enh.stats.simul$pcrepeat=100*enh.stats.simul$repeat_bp/enh.stats.simul$length
-  
-  align_enhancer_obs$pcrepeat=enh.stats.obs[align_enhancer_obs$ID, "pcrepeat"]
-  align_enhancer_sim$pcrepeat=enh.stats.simul[align_enhancer_sim$ID, "pcrepeat"]
-  
-  prepare=FALSE
+  if(!add){
+    abline(v=xpos[1:length(contact.classes)-1]+diff(xpos)[1]/2, lty=3, col="gray40")
+    
+    axis(side=2, mgp=c(3, 0.75, 0), cex.axis=1, las=2)
+    mtext(ylab, side=2, line=2.95, cex=cex.mtext)
+    
+    ## plot label
+    if(length(xpos)>=5){
+      plot.lab.pos=xlim[1]-diff(xlim)/3.5
+    } else{
+      plot.lab.pos=xlim[1]-diff(xlim)/2
+    }
+    
+    mtext(plot.label, side=3, line=1.15, at=plot.lab.pos, font=2, cex=1.2)
+    
+    axis(side=1, cex.axis=1, mgp=c(3, 0.75, 0), at=xpos, labels=rep("",length(xpos)))
+    mtext(xax.labels, at=xpos, side=1, line=0.75, cex=0.7, las=xax.las)
+    
+    mtext(xlab, side=1, line=4.5, cex=cex.mtext)
+  }
 }
 
 #########################################################################################################################
-
 ## 1 column width 85 mm = 3.34 in
 ## 1.5 column width 114 mm = 4.49 in
 ## 2 columns width 174 mm = 6.85 in
@@ -95,15 +150,20 @@ if(prepare){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_phyloP.pdf", sep=""), width=6.85, height=7)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_phyloP.pdf", sep=""), width=6, height=6)
 
-par(mfrow=c(2,2))
-par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right
+m=matrix(rep(NA,6*4), nrow=4)
+m[1,]=c(rep(c(1,2), each=2), 5, 5)
+m[2,]=c(rep(c(1,2), each=2), 6, 6)
+m[3,]=c(rep(c(3,4), each=2), 6, 6)
+m[4,]=c(rep(c(3,4), each=2), 7, 7)
 
-######################## Conserved sequence human vs distance to promoters  ########################
+layout(m)
 
-par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
-par(mar=c(4.1, 4.5, 2, 1.5))
+######################## phyloP scores vs distance to promoters  ########################
+
+par(mai = c(0.6, 0.2, 0.1, 0.2)) #bottom, left, top and right
+par(mar=c(4.1, 4, 2.5, 1.5))
 
 nbclasses=length(levels(frag_align_obs$dist_class))
 xpos=1:nbclasses
@@ -114,13 +174,11 @@ xlim=c(-0.5, max(xpos)+1)
 class_leg <- c("0", "0.5", "1", "1.5", "2")
 xax=seq(from=0, to=max(xpos)+1, by=10)
 
-labels=c("A", "B")
-names(labels)=c("restriction fragments", "enhancers")
+n=1
 
 for (ref_sp in c("human", "mouse")){
-  for(type in c("fragments", "enhancer")){
-    
-    load(paste(pathFigures, "RData/data.bootstrap.",type,".conservation.distance.",ref_sp,".phyloP.RData", sep=""))
+  for(type in c("fragments", "ENCODE")){
+    load(paste(pathFigures, "RData/data.bootstrap.",type,".conservation.distance.",ref_sp,".phyloP_score.RData", sep=""))
     
     ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul))
     
@@ -137,7 +195,7 @@ for (ref_sp in c("human", "mouse")){
     
     axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
     
-    if(type=="enhancer"){
+    if(type=="ENCODE"){
       mtext("distance to promoters (Mb)", side=1, line=2.2, cex=0.8)
     }
     
@@ -150,82 +208,40 @@ for (ref_sp in c("human", "mouse")){
     
     mtext(paste(ref_sp,", ", type, sep=""), side=3, cex=0.8, line=1)
     
-    mtext(labels[type], side=3, line=1, at=-7.75, font=2, cex=1.1)
+    mtext(LETTERS[n], side=3, line=1, at=-7.75, font=2, cex=1.1)
+    n = n+1
   }
+
 }
 
 
+#######################################################################################################
+par(mai = c(0.5, 0.2, 0.2, 0.5)) #bottom, left, top and right
+
+plot(1, type="n", xlab="", ylab="", axes=F, main="", xaxs="i")
+legend("left", fill=dataset.colors, border=dataset.colors, legend = c("PCHi-C data", "simulated data"), bty='n', cex=1.3, xpd=T, inset=c(-0.01, -0.1), horiz=FALSE)
+
+par(mai = c(0.5, 0.7, 0.2, 0.1)) #bottom, left, top and right
+
+########################## gene expression profile evolution ################
+expdata.mouse=expdiv.mouse[,"CorrectedSpearman"]
+names(expdata.mouse)=rownames(expdiv.mouse)
+
+expdata.human=expdiv.human[,"CorrectedSpearman"]
+names(expdata.human)=rownames(expdiv.human)
+
+## expression conservation as a function of enhancer sequence conservation
+
+plot.expdiv.regdiv(regcons.human, "class.phyloP.score", expdata.human, distances="all", ylab = "expression conservation",
+                   plot.label="E", xlab="phyloP scores",  xax.labels=levels(regcons.human$class.phyloP.score.all),
+                   xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.03, 0.15))
+
+plot.expdiv.regdiv(regcons.mouse, "class.phyloP.score", expdata.mouse, distances="all",add=T,smallx.add=0.15, col="navy")
+
+legend("topleft", col=c("darkred", "white", "navy"), legend = c("human", "", "mouse"), box.col="white", bg="white", pch=20, cex=1,
+       inset=c(0.05,0))
 
 #######################################################################################################
-# 
-# ## sequence conservation for gene classes
-# 
-# par(mai = c(0.8, 0.6, 0.2, 0.2)) #bottom, left, top and right
-# 
-# par(mar=c(5.1, 4.5, 1, 1.5))
-# 
-# nbclasses=length(levels(frag_align_obs$class_genes_500kb))
-# xpos=1:nbclasses
-# 
-# xlim=c(0.5, max(xpos)+0.5)
-# 
-# smallx=c(-0.1, 0.1)
-# names(smallx)=c("obs", "sim")
-# 
-# ## axis position
-# 
-# xax=xpos
-# class_leg=levels(frag_align_obs$class_genes_500kb)
-# 
-# labels=c("F", "G")
-# names(labels)=c("restriction fragments", "enhancers")
-# 
-# 
-# for(type in c("restriction fragments", "enhancers")){
-#   
-#   load(paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".RData", sep=""))
-#   
-#   ## plot
-#   
-#   ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul, ci.high.simul.norep, ci.high.obs.norep))
-#   
-#   dy=diff(ylim)/20
-#   ylim=ylim+c(-dy, dy)
-#   
-#   plot(1, type="n", xlab="", ylab="", axes=F, main="", xlim=xlim, ylim=ylim, xaxs="i")
-#   
-#   points(xpos+smallx["obs"], mean.val.obs, col=dataset.colors["Original"], pch=20, cex=1.35)
-#   segments(xpos+smallx["obs"], ci.low.obs, xpos+smallx["obs"], ci.high.obs, col=dataset.colors["Original"])
-#   
-#   points(xpos+smallx["sim"], mean.val.simul, col=dataset.colors["Simulated"], pch=20, cex=1.35)
-#   segments(xpos+smallx["sim"], ci.low.simul, xpos+smallx["sim"], ci.high.simul, col=dataset.colors["Simulated"])
-#   
-#   points(xpos+smallx["obs"], mean.val.obs.norep, bg="white", col=dataset.colors["Original"], pch=21)
-#   segments(xpos+smallx["obs"], ci.low.obs.norep, xpos+smallx["obs"], ci.high.obs.norep, col=dataset.colors["Original"])
-#   
-#   points(xpos+smallx["sim"], mean.val.simul.norep, bg="white", col=dataset.colors["Simulated"], pch=21)
-#   segments(xpos+smallx["sim"], ci.low.simul.norep, xpos+smallx["sim"], ci.high.simul.norep, col=dataset.colors["Simulated"])
-#   
-#   ## axes
-#   axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1, las=2)
-#   mtext("number of genes within 500kb", side=1, line=3.85, cex=0.8)
-#   
-#   axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
-#   mtext("% aligned sequence", side=2, line=3, cex=0.8)
-#   
-#   abline(v=sort(xpos)[-length(xpos)]+0.5, lty=2, col="gray40")
-#   
-#   mtext(labels[type], side=3, line=1, at=-0.75, font=2, cex=1.2)
-#   
-#   if(type=="enhancers"){
-#     legend("topright", box.col="white", bg="white", pch=21, pt.bg=c("black", "white"), legend=c("all data", "without repeats"),xpd=NA, inset=c(0.01, -0.05), cex=1.1)
-#   }
-#   
-# }
-# 
-
-#######################################################################################################
-
 dev.off()
 
 #######################################################################################################

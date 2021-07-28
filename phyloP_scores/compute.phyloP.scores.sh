@@ -4,6 +4,7 @@
 export species=$1         # i.e : human or mouse
 export way=$2             # i.e : 30 60 or 100way
 export enhancer=$3        # i.e : FANTOM5 ENCODE RoadmapEpigenomics FOCS_GRO_seq restriction_fragments
+export masked_exons=$4    # i.e : TRUE or FALSE
 
 ################ Export paths #####################
 export path=/beegfs/data/alaverre/Regulatory_landscape/
@@ -23,8 +24,6 @@ export pathScripts=${path}/scripts/phyloP_scores
 ################ Define aligments input files #####################
 
 export suffixPhylo=phyloP${way}.wigFix.gz
-export suffixExons=MaskedExons_Ensembl94
-export pathExons=${path}/Snakemake_folder/data/exons/${species}_all_exons_merged.bed
 
 if [ "${species}" = "mouse" ]; then
   export chromosomes=({1..19} X Y)
@@ -39,6 +38,14 @@ if [ "${enhancer}" = "restriction_fragments" ]; then
 export CoordSuffix=frag_coords_${genome}.bed
 else
 export CoordSuffix=enhancer_coordinates.bed
+fi
+
+if [ "${masked_exons}" = "TRUE" ]; then
+export suffixExons=MaskedExons_Ensembl94
+export pathExons=${path}/Snakemake_folder/data/exons/${species}_all_exons_merged.bed
+else
+export suffixExons=Unmasked
+export pathExons="NA"
 fi
 
 ################ Create dir output #####################
@@ -64,7 +71,7 @@ do
 	    echo "#PBS -o std_output_phyloP.txt" >> ${pathScripts}/log/phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
 	    echo "#PBS -e std_error_phyloP.txt" >> ${pathScripts}/log/phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
 	    
-	    echo "perl ${pathScripts}/compute.phyloP.scores.pl --pathCoords=${pathEnhancers}/${CoordSuffix}   --pathMaskExonBlocks=${pathExons} --pathPhastCons=${pathPhyloP_scores} --chr=chr${chr} --pathOutput=${pathResults}/phyloP_${way}_chr${chr}_${suffixExons}.txt" >> ${pathScripts}/log/phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
+	    echo "perl ${pathScripts}/compute.phyloP.scores.pl --pathCoords=${pathEnhancers}/${CoordSuffix} --pathMaskExonBlocks=${pathExons} --pathPhastCons=${pathPhyloP_scores} --chr=chr${chr} --pathOutput=${pathResults}/phyloP_${way}_chr${chr}_${suffixExons}.txt" >> ${pathScripts}/log/phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
 
       #bash ${pathScripts}/log/phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
       sbatch -p normal --time=1:00:00 --mem=40GB -c 1 -o ${pathScripts}/log/std_output_phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons} -e ${pathScripts}/log/std_error_phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons} ${pathScripts}/log/phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
