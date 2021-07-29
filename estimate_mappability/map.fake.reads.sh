@@ -33,8 +33,8 @@ do
 
 	     if [ ${cluster} = "pbil" ]; then
 		 echo "#SBATCH --partition=normal" >>  ${pathScripts}/bsub_script_map
-		 echo "#SBATCH --output=${pathScripts}/std_out_index_${sp}" >>  ${pathScripts}/bsub_script_map
-		 echo "#SBATCH --error=${pathScripts}/std_err_index_${sp}" >>  ${pathScripts}/bsub_script_map
+		 echo "#SBATCH --output=${pathScripts}/std_out_map_${sp}_${chr}" >>  ${pathScripts}/bsub_script_map
+		 echo "#SBATCH --error=${pathScripts}/std_err_map_${sp}_${chr}" >>  ${pathScripts}/bsub_script_map
 		 echo "#SBATCH --cpus-per-task=8" >>  ${pathScripts}/bsub_script_map ## 8 CPUs
 		 echo "#SBATCH --time=8:00:00" >>  ${pathScripts}/bsub_script_map ## 8 hours
 		 echo "#SBATCH --mem=4G" >>  ${pathScripts}/bsub_script_map ## 4g per CPU
