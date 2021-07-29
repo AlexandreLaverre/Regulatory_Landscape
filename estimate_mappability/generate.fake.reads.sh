@@ -7,9 +7,8 @@ export cluster=$3
 ##############################################################
 
 if [ ${cluster} = "pbil" ]; then
-    export path=
+    export path=/beegfs/data/${USER}/RegulatoryLandscapes
 fi
-
 
 export pathSequence=${path}/data/genome_sequences/${sp}
 export pathResults=${path}/results/mappability/readlength${readlen}/${sp}
