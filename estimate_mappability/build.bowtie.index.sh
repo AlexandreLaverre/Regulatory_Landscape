@@ -14,6 +14,8 @@ export pathScripts=${path}/scripts/estimate_mappability
 
 export release=94
 
+## bowtie2 version: 2.3.4.3
+
 ##############################################################
 
 echo "#!/bin/bash" >  ${pathScripts}/bsub_script_bowtie_index
