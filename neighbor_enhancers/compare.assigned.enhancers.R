@@ -70,7 +70,21 @@ for(sp in c("human", "mouse")){
     lines(dc$x, dc$y, col="blue")
 
     legend("topright", inset=0.01, col=c("black", "blue"), legend=c("neighbors", "contacts"),lty=1)
-    
+
+    dev.off()
+
+    ## proportion enhancers in common
+
+    nb.common=unlist(lapply(common.genes, function(x) length(intersect(n$EnhancerID[which(n$GeneID==x)], c$enhancer[which(c$gene==x)]))))
+    names(nb.common)=common.genes
+
+    prop.common.contacts=100*nb.common[names(c.nbenh)]/c.nbenh
+    prop.common.neighbors=100*nb.common[names(n.nbenh)]/n.nbenh
+
+    pdf(file=paste("figures/CommonEnhancers_",sp,"_",enh,".pdf",sep=""), width=10, height=6)
+    par(mfrow=c(1,2))
+    hist(prop.common.contacts, xlab="% contacted enhancers found in neighbor regions", main="")
+    hist(prop.common.neighbors, xlab="% neighboring enhancers found in contact", main="")
     dev.off()
     
   }
