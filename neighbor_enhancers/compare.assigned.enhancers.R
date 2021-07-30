@@ -28,9 +28,7 @@ for(sp in c("human", "mouse")){
     }
     
     c=read.table(paste(pathContactedEnhancers, sp, "/", enh, "/gene_enhancer_contacts_original_interactions.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-
-    c=c[which(c$min_dist_baitedTSS>=25000 & c$min_dist_baitedTSS<=2e6),]
-
+   
     ## select common genes
     common.genes=intersect(n$GeneID, c$gene)
 
@@ -85,6 +83,24 @@ for(sp in c("human", "mouse")){
     par(mfrow=c(1,2))
     hist(prop.common.contacts, xlab="% contacted enhancers found in neighbor regions", main="")
     hist(prop.common.neighbors, xlab="% neighboring enhancers found in contact", main="")
+    dev.off()
+
+    ## median distance per gene
+
+    median.dist.n=tapply(n$Distance, n$GeneID, median)
+    median.dist.c=tapply(c$min_dist_baitedTSS, c$gene, median)
+
+    pdf(file=paste("figures/MedianDistance_",sp,"_",enh,".pdf",sep=""), width=10, height=6)
+    par(mar=c(4.5, 4.5, 2.1, 1.1))
+
+    plot(median.dist.n, median.dist.c, pch=20, xlab="median distance, neighbor enhancers", ylab="median distance, contacted enhancers",main="")
+
+    R=round(cor(median.dist.n, median.dist.c), digits=2)
+    rho=round(cor(median.dist.n, median.dist.c, method="spearman"), digits=2)
+
+    mtext(paste("R = ", R, " rho = ", rho, sep=""), line=0.5, side=3)
+
+    abline(0, 1, col="red")
     dev.off()
     
   }
