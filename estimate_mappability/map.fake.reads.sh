@@ -31,7 +31,8 @@ do
 	if [ -e ${pathResults}/fake_reads_posinfo_chr${chr}.fa.gz ]; then
 	    echo "#!/bin/bash" >  ${pathScripts}/bsub_script_map
 
-	     if [ ${cluster} = "pbil" ]; then
+	    if [ ${cluster} = "pbil" ]; then
+		 echo "#SBATCH --job-name=bowtie_map_${sp}_${chr}_${readlen}" >>  ${pathScripts}/bsub_script_bowtie_index
 		 echo "#SBATCH --partition=normal" >>  ${pathScripts}/bsub_script_map
 		 echo "#SBATCH --output=${pathScripts}/std_out_map_${sp}_${chr}" >>  ${pathScripts}/bsub_script_map
 		 echo "#SBATCH --error=${pathScripts}/std_err_map_${sp}_${chr}" >>  ${pathScripts}/bsub_script_map
@@ -45,7 +46,7 @@ do
 	    echo "gzip ${pathResults}/fake_reads_chr${chr}.sam" >> ${pathScripts}/bsub_script_map
 
 	    if [ ${cluster} = "pbil" ]; then
-		sbatch ${pathScripts}/bsub_script_bowtie_index
+		sbatch ${pathScripts}/bsub_script_map
 	    fi
 	    
 	fi
