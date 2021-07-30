@@ -10,7 +10,7 @@ if [ ${cluster} = "pbil" ]; then
     export path=/beegfs/data/${USER}/RegulatoryLandscapes
 fi
 
-export pathGenomeIndexes=${path}/data/genome_sequences/${ref}
+export pathGenomeIndexes=${path}/data/genome_sequences/${sp}
 export pathResults=${path}/results/mappability/readlength${readlen}/${sp}
 export pathScripts=${path}/scripts/estimate_mappability
 
