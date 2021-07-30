@@ -21,7 +21,7 @@ export release=94
 echo "#!/bin/bash" >  ${pathScripts}/bsub_script_bowtie_index
 
 if [ ${cluster} = "pbil" ]; then
-    echo "#SBATCH --job-name=bowtie_index_${sp}_${chr}" >>  ${pathScripts}/bsub_script_bowtie_index
+    echo "#SBATCH --job-name=bowtie_index_${sp}" >>  ${pathScripts}/bsub_script_bowtie_index
     echo "#SBATCH --partition=normal" >>  ${pathScripts}/bsub_script_bowtie_index
     echo "#SBATCH --output=${pathScripts}/std_out_index_${sp}" >>  ${pathScripts}/bsub_script_bowtie_index
     echo "#SBATCH --error=${pathScripts}/std_err_index_${sp}" >>  ${pathScripts}/bsub_script_bowtie_index
