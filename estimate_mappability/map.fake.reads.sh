@@ -32,7 +32,7 @@ do
 	    echo "#!/bin/bash" >  ${pathScripts}/bsub_script_map
 
 	    if [ ${cluster} = "pbil" ]; then
-		 echo "#SBATCH --job-name=bowtie_map_${sp}_${chr}_${readlen}" >>  ${pathScripts}/bsub_script_bowtie_index
+		 echo "#SBATCH --job-name=bowtie_map_${sp}_${chr}_${readlen}" >>  ${pathScripts}/bsub_script_map
 		 echo "#SBATCH --partition=normal" >>  ${pathScripts}/bsub_script_map
 		 echo "#SBATCH --output=${pathScripts}/std_out_map_${sp}_${chr}" >>  ${pathScripts}/bsub_script_map
 		 echo "#SBATCH --error=${pathScripts}/std_err_map_${sp}_${chr}" >>  ${pathScripts}/bsub_script_map
