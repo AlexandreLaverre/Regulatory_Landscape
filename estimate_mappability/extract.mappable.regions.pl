@@ -101,84 +101,88 @@ sub checkAlignments{
 	    print $nbdone." alignments read.\n";
 	}
 	chomp $line;
-	my @s=split("\t",$line);
-	my $readid=$s[0];
-	my $flag=$s[1]+0;
-	my $chr=$s[2];
-	my $start=$s[3]+0;
-	my $cigar=$s[5];
-	my @AS=grep(/AS:i:/,@s);
-	my @XS=grep(/XS:i:/,@s);
 
-	my $thisscore=-100;
-	my $nextscore=-100;
+	my $prefix=substr $line, 0, 1;
 
-	if(@AS==1){
-	    my @u=split(":",$AS[0]);
-	    $thisscore=$u[2]+0;
-	}
-	else{
-	    if($chr ne "*"){
-		print "saw weird AS:i ".join("\t",@AS)." in ".$line."\n";
-		exit(1);
-	    }
-	}
-
-	if(@XS==1){
-	    my @u=split(":",$XS[0]);
-	    $nextscore=$u[2]+0;
-	}
-
-	
-	if(exists $coords->{$readid}){
-	    my $realstart=$coords->{$readid};
-
-	    if($chr eq $realchr){
-		if($realstart==$start){
-		    if(!($flag & 16)){
-		
-			if($thisscore>$nextscore){
-			    if($cigar eq $okcigar){
-				$thisreadok=1;
-				$nbok++;
-			    }
-			    else{
-				$nblocalaln++;
-			    }
-			}
-			else{
-			    $nbambiguous++;
-			}
-		    }
-		    else{
-			$nbwrongstrand++;
-		    }
-		}
-		else{
-		    $nbwrongpos++;
-		}
+	if($prefix ne ">"){
+	    my @s=split("\t",$line);
+	    my $readid=$s[0];
+	    my $flag=$s[1]+0;
+	    my $chr=$s[2];
+	    my $start=$s[3]+0;
+	    my $cigar=$s[5];
+	    my @AS=grep(/AS:i:/,@s);
+	    my @XS=grep(/XS:i:/,@s);
+	    
+	    my $thisscore=-100;
+	    my $nextscore=-100;
+	    
+	    if(@AS==1){
+		my @u=split(":",$AS[0]);
+		$thisscore=$u[2]+0;
 	    }
 	    else{
-		if($chr eq "*"){
-		    $nbunmapped++;  
-		}
-		else{
-		    $nbwrongchr++;
+		if($chr ne "*"){
+		    print "saw weird AS:i ".join("\t",@AS)." in ".$line."\n";
+		    exit(1);
 		}
 	    }
 	    
-	    if($thisreadok==0){
-		delete $coords->{$readid};
-		$removedreads{$readid}=1;
+	    if(@XS==1){
+		my @u=split(":",$XS[0]);
+		$nextscore=$u[2]+0;
+	    }
+	    	    
+	    if(exists $coords->{$readid}){
+		my $realstart=$coords->{$readid};
+		
+		if($chr eq $realchr){
+		    if($realstart==$start){
+			if(!($flag & 16)){
+			    
+			    if($thisscore>$nextscore){
+				if($cigar eq $okcigar){
+				    $thisreadok=1;
+				    $nbok++;
+				}
+				else{
+				    $nblocalaln++;
+				}
+			    }
+			    else{
+				$nbambiguous++;
+			    }
+			}
+			else{
+			    $nbwrongstrand++;
+			}
+		    }
+		    else{
+			$nbwrongpos++;
+		    }
+		}
+		else{
+		    if($chr eq "*"){
+			$nbunmapped++;  
+		    }
+		    else{
+			$nbwrongchr++;
+		    }
+		}
+		
+		if($thisreadok==0){
+		    delete $coords->{$readid};
+		    $removedreads{$readid}=1;
+		}
+	    }
+	    else{
+		if(!(exists $removedreads{$readid})){
+		    print "Weird! cannot find ".$readid." in the original fake reads data, and we didn't remove it previously.\n";
+		    exit(1);
+		}
 	    }
 	}
-	else{
-	    if(!(exists $removedreads{$readid})){
-		print "Weird! cannot find ".$readid." in the original fake reads data, and we didn't remove it previously.\n";
-		exit(1);
-	    }
-	}
-
+	
 	$line=<$input>;
     }
 
