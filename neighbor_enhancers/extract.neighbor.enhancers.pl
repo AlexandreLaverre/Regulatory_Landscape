@@ -28,7 +28,7 @@ sub readCoordinatesBED{
 	
 	my $start=$s[1]+0;
 	my $end=$s[2]+0;
-	my $id=$s[3];
+	my $id="chr".$chr.":".$start.":".$end;
 
 	$hashcoords->{$id}={"chr"=>$chr, "start"=>$start, "end"=>$end};
 
