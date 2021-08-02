@@ -19,11 +19,7 @@ for(ref in c("human", "mouse")){
   for(enh in enhancer.datasets[[ref]]){
     
     coords=read.table(paste(pathEnhancers, ref, "/", enh, "/enhancer_coordinates.bed", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    g=grep("^chr", coords$ID)
-
-    if(length(g)==0){
-      coords$ID=paste0("chr", coords$ID)
-    }
+    coords$ID=paste(coords$chr, coords$start, coords$end, sep=":")
     
     all.enh=coords$ID ## all enhancers from this dataset
     
