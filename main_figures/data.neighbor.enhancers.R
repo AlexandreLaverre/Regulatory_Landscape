@@ -32,9 +32,9 @@ for(sp in c("human", "mouse")){
 
     real=real[which(real$GeneID%in%pc.genes),]
 
-    ## ## select enhancers in our accepted distance range
+    ## select enhancers in our accepted distance range
        
-    ## real=real[which(real$Distance>=minDistance & real$Distance<=maxDistance),]
+    real=real[which(real$Distance>=minDistance & real$Distance<=maxDistance),]
 
     ## change column names
 
