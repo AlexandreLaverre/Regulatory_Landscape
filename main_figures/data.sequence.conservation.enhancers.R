@@ -18,7 +18,7 @@ minAlnLength=10
 for(ref in c("human", "mouse")){
   for(enh in enhancer.datasets[[ref]]){
     
-    coords=read.table(paste(pathEnhancers, sp, "/", enh, "/enhancer_coordinates.bed", h=T, sep=""), h=T, stringsAsFactors=F)
+    coords=read.table(paste(pathEnhancers, ref, "/", enh, "/enhancer_coordinates.bed", h=T, sep=""), h=T, stringsAsFactors=F)
     g=grep("^chr", coords$ID)
 
     if(length(g)==0){
