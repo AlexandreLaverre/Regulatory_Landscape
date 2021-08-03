@@ -5,10 +5,7 @@ library(data.table)
 source("parameters.R") ## paths are defined based on the user name
 
 pathSequenceConservation=paste(pathFinalData, "SupplementaryDataset7/", sep="")
-
-###########################################################################
-
-load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
+pathEnhancers=paste(pathFinalData, "SupplementaryDataset4/", sep="")
 
 ###########################################################################
 
@@ -21,10 +18,10 @@ minAlnLength=10
 for(ref in c("human", "mouse")){
   for(enh in enhancer.datasets[[ref]]){
     
-    enh.obs=enhancer.statistics[[ref]][[enh]][["original"]]
-    enh.sim=enhancer.statistics[[ref]][[enh]][["simulated"]]
+    coords=read.table(paste(pathEnhancers, ref, "/", enh, "/enhancer_coordinates.bed", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    coords$ID=paste(coords$chr, coords$start, coords$end, sep=":")
     
-    all.enh=unique(c(enh.obs$enh, enh.sim$enh))
+    all.enh=coords$ID ## all enhancers from this dataset
     
     for(tg in setdiff(all.species, ref)){
       print(paste("enhancer sequence conservation", ref, tg))
