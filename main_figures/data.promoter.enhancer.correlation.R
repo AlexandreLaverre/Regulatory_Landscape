@@ -52,14 +52,29 @@ for(ref_sp in c("human", "mouse")){
 
       simul=simul[which(simul$IDContact%in%frag.contact.sim$idcontact),]
 
+      ## neighbor enhancers
+
+       neighbors <- fread(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_neighbor_promoters_enhancers.txt", sep="/"), h=T, sep="\t")
+      class(neighbors)<-"data.frame"
+
+      ## filter for distances
+
+      neighbors=neighbors[which(neighbors$Distance>=minDistance & neighbors$Distance<=maxDistance),]
+
+      ## select the same promoters as for the observed contacts
+
+      neighbors=neighbors[which(neighbors$IDPromoter%in%obs$IDPromoter),]
+
       print(paste(ref_sp, enh, "observed mean corr, all distances", mean(obs$SpearmanCorrelation)))
       print(paste(ref_sp, enh, "simulated mean corr, all distances", mean(simul$SpearmanCorrelation)))
+      print(paste(ref_sp, enh, "neighbors mean corr, all distances", mean(neighbors$SpearmanCorrelation)))
       print(wilcox.test(obs$SpearmanCorrelation, simul$SpearmanCorrelation))
             
       # according to distance
     
       obs$dist_class <-cut(obs$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
       simul$dist_class <- cut(simul$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
+      neighbors$dist_class <- cut(neighbors$Distance, breaks=seq(from=minDistance, to=maxDistance+50000, by=50000), include.lowest = T)
 
       BC.obs=tapply(obs$SpearmanCorrelation, obs$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
       obs_correl_activity_dist[[enh]]=unlist(lapply(BC.obs, function(x) x[3]))
@@ -70,10 +85,15 @@ for(ref_sp in c("human", "mouse")){
       simul_correl_activity_dist[[enh]]=unlist(lapply(BC.simul, function(x) x[3]))
       simul_correl_activity_dist[[paste0(enh, "_conflow")]]=unlist(lapply(BC.simul, function(x) x[4]))
       simul_correl_activity_dist[[paste0(enh, "_confup")]]=unlist(lapply(BC.simul, function(x) x[5]))
+
+      BC.neighbors=tapply(neighbors$SpearmanCorrelation, neighbors$dist_class, function(x) BCa(x, delta=NA, M=100, theta=mean, na.rm=T))
+      neighbors_correl_activity_dist[[enh]]=unlist(lapply(BC.neighbors, function(x) x[3]))
+      neighbors_correl_activity_dist[[paste0(enh, "_conflow")]]=unlist(lapply(BC.neighbors, function(x) x[4]))
+      neighbors_correl_activity_dist[[paste0(enh, "_confup")]]=unlist(lapply(BC.neighbors, function(x) x[5]))
     }
   }
   
-  correl_activity <- list(obs=obs_correl_activity_dist, simul=simul_correl_activity_dist)
+  correl_activity <- list(obs=obs_correl_activity_dist, simul=simul_correl_activity_dist, neighbors=neighbors_correl_activity_dist)
   
 ################################################# Save RData ################################################# 
   
