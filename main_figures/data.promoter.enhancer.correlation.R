@@ -28,9 +28,12 @@ for(ref_sp in c("human", "mouse")){
   
   obs_correl_activity_dist <- list()
   simul_correl_activity_dist <- list()
+  neighbors_correl_activity_dist <- list()
   
   for (enh in enhancers){
     if(file.exists(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_real_data.txt", sep="/")) & file.exists(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_simulated_data.txt", sep="/"))){
+
+      print(paste(sp, enh))
       
       obs <- fread(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_real_data.txt", sep="/"), h=T, sep="\t")
       class(obs)<-"data.frame"
