@@ -33,7 +33,7 @@ for(ref_sp in c("human", "mouse")){
   for (enh in enhancers){
     if(file.exists(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_real_data.txt", sep="/")) & file.exists(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_simulated_data.txt", sep="/"))){
 
-      print(paste(sp, enh))
+      print(paste(ref_sp, enh))
       
       obs <- fread(paste(pathFinalData, "SupplementaryDataset8", ref_sp, enh, "expression_correlations_real_data.txt", sep="/"), h=T, sep="\t")
       class(obs)<-"data.frame"
