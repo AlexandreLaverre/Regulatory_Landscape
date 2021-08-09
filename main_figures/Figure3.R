@@ -3,77 +3,78 @@
 objects=ls()
 
 if(!"pathFigures"%in%objects){
-
- source("parameters.R")
-
- library(ape)
- library(vioplot)
- 
- set.seed(19)
- 
- load=T
- prepare=T
+  
+  source("parameters.R")
+  
+  library(ape)
+  library(vioplot)
+  library(data.table)
+  
+  set.seed(19)
+  
+  load=T
+  prepare=T
 }
 
 #########################################################################################################################
 
 if(load){
- ref_sp = "human"
- target_sp = "mouse"
-
- enhancers = enhancer.datasets[[ref_sp]]
-
- selenh="ENCODE"
-
- load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
-
-
- ## enhancer statistics
- load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
- 
- enh.stats.obs=enhancer.statistics[[ref_sp]][[selenh]][["original"]]
- enh.stats.sim=enhancer.statistics[[ref_sp]][[selenh]][["simulated"]]
-
- ## enhancer alignment
- align_enhancer_obs=list_align_enh[[selenh]][["enh_align_obs"]]
- align_enhancer_sim=list_align_enh[[selenh]][["enh_align_simul"]]
- 
- ## fragment statistics
- load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
- 
- frag.stats.obs=fragment.statistics[[ref_sp]][["original"]]
- frag.stats.sim=fragment.statistics[[ref_sp]][["simulated"]]
- 
- load=F
+  ref_sp = "human"
+  target_sp = "mouse"
+  
+  enhancers = enhancer.datasets[[ref_sp]]
+  
+  selenh="ENCODE"
+  
+  load(paste(pathFigures, "RData/data.sequence.conservation.stats.pcungapped.", ref_sp, ".RData", sep=""))
+  
+  
+  ## enhancer statistics
+  load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep=""))
+  
+  enh.stats.obs=enhancer.statistics[[ref_sp]][[selenh]][["original"]]
+  enh.stats.sim=enhancer.statistics[[ref_sp]][[selenh]][["simulated"]]
+  
+  ## enhancer alignment
+  align_enhancer_obs=list_align_enh[[selenh]][["enh_align_obs"]]
+  align_enhancer_sim=list_align_enh[[selenh]][["enh_align_simul"]]
+  
+  ## fragment statistics
+  load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep=""))
+  
+  frag.stats.obs=fragment.statistics[[ref_sp]][["original"]]
+  frag.stats.sim=fragment.statistics[[ref_sp]][["simulated"]]
+  
+  load=F
 }
 
 #########################################################################################################################
 
 if(prepare){
- 
+  
   ## add nb genes 
-
+  
   frag_align_obs$nb_genes_500kb=frag.stats.obs[frag_align_obs$ID, "nb_genes_500kb"]
   frag_align_simul$nb_genes_500kb=frag.stats.sim[frag_align_simul$ID, "nb_genes_500kb"]
   
   align_enhancer_obs$nb_genes_500kb=enh.stats.obs[align_enhancer_obs$ID, "nb_genes_500kb"]
   align_enhancer_sim$nb_genes_500kb=enh.stats.sim[align_enhancer_sim$ID, "nb_genes_500kb"]
-
+  
   ## add nb genes class
-
+  
   frag_align_obs$class_genes_500kb=cut(frag_align_obs$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(frag_align_obs$nb_genes_500kb)), include.lowest=T, labels=c("0-5", "6-10", "11-15", "16-20", "21-25", "26-30", ">30"))
-
+  
   frag_align_simul$class_genes_500kb=cut(frag_align_simul$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(frag_align_simul$nb_genes_500kb)), include.lowest=T, labels=c("0-5", "6-10", "11-15", "16-20", "21-25", "26-30", ">30"))
-
+  
   align_enhancer_obs$class_genes_500kb=cut(align_enhancer_obs$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(align_enhancer_obs$nb_genes_500kb)), include.lowest=T, labels=c("0-5", "6-10", "11-15", "16-20", "21-25", "26-30", ">30"))
   
   align_enhancer_sim$class_genes_500kb=cut(align_enhancer_sim$nb_genes_500kb, breaks=c(seq(from=0, to=30, by=5), max(align_enhancer_sim$nb_genes_500kb)), include.lowest=T, labels=c("0-5", "6-10", "11-15", "16-20", "21-25", "26-30", ">30"))
-
+  
   ## add repeats
   
   frag.stats.obs$pcrepeat=100*frag.stats.obs$repeat_bp/frag.stats.obs$length
   frag.stats.sim$pcrepeat=100*frag.stats.sim$repeat_bp/frag.stats.sim$length
-
+  
   frag_align_obs$pcrepeat=frag.stats.obs[frag_align_obs$ID, "pcrepeat"]
   frag_align_simul$pcrepeat=frag.stats.sim[frag_align_simul$ID, "pcrepeat"]
   
@@ -82,9 +83,9 @@ if(prepare){
   
   align_enhancer_obs$pcrepeat=enh.stats.obs[align_enhancer_obs$ID, "pcrepeat"]
   align_enhancer_sim$pcrepeat=enh.stats.sim[align_enhancer_sim$ID, "pcrepeat"]
-
+  
   ## test
-
+  
   print("tests for fragments")
   splist=colnames(frag_align_obs)[-c(1, ncol(frag_align_obs):(ncol(frag_align_obs)-4))]
   for(sp in splist){
@@ -93,16 +94,16 @@ if(prepare){
     print(paste("simulated median fraction of contacted fragment aligned", round(median(frag_align_simul[,sp], na.rm=T)*100,2), "%"))
     print(wilcox.test(frag_align_obs[,sp], frag_align_simul[,sp]))
   }
-
+  
   print("tests for enhancers")
-
+  
   for(sp in splist){
     print(sp)
     print(paste("observed median fraction of contacted ENCODE aligned", round(median(align_enhancer_obs[,sp], na.rm=T)*100,2), "%"))
     print(paste("simulated median fraction of contacted ENCODE aligned", round(median(align_enhancer_sim[,sp], na.rm=T)*100,2), "%"))
     print(wilcox.test(align_enhancer_obs[,sp], align_enhancer_sim[,sp]))
   }
-
+  
   prepare=FALSE
 }
 
@@ -115,22 +116,22 @@ if(prepare){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Figure3.pdf", sep=""), width=6.85, height=9)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure3_without.low.covered.fragments.pdf", sep=""), width=6.85, height=9)
 
 par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right
 
 m=matrix(rep(NA, 7*6), nrow=7)
 
 for(i in 1:3){
- m[i,]=c(1,1,2,2,3,3)
+  m[i,]=c(1,1,2,2,3,3)
 }
 
 for(i in 4:5){
- m[i,]=c(4,4,4,5,5,5)
+  m[i,]=c(4,4,4,5,5,5)
 }
 
 for(i in 6:7){
- m[i,]=c(6,6,6,7,7,7)
+  m[i,]=c(6,6,6,7,7,7)
 }
 
 layout(m)
@@ -147,7 +148,7 @@ par(mar=c(4.1,1.1, 2.1, 1))
 plot(tree, cex=1.2, y.lim=c(0.3,10.5), x.lim=c(0,1.07), label.offset = 0.01, show.tip.label = F, main="")
 tiplabels(species_names, bg = NA, adj = -0.1, frame="none", cex=1.3)
 
- # legend for the plot
+# legend for the plot
 
 legend("bottomleft", fill=dataset.colors, border=dataset.colors, legend = c("PCHi-C data", "simulated data"), bty='n', cex=1.3, xpd=T, inset=c(-0.01, -0.1), horiz=FALSE)
 
@@ -235,7 +236,7 @@ names(labels)=c("restriction fragments", "enhancers")
 for(type in c("restriction fragments", "enhancers")){
   
   load(paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".RData", sep=""))
-    
+  
   ylim=range(c(ci.low.obs, ci.high.obs, ci.low.sim, ci.high.sim))
   
   dy=diff(ylim)/20
@@ -250,21 +251,21 @@ for(type in c("restriction fragments", "enhancers")){
   segments(xpos, ci.low.sim, xpos, ci.high.sim, col=dataset.colors["Simulated"])
   
   axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
-
+  
   if(type=="enhancers"){
     mtext("distance to promoters (Mb)", side=1, line=2.2, cex=0.8)
   }
-
+  
   if(type=="restriction fragments"){
     mtext("distance to baits (Mb)", side=1, line=2.2, cex=0.8)
   }
   
- axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
- mtext("% aligned sequence", side=2, line=3, cex=0.8)
-
- mtext(paste(ref_sp, " vs. ", target_sp, ", ", type,sep=""), side=3, cex=0.8, line=1)
-
- mtext(labels[type], side=3, line=1, at=-7.75, font=2, cex=1.1)
+  axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
+  mtext("% aligned sequence", side=2, line=3, cex=0.8)
+  
+  mtext(paste(ref_sp, " vs. ", target_sp, ", ", type,sep=""), side=3, cex=0.8, line=1)
+  
+  mtext(labels[type], side=3, line=1, at=-7.75, font=2, cex=1.1)
 }
 
 #######################################################################################################
@@ -294,8 +295,8 @@ names(labels)=c("restriction fragments", "enhancers")
 
 for(type in c("restriction fragments", "enhancers")){
   
- load(paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".RData", sep=""))
-
+  load(paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".RData", sep=""))
+  
   ## plot
   
   ylim=range(c(ci.low.obs, ci.high.obs, ci.low.sim, ci.high.sim, ci.high.sim.norep, ci.high.obs.norep))
@@ -307,16 +308,16 @@ for(type in c("restriction fragments", "enhancers")){
   
   points(xpos+smallx["obs"], mean.val.obs, col=dataset.colors["Original"], pch=20, cex=1.35)
   segments(xpos+smallx["obs"], ci.low.obs, xpos+smallx["obs"], ci.high.obs, col=dataset.colors["Original"])
-
+  
   points(xpos+smallx["sim"], mean.val.sim, col=dataset.colors["Simulated"], pch=20, cex=1.35)
   segments(xpos+smallx["sim"], ci.low.sim, xpos+smallx["sim"], ci.high.sim, col=dataset.colors["Simulated"])
-
+  
   points(xpos+smallx["obs"], mean.val.obs.norep, bg="white", col=dataset.colors["Original"], pch=21)
   segments(xpos+smallx["obs"], ci.low.obs.norep, xpos+smallx["obs"], ci.high.obs.norep, col=dataset.colors["Original"])
   
   points(xpos+smallx["sim"], mean.val.sim.norep, bg="white", col=dataset.colors["Simulated"], pch=21)
   segments(xpos+smallx["sim"], ci.low.sim.norep, xpos+smallx["sim"], ci.high.sim.norep, col=dataset.colors["Simulated"])
-
+  
   ## axes
   axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1, las=2)
   mtext("number of genes within 500kb", side=1, line=3.85, cex=0.8)
@@ -327,11 +328,11 @@ for(type in c("restriction fragments", "enhancers")){
   abline(v=sort(xpos)[-length(xpos)]+0.5, lty=2, col="gray40")
   
   mtext(labels[type], side=3, line=1, at=-0.75, font=2, cex=1.2)
-
+  
   if(type=="enhancers"){
     legend("topright", box.col="white", bg="white", pch=21, pt.bg=c("black", "white"), legend=c("all data", "without repeats"),xpd=NA, inset=c(0.01, -0.05), cex=1.1)
   }
-    
+  
 }
 
 

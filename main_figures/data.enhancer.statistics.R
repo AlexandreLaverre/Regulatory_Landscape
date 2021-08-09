@@ -6,6 +6,8 @@ source("parameters.R")
 
 pathStats=paste(pathFinalData, "SupplementaryDataset4/", sep="")
 
+load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep="")) ## fragments are already filtered for duplication levels, repeat proprtion etc
+
 ###########################################################################
 
 enhancer.statistics=list()
@@ -39,6 +41,19 @@ for(sp in c("human", "mouse")){
     obs <- obs[which(obs$BLAT_match > minBLAT & obs$BLAT_match < maxBLAT),]
     sim <- sim[which(sim$BLAT_match > minBLAT & sim$BLAT_match < maxBLAT),]
     
+    ## select enhancers within previously filtered fragments
+    enh.to.frag = fread(paste(pathStats, sp, "/", enh, "/enhancers_to_restriction_fragment_IDs.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
+    
+    frag.obs <- fragment.statistics[[sp]][["original"]]
+    frag.sim <- fragment.statistics[[sp]][["simulated"]]
+    
+    enh.obs.to.keep <- enh.to.frag[which(enh.to.frag$ID.fragment %in% rownames(frag.obs)),]
+    enh.sim.to.keep <- enh.to.frag[which(enh.to.frag$ID.fragment %in% rownames(frag.sim)),]
+    
+    obs <- obs[which(obs$enh %in% enh.obs.to.keep$ID.enhancer),]
+    sim <- sim[which(sim$enh %in% enh.sim.to.keep$ID.enhancer),]
+    
+  
     print(paste(nrow(obs), "observed contacted enhancers after filtering"))
     print(paste(nrow(sim), "simulated contacted enhancers after filtering"))
     

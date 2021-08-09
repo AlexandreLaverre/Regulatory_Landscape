@@ -63,6 +63,17 @@ for(sp in c("human", "mouse")){
   obs <- obs[which(obs$BLAT_match > minBLAT & obs$BLAT_match < maxBLAT),] 
   sim <- sim[which(sim$BLAT_match > minBLAT & sim$BLAT_match < maxBLAT),]
   
+  ## remove fragment with low read coverage
+  coverage = fread(paste(pathFinalData, "SupplementaryDataset1", sp, "reads.coverage.txt", sep="/"), h=T, select=c("ID", "SumReads", "MaxReads"))
+
+  treshold = quantile(coverage$MaxReads, probs=0.1) 
+  covered.frag = coverage[which(coverage$MaxReads>treshold),]$ID 
+  
+  print(paste("coverage threshold: ",treshold, " reads minimum in a sample"))
+  
+  obs <- obs[which(obs$ID %in% covered.frag),]
+  sim <- sim[which(sim$ID %in% covered.frag),]
+  
   ## save results
 
   print(paste("total covered length, observed, after filtering: ",sum(obs$length)))
