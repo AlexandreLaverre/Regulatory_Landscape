@@ -8,7 +8,7 @@ if(!"pathScripts"%in%objects){
   prepare=T
   source("parameters.R") ## paths are defined based on the user name
 
-  pathEnhancers="../../../RegulatoryLandscapesManuscript/SupplementaryDataset4/"
+  pathEnhancers=paste(pathFinalData, "/SupplementaryDataset4/", sep="")
 
   library(plotrix)
 
@@ -37,7 +37,8 @@ if(load){
 
   ## observed and simulated contacts - already bait-other, in the right distance range
   load(paste(pathFigures, "RData/data.bootstrap.nb.cell.types.",sp,".RData",sep=""))
-
+  source("parameters.R") ## some paths may be changed in previous load according to user
+  
   ## data for simulations
   load(paste(pathFigures, "RData/data.bait.annotation.RData",sep=""))
 
@@ -116,7 +117,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Figure1.pdf", sep=""), width=6.85, height=11)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure1_alternated.colors.pdf", sep=""), width=6.85, height=11)
 
 ## layout
 
@@ -401,6 +402,7 @@ ylim=c(0, length(samples)+1)
 height=0.25
 ypos=1:length(samples)
 names(ypos)=sample.order # re-order according to AFC
+shhinteractions$color <- c(col.Shh, "red")
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=ylim, xaxs="i", yaxs="i")
 
@@ -409,9 +411,12 @@ for(sample in samples){
   
   this.int=shhinteractions[which(!is.na(shhinteractions[,sample])),]
   if(dim(this.int)[1]>0){
-    rect(this.int$start, ypos[sample]-height, this.int$end, ypos[sample]+height, col=col.Shh, border=NA)
+    for(i in 1:dim(this.int)[1]){
+      rect(this.int$start[i],  ypos[sample]-height, this.int$end[i], ypos[sample]+height, col=this.int$color[i], border=NA)
+    }
   }
 }
+
 
 ## labels for the cell types
 
