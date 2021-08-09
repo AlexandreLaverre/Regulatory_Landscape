@@ -50,8 +50,6 @@ if(prepare){
 plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.label, smallx.add=0, xlab, xax.labels, xax.las, col=NA, add=FALSE, ylim=NA){
   ## go through all classes and distances to compute median and ci
   contact.classes=levels(regland[,paste(feature, distances[1],sep=".")])
-
-  print(contact.classes)
   
   median.matrix=matrix(rep(NA, length(distances)*length(contact.classes)), nrow=length(distances))
   rownames(median.matrix)=distances
@@ -67,8 +65,6 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
 
       this.genes=regland$gene[which(regland[,paste(feature, dist, sep=".")] == class)]
 
-      print(paste(length(this.genes), "genes in class ", class))
-      
       b=boxplot(expdata[this.genes], plot=FALSE)
       ci=as.numeric(b$conf)
 
@@ -88,8 +84,6 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
     addy=diff(ylim)/5
     ylim=ylim+c(-addy, addy)
   }
-
-  print(ylim)
 
   ## now do the actual plot
   
@@ -167,7 +161,7 @@ names(expdata.mouse)=rownames(expdiv.mouse)
 expdata.human=expdiv.human[,"MeanRPKM"]
 names(expdata.human)=rownames(expdiv.human)
 
-plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all",  ylab="mean expression level (RPKM)", plot.label="A", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(4.5, 9))
+plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all",  ylab="mean expression level (RPKM)", plot.label="A", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(7, 9.5))
 
 plot.expdiv.regdiv(regcons.mouse, "class.nb.contacts", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
 
@@ -191,7 +185,7 @@ names(expdata.mouse)=rownames(expdiv.mouse)
 expdata.human=expdiv.human[,"TauHuman"]
 names(expdata.human)=rownames(expdiv.human)
 
-plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="expression specificity", plot.label="B", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.65, 0.8))
+plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="expression specificity", plot.label="B", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.65, 0.78))
 plot.expdiv.regdiv(regcons.mouse, "class.nb.contacts", expdata.mouse, distances="all",  add=T, smallx.add=0.15, col="navy")
 
 
@@ -216,7 +210,7 @@ names(expdata.mouse)=rownames(expdiv.mouse)
 expdata.human=expdiv.human[,"CorrectedSpearman"]
 names(expdata.human)=rownames(expdiv.human)
 
-plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="expression conservation", plot.label="C", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.01, 0.2))
+plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="expression conservation", plot.label="C", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.05, 0.1))
 plot.expdiv.regdiv(regcons.mouse, "class.nb.contacts", expdata.mouse, distances="all", add=T, smallx.add=0.15, col="navy")
 
 
@@ -235,7 +229,7 @@ print(paste("mouse, class nb contacts vs. expression conservation, pval", kw.mou
 ########################## gene expression profile evolution ################
 
 ## expression conservation as a function of enhancer sequence conservation
-plot.expdiv.regdiv(regcons.human, "class.aln.score", expdata.human, distances="all", ylab = "expression conservation", plot.label="D", xlab="enhancer sequence conservation",  xax.labels=levels(regcons.human$class.aln.score.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.03, 0.3))
+plot.expdiv.regdiv(regcons.human, "class.aln.score", expdata.human, distances="all", ylab = "expression conservation", plot.label="D", xlab="enhancer sequence conservation",  xax.labels=levels(regcons.human$class.aln.score.all), xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.06, 0.12))
 plot.expdiv.regdiv(regcons.mouse, "class.aln.score", expdata.mouse, distances="all",add=T,smallx.add=0.15, col="navy")
 
 ## tests 
