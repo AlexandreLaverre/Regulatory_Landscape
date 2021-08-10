@@ -18,6 +18,7 @@ export pathScripts=${path}/scripts/estimate_mappability
 
 if [ -e ${pathResults}/mapped_regions.txt ]; then
     echo "result file already there, not doing anything"
+    exit
 fi
 
 ##############################################################
