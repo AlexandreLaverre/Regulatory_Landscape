@@ -107,7 +107,7 @@ if(prepare){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Figure4.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure4_adjust_yaxis.pdf", sep=""), width=6.85, height=5.5)
 
 layout(matrix(c(1, 1, 2, 3), nrow = 2, byrow = TRUE))
 
@@ -194,8 +194,9 @@ for (sp in selected.species){
   
   par(mar=c(3.1, 4.1, 2.1, 1.1))
   
-  ylim=range(c(ci.sim.low, ci.sim.high, ci.obs.low, ci.obs.high))
-
+  #ylim=range(c(ci.sim.low, ci.sim.high, ci.obs.low, ci.obs.high))
+  ylim=c(65, 100)
+    
   smally=diff(ylim)/10
   ylim=ylim+c(-smally, smally)
   
