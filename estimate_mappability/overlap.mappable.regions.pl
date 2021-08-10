@@ -136,9 +136,14 @@ sub overlapCoordinates{
 			my $ovlen=$m-$M+1;
 			
 			if(exists $overlap->{$id1}){
-			    $overlap->{$id1}+=$ovlen;
+			    $overlap->{$id1}{"length"}+=$ovlen;
+			    my $ml=$overlap->{$id1}{"maxstretch"};
+
+			    if($ovlen>$ml){
+				$overlap->{$id1}{"maxstretch"}=$ovlen;
+			    }
 			} else{
-			    $overlap->{$id1}=$ovlen;
+			    $overlap->{$id1}={"length"=>$ovlen, "maxstretch"=>$ovlen};
 			}
 		    }
 		    
@@ -324,7 +329,7 @@ print "Writing output...\n";
 
 open(my $output, ">".$parameters{"pathOutput"});
 
-my $line="IDFragment\tChr\tStart\tEnd\tTotalLength\tTotalMappableLength";
+my $line="IDFragment\tChr\tStart\tEnd\tTotalLength\tTotalMappableLength\tMaxMappableStretch";
 
 for(my $offset=0; $offset<$margin; $offset+=$step){
     $line.="\tL".$offset;
@@ -348,12 +353,14 @@ print $output $line."\n";
 	 my $len=$end-$start+1;
 
 	 my $lenov=0;
+	 my $maxstretch=0;
 	 
 	 if(exists $totoverlap{$id}){
-	     $lenov=$totoverlap{$id};
+	     $lenov=$totoverlap{$id}{"length"};
+	     $maxstretch=$totoverlap{$id}{"maxstretch"};
 	 }
 
-	 my $line=$id."\t".$chr."\t".$start."\t".$end."\t".$len."\t".$lenov;
+	 my $line=$id."\t".$chr."\t".$start."\t".$end."\t".$len."\t".$lenov."\t".$maxstretch;
 
 	 for(my $offset=0; $offset<$margin; $offset+=$step){
  	    my $newstart=$start+$offset;
@@ -365,7 +372,7 @@ print $output $line."\n";
 		$lenovleft=0;
 
 		if(exists $overlapleft{$offset}{$id}){
-		    $lenovleft=$overlapleft{$offset}{$id};
+		    $lenovleft=$overlapleft{$offset}{$id}{"length"};
 		}
 	    }
 	    
@@ -382,7 +389,7 @@ print $output $line."\n";
 		 $lenovright=0;
 		 
 		 if(exists $overlapright{$offset}{$id}){
-		    $lenovright=$overlapright{$offset}{$id};
+		    $lenovright=$overlapright{$offset}{$id}{"length"};
 		}
 	    }
 	    
