@@ -15,7 +15,7 @@ for sp in human mouse
 do
     cp ${pathResults}/${sp}/regulatory_regions_Ensembl${release}.txt ${pathSuppDataset}/${sp}/predicted_regulatory_regions_neighbor_TSS.txt
     
-    for enh in `ls ${pathResults}/${sp}`
+    for enh in `ls ${pathResults}/${sp} | grep -v txt`
     do
 	cp ${pathResults}/${sp}/${enh}/neighbor_enhancers_Ensembl${release}.txt ${pathSuppDataset}/${sp}/${enh}/predicted_enhancers_neighbor_TSS.txt
     done
