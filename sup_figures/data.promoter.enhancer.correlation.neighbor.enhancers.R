@@ -65,11 +65,13 @@ for(ref_sp in c("human", "mouse")){
       BC.obs=lapply(levels, function(x) {y=obs$SpearmanCorrelation[which(obs$dist_class==x & obs$IDPromoter%in%common.class[[x]])]; return(BCa(y, delta=NA, M=100, theta=mean, na.rm=T))})
     
       obs_correl_activity_dist[[enh]]=unlist(lapply(BC.obs, function(x) x[3]))
+      names(obs_correl_activity_dist[[enh]])=levels
       obs_correl_activity_dist[[paste0(enh, "_conflow")]]=unlist(lapply(BC.obs, function(x) x[4]))
       obs_correl_activity_dist[[paste0(enh, "_confup")]]=unlist(lapply(BC.obs, function(x) x[5]))
        
       BC.neighbors=lapply(levels, function(x) {y=neighbors$SpearmanCorrelation[which(neighbors$dist_class==x & neighbors$IDPromoter%in%common.class[[x]])]; return(BCa(y, delta=NA, M=100, theta=mean, na.rm=T))})
       neighbors_correl_activity_dist[[enh]]=unlist(lapply(BC.neighbors, function(x) x[3]))
+      names(obs_correl_activity_dist[[enh]])=levels
       neighbors_correl_activity_dist[[paste0(enh, "_conflow")]]=unlist(lapply(BC.neighbors, function(x) x[4]))
       neighbors_correl_activity_dist[[paste0(enh, "_confup")]]=unlist(lapply(BC.neighbors, function(x) x[5]))
 
