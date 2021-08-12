@@ -56,12 +56,8 @@ for(ref_sp in c("human", "mouse")){
       common.class=lapply(levels(obs$dist_class), function(x) intersect(obs$IDPromoter[which(obs$dist_class==x)], neighbors$IDPromoter[which(neighbors$dist_class==x)]))
       names(common.class)=levels(obs$dist_class)
 
-      nb.prom=unlist(lapply(common.class, length))
-      common.class=common.class[which(nb.prom>=10)]
-
       levels=levels(obs$dist_class)
-      levels=levels[which(levels%in%names(common.class))]
-
+     
       BC.obs=lapply(levels, function(x) {y=obs$SpearmanCorrelation[which(obs$dist_class==x & obs$IDPromoter%in%common.class[[x]])]; return(BCa(y, delta=NA, M=100, theta=mean, na.rm=T))})
     
       obs_correl_activity_dist[[enh]]=unlist(lapply(BC.obs, function(x) x[3]))
