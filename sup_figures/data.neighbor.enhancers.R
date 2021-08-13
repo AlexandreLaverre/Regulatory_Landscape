@@ -1,6 +1,6 @@
 ###########################################################################
 
-source("parameters.R")
+source("../main_figures/parameters.R")
 
 pathNeighborEnhancers=paste(pathFinalData, "SupplementaryDataset4/",sep="")
 
