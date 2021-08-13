@@ -57,20 +57,49 @@ for(ref_sp in c("human", "mouse")){
       names(common.class)=levels(obs$dist_class)
 
       levels=levels(obs$dist_class)
-     
-      BC.obs=lapply(levels, function(x) {y=obs$SpearmanCorrelation[which(obs$dist_class==x & obs$IDPromoter%in%common.class[[x]])]; return(BCa(y, delta=NA, M=100, theta=mean, na.rm=T))})
-    
-      obs_correl_activity_dist[[enh]]=unlist(lapply(BC.obs, function(x) x[3]))
-      names(obs_correl_activity_dist[[enh]])=levels
-      obs_correl_activity_dist[[paste0(enh, "_conflow")]]=unlist(lapply(BC.obs, function(x) x[4]))
-      obs_correl_activity_dist[[paste0(enh, "_confup")]]=unlist(lapply(BC.obs, function(x) x[5]))
-       
-      BC.neighbors=lapply(levels, function(x) {y=neighbors$SpearmanCorrelation[which(neighbors$dist_class==x & neighbors$IDPromoter%in%common.class[[x]])]; return(BCa(y, delta=NA, M=100, theta=mean, na.rm=T))})
-      neighbors_correl_activity_dist[[enh]]=unlist(lapply(BC.neighbors, function(x) x[3]))
-      names(obs_correl_activity_dist[[enh]])=levels
-      neighbors_correl_activity_dist[[paste0(enh, "_conflow")]]=unlist(lapply(BC.neighbors, function(x) x[4]))
-      neighbors_correl_activity_dist[[paste0(enh, "_confup")]]=unlist(lapply(BC.neighbors, function(x) x[5]))
+      nbprom=unlist(lapply(common.class, length))
+      names(nbprom)=levels
 
+      selected.levels=levels[which(nbprom>=10)]
+
+      ## confidence intervals for observed contacts
+     
+      BC.obs=lapply(selected.levels, function(x) {y=obs$SpearmanCorrelation[which(obs$dist_class==x & obs$IDPromoter%in%common.class[[x]])]; return(BCa(y, delta=NA, M=100, theta=mean, na.rm=T))})
+
+      mean.obs=unlist(lapply(BC.obs, function(x) x[3]))
+      names(mean.obs)=selected.levels
+      obs_correl_activity_dist[[enh]]=mean.obs[levels]
+      names(obs_correl_activity_dist[[enh]])=levels
+
+      cl.obs=unlist(lapply(BC.obs, function(x) x[4]))
+      names(cl.obs)=selected.levels
+      obs_correl_activity_dist[[paste0(enh, "_conflow")]]=cl.obs[levels]
+      names(obs_correl_activity_dist[[paste0(enh, "_conflow")]])=levels
+            
+      ch.obs=unlist(lapply(BC.obs, function(x) x[5]))
+      names(ch.obs)=selected.levels
+      obs_correl_activity_dist[[paste0(enh, "_confup")]]=ch.obs[levels]
+      names(obs_correl_activity_dist[[paste0(enh, "_confup")]])=levels
+      
+      ## confidence intervals for neighbors
+     
+      BC.neighbors=lapply(selected.levels, function(x) {y=neighbors$SpearmanCorrelation[which(neighbors$dist_class==x & neighbors$IDPromoter%in%common.class[[x]])]; return(BCa(y, delta=NA, M=100, theta=mean, na.rm=T))})
+
+      mean.neighbors=unlist(lapply(BC.neighbors, function(x) x[3]))
+      names(mean.neighbors)=selected.levels
+      neighbors_correl_activity_dist[[enh]]=mean.neighbors[levels]
+      names(neighbors_correl_activity_dist[[enh]])=levels
+
+      cl.neighbors=unlist(lapply(BC.neighbors, function(x) x[4]))
+      names(cl.neighbors)=selected.levels
+      neighbors_correl_activity_dist[[paste0(enh, "_conflow")]]=cl.neighbors[levels]
+      names(neighbors_correl_activity_dist[[paste0(enh, "_conflow")]])=levels
+            
+      ch.neighbors=unlist(lapply(BC.neighbors, function(x) x[5]))
+      names(ch.neighbors)=selected.levels
+      neighbors_correl_activity_dist[[paste0(enh, "_confup")]]=ch.neighbors[levels]
+      names(neighbors_correl_activity_dist[[paste0(enh, "_confup")]])=levels
+            
     }
   }
   
