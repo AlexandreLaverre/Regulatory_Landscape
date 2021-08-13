@@ -24,7 +24,7 @@ for(sp in c("human", "mouse")){
 
   regions=read.table(paste(pathNeighborEnhancers, sp, "/predicted_regulatory_regions_neighbor_TSS.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
 
-  gene.enhancer.contacts[["regions"]]=regions
+  gene.enhancer.contacts[[sp]][["regions"]]=regions
   
   for(enh in enhancer.datasets[[sp]]){
     
