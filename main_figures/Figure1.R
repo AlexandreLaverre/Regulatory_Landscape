@@ -117,7 +117,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Figure1_alternated.colors.pdf", sep=""), width=6.85, height=11)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure1.pdf", sep=""), width=6.85, height=11)
 
 ## layout
 
@@ -390,8 +390,9 @@ mtext("baits", side=2, las=2, cex=0.7, line=1.75, at=0.75)
 ##############################################################################################
 
 ## Dendrogram of samples
-par(mar=c(0.5, 0.15, 0.105, 0.3)) 
-plot(as.phylo(hcl), direction="rightwards", show.tip.label=FALSE)
+par(mar=c(0.5, 0.15, 0.105, 0.3))
+plot.new()
+## plot(as.phylo(hcl), direction="rightwards", show.tip.label=FALSE)
 
 ##############################################################################################
 
