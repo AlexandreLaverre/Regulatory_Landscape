@@ -116,7 +116,16 @@ for(ref in c("human", "mouse")){
       ## divide nb of contacts into 5 classes
      
       results[[paste("nb.contacts",dist.class,sep=".")]]=nb.contacts
-      results[[paste("class.nb.contacts",dist.class,sep=".")]]=cut(nb.contacts, breaks=c(1, 10, 20, 30, 40, max(nb.contacts)), include.lowest=T, labels=c("1-10", "11-20", "21-30", "30-40", ">40"))
+
+      if(max(nb.contacts)>40){
+        breaks=c(1, 10, 20, 30, 40, max(nb.contacts))
+        labels=c("1-10", "11-20", "21-30", "30-40", ">40")
+      } else{
+        breaks=c(1, 10, 20, 30, 40)
+        labels=c("1-10", "11-20", "21-30", "30-40")
+      }
+      
+      results[[paste("class.nb.contacts",dist.class,sep=".")]]=cut(nb.contacts, breaks=breaks, include.lowest=T, labels=labels)
       
       ## mean conservation score by gene
       
