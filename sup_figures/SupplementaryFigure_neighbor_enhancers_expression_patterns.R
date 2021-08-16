@@ -26,10 +26,15 @@ if(load){
   
   enh="ENCODE"
 
-  load(paste(pathFigures, "RData/data.neighbor.enhancers.RData", sep="")) ## for now we keep all distance ranges
+  load(paste(pathFigures, "RData/data.neighbor.enhancers.RData", sep=""))
 
   neighbors.human=gene.enhancer.contacts[["human"]][[enh]][["real"]]
   neighbors.mouse=gene.enhancer.contacts[["mouse"]][[enh]][["real"]]
+
+  ## same minimum distance as for the contacts
+
+  neighbors.human=neighbors.human[which(neighbors.human$Distance>=minDistance),]
+  neighbors.mouse=neighbors.mouse[which(neighbors.mouse$Distance>=minDistance),]
 
   ## predicted regulatory regions
   regions.human=gene.enhancer.contacts[["human"]][["regions"]]
