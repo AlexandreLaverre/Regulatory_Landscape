@@ -23,9 +23,9 @@ print("done")
 
 ## minDistance and maxDistance defined in parameters.R
 
-dist.classes=c("all")
-min.distances=c(minDistance, minDistance, 500001)
-max.distances=c(maxDistance, 500000, maxDistance)
+dist.classes=c("all", "shortrange", "longrange", "neighbors")
+min.distances=c(minDistance, minDistance, 500001, minDistance)
+max.distances=c(maxDistance, 500000, maxDistance, 100000)
 
 ## min and max number of enhancers for contacts and synteny conservation
 
@@ -162,7 +162,7 @@ for(ref in c("human", "mouse")){
       
       results[[paste("fr.contact.cons",dist.class,sep=".")]]=fr.cons.contact
       
-      results[[paste("class.contact.cons",dist.class, sep=".")]]=cut(fr.cons.contact, breaks=c(0, 0.2, 0.4, 0.6, 0.8,  1), include.lowest=T)
+      results[[paste("class.contact.cons",dist.class, sep=".")]]=cut(fr.cons.contact, breaks=c(0, 0.2, 0.4, 0.6, 0.8, 1), include.lowest=T)
     }    
     
     results=as.data.frame(results)
