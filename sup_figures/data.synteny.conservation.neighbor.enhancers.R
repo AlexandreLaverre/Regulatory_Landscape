@@ -10,7 +10,6 @@ objects=ls()
 
 if(!"pathScripts"%in%objects){
   
-
   source("../main_figures/parameters.R")
   
   minAlnLength=10
@@ -31,6 +30,7 @@ enh="ENCODE"
 ## target chromosomes for enhancers
 
 enhancer.chr=list()
+enhancer.pos=list()
 
 for(ref in c("human", "mouse")){
   tg=setdiff(c("human", "mouse"), ref)
@@ -48,7 +48,6 @@ for(ref in c("human", "mouse")){
   this.aln=this.aln[which(this.aln$pcungapped>=align.threshold),]
 
   ## chromosome in target species
-  this.aln[,paste("chr",ref, sep=".")]=unlist(lapply(this.aln[,paste("ID.", ref, sep="")], function(x) unlist(strsplit(x, split=":"))[1]))
   this.aln[,paste("chr",tg, sep=".")]=unlist(lapply(this.aln[,paste("ID.", tg, sep="")], function(x) unlist(strsplit(x, split=":"))[1]))
 
   this.chr=this.aln[,paste("chr", tg, sep=".")]
@@ -61,7 +60,15 @@ for(ref in c("human", "mouse")){
     this.chr=unlist(lapply(this.chr, function(x) unlist(strsplit(x, split="chr"))[2]))
   }
   
+  ## position in target species
+  this.aln[,paste("start",tg, sep=".")]=unlist(lapply(this.aln[,paste("ID.", tg, sep="")], function(x) as.numeric(unlist(strsplit(x, split=":"))[2])))
+  this.aln[,paste("end",tg, sep=".")]=unlist(lapply(this.aln[,paste("ID.", tg, sep="")], function(x) as.numeric(unlist(strsplit(x, split=":"))[3])))
+
+  this.pos=(this.aln[,paste("start",tg,sep=".")]+this.aln[,paste("start",tg,sep=".")])/2
+  names(this.pos)=rownames(this.aln)
+  
   enhancer.chr[[paste(ref, "2", tg, sep="")]]=this.chr
+  enhancer.pos[[paste(ref, "2", tg, sep="")]]=this.pos
 }
 
 ##################################################################
@@ -69,6 +76,7 @@ for(ref in c("human", "mouse")){
 ## target chromosomes for genes
 
 gene.chr=list()
+gene.pos=list()
 
 for(ref in c("human", "mouse")){
   tg=setdiff(c("human", "mouse"), ref)
@@ -78,7 +86,18 @@ for(ref in c("human", "mouse")){
   this.chr=this.annot[ortho[,tg],"Chr"]
   names(this.chr)=ortho[,ref]
 
+  this.strand=this.annot[ortho[,tg],"Strand"]
+  this.start=this.annot[ortho[,tg],"Start"]
+  this.end=this.annot[ortho[,tg],"End"]
+
+  this.tss=rep(NA, length(this.strand))
+  this.tss[which(this.strand==1)]=this.start[which(this.strand==1)]
+  this.tss[which(this.strand==-1)]=this.end[which(this.strand==-1)]
+
+  names(this.tss)=ortho[,ref]
+  
   gene.chr[[paste(ref, "2", tg, sep="")]]=this.chr
+  gene.pos[[paste(ref, "2", tg, sep="")]]=this.tss
 }
 
 ##################################################################
@@ -93,14 +112,19 @@ for(ref in c("human", "mouse")){
   contacts=gene.enhancer.contacts[[ref]][["ENCODE"]][["real"]]
 
   this.gene.chr=gene.chr[[paste(ref, "2", tg, sep="")]]
+  this.gene.pos=gene.pos[[paste(ref, "2", tg, sep="")]]
+  
   this.enhancer.chr=enhancer.chr[[paste(ref, "2", tg, sep="")]]
+  this.enhancer.pos=enhancer.pos[[paste(ref, "2", tg, sep="")]]
+
   
   contacts[,"TargetChrGene"]=this.gene.chr[contacts$GeneID]
   contacts[,"TargetChrEnhancer"]=this.enhancer.chr[contacts$EnhancerID]
+  contacts[,"TargetDistance"]=abs(this.gene.pos[contacts$GeneID]-this.enhancer.pos[contacts$EnhancerID])
 
   contacts[,"ConservedSynteny"]=rep(NA, dim(contacts)[1])
-  contacts[which(contacts[,"TargetChrGene"]==contacts[,"TargetChrEnhancer"]),"ConservedSynteny"]="yes"
-  contacts[which(contacts[,"TargetChrGene"]!=contacts[,"TargetChrEnhancer"]),"ConservedSynteny"]="no"
+  contacts[which(contacts[,"TargetChrGene"]==contacts[,"TargetChrEnhancer"] & contacts[,"TargetDistance"]<=maxDistanceSyntenyTarget),"ConservedSynteny"]="yes"
+  contacts[which(contacts[,"TargetChrGene"]!=contacts[,"TargetChrEnhancer"] | contacts[,"TargetDistance"]>maxDistanceSyntenyTarget),"ConservedSynteny"]="no"
 
   contacts=contacts[which(!is.na(contacts$ConservedSynteny)),]
   
