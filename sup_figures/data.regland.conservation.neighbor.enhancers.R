@@ -2,7 +2,7 @@
 
 options(stringsAsFactors = FALSE)
 
-source("parameters.R")
+source("../main_figures/parameters.R")
 
 #######################################################################################
 
@@ -70,7 +70,7 @@ for(ref in c("human", "mouse")){
   ## sequence conservation column
   
   load(paste(pathFigures, "RData/data.sequence.conservation.enhancers.",enh,".",ref,"2", tg,".RData", sep=""))
-  contacts$align_score=pcungapped[contacts$enhancer]
+  contacts$align_score=pcungapped[contacts$EnhancerID]
 
   ## synteny conservation
   load(paste(pathFigures, "RData/data.synteny.conservation.neighbor.enhancers.RData",sep=""))
@@ -91,7 +91,7 @@ for(ref in c("human", "mouse")){
     
     print(dist.class)
     
-    filtered.contacts=contacts[which(contacts$dist>=min.dist & contacts$dist<=max.dist),]
+    filtered.contacts=contacts[which(contacts$Distance>=min.dist & contacts$Distance<=max.dist),]
     
     ## mean conservation score by gene
     
