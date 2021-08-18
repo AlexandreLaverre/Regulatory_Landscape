@@ -5,7 +5,7 @@ source("parameters.R")
 library(bootBCa, lib=pathRlibs)
 
 #########################################################################################################################
-conserv="phyloP_score"
+conserv="phastCons_score"
 
 for(ref_sp in c("human", "mouse")){
   print(ref_sp)

@@ -150,14 +150,14 @@ for(ref in c("human", "mouse")){
       mean.phastCons.score=tapply(filtered.contacts$phastCons_score, factor(filtered.contacts$gene, levels=all.genes), mean, na.rm=T)
       
       results[[paste("mean.phastCons.score",dist.class,sep=".")]]=mean.phastCons.score
-      results[[paste("class.phastCons.score", dist.class, sep=".")]]=cut(mean.phastCons.score, breaks=c(0, 0.25, 0.5, 0.75, 1),
-                                                                      include.lowest=T, labels=c("<0.25", "0.25-0.5", "0.5-0.75", ">0.75"))
+      results[[paste("class.phastCons.score", dist.class, sep=".")]]=cut(mean.phastCons.score, breaks=c(0, 0.05, 0.1, 0.25, 1),
+                                                                      include.lowest=T, labels=c("<0.05", "0.05-0.1", "0.1-0.25", ">0.25"))
       
       mean.phastCons.default0=tapply(filtered.contacts$phastCons_default0, factor(filtered.contacts$gene, levels=all.genes), mean, na.rm=T)
       
       results[[paste("mean.phastCons.default0",dist.class,sep=".")]]=mean.phastCons.default0
-      results[[paste("class.phastCons.default0", dist.class, sep=".")]]=cut(mean.phastCons.default0, breaks=c(0, 0.25, 0.5, 0.75, 1),
-                                                                         include.lowest=T, labels=c("<0.25", "0.25-0.5", "0.5-0.75", ">0.75"))
+      results[[paste("class.phastCons.default0", dist.class, sep=".")]]=cut(mean.phastCons.default0, breaks=c(0, 0.05, 0.1, 0.25, 1),
+                                                                         include.lowest=T, labels=c("<0.05", "0.05-0.1", "0.1-0.25", ">0.25"))
       
       ## synteny conservation
 

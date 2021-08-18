@@ -150,7 +150,7 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_phyloP_masked.pdf", sep=""), width=6, height=6)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_phastCons.pdf", sep=""), width=6, height=6)
 
 m=matrix(rep(NA,6*4), nrow=4)
 m[1,]=c(rep(c(1,2), each=2), 5, 5)
@@ -178,7 +178,7 @@ n=1
 
 for (ref_sp in c("human", "mouse")){
   for(type in c("restriction fragments", "enhancers")){
-    load(paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".phyloP_score.RData", sep=""))
+    load(paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".phastCons_score.RData", sep=""))
     
     ylim=range(c(ci.low.obs, ci.high.obs, ci.low.sim, ci.high.sim))
     
@@ -204,7 +204,7 @@ for (ref_sp in c("human", "mouse")){
     }
     
     axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
-    mtext("phyloP score", side=2, line=3, cex=0.8)
+    mtext("phastCons score", side=2, line=3, cex=0.8)
     
     mtext(paste(ref_sp,", ", type, sep=""), side=3, cex=0.7, line=1)
     
@@ -232,11 +232,11 @@ names(expdata.human)=rownames(expdiv.human)
 
 ## expression conservation as a function of enhancer sequence conservation
 
-plot.expdiv.regdiv(regcons.human, "class.phyloP.score", expdata.human, distances="all", ylab = "expression conservation",
-                   plot.label="E", xlab="phyloP scores",  xax.labels=levels(regcons.human$class.phyloP.score.all),
+plot.expdiv.regdiv(regcons.human, "class.phastCons.score", expdata.human, distances="all", ylab = "expression conservation",
+                   plot.label="E", xlab="phastCons scores",  xax.labels=levels(regcons.human$class.phastCons.score.all),
                    xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.03, 0.2))
 
-plot.expdiv.regdiv(regcons.mouse, "class.phyloP.score", expdata.mouse, distances="all",add=T,smallx.add=0.15, col="navy")
+plot.expdiv.regdiv(regcons.mouse, "class.phastCons.score", expdata.mouse, distances="all",add=T,smallx.add=0.15, col="navy")
 
 legend("topleft", col=c("darkred", "white", "navy"), legend = c("human", "", "mouse"), box.col="white", bg="white", pch=20, cex=1,
        inset=c(0.05,0))
