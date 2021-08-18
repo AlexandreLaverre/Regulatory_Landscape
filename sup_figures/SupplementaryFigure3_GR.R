@@ -15,7 +15,7 @@ if(!"pathScripts"%in%objects){
 if(load){
   library(ape)
   
-  load(paste(pathFigures, "RData/data.sample.clustering.RData", sep=""))
+  load(paste(pathFigures, "RData/data.sample.clustering.obs.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
   load(paste(pathFigures, "RData/data.AFC.RData", sep=""))
 
@@ -29,7 +29,7 @@ if(load){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S3.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_S3_all_obs.pdf", sep=""), width=6.85, height=5.5)
 
 ## layout
 m=matrix(rep(NA,20*40), nrow=20)
@@ -53,8 +53,11 @@ for(sp in c("human", "mouse")){
   info=sampleinfo[[sp]]
   rownames(info)=info$Sample.ID
   
-  tree=as.phylo(sample.clustering[[sp]][["hclust.alldist"]])
-  sample.order=sample.clustering[[sp]][["sample.order.alldist"]]
+  #tree=as.phylo(sample.clustering[[sp]][["hclust.alldist"]])
+  #sample.order=sample.clustering[[sp]][["sample.order.alldist"]]
+  tree=as.phylo(sample.clustering[[sp]][["hclust.obs"]])
+  sample.order=sample.clustering[[sp]][["sample.order.obs"]]
+  
   mat.obs=sample.clustering[[sp]][["mat.alldist.obs"]]
   mat.sim=sample.clustering[[sp]][["mat.alldist.sim"]]
   mat.diff=as.matrix(mat.obs-mat.sim)

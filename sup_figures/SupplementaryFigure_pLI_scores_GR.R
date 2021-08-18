@@ -30,7 +30,8 @@ if(load){
   expdiv.human$class.pLI.all = cut(expdiv.human$pLI, breaks=c(0, 0.1, 0.3, 0.6, 0.9, 1), include.lowest=T, labels=c("<0.1", "0.1-0.3", "0.3-0.6", "0.6-0.9", ">0.9"))
   expdiv.human$gene=expdiv.human$IDHuman
   
-  load(paste(pathFigures, "RData/data.regland.conservation.phyloP.RData", sep=""))
+
+  load(paste(pathFigures, "RData/data.regland.conservation.RData", sep=""))
   
   regcons.human=regland.conservation[["human"]][[enh]]
 
@@ -151,11 +152,11 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
 
 #############################################################################################################
 
-pdf(file=paste(pathFigures, "GenomeResearch_Figures/Figure6_pLI_vs_phyloP.pdf", sep=""), width = 5.85,  height=6)
+pdf(file=paste(pathFigures, "GenomeResearch_Figures/Figure6_pLI_score.pdf", sep=""), width = 6.85,  height=5)
 
-m=matrix(rep(NA,2*6), nrow=2)
-m[1,]=c(rep(c(1,2), each=3))
-m[2,]=c(rep(c(3,4), each=3))
+m=matrix(rep(NA,2*8), nrow=2)
+m[1,]=c(1, rep(c(2,3,4), each=2), 5)
+m[2,]=c(rep(c(6,7,8,9), each=2))
 
 layout(m)
 
@@ -167,63 +168,49 @@ par(mar = c(6.5, 4.5, 2.5, 0.5))
 
 ## expression conservation as a function of number of contacts
 
-# nb contact
-# expdata.human=regcons.human[,"nb.contacts.all"]
-# names(expdata.human)=rownames(regcons.human)
-# 
-# plot.expdiv.regdiv(expdiv.human, "class.pLI", expdata.human, distances="all", ylab="number of contacts",
-#                    plot.label="A", xlab="pLI scores", xax.labels=levels(expdiv.human$class.pLI.all),
-#                    xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(25, 40))
-# 
-# # sequence
-# expdata.human=regcons.human[,"mean.aln.score.all"]
-# names(expdata.human)=rownames(regcons.human)
-# 
-# plot.expdiv.regdiv(expdiv.human, "class.pLI", expdata.human, distances="all", ylab="enhancer sequence conservation",
-#                    plot.label="B", xlab="pLI scores", xax.labels=levels(expdiv.human$class.pLI.all),
-#                    xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.44, 0.5))
-# 
-# # synteny
-# expdata.human=regcons.human[,"fr.synteny.cons.all"]
-# names(expdata.human)=rownames(regcons.human)
-# 
-# plot.expdiv.regdiv(expdiv.human, "class.pLI", expdata.human, distances="all", ylab="synteny conservation rate",
-#                    plot.label="C", xlab="pLI scores", xax.labels=levels(expdiv.human$class.pLI.all), mean.plot=TRUE,
-#                    xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.9, 1))
-# 
-# # contact
-# expdata.human=regcons.human[,"fr.contact.cons.all"]
-# names(expdata.human)=rownames(regcons.human)
-# 
-# plot.expdiv.regdiv(expdiv.human, "class.pLI", expdata.human, distances="all", ylab="contact conservation rate",
-#                    plot.label="D", xlab="pLI scores", xax.labels=levels(expdiv.human$class.pLI.all),
-#                    xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.14,0.3))
-# 
-# 
-# # sequence
-# expdata.human=regcons.human[,"mean.phyloP.score.all"]
-# names(expdata.human)=rownames(regcons.human)
-# 
-# plot.expdiv.regdiv(expdiv.human, "class.pLI", expdata.human, distances="all", ylab="enhancer phyloP score",
-#                    plot.label="B", xlab="pLI scores", xax.labels=levels(expdiv.human$class.pLI.all),
-#                    xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.44, 0.5))
+plot.new()
 
-# class pLI vs phyloP score
-expdata.human=regcons.human[,"mean.aln.score.all"]
-names(expdata.human)=rownames(regcons.human)
-
-plot.expdiv.regdiv(expdiv.human, "class.pLI", expdata.human, distances="all", ylab="enhancer phyloP score",
-                   plot.label="B", xlab="pLI scores", xax.labels=levels(expdiv.human$class.pLI.all),
-                   xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0.44, 0.5))
-
-
-# class phyloP score vs pLI vs 
 expdata.human=expdiv.human[,"pLI"]
 names(expdata.human)=rownames(expdiv.human)
 
+# expression level
+plot.expdiv.regdiv(expdiv.human, "class.MeanRPKM", expdata.human, distances="all", ylab="pLI score",
+                   plot.label="A", xlab="mean expression level (RPKM)", xax.labels=levels(expdiv.human$class.MeanRPKM.all),
+                   xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.1, 0.8))
+
+# specificity
+plot.expdiv.regdiv(expdiv.human, "class.Tau", expdata.human, distances="all", ylab="pLI score",
+                   plot.label="B", xlab="expression specifity", xax.labels=levels(expdiv.human$class.Tau.all),
+                   xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.1, 0.5))
+
+
+# nb contact
+plot.expdiv.regdiv(regcons.human, "class.nb.contacts", expdata.human, distances="all", ylab="pLI score",
+                   plot.label="C", xlab="number of contacts", xax.labels=levels(regcons.human$class.nb.contacts.all),
+                   xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0, 0.2))
+
+plot.new()
+
+# sequence
+plot.expdiv.regdiv(regcons.human, "class.aln.score", expdata.human, distances="all", ylab="pLI score",
+                   plot.label="D", xlab="enhancer sequence conservation", xax.labels=levels(regcons.human$class.aln.score.all),
+                   xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0, 0.25))
+
+# phyloP score 
 plot.expdiv.regdiv(regcons.human, "class.phyloP.score", expdata.human, distances="all", ylab = "pLI score",
-                   plot.label="B", xlab="enhancer phyloP score",  xax.labels=levels(regcons.human$class.phyloP.score.all),
+                   plot.label="E", xlab="enhancer phyloP score",  xax.labels=levels(regcons.human$class.phyloP.score.all),
                    xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0, 0.5))
+
+# synteny
+plot.expdiv.regdiv(regcons.human, "class.synteny.cons", expdata.human, distances="all", ylab="pLI score",
+                   plot.label="F", xlab="synteny conservation rate", xax.labels=levels(regcons.human$class.synteny.cons.all),
+                   xax.las=1, smallx.add=-0.15, col="darkred", ylim=c(0, 0.2))
+
+# contact
+plot.expdiv.regdiv(regcons.human, "class.contact.cons", expdata.human, distances="all", ylab="pLI score",
+                   plot.label="G", xlab="contact conservation rate", xax.labels=levels(regcons.human$class.contact.cons.all),
+                   xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(0, 0.35))
+
 
 
 #############################################################################
