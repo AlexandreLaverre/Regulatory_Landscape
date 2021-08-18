@@ -102,7 +102,7 @@ sub readExonBlocks{
 	my $gene=$s[0];
 	my $idexon=$s[1];
 	my $chr=$s[2];
-	my $start=$s[3]+0;
+	my $start=$s[3]+1;
 	my $end=$s[4]+0;
 	my $strand=$s[5];
 

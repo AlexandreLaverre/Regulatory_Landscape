@@ -4,7 +4,9 @@ library(data.table)
 
 source("parameters.R") ## paths are defined based on the user name
 
-pathPhyloP="/home/laverre/Regulatory_landscape/result/phyloP/"
+score="phastCons"
+
+pathscore=paste0("/home/laverre/Regulatory_landscape/result/", score, "/")
 
 ###########################################################################
 
@@ -31,7 +33,7 @@ for(ref in c("human", "mouse")){
     
     if (enh == "restriction_fragments"){all=unique(c(frag.obs$ID, frag.sim$ID))}else{all=unique(c(enh.obs$enh, enh.sim$enh))}
     
-    path=paste(pathPhyloP, ref, "/", enh, "/phyloP_", way, "_MaskedExons_Ensembl94.txt", sep="")
+    path=paste(pathscore, ref, "/", enh, "/", score, "_", way, "_MaskedExons_Ensembl94.txt", sep="")
     
     if(file.exists(path)){
       
@@ -43,7 +45,7 @@ for(ref in c("human", "mouse")){
       
       names(phyloPscore)=all
       names(phyloPscore.default0)=all
-
+      
       cons=fread(path, h=T)
       class(cons)="data.frame"
       
@@ -65,9 +67,16 @@ for(ref in c("human", "mouse")){
       
       phyloPscore.default0[intersect(names(phyloPscore.default0), names(this.phyloPscore.0))]=this.phyloPscore.0[intersect(names(phyloPscore.default0), names(this.phyloPscore.0))]
       
-      ## save results
-      save(phyloPscore, phyloPscore.default0, file=paste(pathFigures, "RData/data.phyloP.scores.", enh,".",ref,".RData", sep=""))
-      
+      if (score == "phastCons"){
+        phastConsscore = phyloPscore
+        phastConsscore.default0 = phyloPscore.default0
+        save(phastConsscore, phastConsscore.default0, file=paste(pathFigures, "RData/data.", score, ".scores.", enh,".",ref,".RData", sep=""))
+        
+      }else{
+        save(phyloPscore, file=paste(pathFigures, "RData/data.", score, ".scores.", enh,".",ref,".RData", sep=""))
+      }
+
+
     }else{print(paste("cannot find file for", ref, enh, sep=" "))}
   }
 }

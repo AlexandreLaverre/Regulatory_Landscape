@@ -3,8 +3,9 @@
 ################################################################################
 
 species=$1
-way=$2
-masked=$3
+score=$2
+way=$3
+masked=$4
 
 enhancers=(FANTOM5 ENCODE restriction_fragments)
 
@@ -23,18 +24,18 @@ fi
 
 for seq in ${enhancers[@]}
 do
-	path=/beegfs/data/alaverre/Regulatory_landscape/result/phyloP/${species}/${seq}
+	path=/beegfs/data/alaverre/Regulatory_landscape/result/${score}/${species}/${seq}
 	echo "Formatting ${species} ${seq}..."
 
-	if [ -e ${path}/phyloP_${way}_${suffixExons}.txt ]; then
+	if [ -e ${path}/${score}_${way}_${suffixExons}.txt ]; then
 		echo "already done"
 	else
-		grep -hv CoveredLength ${path}/*_${way}_chr* > ${path}/phyloP_${way}_${suffixExons}.txt
-		cut -f 2,3,4 ${path}/phyloP_${way}_${suffixExons}.txt > ${path}/ID
-		cut -f 2-7 ${path}/phyloP_${way}_${suffixExons}.txt > ${path}/other
+		grep -hv CoveredLength ${path}/*_${way}_chr* > ${path}/${score}_${way}_${suffixExons}.txt
+		cut -f 2,3,4 ${path}/${score}_${way}_${suffixExons}.txt > ${path}/ID
+		cut -f 2-7 ${path}/${score}_${way}_${suffixExons}.txt > ${path}/other
 		sed -i "s/\t/:/g" ${path}/ID
-		paste -d "\t" ${path}/ID ${path}/other > ${path}/phyloP_${way}_${suffixExons}.txt
-		sed -i '1 i\ID\tChr\tStart\tEnd\tScore\tCoveredLength\tAnalyzedLength' ${path}/phyloP_${way}_${suffixExons}.txt
+		paste -d "\t" ${path}/ID ${path}/other > ${path}/${score}_${way}_${suffixExons}.txt
+		sed -i '1 i\ID\tChr\tStart\tEnd\tScore\tCoveredLength\tAnalyzedLength' ${path}/${score}_${way}_${suffixExons}.txt
 		rm ${path}/ID ${path}/other ${path}/*_${way}_chr*
 	fi
 done
