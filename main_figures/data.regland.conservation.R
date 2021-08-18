@@ -79,8 +79,11 @@ for(ref in c("human", "mouse")){
 
     load(paste(pathFigures, "RData/data.phyloP.scores.",enh,".",ref,".RData", sep=""))
     contacts$phyloP_score=phyloPscore[contacts$enhancer]
-    contacts$phyloP_score.default0 = phyloPscore.default0[contacts$enhancer]
-     
+    
+    load(paste(pathFigures, "RData/data.phastCons.scores.",enh,".",ref,".RData", sep=""))
+    contacts$phastCons_score=phastConsscore[contacts$enhancer]
+    contacts$phastCons_default0=phastConsscore.default0[contacts$enhancer]
+    
     ## we load synteny conservation - already filtered, min sequence conservation >= 10% threshold
     
     load(paste(pathFigures, "/RData/data.synteny.conservation.", ref, ".RData", sep=""))
@@ -139,7 +142,22 @@ for(ref in c("human", "mouse")){
       mean.phyloP.score=tapply(filtered.contacts$phyloP_score, factor(filtered.contacts$gene, levels=all.genes), mean, na.rm=T)
       
       results[[paste("mean.phyloP.score",dist.class,sep=".")]]=mean.phyloP.score
-      results[[paste("class.phyloP.score", dist.class, sep=".")]]=cut(mean.phyloP.score, breaks=c(min(mean.phyloP.score, na.rm=T), 0, 0.25, 0.5, 0.75, 1, max(mean.phyloP.score, na.rm=T)), include.lowest=T, labels=c("<0", "(0-0.25]", "(0.25-0.5]", "(0.5-0.75]","(0.75-1]", ">1"))
+      results[[paste("class.phyloP.score", dist.class, sep=".")]]=cut(mean.phyloP.score, breaks=c(min(mean.phyloP.score, na.rm=T), 0, 0.3, 0.6, 1, max(mean.phyloP.score, na.rm=T)),
+                                                                      include.lowest=T, labels=c("<0", "0-0.3", "0.3-0.6", "0.6-1", ">1"))
+      
+      ## mean phastCons score by gene
+      
+      mean.phastCons.score=tapply(filtered.contacts$phastCons_score, factor(filtered.contacts$gene, levels=all.genes), mean, na.rm=T)
+      
+      results[[paste("mean.phastCons.score",dist.class,sep=".")]]=mean.phastCons.score
+      results[[paste("class.phastCons.score", dist.class, sep=".")]]=cut(mean.phastCons.score, breaks=c(0, 0.25, 0.5, 0.75, 1),
+                                                                      include.lowest=T, labels=c("<0.25", "0.25-0.5", "0.5-0.75", ">0.75"))
+      
+      mean.phastCons.default0=tapply(filtered.contacts$phastCons_default0, factor(filtered.contacts$gene, levels=all.genes), mean, na.rm=T)
+      
+      results[[paste("mean.phastCons.default0",dist.class,sep=".")]]=mean.phastCons.default0
+      results[[paste("class.phastCons.default0", dist.class, sep=".")]]=cut(mean.phastCons.default0, breaks=c(0, 0.25, 0.5, 0.75, 1),
+                                                                         include.lowest=T, labels=c("<0.25", "0.25-0.5", "0.5-0.75", ">0.75"))
       
       ## synteny conservation
 

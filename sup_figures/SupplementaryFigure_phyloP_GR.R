@@ -35,7 +35,7 @@ if(load){
   
   rm("expdiv")
   
-  load(paste(pathFigures, "RData/data.regland.conservation.phyloP.RData", sep=""))
+  load(paste(pathFigures, "RData/data.regland.conservation.RData", sep=""))
   
   regcons.human=regland.conservation[["human"]][[selenh]]
   regcons.mouse=regland.conservation[["mouse"]][[selenh]]
@@ -150,7 +150,7 @@ plot.expdiv.regdiv <- function(regland, feature, expdata, distances, ylab, plot.
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_phyloP.pdf", sep=""), width=6, height=6)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Supplemental_Fig_phyloP_masked.pdf", sep=""), width=6, height=6)
 
 m=matrix(rep(NA,6*4), nrow=4)
 m[1,]=c(rep(c(1,2), each=2), 5, 5)
@@ -177,10 +177,10 @@ xax=seq(from=0, to=max(xpos)+1, by=10)
 n=1
 
 for (ref_sp in c("human", "mouse")){
-  for(type in c("fragments", "ENCODE")){
-    load(paste(pathFigures, "RData/data.bootstrap.",type,".conservation.distance.",ref_sp,".phyloP_score.RData", sep=""))
+  for(type in c("restriction fragments", "enhancers")){
+    load(paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".phyloP_score.RData", sep=""))
     
-    ylim=range(c(ci.low.obs, ci.high.obs, ci.low.simul, ci.high.simul))
+    ylim=range(c(ci.low.obs, ci.high.obs, ci.low.sim, ci.high.sim))
     
     dy=diff(ylim)/20
     ylim=ylim+c(-dy, dy)
@@ -190,23 +190,23 @@ for (ref_sp in c("human", "mouse")){
     points(xpos, mean.val.obs, col=dataset.colors["Original"], pch=20)
     segments(xpos, ci.low.obs, xpos, ci.high.obs, col=dataset.colors["Original"])
     
-    points(xpos, mean.val.simul, col=dataset.colors["Simulated"], pch=20)
-    segments(xpos, ci.low.simul, xpos, ci.high.simul, col=dataset.colors["Simulated"])
+    points(xpos, mean.val.sim, col=dataset.colors["Simulated"], pch=20)
+    segments(xpos, ci.low.sim, xpos, ci.high.sim, col=dataset.colors["Simulated"])
     
     axis(side=1, at=xax, mgp=c(3, 0.75, 0), labels=class_leg, cex.axis=1.1)
     
-    if(type=="ENCODE"){
+    if(type=="enhancers"){
       mtext("distance to promoters (Mb)", side=1, line=2.2, cex=0.8)
     }
     
-    if(type=="fragments"){
+    if(type=="restriction fragments"){
       mtext("distance to baits (Mb)", side=1, line=2.2, cex=0.8)
     }
     
     axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
     mtext("phyloP score", side=2, line=3, cex=0.8)
     
-    mtext(paste(ref_sp,", ", type, sep=""), side=3, cex=0.8, line=1)
+    mtext(paste(ref_sp,", ", type, sep=""), side=3, cex=0.7, line=1)
     
     mtext(LETTERS[n], side=3, line=1, at=-7.75, font=2, cex=1.1)
     n = n+1
@@ -234,7 +234,7 @@ names(expdata.human)=rownames(expdiv.human)
 
 plot.expdiv.regdiv(regcons.human, "class.phyloP.score", expdata.human, distances="all", ylab = "expression conservation",
                    plot.label="E", xlab="phyloP scores",  xax.labels=levels(regcons.human$class.phyloP.score.all),
-                   xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.03, 0.15))
+                   xax.las=2, smallx.add=-0.15, col="darkred", ylim=c(-0.03, 0.2))
 
 plot.expdiv.regdiv(regcons.mouse, "class.phyloP.score", expdata.mouse, distances="all",add=T,smallx.add=0.15, col="navy")
 

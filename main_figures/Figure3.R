@@ -116,7 +116,7 @@ if(prepare){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Figure3_without.low.covered.fragments.pdf", sep=""), width=6.85, height=9)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure3_phyloP_masked.pdf", sep=""), width=6.85, height=9)
 
 par(mai = c(0.5, 0.1, 0.3, 0.1)) #bottom, left, top and right
 
@@ -235,8 +235,8 @@ names(labels)=c("restriction fragments", "enhancers")
 
 for(type in c("restriction fragments", "enhancers")){
   
-  load(paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".RData", sep=""))
-  
+  load(paste(pathFigures, "RData/data.bootstrap.conservation.distance.",type,".",ref_sp,".phyloP_score.RData", sep=""))
+
   ylim=range(c(ci.low.obs, ci.high.obs, ci.low.sim, ci.high.sim))
   
   dy=diff(ylim)/20
@@ -261,9 +261,9 @@ for(type in c("restriction fragments", "enhancers")){
   }
   
   axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
-  mtext("% aligned sequence", side=2, line=3, cex=0.8)
+  mtext("phyloP score", side=2, line=3, cex=0.8)
   
-  mtext(paste(ref_sp, " vs. ", target_sp, ", ", type,sep=""), side=3, cex=0.8, line=1)
+  mtext(paste(ref_sp, ", ", type,sep=""), side=3, cex=0.8, line=1)
   
   mtext(labels[type], side=3, line=1, at=-7.75, font=2, cex=1.1)
 }
@@ -295,7 +295,7 @@ names(labels)=c("restriction fragments", "enhancers")
 
 for(type in c("restriction fragments", "enhancers")){
   
-  load(paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".RData", sep=""))
+  load(paste(pathFigures, "RData/data.bootstrap.conservation.gene.density.",type,".",ref_sp,".phyloP_score.RData", sep=""))
   
   ## plot
   
@@ -323,7 +323,7 @@ for(type in c("restriction fragments", "enhancers")){
   mtext("number of genes within 500kb", side=1, line=3.85, cex=0.8)
   
   axis(side=2, mgp=c(3, 0.75, 0), las=2, cex.axis=1.1)
-  mtext("% aligned sequence", side=2, line=3, cex=0.8)
+  mtext("phyloP score", side=2, line=3, cex=0.8)
   
   abline(v=sort(xpos)[-length(xpos)]+0.5, lty=2, col="gray40")
   

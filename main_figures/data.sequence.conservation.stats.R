@@ -78,8 +78,14 @@ for(ref_sp in c("human", "mouse")){
     frag_align_obs$phyloP_score <- phyloPscore[rownames(frag_align_obs)]
     frag_align_simul$phyloP_score <- phyloPscore[rownames(frag_align_simul)]
     
-    frag_align_obs$phyloP_score.default0 <- phyloPscore.default0[rownames(frag_align_obs)]
-    frag_align_simul$phyloP_score.default0 <- phyloPscore.default0[rownames(frag_align_simul)]
+    ## load phastCons scores
+    load(paste(pathFigures, "RData/data.phastCons.scores.restriction_fragments.",ref_sp,".RData", sep=""))
+    
+    frag_align_obs$phastCons_score <- phastConsscore[rownames(frag_align_obs)]
+    frag_align_simul$phastCons_score <- phastConsscore[rownames(frag_align_simul)]
+    
+    frag_align_obs$phastCons_default0 <- phastConsscore.default0[rownames(frag_align_obs)]
+    frag_align_simul$phastCons_default0 <- phastConsscore.default0[rownames(frag_align_simul)]
     
     ## we compute median distance on filtered contacts
 
@@ -142,9 +148,14 @@ for(ref_sp in c("human", "mouse")){
       enh_align_obs$phyloP_score <- phyloPscore[rownames(enh_align_obs)]
       enh_align_simul$phyloP_score <- phyloPscore[rownames(enh_align_simul)]
       
-      enh_align_obs$phyloP_score.default0 <- phyloPscore.default0[rownames(enh_align_obs)]
-      enh_align_simul$phyloP_score.default0 <- phyloPscore.default0[rownames(enh_align_simul)]
+      ## load phastCons scores
+      load(paste(pathFigures, "RData/data.phastCons.scores.",enh,".",ref_sp,".RData", sep=""))
       
+      enh_align_obs$phastCons_score <- phastConsscore[rownames(enh_align_obs)]
+      enh_align_simul$phastCons_score <- phastConsscore[rownames(enh_align_simul)]
+      
+      enh_align_obs$phastCons_default0 <- phastConsscore.default0[rownames(enh_align_obs)]
+      enh_align_simul$phastCons_default0 <- phastConsscore.default0[rownames(enh_align_simul)]
       
       ## median distance computed from filtered contacts
       
