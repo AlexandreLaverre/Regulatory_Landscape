@@ -117,7 +117,7 @@ if(prepare){
 ## 2 columns width 174 mm = 6.85 in
 ## max height: 11 in
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Figure1.pdf", sep=""), width=6.85, height=11)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure1_colors.pdf", sep=""), width=6.85, height=11)
 
 ## layout
 
@@ -403,7 +403,7 @@ ylim=c(0, length(samples)+1)
 height=0.25
 ypos=1:length(samples)
 names(ypos)=sample.order # re-order according to AFC
-shhinteractions$color <- c(col.Shh, "red")
+shhinteractions$color <- c("gray20", "gray80")
 
 plot(1, type="n", xlab="", ylab="", axes=F, xlim=shhxlim, ylim=ylim, xaxs="i", yaxs="i")
 
