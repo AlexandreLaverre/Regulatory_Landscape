@@ -80,7 +80,7 @@ if(prepare){
     print(paste0(ref_sp, " to ", sp))
     print(paste0("PCHi-C promoters-ENCODE pairs maintained in synteny : ", round(100*nb_cons_synt_obs/nb_tot_synt_obs,2), "%"))
     print(paste0("Simulated promoters-ENCODE pairs maintained in synteny : ", round(100*nb_cons_synt_simul/nb_tot_synt_simul,2), "%"))
-    print(paste0("Wilcoxon test p-value: ", pval))
+    print(paste0("Chisq test p-value: ", pval))
   }
   
   names(prop.obs.alldist) <- species
@@ -107,7 +107,7 @@ if(prepare){
 
 #########################################################################################################################
 
-pdf(paste(pathFigures, "GenomeResearch_Figures/Figure4_adjust_yaxis.pdf", sep=""), width=6.85, height=5.5)
+pdf(paste(pathFigures, "GenomeResearch_Figures/Figure4_pvaladjust_yaxis.pdf", sep=""), width=6.85, height=5.5)
 
 layout(matrix(c(1, 1, 2, 3), nrow = 2, byrow = TRUE))
 
@@ -140,8 +140,10 @@ segments(bar[2,], ci.low.sim.alldist, bar[2,], ci.high.sim.alldist, col="black",
 
 smallx=(bar[2,2]-bar[1,2])/10
 
+pvalues.alldist.adj = p.adjust(pvalues.alldist, method="fdr")
+
 for (sp in species){
-  this.pval=pvalues.alldist[sp]
+  this.pval=pvalues.alldist.adj[sp]
 
   if(this.pval < 0.0001){
     text="***"
