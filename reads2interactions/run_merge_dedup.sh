@@ -3,7 +3,7 @@ specie=$1			#ex : mouse
 author_ctype=$2			#ex : Schoenfelder/ESC
 name=$3				#ex : ESC_rep1
 
-path_result="/beegfs/data/alaverre/result/HiCup/${specie}/${author_ctype}/"
+path_result="/beegfs/data/alaverre/Regulatory_landscape/result/HiCup/${specie}/${author_ctype}/"
 
 files=`ls ${path_result}*.hicup.bam`
 
@@ -15,4 +15,4 @@ echo "source /beegfs/home/alaverre/.bashrc" >> ${path_result}sub_dedup_${name}
 echo "samtools merge -n ${path_result}${name}_sorted.bam `echo ${files}` -@ 10" >> ${path_result}sub_dedup_${name}
 echo "hicup_deduplicator --zip ${path_result}${name}_sorted.bam  --outdir ${path_result} --threads 10" >> ${path_result}sub_dedup_${name}
 
-sbatch -p normal --time=24:00:00 --mem=10G -c 10 --nodelist pbil-deb[23-29] ${path_result}sub_dedup_${name}
+sbatch -p normal --time=24:00:00 --mem=10G -c 10 ${path_result}sub_dedup_${name}
