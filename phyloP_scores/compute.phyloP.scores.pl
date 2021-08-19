@@ -102,10 +102,9 @@ sub readExonBlocks{
 	my $gene=$s[0];
 	my $idexon=$s[1];
 	my $chr=$s[2];
-	my $start=$s[3]+1;
+	my $start=$s[3];
 	my $end=$s[4]+0;
 	my $strand=$s[5];
-
 
 	if($strand eq "."){
 	    $strand="NA";
@@ -155,7 +154,27 @@ sub constructHashCoordinates{
 
 sub readCoords{
     my $pathin=$_[0];
-    my $refcoords=$_[1];
+    my $coordtype=$_[1];
+    my $refcoords=$_[2];
+
+    my $offsetstart=0;
+    my $offsetend=0;
+
+    if($coordtype eq "0_open_end"){
+	$offsetstart=1;
+	$offsetend=0;
+    } else{
+	if($coordtype eq "1_closed_end"){
+	    $offsetstart=0;
+	    $offsetend=0;
+	} else{
+	    print "Weird! unknown coordinate convention: ".$coordtype."\n";
+	    exit(1);
+	}
+    }
+
+    print "Adding offset ".$offsetstart." for start coordinates.\n";
+    print "Adding offset ".$offsetend." for end coordinates.\n";
     
     open(my $input, $pathin);
     my $line=<$input>;
@@ -167,8 +186,8 @@ sub readCoords{
 	my @s=split("\t",$line);
 	
 	my $chr=$s[0];
-	my $start=$s[1]; ## 1-based
-	my $end=$s[2]; ## 1-based, included
+	my $start=$s[1]+$offsetstart;
+	my $end=$s[2]+$offsetend; 
 	my $id=$s[3];
 	my $strand="NA";
 
@@ -279,6 +298,7 @@ sub printHelp{
 my %parameters;
 
 $parameters{"pathCoords"}="NA";
+$parameters{"coordConvention"}="NA";
 $parameters{"pathMaskExonBlocks"}="NA";
 $parameters{"pathPhastCons"}="NA";
 $parameters{"chr"}="NA";
@@ -286,7 +306,7 @@ $parameters{"pathOutput"}="NA";
 
 
 my %defaultvalues;
-my @defaultpars=("pathCoords", "pathMaskExonBlocks", "pathPhastCons", "chr", "pathOutput");
+my @defaultpars=("pathCoords", "coordConvention", "pathMaskExonBlocks", "pathPhastCons", "chr", "pathOutput");
 
 my %numericpars;
 
@@ -361,7 +381,12 @@ if(-e $parameters{"pathMaskExonBlocks"}){
 
 print "Reading genomic coordinates...\n";
 my %elements;
-readCoords($parameters{"pathCoords"}, \%elements);
+
+my $convention=$parameters{"coordConvention"};
+
+print "coordinate convention: ".$convention."\n";
+
+readCoords($parameters{"pathCoords"}, $convention, \%elements);
 print "Done.\n";
 
 print "Ordering regions...\n";

@@ -36,17 +36,19 @@ fi
 
 
 if [ "${enhancer}" = "restriction_fragments" ]; then
-export CoordSuffix=frag_coords_${genome}.bed
+    export CoordSuffix=frag_coords_${genome}.bed
+    export coordConvention=1_closed_end
 else
-export CoordSuffix=enhancer_coordinates_ID.bed
+    export CoordSuffix=enhancer_coordinates_ID.bed
+    export coordConvention=0_open_end
 fi
 
 if [ "${masked_exons}" = "TRUE" ]; then
-export suffixExons=MaskedExons_Ensembl94
-export pathExons=${path}/data/exons/${species}_exons_Ensembl94.txt
+    export suffixExons=MaskedExons_Ensembl94
+    export pathExons=${path}/data/exons/${species}_exons_Ensembl94.txt
 else
-export suffixExons=Unmasked
-export pathExons="NA"
+    export suffixExons=Unmasked
+    export pathExons="NA"
 fi
 
 ################ Create dir output #####################
@@ -72,7 +74,7 @@ do
 	    echo "#PBS -o std_output_${score}.txt" >> ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
 	    echo "#PBS -e std_error_${score}.txt" >> ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
 	    
-	    echo "perl ${pathScripts}/compute.phyloP.scores.pl --pathCoords=${pathEnhancers}/${CoordSuffix} --pathMaskExonBlocks=${pathExons} --pathPhastCons=${pathPhyloP_scores} --chr=chr${chr} --pathOutput=${pathResults}/${score}_${way}_chr${chr}_${suffixExons}.txt" >> ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
+	    echo "perl ${pathScripts}/compute.phyloP.scores.pl --pathCoords=${pathEnhancers}/${CoordSuffix} --coordConvention=${coordConvention} --pathMaskExonBlocks=${pathExons} --pathPhastCons=${pathPhyloP_scores} --chr=chr${chr} --pathOutput=${pathResults}/${score}_${way}_chr${chr}_${suffixExons}.txt" >> ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
 
       #bash ${pathScripts}/log/phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
       sbatch -p normal --time=1:00:00 --mem=40GB -c 1 -o ${pathScripts}/log/std_output_${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons} -e ${pathScripts}/log/std_error_${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons} ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
