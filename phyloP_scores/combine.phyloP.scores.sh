@@ -40,6 +40,14 @@ fi
 
 ################################################################################
 
+if [ "${masked_exons}" = "TRUE" ]; then
+    export suffixExons=MaskedExons_Ensembl94
+else
+    export suffixExons=Unmasked
+fi
+
+################################################################################
+
 if [ -e ${pathResults}/${score}_${way}_${suffixExons}.txt ]; then
     echo "path output already exists, not doing anything"
     exit
