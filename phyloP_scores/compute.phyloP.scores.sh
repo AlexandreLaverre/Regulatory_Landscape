@@ -19,7 +19,16 @@ export pathEnhancers=${pathAnouk}/SupplementaryDataset4/${species}/${enhancer}
 fi
 
 export pathphyloP=${path}/data/${score}/${species}/${way}
-export pathResults=${path}/result/${score}/${species}/${enhancer}
+
+if [ ${USER} = "alaverre" ]; then
+    export pathResults=${path}/result/${score}/${species}/${enhancer}
+fi
+
+if [ ${USER} = "necsulea" ]; then
+    export pathResults=/beegfs/data/necsulea/RegulatoryLandscapes/results/${score}/${species}/${enhancer}
+fi
+
+
 export pathScripts=${path}/scripts/phyloP_scores
 
 ################ Define aligments input files #####################
@@ -74,7 +83,7 @@ do
 	    echo "#PBS -o std_output_${score}.txt" >> ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
 	    echo "#PBS -e std_error_${score}.txt" >> ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
 	    
-	    echo "perl ${pathScripts}/compute.phyloP.scores.pl --pathCoords=${pathEnhancers}/${CoordSuffix} --coordConvention=${coordConvention} --pathMaskExonBlocks=${pathExons} --pathPhastCons=${pathPhyloP_scores} --chr=chr${chr} --pathOutput=${pathResults}/${score}_${way}_chr${chr}_${suffixExons}.txt" >> ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
+	    echo "perl ${pathScripts}/compute.phyloP.scores.pl --pathCoords=${pathEnhancers}/${CoordSuffix} --coordConvention=${coordConvention} --pathMaskExonBlocks=${pathExons} --pathScores=${pathPhyloP_scores} --chr=chr${chr} --pathOutput=${pathResults}/${score}_${way}_chr${chr}_${suffixExons}.txt" >> ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
 
       #bash ${pathScripts}/log/phyloP_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}
       sbatch -p normal --time=1:00:00 --mem=40GB -c 1 -o ${pathScripts}/log/std_output_${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons} -e ${pathScripts}/log/std_error_${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons} ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}

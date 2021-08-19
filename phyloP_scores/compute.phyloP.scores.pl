@@ -3,7 +3,7 @@ use strict;
 
 ##############################################################
 
-sub readPhastCons{
+sub readScores{
     my $pathin=$_[0];
     my $refphast=$_[1];
     
@@ -50,7 +50,7 @@ sub readPhastCons{
 
 ##############################################################
 
-sub computePhastConsScore{
+sub computeScore{
     my $coords=$_[0];
     my $phast=$_[1];
     my $maskedcoords=$_[2];
@@ -65,6 +65,7 @@ sub computePhastConsScore{
 	my $sumscore=0;
 	my $nbpos=0;
 	my $nbunmasked=0;
+	my $nbpositive=0;
 
 	for(my $j=$start; $j<=$end; $j++){
 	    if(!(exists $maskedcoords->{$j})){
@@ -72,6 +73,10 @@ sub computePhastConsScore{
 		if(exists $phast->{$j}){
 		    $nbpos++;
 		    $sumscore+=$phast->{$j};
+
+		    if($phast->{$j}>0){
+			$nbpositive++;
+		    }
 		}
 	    }
 	}
@@ -82,6 +87,7 @@ sub computePhastConsScore{
 	
 	${$coords->{$chr}{"coveredbases"}}[$i]=$nbpos+0.0;
 	${$coords->{$chr}{"analyzedbases"}}[$i]=$nbunmasked+0.0;
+	${$coords->{$chr}{"nbpositive"}}[$i]=$nbpositive;
     }
     
 }
@@ -246,7 +252,7 @@ sub orderCoords{
     }
 
     foreach my $chr (keys %hashstart){
-	$refordered->{$chr}={"start"=>[],"end"=>[],"strand"=>[],"gene"=>[],"score"=>[],"coveredbases"=>[],"analyzedbases"=>[]};
+	$refordered->{$chr}={"start"=>[],"end"=>[],"strand"=>[],"gene"=>[],"score"=>[],"coveredbases"=>[],"analyzedbases"=>[], "nbpositive"=>[]};
 
 	my @uniquestart=keys %{$hashstart{$chr}};
 	
@@ -266,6 +272,7 @@ sub orderCoords{
 			push(@{$refordered->{$chr}{"score"}},"NA");
 			push(@{$refordered->{$chr}{"coveredbases"}},0);
 			push(@{$refordered->{$chr}{"analyzedbases"}},0);
+			push(@{$refordered->{$chr}{"nbpositive"}},0);
 		    }
 		} 
 	    }
@@ -282,7 +289,7 @@ sub printHelp{
     my $parvalues=$_[1];
     
     print "\n";
-    print "This script computes PhastCons scores for genomic coordinates. \n";
+    print "This script computes phastCons or phyloP scores for genomic coordinates. \n";
     print "\n";
     print "Options:\n";
     
@@ -300,13 +307,13 @@ my %parameters;
 $parameters{"pathCoords"}="NA";
 $parameters{"coordConvention"}="NA";
 $parameters{"pathMaskExonBlocks"}="NA";
-$parameters{"pathPhastCons"}="NA";
+$parameters{"pathScores"}="NA";
 $parameters{"chr"}="NA";
 $parameters{"pathOutput"}="NA";
 
 
 my %defaultvalues;
-my @defaultpars=("pathCoords", "coordConvention", "pathMaskExonBlocks", "pathPhastCons", "chr", "pathOutput");
+my @defaultpars=("pathCoords", "coordConvention", "pathMaskExonBlocks", "pathScores", "chr", "pathOutput");
 
 my %numericpars;
 
@@ -394,13 +401,13 @@ my %orderedelements;
 orderCoords(\%elements, \%orderedelements);
 print "Done\n";
 
-print "Computing PhastCons score and writing output \n";
+print "Computing score and writing output \n";
 
 open(my $output,">".$parameters{"pathOutput"});
 print $output "ID\tChr\tStart\tEnd\tScore\tCoveredLength\tAnalyzedLength\n";
 
 my $chr=$parameters{"chr"};
-my $path=$parameters{"pathPhastCons"};
+my $path=$parameters{"pathScores"};
 
 print "Chromosome ".$chr."\n";
 
@@ -417,9 +424,9 @@ if(-e $path){
     if(exists $orderedelements{$chr}){
 	
 	my %phastCons;
-	readPhastCons($path,\%phastCons);
+	readScores($path,\%phastCons);
 	
-	computePhastConsScore(\%orderedelements,\%phastCons,\%maskedcoords, $chr);
+	computeScore(\%orderedelements,\%phastCons,\%maskedcoords, $chr);
         
 	my $nborderedelements=@{$orderedelements{$chr}{"start"}};
 	
