@@ -22,14 +22,13 @@ export pathphyloP=${path}/data/${score}/${species}/${way}
 
 if [ ${USER} = "alaverre" ]; then
     export pathResults=${path}/result/${score}/${species}/${enhancer}
+    export pathScripts=${path}/scripts/phyloP_scores
 fi
 
 if [ ${USER} = "necsulea" ]; then
     export pathResults=/beegfs/data/necsulea/RegulatoryLandscapes/results/${score}/${species}/${enhancer}
+    export pathScripts=/beegfs/data/necsulea/RegulatoryLandscapes/scripts/phyloP_scores
 fi
-
-
-export pathScripts=${path}/scripts/phyloP_scores
 
 ################ Define aligments input files #####################
 
