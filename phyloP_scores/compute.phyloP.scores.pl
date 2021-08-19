@@ -404,7 +404,7 @@ print "Done\n";
 print "Computing score and writing output \n";
 
 open(my $output,">".$parameters{"pathOutput"});
-print $output "ID\tChr\tStart\tEnd\tScore\tCoveredLength\tAnalyzedLength\n";
+print $output "ID\tChr\tStart\tEnd\tScore\tCoveredLength\tAnalyzedLength\tNbPositiveScores\n";
 
 my $chr=$parameters{"chr"};
 my $path=$parameters{"pathScores"};
@@ -437,7 +437,7 @@ if(-e $path){
 	    
 	    my $gene=${$orderedelements{$chr}{"gene"}}[$i];
 	    
-	    print $output ${$orderedelements{$chr}{"gene"}}[$i]."\t".$chr."\t".${$orderedelements{$chr}{"start"}}[$i]."\t".${$orderedelements{$chr}{"end"}}[$i]."\t".${$orderedelements{$chr}{"score"}}[$i]."\t".${$orderedelements{$chr}{"coveredbases"}}[$i]."\t".${$orderedelements{$chr}{"analyzedbases"}}[$i]."\n";
+	    print $output ${$orderedelements{$chr}{"gene"}}[$i]."\t".$chr."\t".${$orderedelements{$chr}{"start"}}[$i]."\t".${$orderedelements{$chr}{"end"}}[$i]."\t".${$orderedelements{$chr}{"score"}}[$i]."\t".${$orderedelements{$chr}{"coveredbases"}}[$i]."\t".${$orderedelements{$chr}{"analyzedbases"}}[$i]."\t".${$orderedelements{$chr}{"nbpositive"}}[$i]."\n";
 	    
 	}
     }
