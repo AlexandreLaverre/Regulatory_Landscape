@@ -85,7 +85,7 @@ do
 	    
 	    echo "perl ${pathScripts}/compute.phyloP.scores.repeats.pl --pathCoords=${pathEnhancers}/${CoordSuffix} --coordConvention=${coordConvention} --pathMaskExonBlocks=${pathExons} --pathRepeatMasker=${pathRepeatMasker}/RepeatMasker_UCSC.txt.gz --pathScores=${pathPhyloP_scores} --chr=chr${chr} --pathOutput=${pathResults}/${score}_${way}_chr${chr}_${suffixExons}_RepeatMasker.txt" >> ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}_RepeatMasker
 
-            sbatch -p normal --time=1:00:00 --mem=70GB -c 1 -o ${pathScripts}/log/std_output_${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}_RepeatMasker -e ${pathScripts}/log/std_error_${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}_RepeatMasker ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}_RepeatMasker
+            sbatch -p normal --time=1:00:00 --mem=120GB -c 1 -o ${pathScripts}/log/std_output_${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}_RepeatMasker -e ${pathScripts}/log/std_error_${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}_RepeatMasker ${pathScripts}/log/${score}_${way}_${species}_${enhancer}_chr${chr}_${suffixExons}_RepeatMasker
        fi
     fi
 done
