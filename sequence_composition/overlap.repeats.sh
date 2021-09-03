@@ -18,7 +18,7 @@ fi
 
 export pathExons=/beegfs/data/alaverre/Regulatory_landscape/data/exons/${species}_exons_Ensembl94.txt
 export pathRepeatMasker=${path}/data/RepeatMasker/${species}
-export pathResults=${path}/results/sequence_composition/${dataset}
+export pathResults=${path}/results/sequence_composition/${species}/${dataset}
 export pathScripts=${path}/scripts/sequence_composition
 
 ####################################################################
