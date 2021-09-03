@@ -312,7 +312,7 @@ print "Computing overlap and writing output \n";
 
 open(my $output,">".$parameters{"pathOutput"});
 
-print $output "ID\tChr\tStart\tEnd\TotalLength\tExonicLength\tRepeatLength\tExonRepeatLength\n";
+print $output "ID\tChr\tStart\tEnd\tTotalLength\tExonicLength\tRepeatLength\tExonRepeatLength\n";
 
 foreach my $chr (keys %elements){
 
