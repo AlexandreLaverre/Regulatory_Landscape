@@ -46,14 +46,18 @@ for(sp in c("human", "mouse")){
     
     frag.obs <- fragment.statistics[[sp]][["original"]]
     frag.sim <- fragment.statistics[[sp]][["simulated"]]
+
+    ## one enhancer can overlap with multiple restriction fragments, they are separated by commas
     
-    enh.obs.to.keep <- enh.to.frag[which(enh.to.frag$ID.fragment %in% rownames(frag.obs)),]
-    enh.sim.to.keep <- enh.to.frag[which(enh.to.frag$ID.fragment %in% rownames(frag.sim)),]
+    enh.to.frag$is_frag_observed=unlist(lapply(enh.to.frag$ID.fragment, function(x) any(unlist(strsplit(x, split=","))%in%rownames(frag.obs))))
+    enh.to.frag$is_frag_simulated=unlist(lapply(enh.to.frag$ID.fragment, function(x) any(unlist(strsplit(x, split=","))%in%rownames(frag.sim))))
+    
+    enh.obs.to.keep <- enh.to.frag[which(enh.to.frag$is_frag_observed),]
+    enh.sim.to.keep <- enh.to.frag[which(enh.to.frag$is_frag_simulated),]
     
     obs <- obs[which(obs$enh %in% enh.obs.to.keep$ID.enhancer),]
     sim <- sim[which(sim$enh %in% enh.sim.to.keep$ID.enhancer),]
     
-  
     print(paste(nrow(obs), "observed contacted enhancers after filtering"))
     print(paste(nrow(sim), "simulated contacted enhancers after filtering"))
     
