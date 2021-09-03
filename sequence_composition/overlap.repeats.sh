@@ -51,6 +51,6 @@ echo "#!/bin/bash" > ${pathScripts}/sub_overlap_repeats
 
 echo "perl ${pathScripts}/overlap.repeats.pl --pathCoords=${pathElements}/${CoordSuffix} --coordConvention=${coordConvention} --pathExonBlocks=${pathExons} --pathRepeatMasker=${pathRepeatMasker}/RepeatMasker_UCSC.txt.gz --pathOutput=${pathResults}/overlap_exons_repeats.txt" >> ${pathScripts}/sub_overlap_repeats
 
-sbatch -p normal --time=4:00:00 --mem=80GB -c 1 -o ${pathScripts}/std_output_${species}_${dataset} -e ${pathScripts}/std_error_${species}_${dataset} ${pathScripts}/sub_overlap_repeats
+sbatch -p normal --time=6:00:00 --mem=80GB -c 1 -o ${pathScripts}/std_output_${species}_${dataset} -e ${pathScripts}/std_error_${species}_${dataset} ${pathScripts}/sub_overlap_repeats
 
 #####################################################################
