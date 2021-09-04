@@ -24,9 +24,11 @@ for(sp in c("human", "mouse")){
   
   obs$repeat_bp=rep[rownames(old.obs), "RepeatLength"]
   obs$exon_bp=rep[rownames(old.obs), "ExonicLength"]
+  obs$length=rep[rownames(old.obs), "TotalLength"]
   
   sim$repeat_bp=rep[rownames(old.sim), "RepeatLength"]
   sim$exon_bp=rep[rownames(old.sim), "ExonicLength"]
+  sim$length=rep[rownames(old.sim), "TotalLength"]
   
   write.table(obs, file=paste(path2,  sp, "/statistics_contacted_sequence_original.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)
   write.table(sim, file=paste(path2,  sp, "/statistics_contacted_sequence_simulated.txt", sep=""), row.names=F, col.names=T, sep="\t", quote=F)  
