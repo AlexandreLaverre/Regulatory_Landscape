@@ -4,9 +4,9 @@ source("parameters.R")
 
 ###########################################################################
 
-pathAnnotations="../../data/ensembl_annotations/"
-pathInteractions="../../../RegulatoryLandscapesManuscript/SupplementaryDataset1/"
-pathEnhancers="../../../RegulatoryLandscapesManuscript/SupplementaryDataset4/"
+pathAnnotations="/beegfs/data/necsulea/RegulatoryLandscapes/data/ensembl_annotations/"
+pathInteractions=paste(pathFinalData, "SupplementaryDataset1/",sep="")
+pathEnhancers=paste(pathFinalData, "SupplementaryDataset4/", sep="")
 
 ###########################################################################
 
