@@ -17,7 +17,7 @@ for(sp in c("human", "mouse")){
   rownames(old.obs)=paste(old.obs$chr, old.obs$start, old.obs$end, sep=":")
   rownames(old.sim)=paste(old.sim$chr, old.sim$start, old.sim$end, sep=":")
   
-  columns=intersect(c("chr", "start", "end", "length", "GC_content", "nb_baits_500kb", "nb_genes_500kb", "BLAT_match", "FANTOM5_bp", "ENCODE_bp", "RoadmapEpigenomics_bp", "FOCS_GRO_seq_bp"), colnames(old.obs))
+  columns=intersect(c("chr", "start", "end", "length", "baited", "GC_content", "nb_baits_500kb", "nb_genes_500kb", "BLAT_match", "FANTOM5_bp", "ENCODE_bp", "RoadmapEpigenomics_bp", "FOCS_GRO_seq_bp"), colnames(old.obs))
   
   obs=old.obs[,columns]
   sim=old.sim[,columns]
