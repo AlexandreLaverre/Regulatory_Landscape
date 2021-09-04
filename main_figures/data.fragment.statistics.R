@@ -64,7 +64,7 @@ for(sp in c("human", "mouse")){
   sim <- sim[which(sim$BLAT_match > minBLAT & sim$BLAT_match < maxBLAT),]
   
   ## remove fragment with low read coverage
-  coverage = fread(paste(pathFinalData, "SupplementaryDataset1", sp, "reads.coverage.txt", sep="/"), h=T, select=c("ID", "SumReads", "MaxReads"))
+  coverage = fread(paste(pathFinalData, "SupplementaryDataset1", sp, "/nb_mapped_reads.txt", sep="/"), h=T, select=c("ID", "SumReads", "MaxReads"))
 
   treshold = quantile(coverage$MaxReads, probs=0.1) 
   covered.frag = coverage[which(coverage$MaxReads>treshold),]$ID 
