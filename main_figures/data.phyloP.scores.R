@@ -20,7 +20,11 @@ minAlnLength=10
 ###########################################################################
 
 for(ref in c("human", "mouse")){
-  if (ref == "human"){way="100way"}else{way="60way"}
+  if (ref == "human"){
+    way="100way"
+  }else{
+    way="60way"
+  }
   
   frag.obs=fragment.statistics[[ref]][["original"]]
   frag.sim=fragment.statistics[[ref]][["simulated"]]

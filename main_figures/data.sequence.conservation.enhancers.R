@@ -19,8 +19,7 @@ for(ref in c("human", "mouse")){
   for(enh in enhancer.datasets[[ref]]){
     
     coords=read.table(paste(pathEnhancers, ref, "/", enh, "/enhancer_coordinates.bed", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    coords$ID=paste(coords$chr, coords$start, coords$end, sep=":")
-    
+        
     all.enh=coords$ID ## all enhancers from this dataset
     
     for(tg in setdiff(all.species, ref)){

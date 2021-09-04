@@ -12,7 +12,7 @@ for(sp in c("human", "mouse")){
 
   load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
   load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
-
+  
    obs=observed.contacts[[sp]]
   sim=simulated.contacts[[sp]]
 

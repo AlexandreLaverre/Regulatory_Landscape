@@ -12,7 +12,6 @@ path_evol <- paste(pathFinalData, "SupplementaryDataset7/", sep="")
 
 types=c("pcungapped")
 
-load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep="")) 
 load(paste(pathFigures, "RData/data.gene.enhancer.contacts.RData", sep=""))
 load(paste(pathFigures, "RData/data.enhancer.statistics.RData", sep="")) ## enhancers are already filtered for duplication levels, repeat proportion etc
