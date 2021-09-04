@@ -1,8 +1,52 @@
 ############################################################################
 
 ## all scripts that generate .RData objects for the figures
-## we need a certain order
-data.scripts=c("data.gene.annotations.R", "data.ortho.genes.R", "data.sample.info.R", "data.aberrant.fragments.R", "data.fragment.statistics.R", "data.enhancer.statistics.R", "data.bait.annotation.R",  "data.fragment.contacts.R", "data.gene.enhancer.contacts.R",  "data.Shh.figure.R",  "data.sample.clustering.R", "data.enhancer.coverage.R", "data.sequence.conservation.fragments.R", "data.sequence.conservation.enhancers.R","data.sequence.conservation.stats.R", "data.synteny.conservation.R", "data.gene.expression.R", "data.promoter.enhancer.correlation.R",  "data.contact.conservation.enhancers.R", "data.contact.conservation.stats.R", "data.AFC.R", "data.CM2019.SomaticOrgans.expression.divergence.R",  "data.regland.conservation.R", "data.bootstrap.nb.cell.types.R", "data.bootstrap.conservation.distance.repeats.R")
+## order is important
+data.scripts=c()
+
+## 0 dependencies
+data.scripts=c(data.scripts, "data.gene.annotations.R")
+data.scripts=c(data.scripts, "data.ortho.genes.R")
+data.scripts=c(data.scripts, "data.sample.info.R")
+data.scripts=c(data.scripts, "data.bait.annotation.R")
+data.scripts=c(data.scripts, "data.fragment.statistics.R") ## depends on aberrant fragments but data is re-read
+data.scripts=c(data.scripts, "data.Shh.figure.R")
+data.scripts=c(data.scripts, "data.sequence.conservation.enhancers.R") ## data is provided for all enhancers 
+data.scripts=c(data.scripts, "data.gene.expression.R")
+
+## 1 dependency
+data.scripts=c(data.scripts, "data.aberrant.fragments.R") ## depends on sample info
+data.scripts=c(data.scripts, "data.enhancer.statistics.R") ## depends on fragment statistics
+data.scripts=c(data.scripts, "data.fragment.contacts.R") ## depends on fragment statistics
+data.scripts=c(data.scripts, "data.sequence.conservation.fragments.R") ## depends on fragment statistics
+data.scripts=c(data.scripts, "data.promoter.enhancer.correlation.R")  ## depends on fragment contacts
+data.scripts=c(data.scripts, "data.CM2019.SomaticOrgans.expression.divergence.R") ## depends on gene annotations
+
+## 2 dependencies
+data.scripts=c(data.scripts, "data.sample.clustering.R") ## sample info, fragment contacts
+data.scripts=c(data.scripts, "data.enhancer.coverage.R") ## fragment statistics, fragment contacts
+data.scripts=c(data.scripts, "data.phyloP.scores.R") ## fragment statistics, enhancer statistics
+data.scripts=c(data.scripts, "data.AFC.R") ## fragment contacts, sample info
+data.scripts=c(data.scripts, "data.bootstrap.nb.cell.types.R") ## fragment contacts, sample info
+
+## 3 dependencies
+data.scripts=c(data.scripts, "data.bootstrap.conservation.distance.repeats.R") ## sequence conservation, enhancer statistics, fragment statistics
+
+## 4 dependencies
+data.scripts=c(data.scripts, "data.gene.enhancer.contacts.R") ## gene annotations, sample info,  fragment contacts, enhancer statistics
+data.scripts=c(data.scripts, "data.contact.conservation.enhancers.R") ## gene-enhancer contacts, ortho genes, bait annotations,  sequence conservation for enhancers
+
+## 2 dependencies
+data.scripts=c(data.scripts, "data.contact.conservation.stats.R") ## sample info, contact conservation enhancers
+
+## 7 dependencies
+data.scripts=c(data.scripts, "data.sequence.conservation.stats.R") ## fragment contacts, gene enhancer contacts, enhancer statistics, fragment statistics, sequence conservation fragments, sequence conservation enhancers, phyloP scores
+
+## 2 dependencies, depends on gene enhancer contacts
+data.scripts=c(data.scripts, "data.synteny.conservation.R") ## gene-enhancer contacts, sequence conservation for enhancers
+
+## 8 dependencies
+data.scripts=c(data.scripts, "data.regland.conservation.R") ## pretty much everything
 
 ############################################################################
 
