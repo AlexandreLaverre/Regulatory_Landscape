@@ -7,10 +7,10 @@ source("parameters.R")
 load(paste(pathFigures, "RData/data.sample.info.RData", sep=""))
 load(paste(pathFigures, "RData/data.fragment.contacts.RData", sep=""))
 
-minDistanceLongRange=250e3
+## minDistanceLongRange=250e3
 
-subsample = FALSE
-if (subsample){sample.suffix=".subsample"}else{sample.suffix=""}
+## ## subsample = FALSE
+## ## if (subsample){sample.suffix=".subsample"}else{sample.suffix=""}
 
 #################################################################################
 
@@ -27,7 +27,7 @@ for(sp in c("human", "mouse")){
   
   # Sub-sampling to minimum number of interactions
   if (subsample){
-    min.nb.interaction = min(apply(observed, 2, function(x) nrow(observed[which(!is.na(x)),])))
+    min.nb.interaction = min(apply(observed, 2, function(x) nrow(observed[which(!is.na(x)),]))) ## ???? not sure this is ok
     
     for (sample in samples){
       treshold.value =  min(head(sort(observed[[sample]] ,decreasing=TRUE), n=min.nb.interaction))
