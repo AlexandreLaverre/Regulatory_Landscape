@@ -19,18 +19,18 @@ for(ref_sp in c("human", "mouse")){
   feat_prop_dist <- list()
   
   enhancers = enhancer.datasets[[ref_sp]]
-  features = c("all_exon", "repeat", "GC", "genes")
+  features = c("exon", "repeat", "GC", "genes")
 
   ## read fragment statistics, already filtered
   obs=fragment.statistics[[ref_sp]][["original"]]
   simul=fragment.statistics[[ref_sp]][["simulated"]]
   
   ## compute percentage of length covered by other features
-  obs$all_exon_pclen=obs$all_exon_bp*100/obs$length
-  simul$all_exon_pclen=simul$all_exon_bp*100/simul$length
+  obs$exon_pclen=obs$exon_bp*100/obs$length
+  simul$exon_pclen=simul$exon_bp*100/simul$length
   
-  obs$repeat_pclen=obs$repet_noexon_bp*100/obs$length
-  simul$repeat_pclen=simul$repet_noexon_bp*100/simul$length
+  obs$repeat_pclen=obs$repeat_bp*100/obs$length
+  simul$repeat_pclen=simul$repeat_bp*100/simul$length
   
   obs$GC_pclen=100*obs$GC_content
   simul$GC_pclen=100*simul$GC_content
@@ -73,8 +73,8 @@ for(ref_sp in c("human", "mouse")){
     simul=enhancer.statistics[[ref_sp]][[enh]][["simulated"]]
    
     ## compute percentage of length covered by other features
-    obs$all_exon_pclen=obs$all_exon_bp*100/obs$length
-    simul$all_exon_pclen=simul$all_exon_bp*100/simul$length
+    obs$exon_pclen=obs$exon_bp*100/obs$length
+    simul$exon_pclen=simul$exon_bp*100/simul$length
     
     obs$repeat_pclen=obs$repeat_bp*100/obs$length
     simul$repeat_pclen=simul$repeat_bp*100/simul$length

@@ -4,7 +4,7 @@ library(data.table)
 
 source("parameters.R")
 
-pathStats=paste(pathFinalData, "SupplementaryDataset4/", sep="")
+pathStats=paste(pathFinalData, "/tmp_writtable/SupplementaryDataset4/", sep="")
 
 load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep="")) ## fragments are already filtered for duplication levels, repeat proprtion etc
 
@@ -13,11 +13,11 @@ load(paste(pathFigures, "RData/data.fragment.statistics.RData", sep="")) ## frag
 enhancer.statistics=list()
 
 for(sp in c("human", "mouse")){
-  
+  print(sp)
   enhancer.statistics[[sp]]=list()
   
   for(enh in enhancer.datasets[[sp]]){
-    
+    print(enh)
     obs=fread(paste(pathStats, sp, "/", enh, "/statistics_contacted_enhancers_original.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
     sim=fread(paste(pathStats, sp, "/", enh, "/statistics_contacted_enhancers_simulated.txt", sep=""), h=T, stringsAsFactors=F, sep="\t", quote="\"")
 
@@ -25,7 +25,6 @@ for(sp in c("human", "mouse")){
     class(sim)<-"data.frame"
 
     ## create enhancer identifier
-    
     obs$enh <-  do.call(paste,c(obs[c("chr","start","end")],sep=":"))
     sim$enh <-  do.call(paste,c(sim[c("chr","start","end")],sep=":"))
 
@@ -37,23 +36,17 @@ for(sp in c("human", "mouse")){
     print(paste(nrow(sim), "simulated contacted enhancers"))
     
     ## select enhancers depending on the number of BLAT hits
-    
     obs <- obs[which(obs$BLAT_match > minBLAT & obs$BLAT_match < maxBLAT),]
     sim <- sim[which(sim$BLAT_match > minBLAT & sim$BLAT_match < maxBLAT),]
     
     ## select enhancers within previously filtered fragments
     enh.to.frag = fread(paste(pathStats, sp, "/", enh, "/enhancers_to_restriction_fragment_IDs.txt", sep=""), h=T, stringsAsFactors=F, sep="\t")
-    
+      
     frag.obs <- fragment.statistics[[sp]][["original"]]
     frag.sim <- fragment.statistics[[sp]][["simulated"]]
 
-    ## one enhancer can overlap with multiple restriction fragments, they are separated by commas
-    
-    enh.to.frag$is_frag_observed=unlist(lapply(enh.to.frag$ID.fragment, function(x) any(unlist(strsplit(x, split=","))%in%rownames(frag.obs))))
-    enh.to.frag$is_frag_simulated=unlist(lapply(enh.to.frag$ID.fragment, function(x) any(unlist(strsplit(x, split=","))%in%rownames(frag.sim))))
-    
-    enh.obs.to.keep <- enh.to.frag[which(enh.to.frag$is_frag_observed),]
-    enh.sim.to.keep <- enh.to.frag[which(enh.to.frag$is_frag_simulated),]
+    enh.obs.to.keep <- enh.to.frag[which(enh.to.frag$ID.fragment %in% rownames(frag.obs)),]
+    enh.sim.to.keep <- enh.to.frag[which(enh.to.frag$ID.fragment %in% rownames(frag.sim)),]
     
     obs <- obs[which(obs$enh %in% enh.obs.to.keep$ID.enhancer),]
     sim <- sim[which(sim$enh %in% enh.sim.to.keep$ID.enhancer),]
@@ -62,7 +55,6 @@ for(sp in c("human", "mouse")){
     print(paste(nrow(sim), "simulated contacted enhancers after filtering"))
     
     ## save results
-    
     enhancer.statistics[[sp]][[enh]]=list("original"=obs, "simulated"=sim)
   }
 }

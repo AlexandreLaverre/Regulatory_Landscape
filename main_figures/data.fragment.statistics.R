@@ -4,7 +4,7 @@ library(data.table)
 
 source("parameters.R")
 
-pathStats=paste(pathFinalData, "SupplementaryDataset5/", sep="")
+pathStats=paste(pathFinalData, "/tmp_writtable/SupplementaryDataset5/", sep="")
 pathFragments=paste(pathFinalData, "SupplementaryDataset1/", sep="")
 
 ###########################################################################
