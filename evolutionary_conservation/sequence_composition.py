@@ -4,23 +4,25 @@
 import os
 import numpy as np
 
+pathManuscript = "/home/laverre/Manuscript/"
 path_overlap = "/home/laverre/Documents/Regulatory_Landscape/data/"
-path_dupli = "/home/laverre/Data/Regulatory_landscape/result/Supplementary_dataset3_annotations/"
-path_HIC = "/home/laverre/Data/Regulatory_landscape/result/"
-path_output = "/home/laverre/Manuscript/SupplementaryDataset5/"
-origin_sp = "human"
+path_dupli = "/home/laverre/Regulatory_landscape/Snakemake_folder/result/"
+path_output = pathManuscript + "/SupplementaryDataset5/"
+
+origin_sp = "mouse"
 
 # Samples to cell types
 sample2cell = {}
-with open(path_dupli + "SupplementaryTable1.txt") as table:
+with open(pathManuscript + "/SupplementaryTables/SupplementaryTable1.txt") as table:
     for i in table.readlines()[1:]:
         i = i.strip("\n")
-        i = i.split("\t")
+        i = i.split(",")
         sample = str(i[1])
         cell = str(i[2])
         sample2cell[sample] = cell
 
-# Composition in base pairs
+
+############################################ Composition in base pairs ###########################################
 def dic_pb(file):
     elem_pb = {}
     with open(path_overlap + origin_sp + "/overlap/" + origin_sp + "_all_fragments" + file) as f2:
@@ -28,21 +30,24 @@ def dic_pb(file):
             i = i.strip("\n")
             i = i.split("\t")
             frag = (str(i[1]) + ':' + str(i[2]) + ':' + str(i[3]))
-            elem_pb[frag] = 0 if i[4] == "NA" else int(i[6])    # len(i[4].split(",")) #
+            elem_pb[frag] = 0 if i[4] == "NA" else int(i[6])    #len(i[4].split(",")) #
 
     return elem_pb
 
 
 all = "_overlap_all_exons.txt"
 all_exon = dic_pb(all)
-repeat_no_exon = "_overlap_repeat_no_exon.txt"
-all_exon250 = dic_pb(repeat_no_exon)
+#no_exon = "_overlap_repeat_no_exon.txt"
+#repeat_no_exon = dic_pb(no_exon)
 coding = "_overlap_coding_exons.txt"
 coding_exon = dic_pb(coding)
 nocoding = "_overlap_nocoding_exons.txt"
 nocoding_exon = dic_pb(nocoding)
 
-CAGE = "_overlap_CAGE.txt"
+repeatmasker = "_overlap_repeatmasker.txt"
+repeat_pb = dic_pb(repeatmasker)
+
+CAGE = "_overlap_FANTOM5.txt"
 CAGE_count = dic_pb(CAGE)
 ENCODE = "_overlap_ENCODE.txt"
 ENCODE_count = dic_pb(ENCODE)
@@ -53,7 +58,7 @@ if origin_sp == "human":
     GRO_seq_count = dic_pb(GRO_seq)
 
 
-# Composition in count number
+############################################ Composition in count number ###########################################
 def dic_count(file):
     elem_pb = {}
     with open(path_overlap + origin_sp + "/overlap/" + origin_sp + "_all_fragments" + file) as f2:
@@ -76,11 +81,11 @@ TSS_count_bait = dic_count(bait_TSS1Kb)
 bait_gene1Kb = "_overlap_genes_1Kb.txt"
 gene_count_bait = dic_count(bait_gene1Kb)
 
-# Duplication score
+############################################## Duplication score ##############################################
 frag_dupli = {}
-repeat_pb = {}
+N_pb = {}
 GC_pb = {}
-input = "/restriction_fragments/restriction_fragments_BLAT_summary_0.8.txt"
+input = "2other/duplication_rate/" + origin_sp + "_restriction_fragments_BLAT_summary_0.8.txt"
 
 with open(path_dupli + origin_sp + input) as f1:
     for i in f1.readlines()[1:]:
@@ -89,11 +94,13 @@ with open(path_dupli + origin_sp + input) as f1:
         frag = i[0].split(':')
         frag = str(frag[0]) + ':' + str(frag[1]) + ':' + str(frag[2])
         frag_dupli[frag] = int(i[4])
-        repeat_pb[frag] = int(i[2])
+        N_pb[frag] = int(i[2])
         GC_pb[frag] = int(i[3])
 
 print("Overlap & Score dupli done ! ")
 
+
+############################################## Contact informations ##############################################
 def HiC_stats(origin_sp, data):
     print(origin_sp, data)
 
@@ -107,11 +114,11 @@ def HiC_stats(origin_sp, data):
     GRO_seq_contact = {}
 
     if data == "_simulated":
-        infile = "Supplementary_dataset2_simulated_interactions/" + origin_sp + "/" + "simulated_all_interactions.txt"
+        infile = "SupplementaryDataset2/" + origin_sp + "/simulated_all_interactions.txt"
     else:
-        infile = "Supplementary_dataset1_original_interactions/" + origin_sp + "/" + "all_interactions.txt"
+        infile = "SupplementaryDataset1/" + origin_sp + "/all_interactions.txt"
 
-    with open(path_HIC + infile) as f3:
+    with open(pathManuscript + infile) as f3:
         first_line = f3.readline().strip("\n")
         first_line = first_line.split("\t")
         sample_names = first_line[8:]
@@ -134,7 +141,6 @@ def HiC_stats(origin_sp, data):
                         PIR_infos[PIR] = [[bait], [str(dist)], contact, nb_bait_in_cell, i[6], [score],
                                           [str(gene) for gene in gene_count_bait[bait]]]
 
-
                     else:
                         PIR_infos[PIR][0].append(bait)
                         PIR_infos[PIR][1].append(str(dist))
@@ -145,7 +151,6 @@ def HiC_stats(origin_sp, data):
                         for gene in gene_count_bait[bait]:
                             if gene not in PIR_infos[PIR][6]:
                                 PIR_infos[PIR][6].append(str(gene))
-
 
                     # Bait side : names and distances of contacted fragments
                     if bait not in bait_infos.keys():
@@ -172,15 +177,16 @@ def HiC_stats(origin_sp, data):
                         RoadMap_contact[bait] += RoadMap_count[PIR]
                         GRO_seq_contact[bait] += GRO_seq_count[PIR]
 
+    ############################################## OUTPUT ##############################################
     print("Writting output...")
-    output = open(path_output + origin_sp + "/statistics_contacted_sequence" + data + ".txt", 'w')
-    if os.stat(path_output + origin_sp + "/statistics_contacted_sequence" + data + ".txt").st_size == 0:
+    output = open(path_output + origin_sp + "/statistics_contacted_sequence" + data + ".txt_repeatmasker", 'w')
+    if os.stat(path_output + origin_sp + "/statistics_contacted_sequence" + data + ".txt_repeatmasker").st_size == 0:
         output.write("chr\tstart\tend\tlength\tFANTOM5_bp\tENCODE_bp\t")
         if origin_sp == "human":
             output.write("RoadmapEpigenomics_bp\tFOCS_GRO_seq_bp\t")
         output.write("bait_contacted\tgenes_contacted\tmean_baits_contacts\tmedian_score\tmedian_dist\tbaited\tnb_sample\t"
-                     "nb_cell\tBLAT_match\tall_exon_bp\trepet_noexon_bp\tcoding_exon_pb\tnocoding_exon_pb\trepeat_bp\t"
-                     "GC_bp\tTSS_count\t")
+                     "nb_cell\tBLAT_match\tall_exon_bp\tcoding_exon_pb\tnocoding_exon_pb\trepeat_bp\t"
+                     "GC_bp\tN_bp\tTSS_count\t")
 
         output.write('\t'.join(sample_names) + "\n")
 
@@ -205,13 +211,13 @@ def HiC_stats(origin_sp, data):
         output.write(str(np.median([float(x) for x in PIR_infos[PIR][1]])) + '\t' + str(PIR_infos[PIR][4]) + '\t')
         output.write(str(nb_sample) + '\t' + str(nb_cell) + '\t')
         output.write(str(frag_dupli[PIR]) + '\t' + str(all_exon[PIR]) + '\t')
-        output.write(str(all_exon250[PIR]) + '\t' + str(coding_exon[PIR]) + '\t' + str(nocoding_exon[PIR]) + '\t')
-        output.write(str(repeat_pb[PIR]) + '\t' + str(GC_pb[PIR]) + '\t' + str(TSS_count[PIR]) + '\t')
+        output.write(str(coding_exon[PIR]) + '\t' + str(nocoding_exon[PIR]) + '\t')
+        output.write(str(repeat_pb[PIR]) + '\t' + str(GC_pb[PIR]) + '\t' + str(N_pb[PIR]) + '\t' + str(TSS_count[PIR]) + '\t')
         output.write(str('\t'.join(str(x) for x in PIR_infos[PIR][3])) + '\n')
 
-    ## Bait side
-    output_bait = open("../../result/conservation/bait_composition_" + origin_sp + data + ".txt", 'w')
-    if os.stat("../../result/conservation/bait_composition_" + origin_sp + data + ".txt").st_size == 0:
+    #################### Bait side
+    output_bait = open(path_output + origin_sp + "/statistics_baits_fragments" + data + ".txt_repeatmasker", 'w')
+    if os.stat(path_output + origin_sp + "/statistics_baits_fragments" + data + ".txt_repeatmasker").st_size == 0:
         output_bait.write("chr\tstart\tend\tCAGE_contacted\tENCODE_contacted\t")
         if origin_sp == "human":
             output_bait.write("RoadMap_contacted\tGRO_seq_contacted\t")
@@ -229,7 +235,7 @@ def HiC_stats(origin_sp, data):
 
         output_bait.write(str(len(bait_infos[Bait][0])) + '\t' + str(len(contact_unbaited[Bait])) + '\t' +
                           str(np.mean(PIR_contact)) + '\t' + str(np.median([float(x) for x in bait_infos[Bait][1]]))
-                          + '\t' + str(frag_dupli[Bait]) + '\t' + str(all_exon[Bait]) + '\t' + str(all_exon250[Bait])
+                          + '\t' + str(frag_dupli[Bait]) + '\t' + str(all_exon[Bait])
                           + '\t' + str(coding_exon[Bait]) + '\t' + str(nocoding_exon[Bait]) + '\t' + str(repeat_pb[Bait])
                           + '\t' + str(GC_pb[Bait]) + '\t' + str(TSS_count_bait[Bait])
                           + '\t' + str(len(gene_count_bait[Bait])) + '\t' + str(",".join(gene_count_bait[Bait])) + '\n')
@@ -237,9 +243,11 @@ def HiC_stats(origin_sp, data):
     output.close()
 
 
-datas = ["_simulated"]
+###########################################################################################
+datas = ["_original", "_simulated"]
 
 for data in datas:
     HiC_stats(origin_sp, data)
 
 print("All done ! ")
+###########################################################################################
