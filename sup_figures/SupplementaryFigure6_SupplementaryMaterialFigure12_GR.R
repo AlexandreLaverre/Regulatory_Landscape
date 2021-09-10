@@ -10,7 +10,7 @@ if(!"pathScripts"%in%objects){
 
 ##################################################################################################################
 
-features = c("repeat", "all_exon", "GC", "genes")
+features = c("repeat", "exon", "GC", "genes")
 sequences <- c("fragment", "ENCODE")
 
 ylab = c("% length covered by repeats", "% length covered by exons", "GC content", "nb. genes within 500kb")
@@ -23,9 +23,9 @@ for (sp in c("human", "mouse")){
   load(paste(pathFigures, "RData/data.features.coverage.", sp, ".RData", sep=""))
   
   if (sp == "human"){
-    pdf.name="GenomeResearch_Figures/Supplemental_Fig_S6.pdf"
+    pdf.name="/Supplemental_Fig_S6.pdf"
   } else{
-    pdf.name="GenomeResearch_Figures/SupplementaryMaterialFigure12.pdf"
+    pdf.name="/SupplementaryMaterialFigure12.pdf"
   }
   
   pdf(paste(pathFigures, pdf.name, sep=""), width=6.85, height=4.5)
