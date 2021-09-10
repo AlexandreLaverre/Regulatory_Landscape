@@ -11,20 +11,22 @@ options("stringsAsFactors"=FALSE)
 ## define paths
 
 user=as.character(Sys.getenv()["USER"])
+pathRlibs=NULL
 
 if(user=="laverre"){
   pathFinalData="/home/laverre/Manuscript/"
-   pathRlibs=NULL
+  pathRepeats="/home/laverre/Regulatory_landscape/result/sequence_composition/"
 }
 
-if(user=="necsulea"){
+
+if(user %in% c("necsulea", "alaverre")){
   pathFinalData="/beegfs/data/necsulea/RegulatoryLandscapesManuscript/"
   pathRlibs="/beegfs/home/necsulea/Rlibs"
+  pathRepeats="/beegfs/data/necsulea/RegulatoryLandscapes/results/sequence_composition/"
 }
 
 if(user=="ubuntu"){
   pathFinalData="/mnt/mydatalocal/RegulatoryLandscapesManuscript/"
-  pathRlibs=NULL
 }
 
 ## current directory - we run scripts from the scripts/main_figures folder
@@ -32,7 +34,7 @@ if(user=="ubuntu"){
 dirs=unlist(strsplit(getwd(), split="\\/"))
 pathScripts=paste(dirs[1:(length(dirs)-1)], collapse="/")
 
-pathFigures=paste(pathFinalData, "Figures/", sep="")
+pathFigures=paste(pathFinalData, "tmp_writtable/Figures/", sep="")
 pathSuppTables=paste(pathFinalData, "SupplementaryTables/", sep="")
 
 #######################################################################################
@@ -92,3 +94,11 @@ maxBLAT=2
 default.cons = 0
 
 #######################################################################################
+# Packages used
+# requiredPackages = c('data.table', 'bootBCa', 'ade4', 'plotrix', 'ape', 'vioplot', 'Hmisc', 'imager', 'plyr', 'car', 'MuMIn')
+# 
+# for(p in requiredPackages){
+#   if(!require(p, character.only = TRUE)) install.packages(p)
+#   if(!require(p, character.only = TRUE) & p == 'bootBCa') install.packages(p, repos="http://R-Forge.R-project.org")
+# }
+
